@@ -1,0 +1,51 @@
+{
+  "tool": "klayout_drc",
+  "case": "pass",
+  "expect": "pass",
+  "captured_at": "2026-10-03T08:30:34+00:00",
+  "workdir": "/tmp/s2s-golden-work/klayout_drc/pass",
+  "command": [
+    "klayout",
+    "-b",
+    "-zz",
+    "-r",
+    "/opt/pdk/sky130A/libs.tech/klayout/drc/sky130A_mr.drc",
+    "-rd",
+    "feol=true",
+    "-rd",
+    "beol=true",
+    "-rd",
+    "floating_metal=false",
+    "-rd",
+    "offgrid=true",
+    "-rd",
+    "seal=true",
+    "-rd",
+    "input=/tmp/s2s-golden-work/klayout_drc/pass/spm.gds",
+    "-rd",
+    "topcell=spm",
+    "-rd",
+    "report=/tmp/s2s-golden-work/klayout_drc/pass/reports/klayout_drc_spm.lyrdb",
+    "-rd",
+    "threads=4"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "0.29.4",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 8.349,
+  "reports": [
+    "lyrdb"
+  ],
+  "live_result": {
+    "status": "PASS",
+    "passed": true,
+    "error_count": 0,
+    "warning_count": 0,
+    "reasons": [],
+    "metrics": {
+      "drc_violations": 0,
+      "by_rule": {}
+    }
+  }
+}

@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1234" />
+    <testcase name="counts_up" classname="test_counter_pass" file="/tmp/s2s-golden-work/cocotb_sim/pass_verilator/test_counter_pass.py" lineno="7" time="0.0015137195587158203" sim_time_ns="70.001" ratio_time="46244.36514474721" />
+  </testsuite>
+</testsuites>

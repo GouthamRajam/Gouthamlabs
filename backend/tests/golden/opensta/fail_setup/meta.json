@@ -1,0 +1,182 @@
+{
+  "tool": "opensta",
+  "case": "fail_setup",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:30:13+00:00",
+  "workdir": "/tmp/s2s-golden-work/opensta/fail_setup",
+  "command": [
+    "sta",
+    "-no_init",
+    "-exit",
+    "/tmp/s2s-golden-work/opensta/fail_setup/.s2s/sta_spm_tt_025C_1v80.tcl"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "2.6.0",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 0.767,
+  "reports": [],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 10,
+    "warning_count": 4,
+    "reasons": [
+      "parser counted 10 error(s)",
+      "stage rule: setup worst slack -2.1620 ns (negative)",
+      "safety net: 10 log line(s) contain known failure strings"
+    ],
+    "metrics": {
+      "corner": "tt_025C_1v80",
+      "wns": -2.162,
+      "setup_worst_slack": -2.162,
+      "tns": -202.9178,
+      "hold_worst_slack": 0.3203,
+      "hold_tns": 0.0,
+      "violated_paths_reported": 10,
+      "worst_paths": [
+        {
+          "startpoint": "rst",
+          "endpoint": "_302_",
+          "type": "max",
+          "slack": -1.2689,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_279_",
+          "type": "max",
+          "slack": -1.265,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_268_",
+          "type": "max",
+          "slack": -1.2633,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_271_",
+          "type": "max",
+          "slack": -1.2631,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_282_",
+          "type": "max",
+          "slack": -1.2629,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "_314_",
+          "endpoint": "y",
+          "type": "max",
+          "slack": -2.162,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_262_",
+          "type": "max",
+          "slack": -2.0907,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_264_",
+          "type": "max",
+          "slack": -2.0809,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_266_",
+          "type": "max",
+          "slack": -2.0783,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_278_",
+          "type": "max",
+          "slack": -2.0764,
+          "state": "VIOLATED"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_259_",
+          "type": "min",
+          "slack": 1.5571,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_256_",
+          "type": "min",
+          "slack": 1.5574,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_272_",
+          "type": "min",
+          "slack": 1.5574,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_274_",
+          "type": "min",
+          "slack": 1.5575,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_257_",
+          "type": "min",
+          "slack": 1.5578,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_305_",
+          "endpoint": "_305_",
+          "type": "min",
+          "slack": 0.3203,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_293_",
+          "endpoint": "_293_",
+          "type": "min",
+          "slack": 0.3241,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_267_",
+          "endpoint": "_267_",
+          "type": "min",
+          "slack": 0.3256,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_281_",
+          "endpoint": "_281_",
+          "type": "min",
+          "slack": 0.3271,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_315_",
+          "endpoint": "_315_",
+          "type": "min",
+          "slack": 0.3278,
+          "state": "MET"
+        }
+      ],
+      "drv_violators": []
+    }
+  }
+}

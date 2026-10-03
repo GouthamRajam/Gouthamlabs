@@ -1,0 +1,39 @@
+{
+  "tool": "magic_drc",
+  "case": "fail_met1_width",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:30:25+00:00",
+  "workdir": "/tmp/s2s-golden-work/magic_drc/fail_met1_width",
+  "command": [
+    "magic",
+    "-dnull",
+    "-noconsole",
+    "-rcfile",
+    "/opt/pdk/sky130A/libs.tech/magic/sky130A.magicrc",
+    "/tmp/s2s-golden-work/magic_drc/fail_met1_width/.s2s/magic_drc_spm.tcl"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "8.3.489",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 4.383,
+  "reports": [],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 2,
+    "warning_count": 0,
+    "reasons": [
+      "parser counted 2 error(s)",
+      "stage rule: 3 Magic DRC violation(s)",
+      "safety net: 2 log line(s) contain known failure strings"
+    ],
+    "metrics": {
+      "drc_violations": 3,
+      "by_rule": {
+        "Metal1 minimum area < 0.083um^2 (met1.6)": 1,
+        "Metal1 width < 0.14um (met1.1)": 2
+      }
+    }
+  }
+}

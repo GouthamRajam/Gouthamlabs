@@ -1,0 +1,43 @@
+{
+  "tool": "sby_formal",
+  "case": "pass",
+  "expect": "pass",
+  "captured_at": "2026-10-03T08:30:08+00:00",
+  "workdir": "/tmp/s2s-golden-work/sby_formal/pass",
+  "command": [
+    "sby",
+    "-f",
+    "counter_pass.sby"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "yosys-0.47",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 0.968,
+  "reports": [
+    "junit"
+  ],
+  "live_result": {
+    "status": "PASS",
+    "passed": true,
+    "error_count": 0,
+    "warning_count": 0,
+    "reasons": [],
+    "metrics": {
+      "status": "PASS",
+      "properties": [
+        {
+          "name": "_witness_.check_assert_counter_formal_v_23_15",
+          "type": "ASSERT",
+          "location": "counter_formal.v:23.13-23.71",
+          "result": "PASS",
+          "trace": null
+        }
+      ],
+      "proven": 1,
+      "failed": 0,
+      "counterexample_vcd": [],
+      "induction_trace_vcd": []
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "tool": "verilator_lint",
+  "case": "fail_syntax_error",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:29:28+00:00",
+  "workdir": "/tmp/s2s-golden-work/verilator_lint/fail_syntax_error",
+  "command": [
+    "verilator",
+    "--lint-only",
+    "-Wall",
+    "--top-module",
+    "syntax_error",
+    "/tmp/s2s-golden-work/verilator_lint/fail_syntax_error/syntax_error.v"
+  ],
+  "exit_code": 1,
+  "timed_out": false,
+  "tool_version": "5.018",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 0.417,
+  "reports": [],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 2,
+    "warning_count": 0,
+    "reasons": [
+      "tool exit code 1 (must be 0)",
+      "parser counted 2 error(s)",
+      "safety net: 2 log line(s) contain known failure strings"
+    ],
+    "metrics": {
+      "errors": 2,
+      "warnings": 0
+    }
+  }
+}

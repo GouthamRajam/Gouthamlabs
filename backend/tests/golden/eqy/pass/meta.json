@@ -1,0 +1,33 @@
+{
+  "tool": "eqy",
+  "case": "pass",
+  "expect": "pass",
+  "captured_at": "2026-10-03T08:30:10+00:00",
+  "workdir": "/tmp/s2s-golden-work/eqy/pass",
+  "command": [
+    "eqy",
+    "-f",
+    "adder_pass.eqy"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "yosys-0.46",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 1.17,
+  "reports": [],
+  "live_result": {
+    "status": "PASS",
+    "passed": true,
+    "error_count": 0,
+    "warning_count": 0,
+    "reasons": [],
+    "metrics": {
+      "status": "PASS",
+      "equivalent": true,
+      "partitions_proven": [
+        "adder.s"
+      ],
+      "partitions_failed": []
+    }
+  }
+}

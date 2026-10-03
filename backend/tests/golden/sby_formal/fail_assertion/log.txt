@@ -1,0 +1,53 @@
+SBY  8:30:09 [counter_fail] Removing directory '/tmp/s2s-golden-work/sby_formal/fail_assertion/sby/counter_fail'.
+SBY  8:30:09 [counter_fail] Copy '/tmp/s2s-golden-work/sby_formal/fail_assertion/rtl/counter.v' to '/tmp/s2s-golden-work/sby_formal/fail_assertion/sby/counter_fail/src/counter.v'.
+SBY  8:30:09 [counter_fail] Copy '/tmp/s2s-golden-work/sby_formal/fail_assertion/sby/counter_formal.v' to '/tmp/s2s-golden-work/sby_formal/fail_assertion/sby/counter_fail/src/counter_formal.v'.
+SBY  8:30:09 [counter_fail] engine_0: smtbmc yices
+SBY  8:30:09 [counter_fail] base: starting process "cd counter_fail/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  8:30:09 [counter_fail] base: finished (returncode=0)
+SBY  8:30:09 [counter_fail] prep: starting process "cd counter_fail/model; yosys -ql design_prep.log design_prep.ys"
+SBY  8:30:09 [counter_fail] prep: finished (returncode=0)
+SBY  8:30:09 [counter_fail] smt2: starting process "cd counter_fail/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  8:30:09 [counter_fail] smt2: finished (returncode=0)
+SBY  8:30:09 [counter_fail] engine_0.basecase: starting process "cd counter_fail; yosys-smtbmc -s yices --presat --unroll --noprogress -t 10  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  8:30:09 [counter_fail] engine_0.induction: starting process "cd counter_fail; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 10  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Checking assertions in step 0..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 10..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 9..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Checking assumptions in step 1..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Checking assertions in step 1..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 8..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Checking assumptions in step 2..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Checking assertions in step 2..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 7..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Assert failed in counter_formal: counter_formal.v:18.33-18.55 (_witness_.check_assert_counter_formal_v_18_7)
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 6..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 5..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 4..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 3..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 2..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY  8:30:09 [counter_fail] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Trying induction in step 0..
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Temporal induction failed!
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Assert failed in counter_formal: counter_formal.v:18.33-18.55 (_witness_.check_assert_counter_formal_v_18_7)
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Writing trace to VCD file: engine_0/trace_induct.vcd
+SBY  8:30:09 [counter_fail] engine_0.induction: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_induct_tb.v
+SBY  8:30:09 [counter_fail] engine_0.basecase: finished (returncode=1)
+SBY  8:30:09 [counter_fail] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  8:30:09 [counter_fail] engine_0.induction: terminating process
+SBY  8:30:09 [counter_fail] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  8:30:09 [counter_fail] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  8:30:09 [counter_fail] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  8:30:09 [counter_fail] summary: counterexample trace [basecase]: counter_fail/engine_0/trace.vcd
+SBY  8:30:09 [counter_fail] summary:   failed assertion counter_formal._witness_.check_assert_counter_formal_v_18_7 at counter_formal.v:18.33-18.55 in step 2
+SBY  8:30:09 [counter_fail] summary: counterexample trace [induction]: counter_fail/engine_0/trace_induct.vcd
+SBY  8:30:09 [counter_fail] summary:   failed assertion counter_formal._witness_.check_assert_counter_formal_v_18_7 at counter_formal.v:18.33-18.55 in step 0
+SBY  8:30:09 [counter_fail] DONE (FAIL, rc=2)

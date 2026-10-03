@@ -1,6 +1,19 @@
-# Populate in M0.3. Python 3.11+. Deps: fastapi, uvicorn, sqlalchemy>=2, alembic,
+# Python 3.11+. M0.2 adds the EDA tool adapters (stdlib only) and pytest for tests.
+# Platform deps are added in M0.3: fastapi, uvicorn, sqlalchemy>=2, alembic,
 # redis, pgvector, pydantic, pytest, cocotb (for tb), anthropic (model gateway).
 [project]
 name = "s2s"
 version = "0.0.0"
 requires-python = ">=3.11"
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+norecursedirs = ["fixtures", "golden"]  # fixtures hold cocotb tests that run inside the simulator
+markers = [
+    "eda: runs real tools in the s2s-eda image (needs docker + image)",
+    "slow: long real runs (OpenLane full flow, minutes each)",
+]

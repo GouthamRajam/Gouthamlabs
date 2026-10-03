@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1234" />
+    <testcase name="counts_up_wrong_expectation" classname="test_counter_fail" file="/tmp/s2s-golden-work/cocotb_sim/fail_icarus/test_counter_fail.py" lineno="8" time="0.00140380859375" sim_time_ns="70.001" ratio_time="49865.06017391304">
+      <failure message="Test failed with RANDOM_SEED=1234" />
+    </testcase>
+  </testsuite>
+</testsuites>

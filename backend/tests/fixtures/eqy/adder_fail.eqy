@@ -1,0 +1,12 @@
+[gold]
+read_verilog adder_gold.v
+prep -top adder
+
+[gate]
+read_verilog adder_gate_bug.v
+prep -top adder
+
+[strategy sby]
+use sby
+depth 2
+engine smtbmc yices

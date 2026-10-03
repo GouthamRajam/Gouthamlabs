@@ -1,0 +1,45 @@
+{
+  "tool": "netgen_lvs",
+  "case": "pass",
+  "expect": "pass",
+  "captured_at": "2026-10-03T08:30:46+00:00",
+  "workdir": "/tmp/s2s-golden-work/netgen_lvs/pass",
+  "command": [
+    "netgen",
+    "-batch",
+    "source",
+    "/tmp/s2s-golden-work/netgen_lvs/pass/.s2s/lvs_spm.tcl"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "1.5.278",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 1.07,
+  "reports": [
+    "json",
+    "report"
+  ],
+  "live_result": {
+    "status": "PASS",
+    "passed": true,
+    "error_count": 0,
+    "warning_count": 0,
+    "reasons": [],
+    "metrics": {
+      "verdict": "Circuits match uniquely",
+      "lvs_status": "match",
+      "counts": {
+        "devices": {
+          "layout": 330,
+          "schematic": 330
+        },
+        "nets": {
+          "layout": 359,
+          "schematic": 359
+        }
+      },
+      "unmatched": {},
+      "mismatch_lines": 0
+    }
+  }
+}

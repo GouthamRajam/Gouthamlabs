@@ -1,0 +1,22 @@
+EQY  8:30:10 [adder_pass] read_gold: starting process "yosys -ql adder_pass/gold.log adder_pass/gold.ys"
+EQY  8:30:10 [adder_pass] read_gold: finished (returncode=0)
+EQY  8:30:10 [adder_pass] read_gate: starting process "yosys -ql adder_pass/gate.log adder_pass/gate.ys"
+EQY  8:30:10 [adder_pass] read_gate: finished (returncode=0)
+EQY  8:30:10 [adder_pass] combine: starting process "yosys -ql adder_pass/combine.log adder_pass/combine.ys"
+EQY  8:30:10 [adder_pass] combine: finished (returncode=0)
+EQY  8:30:10 [adder_pass] partition: starting process "cd adder_pass; yosys -ql partition.log partition.ys"
+EQY  8:30:10 [adder_pass] partition: finished (returncode=0)
+EQY  8:30:10 [adder_pass] run: starting process "make -C adder_pass -f strategies.mk"
+EQY  8:30:10 [adder_pass] run: make: Entering directory '/tmp/s2s-golden-work/eqy/pass/eqy/adder_pass'
+EQY  8:30:10 [adder_pass] run: Running strategy 'sby' on 'adder.s'..
+EQY  8:30:10 [adder_pass] run: Proved equivalence of partition 'adder.s' using strategy 'sby'
+EQY  8:30:10 [adder_pass] run: make -f strategies.mk summary
+EQY  8:30:10 [adder_pass] run: make[1]: Entering directory '/tmp/s2s-golden-work/eqy/pass/eqy/adder_pass'
+EQY  8:30:10 [adder_pass] run: make[1]: Leaving directory '/tmp/s2s-golden-work/eqy/pass/eqy/adder_pass'
+EQY  8:30:10 [adder_pass] run: make: Leaving directory '/tmp/s2s-golden-work/eqy/pass/eqy/adder_pass'
+EQY  8:30:10 [adder_pass] run: finished (returncode=0)
+EQY  8:30:10 [adder_pass] Successfully proved equivalence of partition adder.s
+EQY  8:30:10 [adder_pass] Successfully proved designs equivalent
+EQY  8:30:10 [adder_pass] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+EQY  8:30:10 [adder_pass] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+EQY  8:30:10 [adder_pass] DONE (PASS, rc=0)

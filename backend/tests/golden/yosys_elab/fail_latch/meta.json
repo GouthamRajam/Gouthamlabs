@@ -1,0 +1,32 @@
+{
+  "tool": "yosys_elab",
+  "case": "fail_latch",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:29:29+00:00",
+  "workdir": "/tmp/s2s-golden-work/yosys_elab/fail_latch",
+  "command": [
+    "yosys",
+    "-p",
+    "read_verilog -sv /tmp/s2s-golden-work/yosys_elab/fail_latch/latch.v; hierarchy -check -top latch; proc; check -assert"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "0.46",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 0.416,
+  "reports": [],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 0,
+    "warning_count": 1,
+    "reasons": [
+      "stage rule: 1 latch(es) inferred: \\latch.\\q"
+    ],
+    "metrics": {
+      "latches": 1,
+      "logic_loops": 0,
+      "check_problems": 0
+    }
+  }
+}

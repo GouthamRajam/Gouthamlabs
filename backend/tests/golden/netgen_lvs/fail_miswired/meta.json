@@ -1,0 +1,50 @@
+{
+  "tool": "netgen_lvs",
+  "case": "fail_miswired",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:30:48+00:00",
+  "workdir": "/tmp/s2s-golden-work/netgen_lvs/fail_miswired",
+  "command": [
+    "netgen",
+    "-batch",
+    "source",
+    "/tmp/s2s-golden-work/netgen_lvs/fail_miswired/.s2s/lvs_spm.tcl"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "1.5.278",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 1.121,
+  "reports": [
+    "json",
+    "report"
+  ],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 2,
+    "warning_count": 0,
+    "reasons": [
+      "parser counted 2 error(s)",
+      "safety net: 2 log line(s) contain known failure strings"
+    ],
+    "metrics": {
+      "verdict": "Netlists do not match",
+      "lvs_status": "mismatch",
+      "counts": {
+        "devices": {
+          "layout": 330,
+          "schematic": 330
+        },
+        "nets": {
+          "layout": 359,
+          "schematic": 359
+        }
+      },
+      "unmatched": {
+        "badnets": 1
+      },
+      "mismatch_lines": 1
+    }
+  }
+}

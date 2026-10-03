@@ -1,0 +1,43 @@
+{
+  "tool": "cocotb_sim",
+  "case": "fail_verilator",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:30:06+00:00",
+  "workdir": "/tmp/s2s-golden-work/cocotb_sim/fail_verilator",
+  "command": [
+    "/opt/cocotb/bin/python3",
+    "/tmp/s2s-golden-work/cocotb_sim/fail_verilator/.s2s/run_cocotb.py",
+    "/tmp/s2s-golden-work/cocotb_sim/fail_verilator/.s2s/cocotb_args.json"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "1.9.2",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 18.602,
+  "reports": [
+    "results_xml"
+  ],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 1,
+    "warning_count": 0,
+    "reasons": [
+      "parser counted 1 error(s)",
+      "safety net: 2 log line(s) contain known failure strings"
+    ],
+    "metrics": {
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "seed": 1234,
+      "tests_by_name": {
+        "test_counter_fail.counts_up_wrong_expectation": "FAIL"
+      },
+      "line_coverage": 0.6667,
+      "lines_hit": 2,
+      "lines_found": 3
+    }
+  }
+}

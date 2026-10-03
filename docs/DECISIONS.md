@@ -31,3 +31,21 @@ Record every non-obvious decision: date, decision, reason, alternatives consider
   also runs tiny real jobs (proofs, a counterexample, an equivalence, cocotb on Verilator and
   Icarus) so "installed but unusable" fails the selftest. Alternative considered: run only
   on the engines that worked (abc pdr, Icarus) and leave eqy unusable; rejected by the human.
+- 2026-10-03 (M0.2) — Adapters run each tool with `docker run --rm --network none s2s-eda`,
+  mounting the task's working directory at the same absolute path (inputs must live
+  there). Every result records command, pinned tool version, env hash (image id +
+  versions.lock), duration and raw log path; timeouts kill the container and return TIMEOUT.
+- 2026-10-03 (M0.2) — One pass/fail path (s2s/trust/safety_net.py): exit 0 AND parser errors
+  0 AND no stage-rule failure AND no known failure string in the log AND success marker
+  present. No allow-list/waiver exists; a pattern that misfires on a clean log is made
+  more precise (e.g. OpenSTA's benign "module ... not found. Creating black box" warnings
+  for physical-only cells meant the pattern `not found` was removed, not allow-listed).
+- 2026-10-03 (M0.2) — Stage rules that fail even when the tool exits 0: inferred latch or
+  logic loop (Yosys), any -Wall lint warning (Verilator), any DRC violation (Magic, KLayout),
+  LVS not "match", negative setup/hold slack, zero cocotb tests, sby PASS with no properties.
+- 2026-10-03 (M0.2) — sby: only basecase/BMC traces are counterexamples; [induction] traces are
+  reported separately (k-induction artifacts, possibly unreachable states).
+- 2026-10-03 (M0.2) — netgen_lvs uses the PDK's own Netgen setup (sky130A_setup.tcl); on spm it
+  gives the same result as OpenLane's LVS (330 devices / 359 nets, "Circuits match uniquely").
+- 2026-10-03 (M0.2) — klayout_dfm (listed in Part 7.5) is not in M0.2: the M0.2 request listed
+  ten adapters without it, and its checks are defined with DFM in A.15 / M0.7.

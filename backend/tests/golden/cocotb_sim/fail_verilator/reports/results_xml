@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1234" />
+    <testcase name="counts_up_wrong_expectation" classname="test_counter_fail" file="/tmp/s2s-golden-work/cocotb_sim/fail_verilator/test_counter_fail.py" lineno="8" time="0.0013995170593261719" sim_time_ns="70.001" ratio_time="50017.96836524702">
+      <failure message="Test failed with RANDOM_SEED=1234" />
+    </testcase>
+  </testsuite>
+</testsuites>

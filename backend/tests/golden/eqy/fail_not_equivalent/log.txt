@@ -1,0 +1,22 @@
+EQY  8:30:11 [adder_fail] read_gold: starting process "yosys -ql adder_fail/gold.log adder_fail/gold.ys"
+EQY  8:30:11 [adder_fail] read_gold: finished (returncode=0)
+EQY  8:30:11 [adder_fail] read_gate: starting process "yosys -ql adder_fail/gate.log adder_fail/gate.ys"
+EQY  8:30:11 [adder_fail] read_gate: finished (returncode=0)
+EQY  8:30:11 [adder_fail] combine: starting process "yosys -ql adder_fail/combine.log adder_fail/combine.ys"
+EQY  8:30:11 [adder_fail] combine: finished (returncode=0)
+EQY  8:30:11 [adder_fail] partition: starting process "cd adder_fail; yosys -ql partition.log partition.ys"
+EQY  8:30:11 [adder_fail] partition: finished (returncode=0)
+EQY  8:30:11 [adder_fail] run: starting process "make -C adder_fail -f strategies.mk"
+EQY  8:30:11 [adder_fail] run: make: Entering directory '/tmp/s2s-golden-work/eqy/fail_not_equivalent/eqy/adder_fail'
+EQY  8:30:11 [adder_fail] run: Running strategy 'sby' on 'adder.s'..
+EQY  8:30:11 [adder_fail] run: Could not prove equivalence of partition 'adder.s' using strategy 'sby': partitions not equivalent
+EQY  8:30:11 [adder_fail] run: make -f strategies.mk summary
+EQY  8:30:11 [adder_fail] run: make[1]: Entering directory '/tmp/s2s-golden-work/eqy/fail_not_equivalent/eqy/adder_fail'
+EQY  8:30:11 [adder_fail] run: make[1]: Leaving directory '/tmp/s2s-golden-work/eqy/fail_not_equivalent/eqy/adder_fail'
+EQY  8:30:11 [adder_fail] run: make: Leaving directory '/tmp/s2s-golden-work/eqy/fail_not_equivalent/eqy/adder_fail'
+EQY  8:30:11 [adder_fail] run: finished (returncode=0)
+EQY  8:30:11 [adder_fail] Warning: Failed to prove equivalence for 1/1 partitions:
+EQY  8:30:11 [adder_fail] Failed to prove equivalence of partition adder.s
+EQY  8:30:11 [adder_fail] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+EQY  8:30:11 [adder_fail] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+EQY  8:30:11 [adder_fail] DONE (FAIL, rc=2)

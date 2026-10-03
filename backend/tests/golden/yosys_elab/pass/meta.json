@@ -1,0 +1,30 @@
+{
+  "tool": "yosys_elab",
+  "case": "pass",
+  "expect": "pass",
+  "captured_at": "2026-10-03T08:29:28+00:00",
+  "workdir": "/tmp/s2s-golden-work/yosys_elab/pass",
+  "command": [
+    "yosys",
+    "-p",
+    "read_verilog -sv /tmp/s2s-golden-work/yosys_elab/pass/counter.v; hierarchy -check -top counter; proc; check -assert"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "0.46",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 0.418,
+  "reports": [],
+  "live_result": {
+    "status": "PASS",
+    "passed": true,
+    "error_count": 0,
+    "warning_count": 0,
+    "reasons": [],
+    "metrics": {
+      "latches": 0,
+      "logic_loops": 0,
+      "check_problems": 0
+    }
+  }
+}

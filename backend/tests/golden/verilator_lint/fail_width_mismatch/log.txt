@@ -1,0 +1,11 @@
+%Warning-WIDTHTRUNC: /tmp/s2s-golden-work/verilator_lint/fail_width_mismatch/width_mismatch.v:9:16: Operator ASSIGNW expects 8 bits on the Assign RHS, but Assign RHS's VARREF 'full' generates 9 bits.
+                                                                                                  : ... note: In instance 'width_mismatch'
+    9 |     assign sum = full;
+      |                ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.018
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-UNUSEDSIGNAL: /tmp/s2s-golden-work/verilator_lint/fail_width_mismatch/width_mismatch.v:7:16: Bits of signal are not used: 'full'[8]
+                                                                                                    : ... note: In instance 'width_mismatch'
+    7 |     wire [8:0] full;
+      |                ^~~~
+%Error: Exiting due to 2 warning(s)

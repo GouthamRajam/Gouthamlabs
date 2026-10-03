@@ -1,0 +1,376 @@
+{
+  "tool": "openlane_flow",
+  "case": "fail_timing",
+  "expect": "fail",
+  "captured_at": "2026-10-03T08:21:49+00:00",
+  "workdir": "/tmp/s2s-golden-work/openlane_flow/fail_timing",
+  "command": [
+    "openlane",
+    "--manual-pdk",
+    "--pdk-root",
+    "/opt/pdk",
+    "--pdk",
+    "sky130A",
+    "--scl",
+    "sky130_fd_sc_hd",
+    "--run-tag",
+    "fail_timing",
+    "--overwrite",
+    "--log-level",
+    "VERBOSE",
+    "-j",
+    "4",
+    "config_tight_clock.yaml"
+  ],
+  "exit_code": 2,
+  "timed_out": false,
+  "tool_version": "2.3.10",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 91.065,
+  "reports": [
+    "error_log",
+    "flow_log",
+    "metrics"
+  ],
+  "live_result": {
+    "status": "FAIL",
+    "passed": false,
+    "error_count": 2,
+    "warning_count": 30,
+    "reasons": [
+      "tool exit code 2 (must be 0)",
+      "parser counted 2 error(s)",
+      "stage rule: Checker.SetupViolations: Setup violations found in the following corners: * max_ss_100C_1v60 * min_ss_100C_1v60 * nom_ss_100C_1v60",
+      "stage rule: Checker.HoldViolations: Hold violations found in the following corners: * max_ff_n40C_1v95 * max_ss_100C_1v60 * min_ff_n40C_1v95 * min_ss_100C_1v60",
+      "stage rule: wns = -0.9906 ns (negative slack)",
+      "stage rule: hold_wns = -0.3373 ns (negative slack)",
+      "tool's success marker not found in its output (incomplete or crashed run)",
+      "safety net: 9 log line(s) contain known failure strings"
+    ],
+    "metrics": {
+      "wns": -0.9906290512733203,
+      "tns": -49.2311130241488,
+      "setup_violations": 216,
+      "hold_wns": -0.33733361503393006,
+      "hold_violations": 450,
+      "magic_drc": 0,
+      "klayout_drc": 0,
+      "route_drc": 0,
+      "lvs_errors": 0,
+      "antenna_violating_nets": 0,
+      "instance_count": 388,
+      "die_area": 10367.1,
+      "lvs_status": "match",
+      "metrics_source": "74-misc-reportmanufacturability/state_out.json (flow did not finish)",
+      "steps": [
+        {
+          "step": "Verilator.Lint",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.LintTimingConstructs",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.LintErrors",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.LintWarnings",
+          "status": "ran"
+        },
+        {
+          "step": "Yosys.JsonHeader",
+          "status": "ran"
+        },
+        {
+          "step": "Yosys.Synthesis",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.YosysUnmappedCells",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.YosysSynthChecks",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.NetlistAssignStatements",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CheckSDCFiles",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CheckMacroInstances",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.STAPrePNR",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.Floorplan",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.CheckMacroAntennaProperties",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.SetPowerConnections",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.ManualMacroPlacement",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CutRows",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.TapEndcapInsertion",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.AddPDNObstructions",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.GeneratePDN",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.RemovePDNObstructions",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.AddRoutingObstructions",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.GlobalPlacementSkipIO",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.IOPlacement",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.CustomIOPlacement",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.ApplyDEFTemplate",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.GlobalPlacement",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.WriteVerilogHeader",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.PowerGridViolations",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.STAMidPNR",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.RepairDesignPostGPL",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.ManualGlobalPlacement",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.DetailedPlacement",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CTS",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.STAMidPNR-1",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.ResizerTimingPostCTS",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.STAMidPNR-2",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.GlobalRouting",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CheckAntennas",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.DiodesOnPorts",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.RepairAntennas",
+          "status": "ran"
+        },
+        {
+          "step": "DiodeInsertion",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CheckAntennas",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.STAMidPNR-3",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.DetailedRouting",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.RemoveRoutingObstructions",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.CheckAntennas-1",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.TrDRC",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.ReportDisconnectedPins",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.DisconnectedPins",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.ReportWireLength",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.WireLength",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.FillInsertion",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.CellFrequencyTables",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.RCX",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.STAPostPNR",
+          "status": "ran"
+        },
+        {
+          "step": "OpenROAD.IRDropReport",
+          "status": "ran"
+        },
+        {
+          "step": "Magic.StreamOut",
+          "status": "ran"
+        },
+        {
+          "step": "KLayout.StreamOut",
+          "status": "ran"
+        },
+        {
+          "step": "Magic.WriteLEF",
+          "status": "ran"
+        },
+        {
+          "step": "Odb.CheckDesignAntennaProperties",
+          "status": "ran"
+        },
+        {
+          "step": "KLayout.XOR",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.XOR",
+          "status": "ran"
+        },
+        {
+          "step": "Magic.DRC",
+          "status": "ran"
+        },
+        {
+          "step": "KLayout.DRC",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.MagicDRC",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.KLayoutDRC",
+          "status": "ran"
+        },
+        {
+          "step": "Magic.SpiceExtraction",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.IllegalOverlap",
+          "status": "ran"
+        },
+        {
+          "step": "Netgen.LVS",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.LVS",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.SetupViolations",
+          "status": "failed"
+        },
+        {
+          "step": "Checker.HoldViolations",
+          "status": "failed"
+        },
+        {
+          "step": "Checker.MaxSlewViolations",
+          "status": "ran"
+        },
+        {
+          "step": "Checker.MaxCapViolations",
+          "status": "ran"
+        },
+        {
+          "step": "Misc.ReportManufacturability",
+          "status": "ran"
+        }
+      ],
+      "steps_run": 76,
+      "run_dir": "/tmp/s2s-golden-work/openlane_flow/fail_timing/openlane_spm/runs/fail_timing",
+      "gds": "/tmp/s2s-golden-work/openlane_flow/fail_timing/openlane_spm/runs/fail_timing/final/gds/spm.gds"
+    }
+  }
+}

@@ -1,0 +1,416 @@
+[08:20:18] INFO     Starting a new run of the 'Classic' flow with the tag 'fail_timing'.                                                                                                     flow.py:628
+[08:20:19] INFO     Starting…                                                                                                                                                          sequential.py:294
+──────────────────────────────────────────────────────────────────────────────────────────── Verilator Lint ────────────────────────────────────────────────────────────────────────────────────────────
+[08:20:19] VERBOSE  Running 'Verilator.Lint' at 'runs/fail_timing/01-verilator-lint'…                                                                                                       step.py:1122
+[08:20:19] VERBOSE  Logging subprocess to 'runs/fail_timing/01-verilator-lint/verilator-lint.log'…                                                                                          step.py:1318
+────────────────────────────────────────────────────────────────────────────────────── Lint Timing Errors Checker ──────────────────────────────────────────────────────────────────────────────────────
+[08:20:19] VERBOSE  Running 'Checker.LintTimingConstructs' at 'runs/fail_timing/02-checker-linttimingconstructs'…                                                                           step.py:1122
+[08:20:19] INFO     Check for Lint Timing Errors clear.                                                                                                                                   checker.py:404
+───────────────────────────────────────────────────────────────────────────────────────── Lint Errors Checker ──────────────────────────────────────────────────────────────────────────────────────────
+[08:20:19] VERBOSE  Running 'Checker.LintErrors' at 'runs/fail_timing/03-checker-linterrors'…                                                                                               step.py:1122
+[08:20:19] INFO     Check for Lint errors clear.                                                                                                                                          checker.py:132
+──────────────────────────────────────────────────────────────────────────────────────── Lint Warnings Checker ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:19] VERBOSE  Running 'Checker.LintWarnings' at 'runs/fail_timing/04-checker-lintwarnings'…                                                                                           step.py:1122
+[08:20:19] INFO     Check for Lint warnings clear.                                                                                                                                        checker.py:132
+───────────────────────────────────────────────────────────────────────────────────────── Generate JSON Header ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:19] VERBOSE  Running 'Yosys.JsonHeader' at 'runs/fail_timing/05-yosys-jsonheader'…                                                                                                   step.py:1122
+[08:20:20] VERBOSE  Logging subprocess to 'runs/fail_timing/05-yosys-jsonheader/yosys-jsonheader.log'…                                                                                      step.py:1318
+────────────────────────────────────────────────────────────────────────────────────────────── Synthesis ───────────────────────────────────────────────────────────────────────────────────────────────
+[08:20:20] VERBOSE  Running 'Yosys.Synthesis' at 'runs/fail_timing/06-yosys-synthesis'…                                                                                                     step.py:1122
+[08:20:20] VERBOSE  Logging subprocess to 'runs/fail_timing/06-yosys-synthesis/yosys-synthesis.log'…                                                                                        step.py:1318
+[08:20:22] VERBOSE  Parsing synthesis checks…                                                                                                                                               pyosys.py:54
+──────────────────────────────────────────────────────────────────────────────────────── Unmapped Cells Checker ────────────────────────────────────────────────────────────────────────────────────────
+[08:20:22] VERBOSE  Running 'Checker.YosysUnmappedCells' at 'runs/fail_timing/07-checker-yosysunmappedcells'…                                                                               step.py:1122
+[08:20:22] INFO     Check for Unmapped Yosys instances clear.                                                                                                                             checker.py:132
+────────────────────────────────────────────────────────────────────────────────────────── Yosys Synth Checks ──────────────────────────────────────────────────────────────────────────────────────────
+[08:20:22] VERBOSE  Running 'Checker.YosysSynthChecks' at 'runs/fail_timing/08-checker-yosyssynthchecks'…                                                                                   step.py:1122
+[08:20:22] INFO     Check for Yosys check errors clear.                                                                                                                                   checker.py:132
+─────────────────────────────────────────────────────────────────────────────────── Netlist Assign Statement Checker ───────────────────────────────────────────────────────────────────────────────────
+[08:20:22] VERBOSE  Running 'Checker.NetlistAssignStatements' at 'runs/fail_timing/09-checker-netlistassignstatements'…                                                                     step.py:1122
+─────────────────────────────────────────────────────────────────────────────────────────── Check SDC Files ────────────────────────────────────────────────────────────────────────────────────────────
+[08:20:22] VERBOSE  Running 'OpenROAD.CheckSDCFiles' at 'runs/fail_timing/10-openroad-checksdcfiles'…                                                                                       step.py:1122
+──────────────────────────────────────────────────────────────────────────────────────── Check Macro Instances ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:22] VERBOSE  Running 'OpenROAD.CheckMacroInstances' at 'runs/fail_timing/11-openroad-checkmacroinstances'…                                                                           step.py:1122
+[08:20:22] INFO     No macros found, skipping instance check…                                                                                                                            openroad.py:506
+─────────────────────────────────────────────────────────────────────────────────── Static Timing Analysis (Pre-PnR) ───────────────────────────────────────────────────────────────────────────────────
+[08:20:22] VERBOSE  Running 'OpenROAD.STAPrePNR' at 'runs/fail_timing/12-openroad-staprepnr'…                                                                                               step.py:1122
+[08:20:22] INFO     Starting STA for the nom_tt_025C_1v80 timing corner…                                                                                                                 openroad.py:561
+[08:20:22] INFO     Starting STA for the nom_ss_100C_1v60 timing corner…                                                                                                                 openroad.py:561
+[08:20:22] INFO     Starting STA for the nom_ff_n40C_1v95 timing corner…                                                                                                                 openroad.py:561
+[08:20:22] INFO     Skipping corner min_tt_025C_1v80 for STA (identical to nom_tt_025C_1v80 at this stage)…                                                                              openroad.py:599
+[08:20:22] VERBOSE  Logging subprocess to 'runs/fail_timing/12-openroad-staprepnr/nom_tt_025C_1v80/sta.log'…                                                                                step.py:1318
+[08:20:22] INFO     Skipping corner min_ss_100C_1v60 for STA (identical to nom_ss_100C_1v60 at this stage)…                                                                              openroad.py:599
+[08:20:22] INFO     Skipping corner min_ff_n40C_1v95 for STA (identical to nom_ff_n40C_1v95 at this stage)…                                                                              openroad.py:599
+[08:20:22] VERBOSE  Logging subprocess to 'runs/fail_timing/12-openroad-staprepnr/nom_ss_100C_1v60/sta.log'…                                                                                step.py:1318
+[08:20:22] INFO     Skipping corner max_tt_025C_1v80 for STA (identical to nom_tt_025C_1v80 at this stage)…                                                                              openroad.py:599
+[08:20:22] INFO     Skipping corner max_ss_100C_1v60 for STA (identical to nom_ss_100C_1v60 at this stage)…                                                                              openroad.py:599
+[08:20:22] VERBOSE  Logging subprocess to 'runs/fail_timing/12-openroad-staprepnr/nom_ff_n40C_1v95/sta.log'…                                                                                step.py:1318
+[08:20:22] INFO     Skipping corner max_ff_n40C_1v95 for STA (identical to nom_ff_n40C_1v95 at this stage)…                                                                              openroad.py:599
+[08:20:22] INFO     Finished STA for the nom_ss_100C_1v60 timing corner.                                                                                                                 openroad.py:576
+[08:20:22] INFO     Finished STA for the nom_tt_025C_1v80 timing corner.                                                                                                                 openroad.py:576
+[08:20:22] INFO     Finished STA for the nom_ff_n40C_1v95 timing corner.                                                                                                                 openroad.py:576
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃                      ┃ Hold Worst   ┃ Reg to Reg   ┃          ┃ Hold Vio     ┃ of which reg ┃ Setup Worst  ┃ Reg to Reg    ┃           ┃ Setup Vio    ┃ of which reg  ┃ Max Cap      ┃ Max Slew      ┃
+┃ Corner/Group         ┃ Slack        ┃ Paths        ┃ Hold TNS ┃ Count        ┃ to reg       ┃ Slack        ┃ Paths         ┃ Setup TNS ┃ Count        ┃ to reg        ┃ Violations   ┃ Violations    ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ Overall              │ -0.1207      │ 0.0614       │ -7.7267  │ 64           │ 0            │ -1.8703      │ N/A           │ -151.9864 │ 385          │ 0             │ 2            │ 130           │
+│ nom_tt_025C_1v80     │ 0.0446       │ N/A          │ 0.0000   │ 0            │ 0            │ -0.6598      │ N/A           │ -52.5238  │ 128          │ 0             │ 2            │ 130           │
+│ nom_ss_100C_1v60     │ -0.1207      │ N/A          │ -7.7267  │ 64           │ 0            │ -1.8703      │ N/A           │ -151.9864 │ 129          │ 0             │ 2            │ 130           │
+│ nom_ff_n40C_1v95     │ 0.0509       │ 0.0614       │ 0.0000   │ 0            │ 0            │ -0.2375      │ N/A           │ -14.6465  │ 128          │ 0             │ 2            │ 65            │
+└──────────────────────┴──────────────┴──────────────┴──────────┴──────────────┴──────────────┴──────────────┴───────────────┴───────────┴──────────────┴───────────────┴──────────────┴───────────────┘
+─────────────────────────────────────────────────────────────────────────────────────── Floorplan Initialization ───────────────────────────────────────────────────────────────────────────────────────
+[08:20:23] VERBOSE  Running 'OpenROAD.Floorplan' at 'runs/fail_timing/13-openroad-floorplan'…                                                                                               step.py:1122
+[08:20:23] VERBOSE  Logging subprocess to 'runs/fail_timing/13-openroad-floorplan/openroad-floorplan.log'…                                                                                  step.py:1318
+────────────────────────────────────────────────────────────────────── Check Antenna Properties of Macros Pins in Their LEF Views ──────────────────────────────────────────────────────────────────────
+[08:20:23] VERBOSE  Running 'Odb.CheckMacroAntennaProperties' at 'runs/fail_timing/14-odb-checkmacroantennaproperties'…                                                                     step.py:1122
+[08:20:23] INFO     No cells provided, skipping…                                                                                                                                              odb.py:185
+──────────────────────────────────────────────────────────────────────────────────────── Set Power Connections ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:23] VERBOSE  Running 'Odb.SetPowerConnections' at 'runs/fail_timing/15-odb-setpowerconnections'…                                                                                     step.py:1122
+[08:20:23] VERBOSE  Logging subprocess to 'runs/fail_timing/15-odb-setpowerconnections/odb-setpowerconnections.log'…                                                                        step.py:1318
+──────────────────────────────────────────────────────────────────────────────────────── Manual Macro Placement ────────────────────────────────────────────────────────────────────────────────────────
+[08:20:24] VERBOSE  Running 'Odb.ManualMacroPlacement' at 'runs/fail_timing/16-odb-manualmacroplacement'…                                                                                   step.py:1122
+[08:20:24] INFO     No instances found, skipping 'Odb.ManualMacroPlacement'…                                                                                                                  odb.py:417
+─────────────────────────────────────────────────────────────────────────────────────────────── Cut Rows ───────────────────────────────────────────────────────────────────────────────────────────────
+[08:20:24] VERBOSE  Running 'OpenROAD.CutRows' at 'runs/fail_timing/17-openroad-cutrows'…                                                                                                   step.py:1122
+[08:20:24] VERBOSE  Logging subprocess to 'runs/fail_timing/17-openroad-cutrows/openroad-cutrows.log'…                                                                                      step.py:1318
+───────────────────────────────────────────────────────────────────────────────────────── Tap/Decap Insertion ──────────────────────────────────────────────────────────────────────────────────────────
+[08:20:25] VERBOSE  Running 'OpenROAD.TapEndcapInsertion' at 'runs/fail_timing/18-openroad-tapendcapinsertion'…                                                                             step.py:1122
+[08:20:25] VERBOSE  Logging subprocess to 'runs/fail_timing/18-openroad-tapendcapinsertion/openroad-tapendcapinsertion.log'…                                                                step.py:1318
+───────────────────────────────────────────────────────────────────────────────────────── Add PDN obstructions ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:26] VERBOSE  Running 'Odb.AddPDNObstructions' at 'runs/fail_timing/19-odb-addpdnobstructions'…                                                                                       step.py:1122
+[08:20:26] INFO     'PDN_OBSTRUCTIONS' is not defined. Skipping 'Odb.AddPDNObstructions'…                                                                                                     odb.py:533
+──────────────────────────────────────────────────────────────────────────────── Power Distribution Network Generation ─────────────────────────────────────────────────────────────────────────────────
+[08:20:26] VERBOSE  Running 'OpenROAD.GeneratePDN' at 'runs/fail_timing/20-openroad-generatepdn'…                                                                                           step.py:1122
+[08:20:26] INFO     'FP_PDN_CFG' not explicitly set, setting it to                                                                                                                      openroad.py:1174
+                    /nix/store/ss2cw3sxbrwwx9jl0rrppbw4kgcmgi2n-python3-3.11.9-env/lib/python3.11/site-packages/openlane/scripts/openroad/common/pdn_cfg.tcl…                                           
+[08:20:26] VERBOSE  Logging subprocess to 'runs/fail_timing/20-openroad-generatepdn/openroad-generatepdn.log'…                                                                              step.py:1318
+─────────────────────────────────────────────────────────────────────────────────────── Remove PDN obstructions ────────────────────────────────────────────────────────────────────────────────────────
+[08:20:26] VERBOSE  Running 'Odb.RemovePDNObstructions' at 'runs/fail_timing/21-odb-removepdnobstructions'…                                                                                 step.py:1122
+[08:20:26] INFO     'PDN_OBSTRUCTIONS' is not defined. Skipping 'Odb.RemovePDNObstructions'…                                                                                                  odb.py:533
+─────────────────────────────────────────────────────────────────────────────────────────── Add Obstructions ───────────────────────────────────────────────────────────────────────────────────────────
+[08:20:26] VERBOSE  Running 'Odb.AddRoutingObstructions' at 'runs/fail_timing/22-odb-addroutingobstructions'…                                                                               step.py:1122
+[08:20:26] INFO     'ROUTING_OBSTRUCTIONS' is not defined. Skipping 'Odb.AddRoutingObstructions'…                                                                                             odb.py:533
+─────────────────────────────────────────────────────────────────────────────────────── Global Placement Skip IO ───────────────────────────────────────────────────────────────────────────────────────
+[08:20:26] VERBOSE  Running 'OpenROAD.GlobalPlacementSkipIO' at 'runs/fail_timing/23-openroad-globalplacementskipio'…                                                                       step.py:1122
+[08:20:26] INFO     'PL_TARGET_DENSITY_PCT' not explicitly set, using dynamically calculated target density: 57.381200…                                                                 openroad.py:1260
+[08:20:26] VERBOSE  Logging subprocess to 'runs/fail_timing/23-openroad-globalplacementskipio/openroad-globalplacementskipio.log'…                                                          step.py:1318
+──────────────────────────────────────────────────────────────────────────────────────────── I/O Placement ─────────────────────────────────────────────────────────────────────────────────────────────
+[08:20:27] VERBOSE  Running 'OpenROAD.IOPlacement' at 'runs/fail_timing/24-openroad-ioplacement'…                                                                                           step.py:1122
+[08:20:27] INFO     FP_PIN_ORDER_CFG is set. Skipping 'OpenROAD.IOPlacement'…                                                                                                           openroad.py:1077
+─────────────────────────────────────────────────────────────────────────────────── Custom I/O Pin Placement Script ────────────────────────────────────────────────────────────────────────────────────
+[08:20:27] VERBOSE  Running 'Odb.CustomIOPlacement' at 'runs/fail_timing/25-odb-customioplacement'…                                                                                         step.py:1122
+[08:20:27] VERBOSE  Logging subprocess to 'runs/fail_timing/25-odb-customioplacement/odb-customioplacement.log'…                                                                            step.py:1318
+[08:20:28] WARNING  Overriding minimum distance 0.1 with 0.42 for pins on side N to avoid overlap.                                                                                             odb.py:63
+────────────────────────────────────────────────────────────────────────────────────────── Apply DEF Template ──────────────────────────────────────────────────────────────────────────────────────────
+[08:20:28] VERBOSE  Running 'Odb.ApplyDEFTemplate' at 'runs/fail_timing/26-odb-applydeftemplate'…                                                                                           step.py:1122
+[08:20:28] INFO     No DEF template provided, skipping…                                                                                                                                       odb.py:249
+─────────────────────────────────────────────────────────────────────────────────────────── Global Placement ───────────────────────────────────────────────────────────────────────────────────────────
+[08:20:28] VERBOSE  Running 'OpenROAD.GlobalPlacement' at 'runs/fail_timing/27-openroad-globalplacement'…                                                                                   step.py:1122
+[08:20:28] INFO     'PL_TARGET_DENSITY_PCT' not explicitly set, using dynamically calculated target density: 57.381200…                                                                 openroad.py:1260
+[08:20:28] VERBOSE  Logging subprocess to 'runs/fail_timing/27-openroad-globalplacement/openroad-globalplacement.log'…                                                                      step.py:1318
+───────────────────────────────────────────────────────────────────────────────────────── Write Verilog Header ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:30] VERBOSE  Running 'Odb.WriteVerilogHeader' at 'runs/fail_timing/28-odb-writeverilogheader'…                                                                                       step.py:1122
+[08:20:30] VERBOSE  Logging subprocess to 'runs/fail_timing/28-odb-writeverilogheader/odb-writeverilogheader.log'…                                                                          step.py:1318
+───────────────────────────────────────────────────────────────────────────────────── Power Grid Violation Checker ─────────────────────────────────────────────────────────────────────────────────────
+[08:20:31] VERBOSE  Running 'Checker.PowerGridViolations' at 'runs/fail_timing/29-checker-powergridviolations'…                                                                             step.py:1122
+[08:20:31] INFO     Check for power grid violations (as reported by OpenROAD PSM- you may ignore these if LVS passes) clear.                                                              checker.py:132
+─────────────────────────────────────────────────────────────────────────────────── Static Timing Analysis (Mid-PnR) ───────────────────────────────────────────────────────────────────────────────────
+[08:20:31] VERBOSE  Running 'OpenROAD.STAMidPNR' at 'runs/fail_timing/30-openroad-stamidpnr'…                                                                                               step.py:1122
+[08:20:31] VERBOSE  Logging subprocess to 'runs/fail_timing/30-openroad-stamidpnr/openroad-stamidpnr.log'…                                                                                  step.py:1318
+[08:20:32] WARNING  [GRT-0097] No global routing found for nets.                                                                                                                         openroad.py:235
+──────────────────────────────────────────────────────────────────────────────── Repair Design (Post-Global Placement) ─────────────────────────────────────────────────────────────────────────────────
+[08:20:32] VERBOSE  Running 'OpenROAD.RepairDesignPostGPL' at 'runs/fail_timing/31-openroad-repairdesignpostgpl'…                                                                           step.py:1122
+[08:20:32] VERBOSE  Logging subprocess to 'runs/fail_timing/31-openroad-repairdesignpostgpl/openroad-repairdesignpostgpl.log'…                                                              step.py:1318
+─────────────────────────────────────────────────────────────────────────────────────── Manual Global Placement ────────────────────────────────────────────────────────────────────────────────────────
+[08:20:41] VERBOSE  Running 'Odb.ManualGlobalPlacement' at 'runs/fail_timing/32-odb-manualglobalplacement'…                                                                                 step.py:1122
+[08:20:41] INFO     'MANUAL_GLOBAL_PLACEMENTS' not set, skipping…                                                                                                                             odb.py:953
+────────────────────────────────────────────────────────────────────────────────────────── Detailed Placement ──────────────────────────────────────────────────────────────────────────────────────────
+[08:20:41] VERBOSE  Running 'OpenROAD.DetailedPlacement' at 'runs/fail_timing/33-openroad-detailedplacement'…                                                                               step.py:1122
+[08:20:41] VERBOSE  Logging subprocess to 'runs/fail_timing/33-openroad-detailedplacement/openroad-detailedplacement.log'…                                                                  step.py:1318
+───────────────────────────────────────────────────────────────────────────────────────── Clock Tree Synthesis ─────────────────────────────────────────────────────────────────────────────────────────
+[08:20:41] VERBOSE  Running 'OpenROAD.CTS' at 'runs/fail_timing/34-openroad-cts'…                                                                                                           step.py:1122
+[08:20:41] VERBOSE  Logging subprocess to 'runs/fail_timing/34-openroad-cts/openroad-cts.log'…                                                                                              step.py:1318
+─────────────────────────────────────────────────────────────────────────────────── Static Timing Analysis (Mid-PnR) ───────────────────────────────────────────────────────────────────────────────────
+[08:20:55] VERBOSE  Running 'OpenROAD.STAMidPNR-1' at 'runs/fail_timing/35-openroad-stamidpnr-1'…                                                                                           step.py:1122
+[08:20:55] VERBOSE  Logging subprocess to 'runs/fail_timing/35-openroad-stamidpnr-1/openroad-stamidpnr-1.log'…                                                                              step.py:1318
+[08:20:56] WARNING  [GRT-0097] No global routing found for nets.                                                                                                                         openroad.py:235
+─────────────────────────────────────────────────────────────────────── Resizer Timing Optimizations (Post-Clock Tree Synthesis) ───────────────────────────────────────────────────────────────────────
+[08:20:56] VERBOSE  Running 'OpenROAD.ResizerTimingPostCTS' at 'runs/fail_timing/36-openroad-resizertimingpostcts'…                                                                         step.py:1122
+[08:20:56] VERBOSE  Logging subprocess to 'runs/fail_timing/36-openroad-resizertimingpostcts/openroad-resizertimingpostcts.log'…                                                            step.py:1318
+[08:20:58] WARNING  [RSZ-0062] Unable to repair all setup violations.                                                                                                                    openroad.py:235
+[08:20:58] WARNING  [RSZ-0064] Unable to repair all hold checks within margin.                                                                                                           openroad.py:235
+─────────────────────────────────────────────────────────────────────────────────── Static Timing Analysis (Mid-PnR) ───────────────────────────────────────────────────────────────────────────────────
+[08:20:58] VERBOSE  Running 'OpenROAD.STAMidPNR-2' at 'runs/fail_timing/37-openroad-stamidpnr-2'…                                                                                           step.py:1122
+[08:20:58] VERBOSE  Logging subprocess to 'runs/fail_timing/37-openroad-stamidpnr-2/openroad-stamidpnr-2.log'…                                                                              step.py:1318
+[08:20:59] WARNING  [GRT-0097] No global routing found for nets.                                                                                                                         openroad.py:235
+──────────────────────────────────────────────────────────────────────────────────────────── Global Routing ────────────────────────────────────────────────────────────────────────────────────────────
+[08:20:59] VERBOSE  Running 'OpenROAD.GlobalRouting' at 'runs/fail_timing/38-openroad-globalrouting'…                                                                                       step.py:1122
+[08:20:59] VERBOSE  Logging subprocess to 'runs/fail_timing/38-openroad-globalrouting/openroad-globalrouting.log'…                                                                          step.py:1318
+──────────────────────────────────────────────────────────────────────────────────────────── Check Antennas ────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:00] VERBOSE  Running 'OpenROAD.CheckAntennas' at 'runs/fail_timing/39-openroad-checkantennas'…                                                                                       step.py:1122
+[08:21:00] VERBOSE  Logging subprocess to 'runs/fail_timing/39-openroad-checkantennas/openroad-checkantennas.log'…                                                                          step.py:1318
+[08:21:01] INFO     Gating variable for step 'OpenROAD.RepairDesignPostGRT' set to 'False'- the step will be skipped.                                                                  sequential.py:317
+[08:21:01] INFO     Skipping step 'Repair Design (Post-Global Routing)'…                                                                                                               sequential.py:325
+────────────────────────────────────────────────────────────────────────────────── Diodes on Ports Protection Routine ──────────────────────────────────────────────────────────────────────────────────
+[08:21:02] VERBOSE  Running 'Odb.DiodesOnPorts' at 'runs/fail_timing/40-odb-diodesonports'…                                                                                                 step.py:1122
+[08:21:02] INFO     'DIODE_ON_PORTS' is set to 'none': skipping…                                                                                                                              odb.py:762
+[08:21:02] INFO     Gating variable for step 'Odb.HeuristicDiodeInsertion' set to 'False'- the step will be skipped.                                                                   sequential.py:317
+[08:21:02] INFO     Skipping step 'Heuristic Diode Insertion'…                                                                                                                         sequential.py:325
+──────────────────────────────────────────────────────────────────────────────────────────── Antenna Repair ────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:02] VERBOSE  Running 'OpenROAD.RepairAntennas' at 'runs/fail_timing/41-openroad-repairantennas'…                                                                                     step.py:1122
+──────────────────────────────────────────────────────────────────────────────────────────── Global Routing ────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:02] VERBOSE  Running 'DiodeInsertion' at 'runs/fail_timing/41-openroad-repairantennas/1-diodeinsertion'…                                                                             step.py:1122
+[08:21:02] VERBOSE  Logging subprocess to 'runs/fail_timing/41-openroad-repairantennas/1-diodeinsertion/diodeinsertion.log'…                                                                step.py:1318
+──────────────────────────────────────────────────────────────────────────────────────────── Check Antennas ────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:03] VERBOSE  Running 'OpenROAD.CheckAntennas' at 'runs/fail_timing/41-openroad-repairantennas/2-openroad-checkantennas'…                                                             step.py:1122
+[08:21:03] VERBOSE  Logging subprocess to 'runs/fail_timing/41-openroad-repairantennas/2-openroad-checkantennas/openroad-checkantennas.log'…                                                step.py:1318
+[08:21:04] INFO     Gating variable for step 'OpenROAD.ResizerTimingPostGRT' set to 'False'- the step will be skipped.                                                                 sequential.py:317
+[08:21:04] INFO     Skipping step 'Resizer Timing Optimizations (Post-Global Routing)'…                                                                                                sequential.py:325
+─────────────────────────────────────────────────────────────────────────────────── Static Timing Analysis (Mid-PnR) ───────────────────────────────────────────────────────────────────────────────────
+[08:21:04] VERBOSE  Running 'OpenROAD.STAMidPNR-3' at 'runs/fail_timing/42-openroad-stamidpnr-3'…                                                                                           step.py:1122
+[08:21:04] VERBOSE  Logging subprocess to 'runs/fail_timing/42-openroad-stamidpnr-3/openroad-stamidpnr-3.log'…                                                                              step.py:1318
+─────────────────────────────────────────────────────────────────────────────────────────── Detailed Routing ───────────────────────────────────────────────────────────────────────────────────────────
+[08:21:05] VERBOSE  Running 'OpenROAD.DetailedRouting' at 'runs/fail_timing/43-openroad-detailedrouting'…                                                                                   step.py:1122
+[08:21:05] INFO     Running TritonRoute with 4 threads…                                                                                                                                 openroad.py:1624
+[08:21:05] VERBOSE  Logging subprocess to 'runs/fail_timing/43-openroad-detailedrouting/openroad-detailedrouting.log'…                                                                      step.py:1318
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer mcon                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer mcon                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via                                                                                 openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via                                                                                 openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via2                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via2                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via3                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via3                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via4                                                                                openroad.py:235
+[08:21:05] WARNING  [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer via4                                                                                openroad.py:235
+───────────────────────────────────────────────────────────────────────────────────────── Remove Obstructions ──────────────────────────────────────────────────────────────────────────────────────────
+[08:21:16] VERBOSE  Running 'Odb.RemoveRoutingObstructions' at 'runs/fail_timing/44-odb-removeroutingobstructions'…                                                                         step.py:1122
+[08:21:16] INFO     'ROUTING_OBSTRUCTIONS' is not defined. Skipping 'Odb.RemoveRoutingObstructions'…                                                                                          odb.py:533
+──────────────────────────────────────────────────────────────────────────────────────────── Check Antennas ────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:16] VERBOSE  Running 'OpenROAD.CheckAntennas-1' at 'runs/fail_timing/45-openroad-checkantennas-1'…                                                                                   step.py:1122
+[08:21:16] VERBOSE  Logging subprocess to 'runs/fail_timing/45-openroad-checkantennas-1/openroad-checkantennas-1.log'…                                                                      step.py:1318
+───────────────────────────────────────────────────────────────────────────────────── Routing Design Rule Checker ──────────────────────────────────────────────────────────────────────────────────────
+[08:21:17] VERBOSE  Running 'Checker.TrDRC' at 'runs/fail_timing/46-checker-trdrc'…                                                                                                         step.py:1122
+[08:21:17] INFO     Check for Routing DRC errors clear.                                                                                                                                   checker.py:132
+─────────────────────────────────────────────────────────────────────────────────────── Report Disconnected Pins ───────────────────────────────────────────────────────────────────────────────────────
+[08:21:17] VERBOSE  Running 'Odb.ReportDisconnectedPins' at 'runs/fail_timing/47-odb-reportdisconnectedpins'…                                                                               step.py:1122
+[08:21:17] VERBOSE  Logging subprocess to 'runs/fail_timing/47-odb-reportdisconnectedpins/odb-reportdisconnectedpins.log'…                                                                  step.py:1318
+────────────────────────────────────────────────────────────────────────────────────── Disconnected Pins Checker ───────────────────────────────────────────────────────────────────────────────────────
+[08:21:18] VERBOSE  Running 'Checker.DisconnectedPins' at 'runs/fail_timing/48-checker-disconnectedpins'…                                                                                   step.py:1122
+[08:21:18] INFO     Check for critical disconnected pins clear.                                                                                                                           checker.py:132
+────────────────────────────────────────────────────────────────────────────────────────── Report Wire Length ──────────────────────────────────────────────────────────────────────────────────────────
+[08:21:18] VERBOSE  Running 'Odb.ReportWireLength' at 'runs/fail_timing/49-odb-reportwirelength'…                                                                                           step.py:1122
+[08:21:18] VERBOSE  Logging subprocess to 'runs/fail_timing/49-odb-reportwirelength/odb-reportwirelength.log'…                                                                              step.py:1318
+──────────────────────────────────────────────────────────────────────────────────── Wire Length Threshold Checker ─────────────────────────────────────────────────────────────────────────────────────
+[08:21:19] VERBOSE  Running 'Checker.WireLength' at 'runs/fail_timing/50-checker-wirelength'…                                                                                               step.py:1122
+[08:21:19] WARNING  Threshold for Threshold-surpassing long wires is not set. The checker will be skipped.                                                                                checker.py:109
+──────────────────────────────────────────────────────────────────────────────────────────── Fill Insertion ────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:19] VERBOSE  Running 'OpenROAD.FillInsertion' at 'runs/fail_timing/51-openroad-fillinsertion'…                                                                                       step.py:1122
+[08:21:19] VERBOSE  Logging subprocess to 'runs/fail_timing/51-openroad-fillinsertion/openroad-fillinsertion.log'…                                                                          step.py:1318
+──────────────────────────────────────────────────────────────────────────────────── Generate Cell Frequency Tables ────────────────────────────────────────────────────────────────────────────────────
+[08:21:20] VERBOSE  Running 'Odb.CellFrequencyTables' at 'runs/fail_timing/52-odb-cellfrequencytables'…                                                                                     step.py:1122
+[08:21:20] VERBOSE  Logging subprocess to 'runs/fail_timing/52-odb-cellfrequencytables/buffer_list.txt'…                                                                                    step.py:1318
+[08:21:20] VERBOSE  Logging subprocess to 'runs/fail_timing/52-odb-cellfrequencytables/odb-cellfrequencytables.log'…                                                                        step.py:1318
+───────────────────────────────────────────────────────────────────────────── Parasitic Resistance/Capacitance Extraction ──────────────────────────────────────────────────────────────────────────────
+[08:21:21] VERBOSE  Running 'OpenROAD.RCX' at 'runs/fail_timing/53-openroad-rcx'…                                                                                                           step.py:1122
+[08:21:21] INFO     Running RCX for corners matching nom_* (/tmp/s2s-golden-work/openlane_flow/fail_timing/openlane_spm/runs/fail_timing/53-openroad-rcx/nom/rcx.log)…                  openroad.py:1753
+[08:21:21] INFO     Running RCX for corners matching min_* (/tmp/s2s-golden-work/openlane_flow/fail_timing/openlane_spm/runs/fail_timing/53-openroad-rcx/min/rcx.log)…                  openroad.py:1753
+[08:21:21] INFO     Running RCX for corners matching max_* (/tmp/s2s-golden-work/openlane_flow/fail_timing/openlane_spm/runs/fail_timing/53-openroad-rcx/max/rcx.log)…                  openroad.py:1753
+[08:21:21] VERBOSE  Logging subprocess to 'runs/fail_timing/53-openroad-rcx/nom/rcx.log'…                                                                                                   step.py:1318
+[08:21:21] VERBOSE  Logging subprocess to 'runs/fail_timing/53-openroad-rcx/min/rcx.log'…                                                                                                   step.py:1318
+[08:21:21] VERBOSE  Logging subprocess to 'runs/fail_timing/53-openroad-rcx/max/rcx.log'…                                                                                                   step.py:1318
+[08:21:22] INFO     Finished RCX for corners matching min_*.                                                                                                                            openroad.py:1762
+[08:21:22] INFO     Finished RCX for corners matching nom_*.                                                                                                                            openroad.py:1762
+[08:21:22] INFO     Finished RCX for corners matching max_*.                                                                                                                            openroad.py:1762
+────────────────────────────────────────────────────────────────────────────────── Static Timing Analysis (Post-PnR) ───────────────────────────────────────────────────────────────────────────────────
+[08:21:22] VERBOSE  Running 'OpenROAD.STAPostPNR' at 'runs/fail_timing/54-openroad-stapostpnr'…                                                                                             step.py:1122
+[08:21:22] INFO     Starting STA for the nom_tt_025C_1v80 timing corner…                                                                                                                 openroad.py:561
+[08:21:22] INFO     Starting STA for the nom_ss_100C_1v60 timing corner…                                                                                                                 openroad.py:561
+[08:21:22] INFO     Starting STA for the nom_ff_n40C_1v95 timing corner…                                                                                                                 openroad.py:561
+[08:21:22] INFO     Starting STA for the min_tt_025C_1v80 timing corner…                                                                                                                 openroad.py:561
+[08:21:22] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/nom_tt_025C_1v80/sta.log'…                                                                               step.py:1318
+[08:21:22] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/min_tt_025C_1v80/sta.log'…                                                                               step.py:1318
+[08:21:22] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/nom_ss_100C_1v60/sta.log'…                                                                               step.py:1318
+[08:21:22] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/nom_ff_n40C_1v95/sta.log'…                                                                               step.py:1318
+[08:21:22] INFO     Finished STA for the nom_tt_025C_1v80 timing corner.                                                                                                                 openroad.py:576
+[08:21:22] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/nom_tt_025C_1v80/filter_unannotated.log'…                                                                step.py:1318
+[08:21:22] INFO     Finished STA for the nom_ff_n40C_1v95 timing corner.                                                                                                                 openroad.py:576
+[08:21:22] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/nom_ff_n40C_1v95/filter_unannotated.log'…                                                                step.py:1318
+[08:21:23] INFO     Finished STA for the min_tt_025C_1v80 timing corner.                                                                                                                 openroad.py:576
+[08:21:23] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/min_tt_025C_1v80/filter_unannotated.log'…                                                                step.py:1318
+[08:21:23] INFO     Finished STA for the nom_ss_100C_1v60 timing corner.                                                                                                                 openroad.py:576
+[08:21:23] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/nom_ss_100C_1v60/filter_unannotated.log'…                                                                step.py:1318
+[08:21:23] INFO     Starting STA for the min_ss_100C_1v60 timing corner…                                                                                                                 openroad.py:561
+[08:21:23] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/min_ss_100C_1v60/sta.log'…                                                                               step.py:1318
+[08:21:23] INFO     Starting STA for the min_ff_n40C_1v95 timing corner…                                                                                                                 openroad.py:561
+[08:21:23] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/min_ff_n40C_1v95/sta.log'…                                                                               step.py:1318
+[08:21:23] INFO     Starting STA for the max_tt_025C_1v80 timing corner…                                                                                                                 openroad.py:561
+[08:21:23] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/max_tt_025C_1v80/sta.log'…                                                                               step.py:1318
+[08:21:23] INFO     Starting STA for the max_ss_100C_1v60 timing corner…                                                                                                                 openroad.py:561
+[08:21:23] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/max_ss_100C_1v60/sta.log'…                                                                               step.py:1318
+[08:21:24] INFO     Finished STA for the min_ff_n40C_1v95 timing corner.                                                                                                                 openroad.py:576
+[08:21:24] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/min_ff_n40C_1v95/filter_unannotated.log'…                                                                step.py:1318
+[08:21:24] INFO     Finished STA for the min_ss_100C_1v60 timing corner.                                                                                                                 openroad.py:576
+[08:21:24] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/min_ss_100C_1v60/filter_unannotated.log'…                                                                step.py:1318
+[08:21:24] INFO     Finished STA for the max_tt_025C_1v80 timing corner.                                                                                                                 openroad.py:576
+[08:21:24] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/max_tt_025C_1v80/filter_unannotated.log'…                                                                step.py:1318
+[08:21:24] INFO     Finished STA for the max_ss_100C_1v60 timing corner.                                                                                                                 openroad.py:576
+[08:21:24] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/max_ss_100C_1v60/filter_unannotated.log'…                                                                step.py:1318
+[08:21:25] INFO     Starting STA for the max_ff_n40C_1v95 timing corner…                                                                                                                 openroad.py:561
+[08:21:25] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/max_ff_n40C_1v95/sta.log'…                                                                               step.py:1318
+[08:21:25] INFO     Finished STA for the max_ff_n40C_1v95 timing corner.                                                                                                                 openroad.py:576
+[08:21:25] VERBOSE  Logging subprocess to 'runs/fail_timing/54-openroad-stapostpnr/max_ff_n40C_1v95/filter_unannotated.log'…                                                                step.py:1318
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃                      ┃ Hold Worst   ┃ Reg to Reg   ┃          ┃ Hold Vio     ┃ of which reg ┃ Setup Worst  ┃ Reg to Reg    ┃           ┃ Setup Vio    ┃ of which reg  ┃ Max Cap      ┃ Max Slew      ┃
+┃ Corner/Group         ┃ Slack        ┃ Paths        ┃ Hold TNS ┃ Count        ┃ to reg       ┃ Slack        ┃ Paths         ┃ Setup TNS ┃ Count        ┃ to reg        ┃ Violations   ┃ Violations    ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ Overall              │ -0.3373      │ N/A          │ -17.7590 │ 450          │ 0            │ -0.9906      │ -0.8282       │ -49.2311  │ 216          │ 183           │ 0            │ 0             │
+│ nom_tt_025C_1v80     │ -0.1029      │ N/A          │ -4.0495  │ 64           │ 0            │ -0.1906      │ 0.0597        │ -0.2282   │ 9            │ 0             │ 0            │ 0             │
+│ nom_ss_100C_1v60     │ -0.3258      │ N/A          │ -16.8825 │ 64           │ 0            │ -0.9788      │ -0.8220       │ -48.7296  │ 65           │ 63            │ 0            │ 0             │
+│ nom_ff_n40C_1v95     │ -0.0256      │ N/A          │ -0.3182  │ 24           │ 0            │ 0.1080       │ 0.3946        │ 0.0000    │ 0            │ 0             │ 0            │ 0             │
+│ min_tt_025C_1v80     │ -0.1087      │ N/A          │ -4.5275  │ 64           │ 0            │ -0.1824      │ 0.0645        │ -0.1824   │ 1            │ 0             │ 0            │ 0             │
+│ min_ss_100C_1v60     │ -0.3373      │ N/A          │ -17.7590 │ 64           │ 0            │ -0.9661      │ -0.8128       │ -48.4002  │ 65           │ 64            │ 0            │ 0             │
+│ min_ff_n40C_1v95     │ -0.0286      │ N/A          │ -0.4129  │ 24           │ 0            │ 0.1141       │ 0.3981        │ 0.0000    │ 0            │ 0             │ 0            │ 0             │
+│ max_tt_025C_1v80     │ -0.0959      │ N/A          │ -3.4350  │ 64           │ 0            │ -0.1988      │ 0.0598        │ -0.3867   │ 11           │ 0             │ 0            │ 0             │
+│ max_ss_100C_1v60     │ -0.3111      │ N/A          │ -15.7524 │ 64           │ 0            │ -0.9906      │ -0.8282       │ -49.2311  │ 65           │ 56            │ 0            │ 0             │
+│ max_ff_n40C_1v95     │ -0.0217      │ N/A          │ -0.1936  │ 18           │ 0            │ 0.1014       │ 0.3912        │ 0.0000    │ 0            │ 0             │ 0            │ 0             │
+└──────────────────────┴──────────────┴──────────────┴──────────┴──────────────┴──────────────┴──────────────┴───────────────┴───────────┴──────────────┴───────────────┴──────────────┴───────────────┘
+─────────────────────────────────────────────────────────────────────────────────────── Generate IR Drop Report ────────────────────────────────────────────────────────────────────────────────────────
+[08:21:26] VERBOSE  Running 'OpenROAD.IRDropReport' at 'runs/fail_timing/55-openroad-irdropreport'…                                                                                         step.py:1122
+[08:21:26] WARNING  'VSRC_LOC_FILES' was not given a value, which may make the results of IR drop analysis inaccurate. If you are not integrating a top-level chip for manufacture, you openroad.py:1853
+                    may ignore this warning, otherwise, see the documentation for 'VSRC_LOC_FILES'.                                                                                                     
+[08:21:27] VERBOSE  Logging subprocess to 'runs/fail_timing/55-openroad-irdropreport/openroad-irdropreport.log'…                                                                            step.py:1318
+[08:21:27] VERBOSE  [INFO PSM-0040] All shapes on net VPWR are connected.                                                                                                               openroad.py:1865
+                    ########## IR report #################                                                                                                                                              
+                    Net              : VPWR                                                                                                                                                             
+                    Corner           : nom_tt_025C_1v80                                                                                                                                                 
+                    Supply voltage   : 1.80e+00 V                                                                                                                                                       
+                    Worstcase voltage: 1.80e+00 V                                                                                                                                                       
+                    Average voltage  : 1.80e+00 V                                                                                                                                                       
+                    Average IR drop  : 2.79e-04 V                                                                                                                                                       
+                    Worstcase IR drop: 1.14e-03 V                                                                                                                                                       
+                    Percentage drop  : 0.06 %                                                                                                                                                           
+                    ######################################                                                                                                                                              
+                    [INFO PSM-0040] All shapes on net VGND are connected.                                                                                                                               
+                    ########## IR report #################                                                                                                                                              
+                    Net              : VGND                                                                                                                                                             
+                    Corner           : nom_tt_025C_1v80                                                                                                                                                 
+                    Supply voltage   : 0.00e+00 V                                                                                                                                                       
+                    Worstcase voltage: 1.01e-03 V                                                                                                                                                       
+                    Average voltage  : 2.67e-04 V                                                                                                                                                       
+                    Average IR drop  : 2.67e-04 V                                                                                                                                                       
+                    Worstcase IR drop: 1.01e-03 V                                                                                                                                                       
+                    Percentage drop  : 0.06 %                                                                                                                                                           
+                    ######################################                                                                                                                                              
+                                                                                                                                                                                                        
+─────────────────────────────────────────────────────────────────────────────────────── GDSII Stream Out (Magic) ───────────────────────────────────────────────────────────────────────────────────────
+[08:21:28] VERBOSE  Running 'Magic.StreamOut' at 'runs/fail_timing/56-magic-streamout'…                                                                                                     step.py:1122
+[08:21:28] VERBOSE  Logging subprocess to 'runs/fail_timing/56-magic-streamout/magic-streamout.log'…                                                                                        step.py:1318
+────────────────────────────────────────────────────────────────────────────────────── GDSII Stream Out (KLayout) ──────────────────────────────────────────────────────────────────────────────────────
+[08:21:29] VERBOSE  Running 'KLayout.StreamOut' at 'runs/fail_timing/57-klayout-streamout'…                                                                                                 step.py:1122
+[08:21:29] VERBOSE  Logging subprocess to 'runs/fail_timing/57-klayout-streamout/klayout-streamout.log'…                                                                                    step.py:1318
+────────────────────────────────────────────────────────────────────────────────────────── Write LEF (Magic) ───────────────────────────────────────────────────────────────────────────────────────────
+[08:21:30] VERBOSE  Running 'Magic.WriteLEF' at 'runs/fail_timing/58-magic-writelef'…                                                                                                       step.py:1122
+[08:21:30] VERBOSE  Logging subprocess to 'runs/fail_timing/58-magic-writelef/magic-writelef.log'…                                                                                          step.py:1318
+────────────────────────────────────────────────────────────────── Check Antenna Properties of Pins in The Generated Design LEF view ───────────────────────────────────────────────────────────────────
+[08:21:31] VERBOSE  Running 'Odb.CheckDesignAntennaProperties' at 'runs/fail_timing/59-odb-checkdesignantennaproperties'…                                                                   step.py:1122
+[08:21:31] VERBOSE  Logging subprocess to 'runs/fail_timing/59-odb-checkdesignantennaproperties/odb-checkdesignantennaproperties.log'…                                                      step.py:1318
+──────────────────────────────────────────────────────────────────────────────────────── KLayout vs. Magic XOR ─────────────────────────────────────────────────────────────────────────────────────────
+[08:21:32] VERBOSE  Running 'KLayout.XOR' at 'runs/fail_timing/60-klayout-xor'…                                                                                                             step.py:1122
+[08:21:32] INFO     Running XOR with 4 threads…                                                                                                                                           klayout.py:300
+[08:21:32] VERBOSE  Logging subprocess to 'runs/fail_timing/60-klayout-xor/klayout-xor.log'…                                                                                                step.py:1318
+─────────────────────────────────────────────────────────────────────────────── Magic vs. KLayout XOR Difference Checker ───────────────────────────────────────────────────────────────────────────────
+[08:21:36] VERBOSE  Running 'Checker.XOR' at 'runs/fail_timing/61-checker-xor'…                                                                                                             step.py:1122
+[08:21:36] INFO     Check for XOR differences clear.                                                                                                                                      checker.py:132
+────────────────────────────────────────────────────────────────────────────────────────── Design Rule Checks ──────────────────────────────────────────────────────────────────────────────────────────
+[08:21:36] VERBOSE  Running 'Magic.DRC' at 'runs/fail_timing/62-magic-drc'…                                                                                                                 step.py:1122
+[08:21:36] VERBOSE  Logging subprocess to 'runs/fail_timing/62-magic-drc/magic-drc.log'…                                                                                                    step.py:1318
+───────────────────────────────────────────────────────────────────────────────────── Design Rule Check (KLayout) ──────────────────────────────────────────────────────────────────────────────────────
+[08:21:38] VERBOSE  Running 'KLayout.DRC' at 'runs/fail_timing/63-klayout-drc'…                                                                                                             step.py:1122
+[08:21:38] INFO     Running KLayout DRC with 4 threads…                                                                                                                                   klayout.py:375
+[08:21:38] VERBOSE  Logging subprocess to 'runs/fail_timing/63-klayout-drc/klayout-drc.log'…                                                                                                step.py:1318
+[08:21:46] VERBOSE  Logging subprocess to 'runs/fail_timing/63-klayout-drc/xml_drc_report_to_json.log'…                                                                                     step.py:1318
+────────────────────────────────────────────────────────────────────────────────────── Magic Design Rule Checker ───────────────────────────────────────────────────────────────────────────────────────
+[08:21:46] VERBOSE  Running 'Checker.MagicDRC' at 'runs/fail_timing/64-checker-magicdrc'…                                                                                                   step.py:1122
+[08:21:47] INFO     Check for Magic DRC errors clear.                                                                                                                                     checker.py:132
+───────────────────────────────────────────────────────────────────────────────────── KLayout Design Rule Checker ──────────────────────────────────────────────────────────────────────────────────────
+[08:21:47] VERBOSE  Running 'Checker.KLayoutDRC' at 'runs/fail_timing/65-checker-klayoutdrc'…                                                                                               step.py:1122
+[08:21:47] INFO     Check for KLayout DRC errors clear.                                                                                                                                   checker.py:132
+──────────────────────────────────────────────────────────────────────────────────────── SPICE Model Extraction ────────────────────────────────────────────────────────────────────────────────────────
+[08:21:47] VERBOSE  Running 'Magic.SpiceExtraction' at 'runs/fail_timing/66-magic-spiceextraction'…                                                                                         step.py:1122
+[08:21:47] VERBOSE  Logging subprocess to 'runs/fail_timing/66-magic-spiceextraction/magic-spiceextraction.log'…                                                                            step.py:1318
+──────────────────────────────────────────────────────────────────────────── Spice Extraction-based Illegal Overlap Checker ────────────────────────────────────────────────────────────────────────────
+[08:21:47] VERBOSE  Running 'Checker.IllegalOverlap' at 'runs/fail_timing/67-checker-illegaloverlap'…                                                                                       step.py:1122
+[08:21:47] INFO     Check for Magic Illegal Overlap errors clear.                                                                                                                         checker.py:132
+────────────────────────────────────────────────────────────────────────────────────────────── Netgen LVS ──────────────────────────────────────────────────────────────────────────────────────────────
+[08:21:47] VERBOSE  Running 'Netgen.LVS' at 'runs/fail_timing/68-netgen-lvs'…                                                                                                               step.py:1122
+[08:21:48] VERBOSE  Logging subprocess to 'runs/fail_timing/68-netgen-lvs/netgen-lvs.log'…                                                                                                  step.py:1318
+────────────────────────────────────────────────────────────────────────────────── Layout vs. Schematic Error Checker ──────────────────────────────────────────────────────────────────────────────────
+[08:21:48] VERBOSE  Running 'Checker.LVS' at 'runs/fail_timing/69-checker-lvs'…                                                                                                             step.py:1122
+[08:21:48] INFO     Check for LVS errors clear.                                                                                                                                           checker.py:132
+[08:21:48] INFO     Gating variable for step 'Yosys.EQY' set to 'False'- the step will be skipped.                                                                                     sequential.py:317
+[08:21:48] INFO     Skipping step 'Equivalence Check'…                                                                                                                                 sequential.py:325
+─────────────────────────────────────────────────────────────────────────────────── Setup Timing Violations Checker ────────────────────────────────────────────────────────────────────────────────────
+[08:21:48] VERBOSE  Running 'Checker.SetupViolations' at 'runs/fail_timing/70-checker-setupviolations'…                                                                                     step.py:1122
+[08:21:48] WARNING  Setup violations found in the following corners:                                                                                                                      checker.py:581
+                    * max_ss_100C_1v60                                                                                                                                                                  
+                    * min_ss_100C_1v60                                                                                                                                                                  
+                    * nom_ss_100C_1v60                                                                                                                                                                  
+──────────────────────────────────────────────────────────────────────────────────── Hold Timing Violations Checker ────────────────────────────────────────────────────────────────────────────────────
+[08:21:48] VERBOSE  Running 'Checker.HoldViolations' at 'runs/fail_timing/71-checker-holdviolations'…                                                                                       step.py:1122
+[08:21:48] WARNING  Hold violations found in the following corners:                                                                                                                       checker.py:581
+                    * max_ff_n40C_1v95                                                                                                                                                                  
+                    * max_ss_100C_1v60                                                                                                                                                                  
+                    * min_ff_n40C_1v95                                                                                                                                                                  
+                    * min_ss_100C_1v60                                                                                                                                                                  
+                    * nom_ff_n40C_1v95                                                                                                                                                                  
+                    * nom_ss_100C_1v60                                                                                                                                                                  
+─────────────────────────────────────────────────────────────────────────────────── Maximum Slew Violations Checker ────────────────────────────────────────────────────────────────────────────────────
+[08:21:48] VERBOSE  Running 'Checker.MaxSlewViolations' at 'runs/fail_timing/72-checker-maxslewviolations'…                                                                                 step.py:1122
+[08:21:48] VERBOSE  No max slew violations found                                                                                                                                          checker.py:583
+──────────────────────────────────────────────────────────────────────────────── Maximum Capacitance Violations Checker ────────────────────────────────────────────────────────────────────────────────
+[08:21:48] VERBOSE  Running 'Checker.MaxCapViolations' at 'runs/fail_timing/73-checker-maxcapviolations'…                                                                                   step.py:1122
+[08:21:48] VERBOSE  No max cap violations found                                                                                                                                           checker.py:583
+───────────────────────────────────────────────────────────────────────────── Report Manufacturability (DRC, LVS, Antenna) ─────────────────────────────────────────────────────────────────────────────
+[08:21:48] VERBOSE  Running 'Misc.ReportManufacturability' at 'runs/fail_timing/74-misc-reportmanufacturability'…                                                                           step.py:1122
+* Antenna
+Passed ✅
+
+* LVS
+Passed ✅
+
+* DRC
+Passed ✅
+
+Classic - Stage 78 - Report Manufacturability ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78/78 0:01:29
+[08:21:48] WARNING  The following warnings were generated by the flow:                                                                                                                       flow.py:673
+[08:21:48] WARNING  [Odb.CustomIOPlacement] Overriding minimum distance 0.1 with 0.42 for pins on side N to avoid overlap.                                                                   flow.py:675
+[08:21:48] WARNING  [OpenROAD.STAMidPNR] [GRT-0097] No global routing found for nets. (and 2 similar warnings)                                                                               flow.py:675
+[08:21:48] WARNING  [OpenROAD.ResizerTimingPostCTS] [RSZ-0062] Unable to repair all setup violations.                                                                                        flow.py:675
+[08:21:48] WARNING  [OpenROAD.ResizerTimingPostCTS] [RSZ-0064] Unable to repair all hold checks within margin.                                                                               flow.py:675
+[08:21:48] WARNING  [OpenROAD.DetailedRouting] [DRT-0349] LEF58_ENCLOSURE with no CUTCLASS is not supported. Skipping for layer mcon (and 9 similar warnings)                                flow.py:675
+[08:21:48] WARNING  [Checker.WireLength] Threshold for Threshold-surpassing long wires is not set. The checker will be skipped.                                                              flow.py:675
+[08:21:48] WARNING  [OpenROAD.IRDropReport] 'VSRC_LOC_FILES' was not given a value, which may make the results of IR drop analysis inaccurate. If you are not integrating a top-level chip   flow.py:675
+                    for manufacture, you may ignore this warning, otherwise, see the documentation for 'VSRC_LOC_FILES'.                                                                                
+[08:21:48] WARNING  [Checker.SetupViolations] Setup violations found in the following corners:                                                                                               flow.py:675
+                    * max_ss_100C_1v60                                                                                                                                                                  
+                    * min_ss_100C_1v60                                                                                                                                                                  
+                    * nom_ss_100C_1v60                                                                                                                                                                  
+[08:21:48] WARNING  [Checker.HoldViolations] Hold violations found in the following corners:                                                                                                 flow.py:675
+                    * max_ff_n40C_1v95                                                                                                                                                                  
+                    * max_ss_100C_1v60                                                                                                                                                                  
+                    * min_ff_n40C_1v95                                                                                                                                                                  
+                    * min_ss_100C_1v60                                                                                                                                                                  
+                    * nom_ff_n40C_1v95                                                                                                                                                                  
+                    * nom_ss_100C_1v60                                                                                                                                                                  
+[08:21:48] ERROR    The following error was encountered while running the flow:                                                                                                          __main__.py:187
+                    One or more deferred errors were encountered:                                                                                                                                       
+                    Setup violations found in the following corners:                                                                                                                                    
+                    * max_tt_025C_1v80                                                                                                                                                                  
+                    * min_tt_025C_1v80                                                                                                                                                                  
+                    * nom_tt_025C_1v80                                                                                                                                                                  
+                    Hold violations found in the following corners:                                                                                                                                     
+                    * max_tt_025C_1v80                                                                                                                                                                  
+                    * min_tt_025C_1v80                                                                                                                                                                  
+                    * nom_tt_025C_1v80                                                                                                                                                                  
+[08:21:48] ERROR    OpenLane will now quit.                                                                                                                                              __main__.py:188

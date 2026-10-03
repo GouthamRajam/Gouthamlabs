@@ -1,0 +1,178 @@
+{
+  "tool": "opensta",
+  "case": "pass",
+  "expect": "pass",
+  "captured_at": "2026-10-03T08:30:12+00:00",
+  "workdir": "/tmp/s2s-golden-work/opensta/pass",
+  "command": [
+    "sta",
+    "-no_init",
+    "-exit",
+    "/tmp/s2s-golden-work/opensta/pass/.s2s/sta_spm_tt_025C_1v80.tcl"
+  ],
+  "exit_code": 0,
+  "timed_out": false,
+  "tool_version": "2.6.0",
+  "env_hash": "sha256:71c263984e27d978b2f05b404206733ce7f921372d0a842b0f4e3eeef2f636bc",
+  "duration_s": 0.718,
+  "reports": [],
+  "live_result": {
+    "status": "PASS",
+    "passed": true,
+    "error_count": 0,
+    "warning_count": 4,
+    "reasons": [],
+    "metrics": {
+      "corner": "tt_025C_1v80",
+      "wns": 0.0,
+      "setup_worst_slack": 6.838,
+      "tns": 0.0,
+      "hold_worst_slack": 0.3203,
+      "hold_tns": 0.0,
+      "violated_paths_reported": 0,
+      "worst_paths": [
+        {
+          "startpoint": "rst",
+          "endpoint": "_302_",
+          "type": "max",
+          "slack": 7.7311,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_279_",
+          "type": "max",
+          "slack": 7.735,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_268_",
+          "type": "max",
+          "slack": 7.7367,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_271_",
+          "type": "max",
+          "slack": 7.7369,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_282_",
+          "type": "max",
+          "slack": 7.7371,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_314_",
+          "endpoint": "y",
+          "type": "max",
+          "slack": 6.838,
+          "state": "MET"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_262_",
+          "type": "max",
+          "slack": 6.9093,
+          "state": "MET"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_264_",
+          "type": "max",
+          "slack": 6.9191,
+          "state": "MET"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_266_",
+          "type": "max",
+          "slack": 6.9217,
+          "state": "MET"
+        },
+        {
+          "startpoint": "x",
+          "endpoint": "_278_",
+          "type": "max",
+          "slack": 6.9236,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_259_",
+          "type": "min",
+          "slack": 1.5571,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_256_",
+          "type": "min",
+          "slack": 1.5574,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_272_",
+          "type": "min",
+          "slack": 1.5574,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_274_",
+          "type": "min",
+          "slack": 1.5575,
+          "state": "MET"
+        },
+        {
+          "startpoint": "rst",
+          "endpoint": "_257_",
+          "type": "min",
+          "slack": 1.5578,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_305_",
+          "endpoint": "_305_",
+          "type": "min",
+          "slack": 0.3203,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_293_",
+          "endpoint": "_293_",
+          "type": "min",
+          "slack": 0.3241,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_267_",
+          "endpoint": "_267_",
+          "type": "min",
+          "slack": 0.3256,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_281_",
+          "endpoint": "_281_",
+          "type": "min",
+          "slack": 0.3271,
+          "state": "MET"
+        },
+        {
+          "startpoint": "_315_",
+          "endpoint": "_315_",
+          "type": "min",
+          "slack": 0.3278,
+          "state": "MET"
+        }
+      ],
+      "drv_violators": []
+    }
+  }
+}

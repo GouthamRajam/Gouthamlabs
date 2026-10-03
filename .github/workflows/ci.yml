@@ -1,15 +1,16 @@
-# CI (M0.1): build the s2s-eda image from a clean checkout and run its selftest.
-# Backend tests and golden-log tests are added by the milestones that create them.
+# CI: build the s2s-eda image from a clean checkout, run its selftest (M0.1), then run
+# the backend tests (M0.2): parser unit tests on golden logs, and live adapter tests that
+# run the real tools in the freshly built image (including full OpenLane runs on spm).
 name: ci
 on: [push, pull_request]
 jobs:
   eda:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
-      # The s2s-eda image is ~8 GB unpacked; the stock runner needs room for it.
+      # The s2s-eda image is ~10 GB unpacked; the stock runner needs room for it.
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
@@ -18,5 +19,18 @@ jobs:
       - name: Build s2s-eda
         run: docker build -t s2s-eda eda/
 
-      - name: Selftest (every tool + PDK at its pinned version)
+      - name: Selftest (every tool + PDK at its pinned version, plus functional checks)
         run: docker run --rm s2s-eda bash /opt/s2s/eda/scripts/selftest.sh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Backend tests (golden-log unit tests + live adapter runs)
+        working-directory: backend
+        env:
+          S2S_REQUIRE_EDA: "1"  # a missing EDA environment fails instead of skipping
+          S2S_RUN_SLOW: "1"     # include the OpenLane full-flow runs
+        run: |
+          python -m pip install --quiet "pytest>=8"
+          python -m pytest -v -rs
