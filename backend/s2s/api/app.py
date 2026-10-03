@@ -3,11 +3,13 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from decimal import Decimal
 from typing import Any
 
 import redis.asyncio as aioredis
 from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
@@ -24,7 +26,15 @@ from s2s.orchestrator import flow
 from s2s.orchestrator.engine import create_run
 from s2s.org import load_org
 
-app = FastAPI(title="S2S API", version="0.3.0")
+app = FastAPI(title="S2S API", version="0.4.0")
+# The Live Office (web app, M0.4) runs on its own origin and calls this API from the browser.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in os.environ.get(
+        "S2S_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if o.strip()],
+    allow_methods=["GET", "POST"],
+    allow_headers=["content-type"],
+)
 
 
 def db() -> Session:
@@ -134,6 +144,17 @@ def _task_view(t: Task) -> dict:
             "last_progress_at", "stalled_at")
     row = _row(t)
     return {**{k: row[k] for k in keep}, "checkpoint_step": (t.checkpoint or {}).get("step", 0)}
+
+
+@app.get("/runs")
+def list_runs(limit: int = Query(20, le=100), s: Session = Depends(db)) -> list[dict]:
+    """Most recent runs first (the Live Office's replay picker)."""
+    out = []
+    for run in s.scalars(select(Run).order_by(Run.id.desc()).limit(limit)):
+        d = s.get(Design, run.design_id)
+        n_events = s.scalar(select(func.count()).select_from(Event).where(Event.run_id == run.id))
+        out.append({**_row(run), "design_name": d.name if d else None, "events": n_events})
+    return out
 
 
 @app.get("/runs/{run_id}")
@@ -283,6 +304,9 @@ def finance_summary(s: Session = Depends(db)) -> dict:
                 s.execute(select(col, func.sum(UsageRecord.cost_usd)).group_by(col)).all()}
 
     total = float(s.scalar(select(func.coalesce(func.sum(UsageRecord.cost_usd), 0))))
+    midnight = utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    today = float(s.scalar(select(func.coalesce(func.sum(UsageRecord.cost_usd), 0))
+                           .where(UsageRecord.ts >= midnight)))
     budgets = []
     for b in s.scalars(select(Budget)):
         spent = float(s.scalar(select(func.coalesce(func.sum(UsageRecord.cost_usd), 0)).where(
@@ -290,6 +314,8 @@ def finance_summary(s: Session = Depends(db)) -> dict:
         budgets.append({**_row(b), "spent_usd": spent, "pct": round(100 * spent / float(b.limit_usd), 3)})
     return {
         "total_usd": total,
+        "today_usd": today,  # since 00:00 UTC
+        "as_of": utcnow().isoformat(),
         "records": s.scalar(select(func.count()).select_from(UsageRecord)),
         "by_source": by(UsageRecord.source), "by_model": by(UsageRecord.model),
         "by_agent": by(UsageRecord.agent_id), "by_run": by(UsageRecord.run_id),

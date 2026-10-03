@@ -1,7 +1,8 @@
 # CI: build the s2s-eda image from a clean checkout and run its selftest (M0.1); bring up
 # the compose stack (Postgres, Redis, migrations, API, orchestrator) and wait for it to be
 # healthy (M0.3); then run all backend tests: parser unit tests on golden logs and live EDA
-# adapter runs (M0.2), and the platform tests against real Postgres/Redis (M0.3).
+# adapter runs (M0.2), and the platform tests against real Postgres/Redis (M0.3); then build
+# the Live Office web app and run its Playwright tests against a real API + orchestrator (M0.4).
 name: ci
 on: [push, pull_request]
 jobs:
@@ -23,7 +24,7 @@ jobs:
       - name: Selftest (every tool + PDK at its pinned version, plus functional checks)
         run: docker run --rm s2s-eda bash /opt/s2s/eda/scripts/selftest.sh
 
-      - name: Compose stack up and healthy (postgres, redis, migrate, api, orchestrator)
+      - name: Compose stack up and healthy (postgres, redis, migrate, api, orchestrator, web)
         run: |
           docker compose up -d --build --wait
           docker compose ps -a
@@ -41,6 +42,29 @@ jobs:
         run: |
           python -m pip install --quiet -r requirements.txt "pytest>=8"
           python -m pytest -v -rs
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Live Office build + Playwright tests (Part 12.4, M0.4 acceptance)
+        working-directory: web
+        env:
+          S2S_PYTHON: python   # backend/scripts/e2e_stack.py uses the deps installed above
+        run: |
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npm run typecheck
+          npm run build
+          npx playwright test
+
+      - name: Playwright traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: web/test-results
+          if-no-files-found: ignore
 
       - name: Compose logs on failure
         if: failure()

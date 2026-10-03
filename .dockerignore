@@ -1,9 +1,13 @@
 **/.venv
 **/__pycache__
 **/.pytest_cache
+**/node_modules
 backend/tests
 eda
-web
+web/.next
+web/test-results
+web/playwright-report
+web/src/generated
 docs
 demo
 .git

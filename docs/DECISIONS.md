@@ -77,3 +77,35 @@ Record every non-obvious decision: date, decision, reason, alternatives consider
 - 2026-10-03 (M0.3) — Gates G1-G4 sit after spec+architecture, verification, signoff, gdsii
   (Part 6.1 zone exits). gates.mode=auto approves only when the stage's latest result for
   every check passed; `human` mode waits for POST /gates/{id}/decision.
+- 2026-10-03 (M0.4) — Live Office seats are generated at build time from
+  config/management.yaml (web/scripts/gen-org.mjs -> src/generated/org.json), so the floor
+  always shows exactly the org the orchestrator loads: 66 agent seats + 5 human desks.
+  Added `mission:` to the 46 teams whose Part 6.3 table has a Mission column (Div 6/7 tables
+  have none, so those seats show no mission), and `org.humans` (CEO, VP Front-End,
+  VP Physical, VP Platform, CFO, with the gates/approvals Part 6.1/19 give them).
+- 2026-10-03 (M0.4) — Live, replay and demo all feed the same reducer (web/src/lib/store.ts
+  `applyEvent`), so a visual that works in one mode works in all. Live = backfill
+  `/events?limit=300` then `/ws/events` (reconnects with `since=`); replay = a stored run's
+  `/events` re-timed by speed (gaps capped at 3 s); demo = a scripted run.
+- 2026-10-03 (M0.4) — Demo is a simulation and is labeled as one everywhere (Part 12 rule 5):
+  "Simulation" badge, banner, a SIM tag on every feed item, `detail.simulated=true` on every
+  event, run ids `sim_run_*`, and a note on the dashboards. The page picks live only when the
+  API answers /health; otherwise demo, never an unlabeled view.
+- 2026-10-03 (M0.4) — API additions for the web app: CORS (origins from S2S_CORS_ORIGINS,
+  default localhost:3000), `GET /runs` (replay picker), finance summary `today_usd` + `as_of`.
+  Finance tab shows amounts rounded to the cent with exact values on hover; runway shows
+  "n/a" until ledger data exists (M0.9), never an estimate.
+- 2026-10-03 (M0.4) — Part 12.4 #2/#3 are measured, not assumed: click-to-panel with the
+  browser's Event Timing API on real clicks of all 71 seats (input -> next paint), fps by
+  counting rAF frames for 10 s with 20+ agents working. Playwright trace recording is off for
+  these two tests (it alone cost ~15 fps and ~50 ms per click). To meet 100 ms: rooms use
+  `contain: layout`, the panel `contain: layout paint` and is sticky, the floor grid pattern
+  is on its own layer.
+- 2026-10-03 (M0.4) — Every event type's visual carries `data-effect="<type>"`; the e2e test
+  watches the DOM (MutationObserver) during a real dummy run and requires an effect for all
+  21 types. Transient visuals expire (tool chip 2.5 s, bubble 4.5 s, decided-gate banner 6 s,
+  escalation toast 8 s); a manager's stall flag clears when that task reports progress.
+- 2026-10-03 (M0.4) — Compose gains `web` (web/Dockerfile, Next.js standalone, :3000; the
+  browser calls the API at <host>:8000). Playwright runs its own `next start` on :3100 against
+  its own API stack (backend/scripts/e2e_stack.py: fresh DB, fast SLAs, tiny budgets on :8100)
+  so tests never touch a running compose stack or its data.

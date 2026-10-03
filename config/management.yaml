@@ -21,6 +21,18 @@ gates:
 # Phase 0 runs one instance per active team. `phase` marks teams that start later.
 org:
   ceo: "Goutham Rajam (CEO)"
+  # Human leadership (Part 6.5): desks in the Live Office; `approves` drives gate banners.
+  humans:
+    - {id: ceo, name: Goutham, title: CEO, approves: [G4, budgets],
+       owns: "Strategy, customers, investors, Divisions 5 and 9, DFM & Yield until a director is hired"}
+    - {id: vp_frontend, name: VP Front-End, title: VP Front-End (cofounder), approves: [G1, G2],
+       owns: "Divisions 1 and 2"}
+    - {id: vp_physical, name: VP Physical, title: VP Physical Design & Signoff (cofounder), approves: [G3, G4],
+       owns: "Divisions 3 and 4"}
+    - {id: vp_platform, name: VP Platform, title: VP Platform, approves: [code merges],
+       owns: "Division 6"}
+    - {id: cfo, name: CFO, title: Fractional CFO / bookkeeper, approves: [payments, financial reports],
+       owns: "Division 8"}
   divisions:
     - id: div1
       name: Architecture & Specification
@@ -28,10 +40,10 @@ org:
       human_owner: Front-end cofounder (later VP Architecture)
       director: Juno
       teams:
-        - {id: spec_requirements, name: Spec & Requirements, lead: Iris, instances: 3}
-        - {id: micro_architecture, name: Micro-architecture, lead: Kepler, instances: 3}
-        - {id: perf_power_modeling, name: Performance & Power Modeling, lead: Pascal, instances: 2}
-        - {id: ip_standards_library, name: IP & Standards Library, lead: Ivy, instances: 2}
+        - {id: spec_requirements, name: Spec & Requirements, lead: Iris, instances: 3, mission: "Turn requests into complete, testable specs"}
+        - {id: micro_architecture, name: Micro-architecture, lead: Kepler, instances: 3, mission: "Choose structures that meet the spec with margin"}
+        - {id: perf_power_modeling, name: Performance & Power Modeling, lead: Pascal, instances: 2, mission: "Fast PPA models and early trade-off studies"}
+        - {id: ip_standards_library, name: IP & Standards Library, lead: Ivy, instances: 2, mission: "Interface standards, reusable IP choices, licensing notes"}
     - id: div2
       name: Front-End Design & Verification
       zone: "2"
@@ -43,63 +55,63 @@ org:
           zone: "2A"
           manager: Reid
           teams:
-            - {id: datapath_rtl, name: Datapath RTL, lead: Ada, instances: 3}
-            - {id: control_fsm, name: Control & State Machines, lead: Ada-C, instances: 3}
-            - {id: interfaces_protocols, name: Interfaces & Protocols, lead: Ada-I, instances: 2}
-            - {id: low_power, name: Low-Power Design, lead: Watt, instances: 1}
-            - {id: design_quality, name: Design Quality, lead: Lumen, instances: 2}
+            - {id: datapath_rtl, name: Datapath RTL, lead: Ada, instances: 3, mission: "Arithmetic, pipelines, data movement"}
+            - {id: control_fsm, name: Control & State Machines, lead: Ada-C, instances: 3, mission: "FSMs, sequencing, arbitration"}
+            - {id: interfaces_protocols, name: Interfaces & Protocols, lead: Ada-I, instances: 2, mission: "Bus and serial interfaces"}
+            - {id: low_power, name: Low-Power Design, lead: Watt, instances: 1, mission: "Clock gating, power intent"}
+            - {id: design_quality, name: Design Quality, lead: Lumen, instances: 2, mission: "Lint, clock-domain and reset-domain checks"}
         - id: dept2b
           name: Verification Build
           zone: "2B"
           manager: Nadia
           teams:
-            - {id: test_planning, name: Test Planning, lead: Vera, instances: 2}
-            - {id: testbench_engineering, name: Testbench Engineering, lead: Theo, instances: 6}
-            - {id: reference_models, name: Reference Models, lead: Mira, instances: 4}
-            - {id: vip_protocol_checkers, name: Verification IP & Protocol Checkers, lead: Proto, instances: 3}
-            - {id: formal_verification, name: Formal Verification, lead: Euclid, instances: 5}
+            - {id: test_planning, name: Test Planning, lead: Vera, instances: 2, mission: "Requirement-to-test mapping, verification strategy"}
+            - {id: testbench_engineering, name: Testbench Engineering, lead: Theo, instances: 6, mission: "Drivers, monitors, scoreboards, stimulus"}
+            - {id: reference_models, name: Reference Models, lead: Mira, instances: 4, mission: "Golden models written from the spec only"}
+            - {id: vip_protocol_checkers, name: Verification IP & Protocol Checkers, lead: Proto, instances: 3, mission: "Reusable protocol checkers and assertions"}
+            - {id: formal_verification, name: Formal Verification, lead: Euclid, instances: 5, mission: "Properties and proofs"}
         - id: dept2c
           name: Verification Closure
           zone: "2C"
           manager: Rhea
           teams:
-            - {id: regression_ops, name: Regression Operations, lead: Rex, instances: 3}
-            - {id: debug_triage, name: Debug & Triage, lead: Dex, instances: 6}
-            - {id: coverage_closure, name: Coverage Closure, lead: Cora, instances: 5}
-            - {id: verification_quality, name: Verification Quality, lead: Myra, instances: 2}
-            - {id: emulation_fpga, name: Emulation & FPGA Prototyping, lead: Flux, instances: 2, phase: 1}
+            - {id: regression_ops, name: Regression Operations, lead: Rex, instances: 3, mission: "Run and schedule thousands of random seeds; track pass rates and flaky tests"}
+            - {id: debug_triage, name: Debug & Triage, lead: Dex, instances: 6, mission: "Reproduce, shrink, root-cause and route failures"}
+            - {id: coverage_closure, name: Coverage Closure, lead: Cora, instances: 5, mission: "Find untested areas and close them"}
+            - {id: verification_quality, name: Verification Quality, lead: Myra, instances: 2, mission: "Injected-bug (mutation) testing of the testbench"}
+            - {id: emulation_fpga, name: Emulation & FPGA Prototyping, lead: Flux, instances: 2, phase: 1, mission: "Long-running tests on FPGA"}
     - id: div3
       name: Physical Implementation
       zone: "3"
       human_owner: VP Physical Design & Signoff
       director: Mason
       teams:
-        - {id: synthesis_constraints, name: Synthesis & Constraints, lead: Sienna, instances: 3}
-        - {id: dft, name: Design for Test, lead: Tess, instances: 3}
-        - {id: floorplan_power_grid, name: Floorplan & Power Grid, lead: Grid, instances: 2}
-        - {id: place_route, name: Place & Route, lead: Orion, instances: 5}
-        - {id: clock_tree, name: Clock Tree, lead: Tick, instances: 2}
+        - {id: synthesis_constraints, name: Synthesis & Constraints, lead: Sienna, instances: 3, mission: "Netlist, timing constraints, equivalence"}
+        - {id: dft, name: Design for Test, lead: Tess, instances: 3, mission: "Scan, test patterns, memory self-test"}
+        - {id: floorplan_power_grid, name: Floorplan & Power Grid, lead: Grid, instances: 2, mission: "Die size, pin placement, power network"}
+        - {id: place_route, name: Place & Route, lead: Orion, instances: 5, mission: "Placement, routing, timing fixes"}
+        - {id: clock_tree, name: Clock Tree, lead: Tick, instances: 2, mission: "Clock-tree synthesis and skew"}
     - id: div4
       name: Signoff & Manufacturing
       zone: "4"
       human_owner: VP Physical Design & Signoff; Director of DFM & Yield (CEO at first)
       director: Sloane
       teams:
-        - {id: timing_signoff, name: Timing Signoff, lead: Chronos, instances: 4}
-        - {id: power_ir_em, name: Power IR & EM, lead: Volta, instances: 2}
-        - {id: physical_verification, name: Physical Verification, lead: Calla, instances: 3}
-        - {id: dfm_yield, name: DFM & Yield, lead: Fabian, instances: 4}
-        - {id: tapeout_release, name: Tape-out & Release, lead: Gideon, instances: 1}
-        - {id: post_silicon, name: Post-Silicon Bring-up, lead: Bea, instances: 2, phase: 1}
+        - {id: timing_signoff, name: Timing Signoff, lead: Chronos, instances: 4, mission: "All-corner timing"}
+        - {id: power_ir_em, name: Power IR & EM, lead: Volta, instances: 2, mission: "Power integrity"}
+        - {id: physical_verification, name: Physical Verification, lead: Calla, instances: 3, mission: "DRC, LVS, antenna, density"}
+        - {id: dfm_yield, name: DFM & Yield, lead: Fabian, instances: 4, mission: "Manufacturability and yield risk"}
+        - {id: tapeout_release, name: Tape-out & Release, lead: Gideon, instances: 1, mission: "Tape-out package and checklist"}
+        - {id: post_silicon, name: Post-Silicon Bring-up, lead: Bea, instances: 2, phase: 1, mission: "Lab bring-up, test data, yield learning"}
     - id: div5
       name: Quality & Program Office
       human_owner: CEO
       reports_to: ceo
       teams:
-        - {id: program_office, name: Program Office, lead: Atlas, instances: 3}
-        - {id: independent_review, name: Independent Review, lead: Sentinel, instances: 4}
-        - {id: knowledge_methodology, name: Knowledge & Methodology, lead: Sage, instances: 2}
-        - {id: trust_audit, name: Trust & Audit, lead: Proof, instances: 2}
+        - {id: program_office, name: Program Office, lead: Atlas, instances: 3, mission: "Schedules, routing, cross-zone coordination, status"}
+        - {id: independent_review, name: Independent Review, lead: Sentinel, instances: 4, mission: "Challenge every major artifact"}
+        - {id: knowledge_methodology, name: Knowledge & Methodology, lead: Sage, instances: 2, mission: "Lessons learned, checklists, methods"}
+        - {id: trust_audit, name: Trust & Audit, lead: Proof, instances: 2, mission: "Re-execution, evidence packets, anti-cheating guards"}
     - id: div6
       name: Platform Engineering
       human_owner: VP Platform
@@ -127,20 +139,20 @@ org:
       human_owner: Fractional CFO / bookkeeper
       director: Penny
       teams:
-        - {id: finops, name: FinOps, lead: Penny, instances: 1}
-        - {id: usage_metering, name: Usage Metering, lead: Meter, instances: 2}
-        - {id: forecasting_runway, name: Forecasting & Runway, lead: Vista, instances: 1}
-        - {id: bookkeeping_support, name: Bookkeeping Support, lead: Ledger, instances: 1}
-        - {id: credits_grants, name: Credits & Grants, lead: Grant, instances: 1}
+        - {id: finops, name: FinOps, lead: Penny, instances: 1, mission: "Real-time cost tracking, budget enforcement, alerts"}
+        - {id: usage_metering, name: Usage Metering, lead: Meter, instances: 2, mission: "Counts LLM tokens and credits, CPU/GPU hours, EDA license minutes, storage"}
+        - {id: forecasting_runway, name: Forecasting & Runway, lead: Vista, instances: 1, mission: "Burn rate, runway, cost per design, scenario plans"}
+        - {id: bookkeeping_support, name: Bookkeeping Support, lead: Ledger, instances: 1, mission: "Categorizes spend, reconciles invoices, prepares reports for the human accountant"}
+        - {id: credits_grants, name: Credits & Grants, lead: Grant, instances: 1, mission: "Tracks cloud and API credits, startup programs and grant deadlines"}
     - id: div9
       name: Research, Intelligence & Sourcing
       human_owner: CEO
       director: Recon
       teams:
-        - {id: market_intel, name: Market & Competitor Intelligence, lead: Scout-Intel, instances: 2}
-        - {id: sourcing, name: Sourcing & Acquisition, lead: Scout, instances: 2}
-        - {id: technical_research, name: Technical Research, lead: Lyra, instances: 2}
-        - {id: foundry_pdk_watch, name: Foundry & PDK Watch, lead: Fermi, instances: 1}
-        - {id: standards_watch, name: Standards Watch, lead: Iso, instances: 1}
-        - {id: eda_tools_watch, name: EDA & Open-Source Tools Watch, lead: Patch, instances: 1}
-        - {id: customer_problem_research, name: Customer Problem Research, lead: Echo, instances: 1}
+        - {id: market_intel, name: Market & Competitor Intelligence, lead: Scout-Intel, instances: 2, mission: "Competitors, funding, customer moves, pricing"}
+        - {id: sourcing, name: Sourcing & Acquisition, lead: Scout, instances: 2, mission: "Gets the company what it needs from outside, legally (Part 21): open-source code/IP, tools, datasets, vendors, compute, access requests; tests that it works; keeps the provenance ledger"}
+        - {id: technical_research, name: Technical Research, lead: Lyra, instances: 2, mission: "Papers (DAC, ICCAD, ISSCC, arXiv), new methods for agents and EDA"}
+        - {id: foundry_pdk_watch, name: Foundry & PDK Watch, lead: Fermi, instances: 1, mission: "Process updates, PDK releases and errata, shuttle schedules"}
+        - {id: standards_watch, name: Standards Watch, lead: Iso, instances: 1, mission: "Interface standards and revisions"}
+        - {id: eda_tools_watch, name: EDA & Open-Source Tools Watch, lead: Patch, instances: 1, mission: "Tool releases, bugs, breaking changes"}
+        - {id: customer_problem_research, name: Customer Problem Research, lead: Echo, instances: 1, mission: "Synthesizes interview notes, forums and support tickets into pain points"}
