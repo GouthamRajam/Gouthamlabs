@@ -1,3 +1,32 @@
-# Implemented in M0.1. Services: postgres, redis, api, web, eda-runner (s2s-eda).
-# Placeholder so the layout is visible.
-services: {}
+# M0.1: Postgres and Redis with healthchecks. api, web and eda-runner services
+# are added by the milestones that build them (M0.3 / M0.4); the s2s-eda image
+# is built and run on its own (see eda/ and docs/milestones/M0.1.md).
+services:
+  postgres:
+    image: postgres:16.10-alpine
+    environment:
+      POSTGRES_USER: s2s
+      POSTGRES_PASSWORD: s2s
+      POSTGRES_DB: s2s
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U s2s -d s2s"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7.4.6-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
