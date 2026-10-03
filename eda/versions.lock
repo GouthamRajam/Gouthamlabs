@@ -21,6 +21,28 @@ magic=8.3.489
 klayout=0.29.4
 netgen=1.5.278
 
+# Support tools the base image lacks (added in M0.2): make + C++ compiler + perl for
+# Verilator simulation, awk/sed for eqy's generated scripts, SMT solvers for SymbiYosys/eqy, and
+# click for yosys-witness (counterexample traces). All come from the SAME nixpkgs revision
+# the base image was built from (OpenLane 2.3.10's flake.lock), as prebuilt, signed binaries
+# from cache.nixos.org, pinned by exact store path (the store hash pins the content).
+nixpkgs_rev=805a384895c696f802a9bf5bf4720f37385df547
+make=4.4.1
+gawk=5.2.2
+sed=4.9
+clang=17.0.6
+yices=2.6.4
+z3=4.8.17
+perl=5.38.2
+nix_store_path_make=/nix/store/y9mnxlhj1hda3b75j0hbx80gqfaysvfh-gnumake-4.4.1
+nix_store_path_gawk=/nix/store/8vvkbgmnin1x2jkp7wcb2zg1p0vc4ks9-gawk-5.2.2
+nix_store_path_sed=/nix/store/5zjms21vpxlkbc0qyl5pmj2sidfmzmd7-gnused-4.9
+nix_store_path_clang=/nix/store/mzhqknx2mc94jdz4n320hn1lml86398y-clang-wrapper-17.0.6
+nix_store_path_yices=/nix/store/cn15cs8nwhx8i440r1zpvkbsjl4b2xag-yices-2.6.4
+nix_store_path_z3=/nix/store/l9mpxhr9j4q14cfnw95hm1dnk8bh7mh6-z3-4.8.17
+nix_store_path_perl=/nix/store/1iscdpbd3x9x3s3s25jd5ppl7yra0b77-perl-5.38.2
+nix_store_path_click=/nix/store/4flhri1nwh8n0d8a4bx2yjnyigpz00bg-python3.11-click-8.1.7
+
 # SkyWater SKY130 PDK, built by open_pdks at this commit (the revision OpenLane 2.3.10 expects).
 # Libraries = volare's "default" set for sky130, which is what OpenLane installs for itself;
 # OpenLane's sky130 config needs sky130_fd_io etc. even though designs use only sky130_fd_sc_hd.

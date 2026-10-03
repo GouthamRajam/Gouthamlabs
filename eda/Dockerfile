@@ -3,9 +3,10 @@
 #
 # Base: the official OpenLane 2.3.10 image, pinned by digest. It already ships
 # OpenLane 2, Yosys, OpenROAD, OpenSTA, Verilator, Icarus Verilog, SymbiYosys, eqy,
-# Magic, KLayout and Netgen as one tested toolchain. This file adds the two
-# missing pieces: the SKY130 PDK (sky130A, with sky130_fd_sc_hd plus the other
-# libraries OpenLane's sky130 config requires) and cocotb.
+# Magic, KLayout and Netgen as one tested toolchain. This file adds what it lacks:
+# the SKY130 PDK (sky130A, with sky130_fd_sc_hd plus the other libraries OpenLane's
+# sky130 config requires), cocotb, and the support tools needed to actually run
+# simulation and formal (make, clang, perl, awk, sed, yices, z3; added in M0.2).
 #
 # Build (from the repo root):  docker build -t s2s-eda eda/
 # Behind a TLS-intercepting proxy, pass its CA as an optional build secret:
@@ -53,6 +54,24 @@ RUN --mount=type=secret,id=proxy_ca,required=false \
     /opt/cocotb/bin/pip install --no-cache-dir --disable-pip-version-check "cocotb==$ver"; \
     /opt/cocotb/bin/cocotb-config --version'
 ENV PATH="${PATH}:/opt/cocotb/bin"
+
+# Support tools the base image lacks (make, clang, perl, awk, sed, yices, z3, click): every
+# versions.lock `nix_store_path_*` entry is installed into the /nix/var/nix/profiles/s2s
+# profile. They are prebuilt binaries from cache.nixos.org, checked against the signing key
+# the base image already trusts, and the store hash pins their exact content.
+# yosys-witness (used by SymbiYosys to write counterexample traces) is shipped without its
+# `click` dependency; a wrapper in /opt/s2s/bin adds it.
+RUN --mount=type=secret,id=proxy_ca,required=false \
+    bash -euo pipefail -c ' \
+    if [ -s /run/secrets/proxy_ca ]; then export NIX_SSL_CERT_FILE=/run/secrets/proxy_ca; fi; \
+    paths=$(grep "^nix_store_path_" /opt/s2s/eda/versions.lock | cut -d= -f2); \
+    nix-env -p /nix/var/nix/profiles/s2s -i $paths; \
+    witness=$(command -v yosys-witness); \
+    mkdir -p /opt/s2s/bin; \
+    printf "#!%s\nexport PYTHONPATH=/nix/var/nix/profiles/s2s/lib/python3.11/site-packages\${PYTHONPATH:+:\$PYTHONPATH}\nexec %s \"\$@\"\n" \
+        "$(command -v bash)" "$witness" > /opt/s2s/bin/yosys-witness; \
+    chmod +x /opt/s2s/bin/yosys-witness'
+ENV PATH="/opt/s2s/bin:${PATH}:/nix/var/nix/profiles/s2s/bin"
 
 COPY scripts/ /opt/s2s/eda/scripts/
 

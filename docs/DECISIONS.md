@@ -21,3 +21,13 @@ Record every non-obvious decision: date, decision, reason, alternatives consider
   because the base image's Nix Python has no pip and must stay the default python3.
 - 2026-10-03 (M0.1) — docker-compose.yml has only postgres and redis for now; api, web and
   eda-runner services are added by the milestones that build them (M0.3/M0.4).
+- 2026-10-03 (M0.2, approved by the human before work continued) — Fixed s2s-eda gaps found
+  while building the M0.2 adapters: the image had no make, C++ compiler, perl, awk, sed or
+  SMT solver, and yosys-witness lacked its `click` module. So Verilator simulation, eqy, and
+  SymbiYosys's default engine could not run, although M0.1's version-only selftest passed.
+  Fix: install make, clang, perl, gawk, sed, yices, z3 from the same nixpkgs revision the base
+  image was built from (OpenLane 2.3.10's flake.lock), as signed prebuilt binaries pinned by
+  store path in versions.lock, plus a yosys-witness wrapper that adds click. The selftest now
+  also runs tiny real jobs (proofs, a counterexample, an equivalence, cocotb on Verilator and
+  Icarus) so "installed but unusable" fails the selftest. Alternative considered: run only
+  on the engines that worked (abc pdr, Icarus) and leave eqy unusable; rejected by the human.
