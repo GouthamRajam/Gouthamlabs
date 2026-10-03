@@ -8,3 +8,7 @@ artifacts/
 *.log
 .DS_Store
 .pytest_cache/
+# Server-side secrets (Settings -> Model access, Part 28.5): never committed
+var/
+*.enc
+master.key

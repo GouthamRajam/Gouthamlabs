@@ -7,8 +7,13 @@ x-backend: &backend
     S2S_DATABASE_URL: postgresql+psycopg://s2s:s2s@postgres:5432/s2s
     S2S_REDIS_URL: redis://redis:6379/0
     S2S_ARTIFACT_DIR: /data/artifacts
+    S2S_SECRETS_DIR: /data/secrets   # Settings -> Model access (encrypted, Part 28.5)
   volumes:
     - artifacts:/data/artifacts
+    - secrets:/data/secrets
+    # Settings -> Spend controls rewrites config/finance.yaml spend_caps; the orchestrator and
+    # the API must see the same file (and changes land in the repo's config, not in a container)
+    - ./config:/app/config
 
 services:
   postgres:
@@ -80,3 +85,4 @@ services:
 volumes:
   pgdata:
   artifacts:
+  secrets:

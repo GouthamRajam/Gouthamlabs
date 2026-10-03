@@ -14,6 +14,8 @@ Budget controls, checked after every record:
 """
 from __future__ import annotations
 
+import datetime as dt
+
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -21,8 +23,8 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from s2s.config import budgets as budgets_cfg
-from s2s.config import finance
-from s2s.db.models import Budget, BudgetEvent, Event, UsageRecord
+from s2s.config import finance, spend_caps
+from s2s.db.models import Budget, BudgetEvent, Event, Run, UsageRecord
 from s2s.db.session import session as db_session
 from s2s.events.bus import emit
 from s2s.ids import new_id
@@ -42,6 +44,14 @@ class TaskRef:
 class BudgetExceeded(RuntimeError):
     def __init__(self, task_id: str, what: str, used: float, limit: float):
         super().__init__(f"task {task_id} hit its {what} budget: {used:g} of {limit:g}")
+        self.task_id, self.what, self.used, self.limit = task_id, what, used, limit
+
+
+class SpendCapReached(BudgetExceeded):
+    """A Settings spend cap (Part 28.3) is reached: the run stops, no overage."""
+    def __init__(self, task_id: str, what: str, used: float, limit: float):
+        cap = f"{limit:,.2f}" if round(limit, 2) == limit else f"{limit:g}"
+        RuntimeError.__init__(self, f"{what} reached: ${used:.4f} spent of ${cap}")
         self.task_id, self.what, self.used, self.limit = task_id, what, used, limit
 
 
@@ -71,6 +81,47 @@ def record_llm(task: TaskRef, model: str, input_tokens: int, output_tokens: int,
         s.add(rec)
     check_budgets(task)
     return rec
+
+
+def record_llm_untasked(agent_id: str, model: str, input_tokens: int, output_tokens: int,
+                        call_id: str, purpose: str) -> UsageRecord:
+    """A model call made outside any task (e.g. Settings -> Test connection): still metered."""
+    p_in, p_out = price(model)
+    cost = p_in * input_tokens + p_out * output_tokens
+    qty = input_tokens + output_tokens
+    rec = UsageRecord(id=new_id("use"), agent_id=agent_id, source="llm", quantity=qty, unit="tokens",
+                      unit_cost=(cost / qty) if qty else Decimal(0), cost_usd=cost, model=model,
+                      detail={"call_id": call_id, "input_tokens": input_tokens,
+                              "output_tokens": output_tokens, "purpose": purpose})
+    with db_session() as s:
+        s.add(rec)
+    return rec
+
+
+def spend_so_far(s: Session, run_id: str | None = None) -> dict:
+    """Spend today (since 00:00 UTC, all work) and, given a run, its design's total spend."""
+    midnight = dt.datetime.now(dt.timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    out = {"today_usd": Decimal(str(s.scalar(select(func.coalesce(func.sum(UsageRecord.cost_usd), 0))
+                                             .where(UsageRecord.ts >= midnight))))}
+    if run_id:
+        design_runs = select(Run.id).where(Run.design_id == select(Run.design_id).where(Run.id == run_id)
+                                           .scalar_subquery())
+        out["design_usd"] = Decimal(str(s.scalar(select(func.coalesce(func.sum(UsageRecord.cost_usd), 0))
+                                                 .where(UsageRecord.run_id.in_(design_runs)))))
+    return out
+
+
+def check_spend_caps(task: TaskRef) -> None:
+    """Raise SpendCapReached if the daily or per-design cap (config/finance.yaml spend_caps) is
+    reached. Called before every model call and after every metered cost."""
+    caps = spend_caps()
+    with db_session() as s:
+        spent = spend_so_far(s, task.run_id)
+    if caps.get("daily_usd") is not None and spent["today_usd"] >= Decimal(str(caps["daily_usd"])):
+        raise SpendCapReached(task.id, "daily spend cap", float(spent["today_usd"]), float(caps["daily_usd"]))
+    if caps.get("per_design_usd") is not None and spent["design_usd"] >= Decimal(str(caps["per_design_usd"])):
+        raise SpendCapReached(task.id, "per-design spend cap", float(spent["design_usd"]),
+                              float(caps["per_design_usd"]))
 
 
 def record_compute(task: TaskRef, cpu_seconds: float, tool: str) -> UsageRecord:
@@ -120,6 +171,7 @@ def check_budgets(task: TaskRef) -> None:
         _check_run_budget(s, task)
     if exceeded:
         raise exceeded
+    check_spend_caps(task)
 
 
 def _warned(s: Session, task_id: str, what: str) -> bool:

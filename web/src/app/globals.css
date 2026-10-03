@@ -235,3 +235,20 @@ table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
   .av, .bar span, .prog span { transition: none; }
 }
 @media (max-width: 480px) { body { padding: 10px; } }
+
+/* settings (Part 28) */
+.set-wrap { display: grid; gap: 14px; max-width: 720px; }
+.set-card { padding: 16px 18px; }
+.set-card h2 { font-family: var(--font-display); font-size: 18px; margin: 0; }
+.set-card .desc { margin: 4px 0 4px; font-size: 13px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.field .lbl { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.inrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.inrow .inp { flex: 1; min-width: 180px; }
+.inp { font-family: var(--font-mono); font-size: 13px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 4px;
+  background: var(--surface); color: var(--fg); width: 100%; min-width: 0; }
+.btn.primary { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.btn:disabled { opacity: .6; cursor: default; }
+.ok-text { color: var(--ok); font-size: 13px; margin: 6px 0 0; }
+.bad-text { color: var(--bad); font-size: 13px; margin: 6px 0 0; }

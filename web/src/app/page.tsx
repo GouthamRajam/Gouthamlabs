@@ -2,6 +2,7 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Management, FinanceTab } from "@/components/Dashboards";
+import { Settings } from "@/components/Settings";
 import { Feed } from "@/components/Feed";
 import { Floor } from "@/components/Floor";
 import { OrgView, Toasts } from "@/components/OrgView";
@@ -69,7 +70,7 @@ function Office() {
   const params = useSearchParams();
   const mode = useOffice((s) => s.mode);
   const reset = useOffice((s) => s.reset);
-  const [tab, setTab] = useState<"office" | "management" | "finance">("office");
+  const [tab, setTab] = useState<"office" | "management" | "finance" | "settings">("office");
   const [view, setView] = useState<"floor" | "org">("floor");
   const [theme, setTheme] = useTheme();
   const [resolved, setResolved] = useState<Mode | null>(null);
@@ -116,9 +117,9 @@ function Office() {
       )}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "space-between" }}>
         <div role="tablist" aria-label="Views" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {(["office", "management", "finance"] as const).map((t) => (
+          {(["office", "management", "finance", "settings"] as const).map((t) => (
             <button key={t} type="button" role="tab" className="btn" aria-selected={tab === t} data-testid={`tab-${t}`}
-              onClick={() => setTab(t)}>{t === "office" ? "Office" : t === "management" ? "Management" : "Finance"}</button>
+              onClick={() => setTab(t)}>{t === "office" ? "Office" : t === "management" ? "Management" : t === "finance" ? "Finance" : "Settings"}</button>
           ))}
           {tab === "office" && (
             <span style={{ display: "inline-flex", gap: 6, marginLeft: 8 }}>
@@ -149,6 +150,7 @@ function Office() {
       )}
       {tab === "management" && <Management />}
       {tab === "finance" && <FinanceTab />}
+      {tab === "settings" && <Settings />}
       <Toasts />
     </div>
   );

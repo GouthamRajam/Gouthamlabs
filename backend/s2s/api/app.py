@@ -8,19 +8,23 @@ from decimal import Decimal
 from typing import Any
 
 import redis.asyncio as aioredis
-from fastapi import Depends, FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, WebSocket, WebSocketDisconnect
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from s2s.agents.runtime import artifact_dir
-from s2s.config import management, settings, sla_seconds
+from s2s.config import management, save_spend_caps, settings, sla_seconds, spend_caps
 from s2s.db.models import (Artifact, Budget, BudgetEvent, Credit, Design, Event, EvidencePacket, Gate,
                            OrgUnit, Project, ResearchBrief, Run, Task, TeamMetric, UsageRecord)
 from s2s.db.session import session_factory
 from s2s.events.bus import emit, utcnow
+from s2s.finance import meter
+from s2s.models import access
 from s2s.ids import new_id
 from s2s.orchestrator import flow
 from s2s.orchestrator.engine import create_run
@@ -32,9 +36,19 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in os.environ.get(
         "S2S_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if o.strip()],
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PUT"],
     allow_headers=["content-type"],
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def _validation_error(request: Request, exc: RequestValidationError):
+    # Settings bodies can carry an API key: never echo submitted values back (FastAPI's default
+    # 422 body includes each invalid field's input).
+    if request.url.path.startswith("/settings"):
+        return JSONResponse(status_code=422, content={"detail": [
+            {"loc": e.get("loc"), "msg": e.get("msg"), "type": e.get("type")} for e in exc.errors()]})
+    return await request_validation_exception_handler(request, exc)
 
 
 def db() -> Session:
@@ -375,3 +389,52 @@ async def ws_events(ws: WebSocket, run_id: str | None = None, agent_id: str | No
         pass
     finally:
         await r.aclose()
+
+
+# --- Settings (MASTER_SPEC Part 28) ---------------------------------------------------------
+# Thin Phase 0 version: no login/roles yet (Part 28.5 #4 comes with the hardened version).
+
+class ModelAccessIn(BaseModel):
+    provider: str = "anthropic"
+    api_key: str | None = Field(default=None, max_length=512)  # write-only; omitted = keep stored key
+    endpoint: str | None = Field(default=None, max_length=512)
+
+
+@app.get("/settings/model-access")
+def get_model_access() -> dict:
+    return access.public_view()
+
+
+@app.put("/settings/model-access")
+def put_model_access(body: ModelAccessIn) -> dict:
+    try:
+        return access.save(body.provider, body.api_key, body.endpoint)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from None
+
+
+@app.post("/settings/model-access/test")
+def test_model_access() -> dict:
+    return access.test_connection()
+
+
+class SpendCapsIn(BaseModel):
+    per_design_usd: float = Field(gt=0, le=1_000_000)
+    daily_usd: float = Field(gt=0, le=1_000_000)
+
+
+def _caps_view(s: Session) -> dict:
+    caps = spend_caps()
+    return {"per_design_usd": caps.get("per_design_usd"), "daily_usd": caps.get("daily_usd"),
+            "spent_today_usd": float(meter.spend_so_far(s)["today_usd"]), "source": "config/finance.yaml"}
+
+
+@app.get("/settings/spend-caps")
+def get_spend_caps(s: Session = Depends(db)) -> dict:
+    return _caps_view(s)
+
+
+@app.put("/settings/spend-caps")
+def put_spend_caps(body: SpendCapsIn, s: Session = Depends(db)) -> dict:
+    save_spend_caps(body.per_design_usd, body.daily_usd)
+    return _caps_view(s)

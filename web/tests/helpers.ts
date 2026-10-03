@@ -49,9 +49,9 @@ export async function waitIdle(timeoutMs = 90_000): Promise<void> {
 
 export const live = (extra = "") => `/?mode=live&api=${encodeURIComponent(API)}${extra}`;
 
-/** Screenshots go to docs/milestones/m0.4-screenshots/ (committed with the milestone report). */
-export async function shot(page: Page, name: string, fullPage = true) {
-  const dir = resolve("../docs/milestones/m0.4-screenshots");
+/** Screenshots go to docs/milestones/<folder>/ (committed with the milestone report). */
+export async function shot(page: Page, name: string, fullPage = true, folder = "m0.4-screenshots") {
+  const dir = resolve(`../docs/milestones/${folder}`);
   mkdirSync(dir, { recursive: true });
   await page.screenshot({ path: `${dir}/${name}.png`, fullPage });
 }

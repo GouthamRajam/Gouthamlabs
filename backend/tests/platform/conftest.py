@@ -83,6 +83,7 @@ def platform(tmp_path, monkeypatch):
         "S2S_MANAGEMENT_CONFIG": str(mgmt_path),
         "S2S_ARTIFACT_DIR": str(tmp_path / "artifacts"),
         "S2S_DUMMY_MODEL_CALL_LOG": str(tmp_path / "model_calls.jsonl"),
+        "S2S_SECRETS_DIR": str(tmp_path / "secrets"),  # never the repo's var/secrets
     }
     for k, v in env.items():
         monkeypatch.setenv(k, v)

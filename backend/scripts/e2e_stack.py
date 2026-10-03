@@ -51,10 +51,14 @@ def main() -> None:
     budgets["per_run"]["max_cost_usd"] = 0.01           # a dummy run (~$0.014) crosses 80% and 100%
     (work / "management.yaml").write_text(yaml.safe_dump(mgmt))
     (work / "budgets.yaml").write_text(yaml.safe_dump(budgets))
+    # Settings -> Spend controls rewrites finance.yaml: give it a copy, never the repo's file
+    (work / "finance.yaml").write_text((REPO / "config" / "finance.yaml").read_text())
     env = {
         **os.environ, "S2S_DATABASE_URL": url, "S2S_EVENT_STREAM": f"s2s:{name}",
         "S2S_MANAGEMENT_CONFIG": str(work / "management.yaml"), "S2S_BUDGETS_CONFIG": str(work / "budgets.yaml"),
         "S2S_ARTIFACT_DIR": str(work / "artifacts"), "PYTHONPATH": str(BACKEND),
+        "S2S_FINANCE_CONFIG": str(work / "finance.yaml"),
+        "S2S_SECRETS_DIR": str(work / "secrets"),  # Settings -> Model access (never var/secrets)
         "S2S_CORS_ORIGINS": "http://localhost:3100,http://127.0.0.1:3100",  # the test web server
     }
     subprocess.run([sys.executable, "-m", "alembic", "upgrade", "head"], cwd=BACKEND, env=env, check=True,
@@ -68,7 +72,8 @@ def main() -> None:
     env_file = Path(args.env_file)
     env_file.parent.mkdir(parents=True, exist_ok=True)
     env_file.write_text(json.dumps({k: env[k] for k in (
-        "S2S_DATABASE_URL", "S2S_EVENT_STREAM", "S2S_MANAGEMENT_CONFIG", "S2S_BUDGETS_CONFIG", "S2S_ARTIFACT_DIR")}
+        "S2S_DATABASE_URL", "S2S_EVENT_STREAM", "S2S_MANAGEMENT_CONFIG", "S2S_BUDGETS_CONFIG", "S2S_ARTIFACT_DIR",
+        "S2S_FINANCE_CONFIG", "S2S_SECRETS_DIR")}
         | {"api": f"http://127.0.0.1:{args.port}", "work": str(work)}, indent=2))
 
     stopping = False

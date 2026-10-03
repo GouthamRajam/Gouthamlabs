@@ -53,3 +53,21 @@ export async function runEvents(runId: string): Promise<S2SEvent[]> {
 }
 
 export interface RunSummary { id: string; design_name: string | null; status: string; started_at: string; events: number }
+
+/** PUT/POST JSON; on an error status, throws with the API's `detail` message. */
+export async function sendJSON<T>(method: "PUT" | "POST", path: string, body?: unknown, timeoutMs = 40000): Promise<T> {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), timeoutMs);
+  try {
+    const r = await fetch(`${apiBase()}${path}`, {
+      method, signal: ctl.signal, cache: "no-store",
+      headers: body === undefined ? undefined : { "content-type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(typeof data.detail === "string" ? data.detail : `HTTP ${r.status}`);
+    return data as T;
+  } finally {
+    clearTimeout(timer);
+  }
+}

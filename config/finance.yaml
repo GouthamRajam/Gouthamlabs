@@ -3,6 +3,11 @@ alerts_pct: [80, 100]
 approval_ladder: {manager_extra_pct: 20, director_extra_pct: 50, above: human}
 monthly_budget_usd: {llm: 3000, compute: 800, storage: 50}   # placeholders; set from real data
 per_run_max_usd: 75
+# Hard spend caps (Part 28.3), edited in Settings -> Spend controls (which rewrites this one line).
+# Once a cap is reached the run stops: no further model call is made (the call that crosses
+# the cap has already completed; its cost is only known when it returns).
+# Placeholders until set in Settings.
+spend_caps: {per_design_usd: 75.00, daily_usd: 150.00}
 reconcile_tolerance_pct: 1
 agents_can_move_money: false
 # Prices used by the usage meter. USD per million tokens. `dummy-model` exists only for the
@@ -10,4 +15,5 @@ agents_can_move_money: false
 # real model gateway provider (M0.5). Placeholders, like the budgets above.
 model_prices:
   dummy-model: {input_per_mtok: 3.00, output_per_mtok: 15.00}
+  claude-sonnet-5-5: {input_per_mtok: 2.00, output_per_mtok: 10.00}   # Anthropic list price, 2026-09
 compute_usd_per_cpu_hour: 0.05   # placeholder for local compute metering
