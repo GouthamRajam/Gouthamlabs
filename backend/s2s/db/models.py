@@ -6,10 +6,11 @@ needs to make tasks resumable and to detect stalls.
 from __future__ import annotations
 
 import datetime as dt
+from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import (BigInteger, Boolean, DateTime, Float, ForeignKey, Integer, Numeric,
-                        String, Text, func)
+from sqlalchemy import (BigInteger, Boolean, CheckConstraint, DateTime, Float, ForeignKey, Index,
+                        Integer, Numeric, String, Text, func)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -109,6 +110,28 @@ class Check(Base):
     passed: Mapped[bool] = mapped_column(Boolean, nullable=False)
     metrics: Mapped[dict[str, Any]] = mapped_column(default=dict)
     log_artifact: Mapped[str | None] = mapped_column(String)
+
+
+class CheckParam(Base):
+    """One measured parameter of a check, against its limit (Part 27.6). Many rows per check
+    (per rule, per layer, per corner). run_id and stage are copied from the check's task so
+    the cockpit can filter by (run_id, stage) without joins."""
+    __tablename__ = "check_params"
+    __table_args__ = (
+        CheckConstraint("comparison IN ('<=', '>=', '==')", name="ck_check_params_comparison"),
+        Index("ix_check_params_run_id_stage", "run_id", "stage"),
+    )
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    check_id: Mapped[str] = mapped_column(ForeignKey("checks.id"), nullable=False, index=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), nullable=False)
+    stage: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    measured_value: Mapped[Decimal] = mapped_column(Numeric, nullable=False)
+    limit_value: Mapped[Decimal] = mapped_column(Numeric, nullable=False)
+    comparison: Mapped[str] = mapped_column(String(2), nullable=False)
+    unit: Mapped[str | None] = mapped_column(String)
+    layer_or_corner: Mapped[str | None] = mapped_column(String)
+    pass_: Mapped[bool] = mapped_column("pass", Boolean, nullable=False)  # "pass" is a Python keyword
 
 
 class Message(Base):
