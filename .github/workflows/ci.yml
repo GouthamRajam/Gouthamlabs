@@ -1,8 +1,22 @@
-# CI — implemented in M0.1. Build images, run backend tests + golden-log tests.
+# CI (M0.1): build the s2s-eda image from a clean checkout and run its selftest.
+# Backend tests and golden-log tests are added by the milestones that create them.
 name: ci
 on: [push, pull_request]
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  eda:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - run: echo "TODO(M0.1): build s2s-eda, run pytest, run eda/scripts/selftest.sh"
+      - uses: actions/checkout@v4
+
+      # The s2s-eda image is ~8 GB unpacked; the stock runner needs room for it.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Build s2s-eda
+        run: docker build -t s2s-eda eda/
+
+      - name: Selftest (every tool + PDK at its pinned version)
+        run: docker run --rm s2s-eda bash /opt/s2s/eda/scripts/selftest.sh
