@@ -1,5 +1,5 @@
 "use client";
-import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { SEATS } from "@/lib/org";
 import { useOffice } from "@/lib/store";
 
@@ -16,6 +16,15 @@ function useTransient(at: number | undefined, ms: number): boolean {
 }
 
 export const BUBBLE_MS = 4500;
+const TYPING_MS = 900;
+
+/** Typing dots while working. Stepped and phase-locked to one page-wide clock, so every seat's dots
+ *  change on the same 3 frames per cycle and the frames in between have nothing to redraw (without
+ *  a GPU, e.g. in CI, each changed frame repaints most of the floor). */
+function Dots() {
+  const [phase] = useState(() => -(performance.now() % TYPING_MS));
+  return <span className="dots" style={{ "--ph": `${phase}ms` } as CSSProperties}><i /><i /><i /></span>;
+}
 
 function SeatImpl({ id }: { id: string }) {
   const seat = SEATS[id];
@@ -53,7 +62,7 @@ function SeatImpl({ id }: { id: string }) {
       )}
       <span className="av" aria-hidden="true">
         {seat.initials}
-        <span className="dots"><i /><i /><i /></span>
+        {a.status === "working" && <Dots />}
         {toolOn && a.tool && <span className="tool-chip" data-effect="tool_call">{a.tool.name}</span>}
         {a.findings > 0 && <span className="bdg bdg-finding" data-effect="finding" title="open findings">⚠{a.findings}</span>}
         {a.budgetWarning && <span className="bdg bdg-budget" data-effect="budget.warning" title="budget near limit">$</span>}

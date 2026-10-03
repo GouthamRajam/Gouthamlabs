@@ -98,9 +98,12 @@ Record every non-obvious decision: date, decision, reason, alternatives consider
 - 2026-10-03 (M0.4) — Part 12.4 #2/#3 are measured, not assumed: click-to-panel with the
   browser's Event Timing API on real clicks of all 71 seats (input -> next paint), fps by
   counting rAF frames for 10 s with 20+ agents working. Playwright trace recording is off for
-  these two tests (it alone cost ~15 fps and ~50 ms per click). To meet 100 ms: rooms use
-  `contain: layout`, the panel `contain: layout paint` and is sticky, the floor grid pattern
-  is on its own layer.
+  these two tests (it alone cost ~15 fps and ~50 ms per click). Rendering rules that keep clicks
+  fast on CI's GPU-less software renderer (first CI run: 104 ms, profiled under 2x CPU slowdown):
+  continuous animations are stepped and phase-locked (one hopping dot per working seat, not three
+  independently fading dots); no full-floor `will-change` layer (it promoted 44 more elements:
+  140 layers); no box-shadow transitions (not compositor-capable); feed rows memoized with
+  content-visibility. Rooms keep `contain: layout`, the panel `contain: layout paint` + sticky.
 - 2026-10-03 (M0.4) — Every event type's visual carries `data-effect="<type>"`; the e2e test
   watches the DOM (MutationObserver) during a real dummy run and requires an effect for all
   21 types. Transient visuals expire (tool chip 2.5 s, bubble 4.5 s, decided-gate banner 6 s,

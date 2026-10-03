@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { DIVISIONS, divisionOf, SEATS } from "@/lib/org";
 import { useOffice } from "@/lib/store";
 import { EVENT_TYPES, type S2SEvent } from "@/lib/types";
@@ -9,6 +9,19 @@ const KIND: Partial<Record<S2SEvent["type"], string>> = {
   "task.stalled": "bad", plan: "think", "research.brief": "think", finding: "review", handoff: "wait",
   "gate.requested": "wait", "budget.warning": "wait", "budget.alert": "wait", tool_call: "work", tool_result: "work",
 };
+
+/** One feed line. Memoized: a new event renders only its own row, not the 200 already shown. */
+const Row = memo(function Row({ e, sim }: { e: S2SEvent; sim: boolean }) {
+  return (
+    <li data-type={e.type}>
+      <time>{new Date(e.ts).toLocaleTimeString([], { hour12: false })}</time>
+      <span className={`k ${KIND[e.type] ?? ""}`} aria-hidden="true" />
+      <span className="who">{e.agent_id ?? "system"}</span>
+      <span className="ty">{e.type}</span>
+      <span className="txt">{sim && <span className="simtag">SIM</span>}{e.summary}</span>
+    </li>
+  );
+});
 
 /** Live activity feed, newest first; filter by team (division), agent or type (Part 12.2). */
 export function Feed() {
@@ -41,15 +54,7 @@ export function Feed() {
         </div>
       </div>
       <ul className="feed" data-testid="feed">
-        {rows.map((e) => (
-          <li key={e.id} data-type={e.type}>
-            <time>{new Date(e.ts).toLocaleTimeString([], { hour12: false })}</time>
-            <span className={`k ${KIND[e.type] ?? ""}`} aria-hidden="true" />
-            <span className="who">{e.agent_id ?? "system"}</span>
-            <span className="ty">{e.type}</span>
-            <span className="txt">{mode === "demo" && <span className="simtag">SIM</span>}{e.summary}</span>
-          </li>
-        ))}
+        {rows.map((e) => <Row key={e.id} e={e} sim={mode === "demo"} />)}
         {!rows.length && <li><span /><span /><span className="muted">No events yet</span></li>}
       </ul>
     </section>

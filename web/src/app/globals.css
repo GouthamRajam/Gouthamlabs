@@ -71,10 +71,10 @@ button, select, input { font: inherit; color: inherit; }
 .main { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 14px; align-items: start; }
 @media (max-width: 1100px) { .main { grid-template-columns: minmax(0, 1fr); } }
 
-.floor { position: relative; padding: 14px; border-radius: 6px; border: 1px solid var(--line); isolation: isolate;
-  background-color: var(--floor); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
-/* the die-grid carpet sits on its own compositor layer, so seat animations don't repaint it */
-.floor::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 6px; pointer-events: none; will-change: transform;
+/* the die-grid carpet. Deliberately not its own compositor layer: content over a promoted layer gets
+   promoted too (44 extra layers measured), which made every frame, and every seat click, slower */
+.floor { position: relative; padding: 14px; border-radius: 6px; border: 1px solid var(--line);
+  background-color: var(--floor); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start;
   background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: 40px 40px; }
 @media (max-width: 900px) { .floor { grid-template-columns: minmax(0, 1fr); } }
@@ -99,7 +99,7 @@ button, select, input { font: inherit; color: inherit; }
 .seat:hover .nm { border-color: var(--line); }
 .av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display);
   font-weight: 700; font-size: 11px; background: var(--surface); border: 2.5px solid var(--idle); position: relative;
-  transition: border-color .25s, box-shadow .25s; }
+  transition: border-color .25s; /* no box-shadow transition: it cannot run on the compositor */ }
 .seat.human .av { border-radius: 8px; width: 40px; height: 40px; }
 .seat.mgr .av { width: 40px; height: 40px; border-width: 3px; }
 .seat .nm { font-size: 10.5px; font-weight: 600; line-height: 1.1; white-space: nowrap; background: var(--surface);
@@ -118,13 +118,15 @@ button, select, input { font: inherit; color: inherit; }
 .flash-bad .av { box-shadow: 0 0 0 5px color-mix(in srgb, var(--bad) 40%, transparent); }
 .flash-money .av { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 50%, transparent); }
 
-/* typing animation while working (compositor-only: transform + opacity) */
+/* typing animation while working: one lit dot hops across three dim ones, in steps, every seat in phase
+   (see Seat.tsx Dots). One compositor animation per seat, and frames between steps have nothing to redraw */
 .dots { position: absolute; bottom: -3px; right: -7px; display: none; gap: 2px; background: var(--surface);
   border: 1px solid var(--line); border-radius: 8px; padding: 2px 3px; }
 .seat[data-status="working"] .dots { display: flex; }
-.dots i { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); animation: blink 1.1s infinite; will-change: opacity; }
-.dots i:nth-child(2) { animation-delay: .18s; } .dots i:nth-child(3) { animation-delay: .36s; }
-@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+.dots i { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); opacity: .25; }
+.dots::after { content: ""; position: absolute; left: 3px; top: 2px; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--accent); animation: typing .9s steps(1, end) infinite; animation-delay: var(--ph, 0ms); }
+@keyframes typing { 0% { transform: none; } 33.333% { transform: translateX(5px); } 66.667% { transform: translateX(10px); } }
 
 /* progress under avatar (task.heartbeat) */
 .prog { width: 40px; height: 3px; background: var(--grid); border-radius: 2px; overflow: hidden; }
@@ -189,7 +191,8 @@ svg.links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-eve
 /* feed */
 .feed { list-style: none; margin: 0; padding: 0; max-height: 300px; overflow-y: auto; }
 .feed li { display: grid; grid-template-columns: 62px 10px 96px 130px minmax(0, 1fr); gap: 8px; padding: 5px 0;
-  border-top: 1px solid var(--line); font-size: 12.5px; align-items: baseline; }
+  border-top: 1px solid var(--line); font-size: 12.5px; align-items: baseline;
+  content-visibility: auto; contain-intrinsic-size: auto 28px; /* rows scrolled out of the box skip layout and paint */ }
 .feed time, .feed .ty { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
 .feed .k { width: 8px; height: 8px; border-radius: 50%; background: var(--idle); align-self: center; }
 .feed .who { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -227,7 +230,7 @@ table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
 .org .st { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; border: 2px solid var(--idle); }
 
 @media (prefers-reduced-motion: reduce) {
-  .dots i, .tool-chip { animation: none; opacity: .85; }
+  .dots::after, .tool-chip { animation: none; }
   .bubble { animation: none; }
   .av, .bar span, .prog span { transition: none; }
 }
