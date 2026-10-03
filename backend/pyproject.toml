@@ -1,6 +1,6 @@
-# Python 3.11+. M0.2 adds the EDA tool adapters (stdlib only) and pytest for tests.
-# Platform deps are added in M0.3: fastapi, uvicorn, sqlalchemy>=2, alembic,
-# redis, pgvector, pydantic, pytest, cocotb (for tb), anthropic (model gateway).
+# Python 3.11+. Runtime dependencies are pinned in requirements.txt (M0.3: FastAPI,
+# SQLAlchemy 2 + Alembic + psycopg, Redis, pydantic, PyYAML). pgvector and the Anthropic SDK
+# arrive with the milestones that use them (knowledge base / real model gateway, M0.5).
 [project]
 name = "s2s"
 version = "0.0.0"

@@ -49,3 +49,31 @@ Record every non-obvious decision: date, decision, reason, alternatives consider
   gives the same result as OpenLane's LVS (330 devices / 359 nets, "Circuits match uniquely").
 - 2026-10-03 (M0.2) — klayout_dfm (listed in Part 7.5) is not in M0.2: the M0.2 request listed
   ten adapters without it, and its checks are defined with DFM in A.15 / M0.7.
+- 2026-10-03 (M0.3) — Org structure (Part 6.2-6.4) transcribed into config/management.yaml
+  `org:` (the file previously only pointed at the spec); agent ids are agent names. Teams
+  the spec marks Phase 1+/2+ carry `phase:` so they are never activated in Phase 0.
+- 2026-10-03 (M0.3) — Fixed a YAML syntax error in config/budgets.yaml
+  (`Euclid:{...}` -> `Euclid: {...}`); the file had never been parsed before M0.3.
+- 2026-10-03 (M0.3) — Resumable tasks: each agent step runs in one DB transaction that also
+  writes its heartbeat and the new checkpoint; after a crash the task restarts at the first
+  uncommitted step. Single active orchestrator enforced with a Postgres advisory lock;
+  on start it takes over tasks a dead process left `running`.
+- 2026-10-03 (M0.3) — Two kinds of events. State events (heartbeat, artifact, check, gate,
+  task/stage changes...) are written in the transaction of the rows they describe and
+  published after commit, ts = commit time, so the feed never shows rolled-back work. Live
+  action events (agent.status, plan, tool_call, tool_result) commit and publish immediately.
+  Reason: first version published everything at commit, so "tool started" appeared only when
+  the step finished (p95 529 ms with 0.5 s steps; with real tools it would be minutes).
+- 2026-10-03 (M0.3) — Metering commits each usage_records row immediately in its own
+  transaction (a model call costs money even if its step later fails/re-runs); usage totals
+  are always computed from usage_records. Budget warnings at 80% (task) / finance alerts_pct
+  (run); a task at 100% of its budget is hard-stopped: paused + escalation, never continues.
+- 2026-10-03 (M0.3) — Model gateway has only a dummy provider (no network, deterministic,
+  priced via finance.yaml `model_prices.dummy-model`, labelled placeholder). Real providers
+  and model_hint routing arrive with the real agents (M0.5). The dummy agent's tool results
+  and checks are all marked `simulated: true` / "[dummy]" (Part 12 rule 5).
+- 2026-10-03 (M0.3) — knowledge.embedding (pgvector) deferred to the knowledge base (M0.5);
+  the Postgres image is unchanged until then.
+- 2026-10-03 (M0.3) — Gates G1-G4 sit after spec+architecture, verification, signoff, gdsii
+  (Part 6.1 zone exits). gates.mode=auto approves only when the stage's latest result for
+  every check passed; `human` mode waits for POST /gates/{id}/decision.

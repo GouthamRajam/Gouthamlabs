@@ -16,4 +16,131 @@ gates:
   auto_requires: [all_checks_passed, no_open_sentinel_blocking, no_spec_change, no_cost_event]
   auto_target_allowlist: [sky130_openshuttle_or_local]
   always_human: [real_tapeout, spec_change, budget_overrun]
-# Org structure: see docs/MASTER_SPEC.md Part 6.3
+# Org structure (MASTER_SPEC Part 6.2-6.4), loaded into the org_units table at startup.
+# Agent ids are the agent names. `instances` = engineer instances at scale (Part 6.3);
+# Phase 0 runs one instance per active team. `phase` marks teams that start later.
+org:
+  ceo: "Goutham Rajam (CEO)"
+  divisions:
+    - id: div1
+      name: Architecture & Specification
+      zone: "1"
+      human_owner: Front-end cofounder (later VP Architecture)
+      director: Juno
+      teams:
+        - {id: spec_requirements, name: Spec & Requirements, lead: Iris, instances: 3}
+        - {id: micro_architecture, name: Micro-architecture, lead: Kepler, instances: 3}
+        - {id: perf_power_modeling, name: Performance & Power Modeling, lead: Pascal, instances: 2}
+        - {id: ip_standards_library, name: IP & Standards Library, lead: Ivy, instances: 2}
+    - id: div2
+      name: Front-End Design & Verification
+      zone: "2"
+      human_owner: VP Front-End and Head of Verification
+      director: Hale
+      departments:
+        - id: dept2a
+          name: RTL Design
+          zone: "2A"
+          manager: Reid
+          teams:
+            - {id: datapath_rtl, name: Datapath RTL, lead: Ada, instances: 3}
+            - {id: control_fsm, name: Control & State Machines, lead: Ada-C, instances: 3}
+            - {id: interfaces_protocols, name: Interfaces & Protocols, lead: Ada-I, instances: 2}
+            - {id: low_power, name: Low-Power Design, lead: Watt, instances: 1}
+            - {id: design_quality, name: Design Quality, lead: Lumen, instances: 2}
+        - id: dept2b
+          name: Verification Build
+          zone: "2B"
+          manager: Nadia
+          teams:
+            - {id: test_planning, name: Test Planning, lead: Vera, instances: 2}
+            - {id: testbench_engineering, name: Testbench Engineering, lead: Theo, instances: 6}
+            - {id: reference_models, name: Reference Models, lead: Mira, instances: 4}
+            - {id: vip_protocol_checkers, name: Verification IP & Protocol Checkers, lead: Proto, instances: 3}
+            - {id: formal_verification, name: Formal Verification, lead: Euclid, instances: 5}
+        - id: dept2c
+          name: Verification Closure
+          zone: "2C"
+          manager: Rhea
+          teams:
+            - {id: regression_ops, name: Regression Operations, lead: Rex, instances: 3}
+            - {id: debug_triage, name: Debug & Triage, lead: Dex, instances: 6}
+            - {id: coverage_closure, name: Coverage Closure, lead: Cora, instances: 5}
+            - {id: verification_quality, name: Verification Quality, lead: Myra, instances: 2}
+            - {id: emulation_fpga, name: Emulation & FPGA Prototyping, lead: Flux, instances: 2, phase: 1}
+    - id: div3
+      name: Physical Implementation
+      zone: "3"
+      human_owner: VP Physical Design & Signoff
+      director: Mason
+      teams:
+        - {id: synthesis_constraints, name: Synthesis & Constraints, lead: Sienna, instances: 3}
+        - {id: dft, name: Design for Test, lead: Tess, instances: 3}
+        - {id: floorplan_power_grid, name: Floorplan & Power Grid, lead: Grid, instances: 2}
+        - {id: place_route, name: Place & Route, lead: Orion, instances: 5}
+        - {id: clock_tree, name: Clock Tree, lead: Tick, instances: 2}
+    - id: div4
+      name: Signoff & Manufacturing
+      zone: "4"
+      human_owner: VP Physical Design & Signoff; Director of DFM & Yield (CEO at first)
+      director: Sloane
+      teams:
+        - {id: timing_signoff, name: Timing Signoff, lead: Chronos, instances: 4}
+        - {id: power_ir_em, name: Power IR & EM, lead: Volta, instances: 2}
+        - {id: physical_verification, name: Physical Verification, lead: Calla, instances: 3}
+        - {id: dfm_yield, name: DFM & Yield, lead: Fabian, instances: 4}
+        - {id: tapeout_release, name: Tape-out & Release, lead: Gideon, instances: 1}
+        - {id: post_silicon, name: Post-Silicon Bring-up, lead: Bea, instances: 2, phase: 1}
+    - id: div5
+      name: Quality & Program Office
+      human_owner: CEO
+      reports_to: ceo
+      teams:
+        - {id: program_office, name: Program Office, lead: Atlas, instances: 3}
+        - {id: independent_review, name: Independent Review, lead: Sentinel, instances: 4}
+        - {id: knowledge_methodology, name: Knowledge & Methodology, lead: Sage, instances: 2}
+        - {id: trust_audit, name: Trust & Audit, lead: Proof, instances: 2}
+    - id: div6
+      name: Platform Engineering
+      human_owner: VP Platform
+      director: Forge
+      teams:
+        - {id: platform_architecture, name: Architecture, lead: Forge, instances: 1}
+        - {id: backend, name: Backend, lead: Bolt, instances: 3}
+        - {id: frontend_live_office, name: Frontend & Live Office, lead: Pixel, instances: 2}
+        - {id: eda_integration, name: EDA Integration, lead: Hook, instances: 3}
+        - {id: ml_infra, name: ML & Infrastructure, lead: Kube, instances: 3}
+        - {id: qa, name: QA, lead: Quill, instances: 2}
+        - {id: security, name: Security, lead: Aegis, instances: 1}
+        - {id: devops_ci, name: DevOps & CI, lead: Pipe, instances: 1}
+        - {id: product_management, name: Product Management, lead: Compass, instances: 1}
+        - {id: documentation, name: Documentation, lead: Scribe, instances: 1}
+    - id: div7
+      name: Customer & Business
+      human_owner: VP Customer (hire)
+      phase: 2
+      teams:
+        - {id: customer_support, name: Customer Support, lead: Juniper, instances: 3, phase: 2}
+        - {id: proposals_rfps, name: Proposals & RFPs, lead: Quinn, instances: 1, phase: 2}
+    - id: div8
+      name: Finance & FinOps
+      human_owner: Fractional CFO / bookkeeper
+      director: Penny
+      teams:
+        - {id: finops, name: FinOps, lead: Penny, instances: 1}
+        - {id: usage_metering, name: Usage Metering, lead: Meter, instances: 2}
+        - {id: forecasting_runway, name: Forecasting & Runway, lead: Vista, instances: 1}
+        - {id: bookkeeping_support, name: Bookkeeping Support, lead: Ledger, instances: 1}
+        - {id: credits_grants, name: Credits & Grants, lead: Grant, instances: 1}
+    - id: div9
+      name: Research, Intelligence & Sourcing
+      human_owner: CEO
+      director: Recon
+      teams:
+        - {id: market_intel, name: Market & Competitor Intelligence, lead: Scout-Intel, instances: 2}
+        - {id: sourcing, name: Sourcing & Acquisition, lead: Scout, instances: 2}
+        - {id: technical_research, name: Technical Research, lead: Lyra, instances: 2}
+        - {id: foundry_pdk_watch, name: Foundry & PDK Watch, lead: Fermi, instances: 1}
+        - {id: standards_watch, name: Standards Watch, lead: Iso, instances: 1}
+        - {id: eda_tools_watch, name: EDA & Open-Source Tools Watch, lead: Patch, instances: 1}
+        - {id: customer_problem_research, name: Customer Problem Research, lead: Echo, instances: 1}

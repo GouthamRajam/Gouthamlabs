@@ -5,3 +5,9 @@ monthly_budget_usd: {llm: 3000, compute: 800, storage: 50}   # placeholders; set
 per_run_max_usd: 75
 reconcile_tolerance_pct: 1
 agents_can_move_money: false
+# Prices used by the usage meter. USD per million tokens. `dummy-model` exists only for the
+# M0.3 dummy agent (no real API calls are made); real provider prices are added with the
+# real model gateway provider (M0.5). Placeholders, like the budgets above.
+model_prices:
+  dummy-model: {input_per_mtok: 3.00, output_per_mtok: 15.00}
+compute_usd_per_cpu_hour: 0.05   # placeholder for local compute metering

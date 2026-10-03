@@ -1,6 +1,15 @@
-# M0.1: Postgres and Redis with healthchecks. api, web and eda-runner services
-# are added by the milestones that build them (M0.3 / M0.4); the s2s-eda image
-# is built and run on its own (see eda/ and docs/milestones/M0.1.md).
+# Postgres and Redis (M0.1); migrate, api and orchestrator (M0.3). The web app is added in
+# M0.4. The s2s-eda image is built and run on its own (see eda/ and docs/milestones/M0.1.md).
+x-backend: &backend
+  build: {context: ., dockerfile: backend/Dockerfile}
+  image: s2s-backend
+  environment:
+    S2S_DATABASE_URL: postgresql+psycopg://s2s:s2s@postgres:5432/s2s
+    S2S_REDIS_URL: redis://redis:6379/0
+    S2S_ARTIFACT_DIR: /data/artifacts
+  volumes:
+    - artifacts:/data/artifacts
+
 services:
   postgres:
     image: postgres:16.10-alpine
@@ -28,5 +37,33 @@ services:
       timeout: 5s
       retries: 10
 
+  migrate:
+    <<: *backend
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: "no"
+
+  api:
+    <<: *backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  orchestrator:
+    <<: *backend
+    command: ["python", "-m", "s2s.orchestrator"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+
 volumes:
   pgdata:
+  artifacts:
