@@ -1,0 +1,7 @@
+defaults: {max_tokens: 400000, max_minutes: 30, max_tool_runs: 40}
+per_agent:
+  Atlas: {max_tokens: 200000, max_minutes: 600}
+  Vera:  {max_tokens: 800000, max_minutes: 90, max_tool_runs: 120}
+  Euclid:{max_tokens: 400000, max_minutes: 60}
+  Orion: {max_tokens: 300000, max_minutes: 240, max_tool_runs: 16}
+per_run: {max_cost_usd: 75, alert_at_pct: 80}

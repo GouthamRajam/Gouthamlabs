@@ -1,0 +1,19 @@
+# Tape-out Readiness Report weights (MASTER_SPEC Part 22).
+baselines: {A: open_sky130_shuttle, B: commercial_production}
+weights:
+  functional_sim: 12
+  coverage: 8
+  formal_equiv: 10
+  drc: 14
+  lvs: 14
+  antenna: 4
+  density: 4
+  sta_setup_hold: 12
+  power: 4
+  ir_em_static: 4
+  dft_atpg: 5
+  signal_integrity: 3
+  reliability: 3
+  foundry_signoff: 3
+  gds_integrity_repro: 6
+require_assumptions_block: true   # a score without the assumptions block is invalid

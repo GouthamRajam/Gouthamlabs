@@ -1,0 +1,32 @@
+# PHASE GATES — read before building anything beyond the current phase
+
+Phases 0-2 PROVE the AI on small chips and one real RISC-V core. The heavy Phase 3 work
+is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED by a HUMAN.
+
+## Gates
+- [ ] PHASE 0 -> PHASE 1: all 5 blocks reach clean GDS, reproducibly (Tape-out Readiness
+      Baseline A ~100%, no human edits to artifacts).
+- [ ] PHASE 1 -> PHASE 2: RISC-V core passes the official compliance tests AND
+      cost-per-design and human-touch-per-design are trending toward target.
+- [ ] PHASE 2 -> PHASE 3: a mature-node customer chip works in REAL silicon.
+
+## Rule for the coding agent
+Build only what the CURRENT phase needs. Do NOT write Phase 3 code (commercial-tool
+adapters, advanced/leading-edge nodes, deep reliability/compliance machinery) until the
+gate above it is checked PASSED here by a human. If asked to build gated work early, STOP
+and say the gate is not met. Smaller codebase while the AI is being proven = less context,
+fewer compounding errors.
+
+## Hard rules (build from day one — cheap; full text in MASTER_SPEC Part 26)
+1. Blast-radius: no tape-out above an open shuttle until silicon works at the node below.
+2. PDK is tool-resident, never model-resident (never put foundry rules in a prompt/API).
+3. On-prem, no external endpoints in customer mode (RTL/GDSII never leave their network).
+4. Real tools decide pass/fail; the AI never does.
+5. Never market agent "experience" or 99.99% as model accuracy.
+6. Beachhead = DFM/yield + mature nodes.
+
+## Two north-star metrics (wire into dashboards from M0.8)
+- Cost per design (must beat offshore). 
+- Human-touch per design (must fall run over run).
+
+## Kill criteria: see MASTER_SPEC Part 26.4. Honor the lines when hit.

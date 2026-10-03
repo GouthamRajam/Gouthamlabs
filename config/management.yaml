@@ -1,0 +1,19 @@
+sla:
+  assign_ready_task_minutes: 2
+  heartbeat_minutes: 5
+  manager_checkin_minutes: 10
+  stall_minutes: 15
+  stall_multiplier_of_expected_step: 2
+  escalate_to_human_after_minutes: 30
+spot_check_pct: 10
+always_review: [tests, constraints, waivers, frozen_artifacts]
+reports:
+  standup_every_active_hours: 4
+  division_daily_local_time: "08:00"
+  ceo_weekly: "Monday 08:00"
+gates:
+  mode: auto            # auto = self-approve when all checks pass; human = wait for a person
+  auto_requires: [all_checks_passed, no_open_sentinel_blocking, no_spec_change, no_cost_event]
+  auto_target_allowlist: [sky130_openshuttle_or_local]
+  always_human: [real_tapeout, spec_change, budget_overrun]
+# Org structure: see docs/MASTER_SPEC.md Part 6.3

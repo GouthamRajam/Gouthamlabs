@@ -1,0 +1,8 @@
+# CI — implemented in M0.1. Build images, run backend tests + golden-log tests.
+name: ci
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "TODO(M0.1): build s2s-eda, run pytest, run eda/scripts/selftest.sh"

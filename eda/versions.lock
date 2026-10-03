@@ -1,0 +1,3 @@
+# Pin exact tool versions here in M0.1. Each run's evidence packet records these.
+# openlane=  yosys=  openroad=  opensta=  verilator=  iverilog=  cocotb=
+# sby=  eqy=  magic=  klayout=  netgen=  sky130_pdk=

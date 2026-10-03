@@ -1,0 +1,7 @@
+currency: USD
+alerts_pct: [80, 100]
+approval_ladder: {manager_extra_pct: 20, director_extra_pct: 50, above: human}
+monthly_budget_usd: {llm: 3000, compute: 800, storage: 50}   # placeholders; set from real data
+per_run_max_usd: 75
+reconcile_tolerance_pct: 1
+agents_can_move_money: false

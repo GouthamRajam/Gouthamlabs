@@ -1,0 +1,6 @@
+# Populate in M0.3. Python 3.11+. Deps: fastapi, uvicorn, sqlalchemy>=2, alembic,
+# redis, pgvector, pydantic, pytest, cocotb (for tb), anthropic (model gateway).
+[project]
+name = "s2s"
+version = "0.0.0"
+requires-python = ">=3.11"

@@ -1,0 +1,15 @@
+# Scout delegation ladder (MASTER_SPEC Part 21). blocked_actions is fixed.
+standing_budget_usd_per_month: 0        # raise when ready, e.g. 500
+auto_spend_categories: []               # e.g. [cloud_compute, api_credits]
+license_allowlist: [MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC]
+license_denylist: [unknown, "custom", AGPL-3.0]
+copyleft_policy: escalate               # GPL/LGPL/MPL -> human decides
+trusted_sources:
+  - github.com/The-OpenROAD-Project
+  - github.com/chipsalliance
+  - github.com/google/skywater-pdk
+  - opencores.org
+blocked_actions:                        # can NEVER be enabled
+  - access_without_authorization
+  - bypass_paywall_or_login
+  - scrape_behind_authentication

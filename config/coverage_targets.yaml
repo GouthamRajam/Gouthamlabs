@@ -1,0 +1,5 @@
+line: 0.95
+toggle: 0.90
+functional_bins: 1.00
+formal_min_depth: 30
+mutation_detection: 0.85
