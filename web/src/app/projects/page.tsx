@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { apiBase, getJSON, sendJSON } from "@/lib/api";
+import { GateReview } from "@/components/GateReview";
 
 const Layout3D = dynamic(() => import("@/components/Layout3D").then((m) => m.Layout3D), { ssr: false });
 
@@ -19,7 +20,7 @@ type TaskInfo = { id: string; run_id: string; agent_id: string; status: string; 
   stalled_at: string | null; checkpoint_step: number; steps: string[] | null };
 type Stage = { name: string; title: string; zone: string | null; lead: string | null; gate_after: string | null;
   status: string; task: TaskInfo | null; checks: Check[]; checks_passed: number; checks_failed: number;
-  gate: { gate: string; status: string; reviewer: string | null; decided_at: string | null } | null;
+  gate: { id: string; gate: string; status: string; reviewer: string | null; decided_at: string | null; comments: string | null } | null;
   spend_usd: number; events: number; earlier_attempts: { run_id: string; status: string; started_at: string | null }[] };
 type Overview = {
   design: { id: string; name: string; pdk: string; target_clock_mhz: number | null; request_text: string | null; created_at: string | null };
@@ -330,6 +331,8 @@ function DesignView({ designId }: { designId: string }) {
         <h2 id="flow-h" className="pj-h2">Design flow <span className="mono muted">spec → GDSII · four human gates</span></h2>
         <Flow stages={o.stages} onJump={jump} />
       </section>
+
+      <GateReview designId={designId} gateNames={o.stages.flatMap((s) => (s.gate_after ? [s.gate_after] : []))} onDecided={load} />
 
       <section aria-labelledby="stages-h" className="pj-stages">
         <h2 id="stages-h" className="pj-h2">Stages <span className="mono muted">open a stage for its checkpoints, checks and log</span></h2>
