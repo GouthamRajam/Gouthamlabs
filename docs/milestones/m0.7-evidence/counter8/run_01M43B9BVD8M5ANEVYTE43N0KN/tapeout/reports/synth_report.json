@@ -1,0 +1,31 @@
+{
+  "cells": 71,
+  "area_um2": 709.4304,
+  "cell_classes": {},
+  "pre_layout_setup_ws_by_corner": {
+    "nom_tt_025C_1v80": 4.090087495568822,
+    "nom_ss_100C_1v60": 1.5699468835983306,
+    "nom_ff_n40C_1v95": 5.07880774034192
+  },
+  "pre_layout_hold_ws_by_corner": {
+    "nom_tt_025C_1v80": 0.2796010169199104,
+    "nom_ss_100C_1v60": 0.817408164291696,
+    "nom_ff_n40C_1v95": 0.07729696268507003
+  },
+  "worst_corner": "nom_ss_100C_1v60",
+  "netlist": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/pnr/runs/it1/06-yosys-synthesis/counter8.nl.v",
+  "run": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/pnr/runs/it1",
+  "explained_by": "Sienna",
+  "explanation": "# counter8 synthesis and pre-layout STA report\n\nSource: reports/synth_tool.json (OpenLane 2 / Yosys netlist, OpenSTA), constraints/constraints.sdc. All numbers below are copied from that tool data.\n\n## Synthesis result\n- Cells: 71\n- Area: 709.4304 um2\n- Cell class breakdown: not provided by the tool (cell_classes is empty).\n- Library: sky130_fd_sc_hd, clock clk at 10.0 ns (100 MHz), uncertainty 0.25 ns, input and output delays 3.0 ns (DEFAULT 30%).\n\n## Setup WNS per corner (ns)\n| Corner | Setup WNS | Hold WNS |\n|---|---|---|\n| nom_tt_025C_1v80 | 4.090087 | 0.279601 |\n| nom_ss_100C_1v60 (worst setup) | 1.569947 | 0.817408 |\n| nom_ff_n40C_1v95 (worst hold) | 5.078808 | 0.077297 |\n\nAll reported setup and hold slacks are positive, so the tool data shows no violation at these three corners. The worst setup corner is nom_ss_100C_1v60; the tightest hold margin is 0.077297 ns at nom_ff_n40C_1v95. TNS is not given in the tool data. Equivalence (eqy) results were not part of this input, so nothing is claimed about them here.\n\n## Worst setup paths (nom_ss_100C_1v60), in plain English\n1. Starts at input port up_down and ends at flip-flop _133_ (D pin). Slack 1.569947 ns (MET); data arrival 7.888843 ns against required 9.458790 ns. The path passes through 9 gates after the port. The first gate, _070_ (nor3b_2), alone takes 1.084077 ns. It drives 13 loads and has an output slew of 1.307254 ns. The a2111o_2 gate _113_ is the second largest at 0.896772 ns. The other gates (nand2, a21boi, o21a, a31o, a21o, a31o, and2) take roughly 0.37 to 0.48 ns each.\n2. Starts at up_down and ends at flip-flop _132_. Slack 2.065626 ns (MET). It shares the same first four gates (_070_, _071_, _080_, _088_) and the a2111o_2 _113_, then goes through and3, xnor2, nor2 and o21a.\n3. Starts at up_down and ends at flip-flop _130_. It shares the first four gates, then goes through a21o, or2 (0.668527 ns), and3 and o21a. The tool output is cut off before the slack line, so the slack of this path is not available from the data. Its data arrival is 7.222626 ns and its required time is 9.463956 ns.\n\nOnly 3 of the worst 10 paths are present in the input (the report text is truncated), so the other 7 are not described.\n\nWhat dominates: all three paths start at the up_down input, which arrives 3.0 ns into the cycle. They get through the shared first gate _070_, a high-fanout (13) nor3b that decodes the control inputs (load/enable/up_down). That one gate costs about 1.08 ns because of its heavy load and slow output slew. The up/down carry chain through the a2111o/a21o/a31o cells then adds most of the rest. The paths run from an input port to a flip-flop, not from a flip-flop to a flip-flop, which is consistent with the 3.0 ns input delay.\n\n## Observations for the humans\n- Net _014_ driven by _070_ has fanout 13, while the SDC sets set_max_fanout 10. The tool data given here does not state a max-fanout violation, so this needs checking in the flow's own report. I have not changed any constraint.\n- Setup margin at the worst corner is 1.569947 ns, so no architectural change is needed for REQ-011 based on this data.\n",
+  "assumptions": [
+    "The numbers in reports/synth_tool.json are the real OpenLane 2 / OpenSTA results for the netlist named there.",
+    "Constraints in constraints.sdc (10 ns clock, 0.25 ns uncertainty, 3.0 ns I/O delays, all DEFAULT) were used unchanged; I did not edit them.",
+    "WNS per corner is taken as the worst slack value reported per corner; TNS was not provided."
+  ],
+  "open_issues": [
+    "Only 3 of the worst 10 paths are in the input and the third is cut off before its slack line; the full path report is needed to describe the rest.",
+    "Net _014_ has fanout 13 while the SDC sets max fanout 10; confirm in the flow's max-fanout report whether this is flagged.",
+    "Equivalence check (eqy) results and cell class breakdown were not supplied, so no equivalence claim is made.",
+    "PDK release and corners are not pinned in the spec (open question in spec.yaml)."
+  ]
+}

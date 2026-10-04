@@ -1,0 +1,223 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 4.3394,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3604,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 2.0569,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9341,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 5.209,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1163,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 4.3642,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3573,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 2.0982,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9291,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 5.2254,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.114,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 4.3169,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3639,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 2.0134,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9404,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 5.1939,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1187,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    }
+  },
+  "worst_paths": {
+    "nom_tt_025C_1v80": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 4.3394,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 4.4995,
+        "state": "MET"
+      }
+    ],
+    "nom_ss_100C_1v60": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 2.0569,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 2.3393,
+        "state": "MET"
+      }
+    ],
+    "nom_ff_n40C_1v95": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 5.209,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 5.3178,
+        "state": "MET"
+      }
+    ],
+    "min_tt_025C_1v80": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 4.3642,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 4.5272,
+        "state": "MET"
+      }
+    ],
+    "min_ss_100C_1v60": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 2.0982,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 2.3876,
+        "state": "MET"
+      }
+    ],
+    "min_ff_n40C_1v95": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 5.2254,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 5.3362,
+        "state": "MET"
+      }
+    ],
+    "max_tt_025C_1v80": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 4.3169,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 4.4745,
+        "state": "MET"
+      }
+    ],
+    "max_ss_100C_1v60": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 2.0134,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 2.2909,
+        "state": "MET"
+      }
+    ],
+    "max_ff_n40C_1v95": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 5.1939,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 5.3013,
+        "state": "MET"
+      }
+    ]
+  },
+  "clock_period_ns": 10.0
+}

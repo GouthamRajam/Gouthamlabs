@@ -1,0 +1,17 @@
+{
+  "DESIGN_NAME": "counter8",
+  "VERILOG_FILES": [
+    "dir::src/cnt_ctrl.v",
+    "dir::src/cnt_dp.v",
+    "dir::src/counter8.v"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 10.0,
+  "PNR_SDC_FILE": "dir::src/constraints.sdc",
+  "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc",
+  "ERRORS_ON_UNMATCHED_IO": "both",
+  "FP_CORE_UTIL": 45,
+  "PL_TARGET_DENSITY_PCT": 55.0,
+  "MAX_FANOUT_CONSTRAINT": 10,
+  "FP_PIN_ORDER_CFG": "dir::src/pin_order.cfg"
+}

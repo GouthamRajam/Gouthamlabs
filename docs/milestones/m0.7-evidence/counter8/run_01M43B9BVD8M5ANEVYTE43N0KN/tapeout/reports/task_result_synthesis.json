@@ -1,0 +1,53 @@
+{
+  "task_id": "task_01M43B9BW4A8XYSW7HG8G8DSAQ",
+  "status": "success",
+  "summary": "71 cells, 709.4304 um2. Setup WNS 4.090087 (tt), 1.569947 (ss, worst) and 5.078808 (ff) ns; hold WNS 0.279601, 0.817408 and 0.077297 ns. The worst paths start at the up_down input, go through a fanout-13 nor3b gate (1.084077 ns), then the carry logic, and end at counter flip-flops.",
+  "outputs": [
+    {
+      "path": "constraints/constraints.sdc",
+      "sha256": "64a9767e03bd08cf32c9111a20a0b7069d78786799eead2026a207300b8417c6"
+    },
+    {
+      "path": "reports/sentinel_constraints.json",
+      "sha256": "a836e3d4bff607a739a005797934509523f17d015aa887c95d4ba74eb94430e6"
+    },
+    {
+      "path": "reports/sta_pre.json",
+      "sha256": "8ff5d4cfdf7332dc0222f501bd57615c88efe360b59152a423f388ebfaa2a096"
+    },
+    {
+      "path": "reports/synth_report.json",
+      "sha256": "562319102932d5e8f967ddce826f51115c04acba65377bf0d1cdf3b53aa293aa"
+    },
+    {
+      "path": "reports/synth_tool.json",
+      "sha256": "24daa59f1a696983fe5507583ed66153d91141568db379a87bd951e79a6d7332"
+    }
+  ],
+  "checks_run": [
+    "chk_01M43B9C41V1G2CXJ4G3AJ68W8",
+    "chk_01M43BAVM5KP3KTZW45E9XJCV1",
+    "chk_01M43BBXD6JDBFBF4XR2WF76TT",
+    "chk_01M43BBXECS1T4QSZ2M1PRNEN7",
+    "chk_01M43BC10SW15VTSD1XGY491DX",
+    "chk_01M43BC10XWR9NH8NJ4KD47J6H",
+    "chk_01M43BC2N6FY38ED3G51FN12P9",
+    "chk_01M43BD6BYC2MB5KH66SS1XBMB"
+  ],
+  "assumptions": [
+    "Constraints in constraints.sdc (10 ns clock, 0.25 ns uncertainty, 3.0 ns I/O delays, all DEFAULT) were used unchanged; I did not edit them.",
+    "The numbers in reports/synth_tool.json are the real OpenLane 2 / OpenSTA results for the netlist named there.",
+    "WNS per corner is taken as the worst slack value reported per corner; TNS was not provided."
+  ],
+  "open_issues": [
+    "Equivalence check (eqy) results and cell class breakdown were not supplied, so no equivalence claim is made.",
+    "Net _014_ has fanout 13 while the SDC sets max fanout 10; confirm in the flow's max-fanout report whether this is flagged.",
+    "Only 3 of the worst 10 paths are in the input and the third is cut off before its slack line; the full path report is needed to describe the rest.",
+    "PDK release and corners are not pinned in the spec (open question in spec.yaml)."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "All numbers are quoted from the tool data, but the path report is truncated, there is no TNS, no eqy data and no cell class breakdown.",
+    "confidence": "medium"
+  }
+}

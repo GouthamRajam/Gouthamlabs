@@ -1,0 +1,122 @@
+{
+  "die_area_um2": 3119.04,
+  "core_area_um2": 1506.44,
+  "utilization": 0.484219,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "count[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "enable",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "up_down",
+      "direction": "INPUT",
+      "side": "W"
+    }
+  ],
+  "choices": {
+    "core_utilization_pct": 45,
+    "reasons": {
+      "utilization": "Synthesized cell area is 709.43 um2 (71 cells, reports/synth_tool.json). The pnr_ranges.yaml default of 45% is inside the allowed 30-65% range and gives a core of about 1576 um2 (~40 x 40 um). This leaves 55% whitespace for CTS buffers, hold-fix buffers, fill/tap cells and routing, which is ample for a 71-cell design; going lower adds area with no timing or routability benefit (pre-layout worst setup slack is +1.57 ns at ss_100C_1v60), and going higher would crowd 21 I/O pins and the nor3b fanout-13 net on a tiny core.",
+      "pins": "Pins follow the arch.yaml data flow left to right: all data and control inputs (load_data[7:0] -> cnt_dp, load/enable/up_down -> cnt_ctrl -> cnt_dp) on the West edge, and the only output count[7:0] (driven directly by the cnt_dp flops) on the East edge. Bus bits are kept together on one side so the next-state mux and the register bits line up with their load_data and count pins, keeping input-to-flop and flop-to-output wires short. Every one of the 21 ports matches exactly one pattern in pnr/pin_order.cfg.",
+      "power_grid": "PDK default SKY130 PDN for sky130_fd_sc_hd (met1 rails along cell rows, default met4/met5 straps), unchanged: pnr_ranges.yaml defines no strap pitch/width ranges, so straps stay at the PDK default as the task requires. PDN connectivity and no-unpowered-row checks are left to the real tool run.",
+      "clock_reset": "clk is alone on the North edge and rst_n alone on the South edge, both central to the core so the clock tree root and the reset net (which fans out to all 8 flops in cnt_dp, synchronous, part of next-state logic) reach the register bank with balanced short wires, and neither competes for pin slots with the data buses on West/East."
+    }
+  }
+}

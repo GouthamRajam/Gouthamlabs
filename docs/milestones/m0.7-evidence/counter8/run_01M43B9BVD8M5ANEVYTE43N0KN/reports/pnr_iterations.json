@@ -1,0 +1,48 @@
+[
+  {
+    "iteration": 1,
+    "tag": "it1",
+    "params": {
+      "FP_CORE_UTIL": 45,
+      "PL_TARGET_DENSITY_PCT": 55.0,
+      "MAX_FANOUT_CONSTRAINT": 10
+    },
+    "problems": [],
+    "facts": {
+      "route_drc_errors": 0,
+      "antenna_violating_nets": 0,
+      "antenna_violating_pins": 0,
+      "disconnected_pins": 0,
+      "setup_ws_by_corner": {
+        "nom_tt_025C_1v80": 4.33942627447223,
+        "nom_ss_100C_1v60": 2.056888051435302,
+        "nom_ff_n40C_1v95": 5.208969403251777,
+        "min_tt_025C_1v80": 4.364224216651592,
+        "min_ss_100C_1v60": 2.098168809193624,
+        "min_ff_n40C_1v95": 5.225431346637285,
+        "max_tt_025C_1v80": 4.316855439743255,
+        "max_ss_100C_1v60": 2.0134099402044963,
+        "max_ff_n40C_1v95": 5.193869037422178
+      },
+      "hold_ws_by_corner": {
+        "nom_tt_025C_1v80": 0.36043657967365883,
+        "nom_ss_100C_1v60": 0.9341201410116508,
+        "nom_ff_n40C_1v95": 0.11628418002089218,
+        "min_tt_025C_1v80": 0.3573250407812684,
+        "min_ss_100C_1v60": 0.9290665166829333,
+        "min_ff_n40C_1v95": 0.11395409938206096,
+        "max_tt_025C_1v80": 0.3639114113055568,
+        "max_ss_100C_1v60": 0.9403853517614077,
+        "max_ff_n40C_1v95": 0.11866688523257896
+      },
+      "max_slew_violations": 0,
+      "max_cap_violations": 0,
+      "max_fanout_violations": 0,
+      "wirelength_um": 1563,
+      "utilization": 0.507475,
+      "cts_worst_tree_skew_ns": 0.003713,
+      "cts_target_ns": 1.0
+    },
+    "changes": []
+  }
+]

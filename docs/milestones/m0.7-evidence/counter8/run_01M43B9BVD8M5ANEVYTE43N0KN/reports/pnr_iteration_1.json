@@ -1,0 +1,210 @@
+{
+  "iteration": 1,
+  "tag": "it1",
+  "params": {
+    "FP_CORE_UTIL": 45,
+    "PL_TARGET_DENSITY_PCT": 55.0,
+    "MAX_FANOUT_CONSTRAINT": 10
+  },
+  "problems": [],
+  "facts": {
+    "route_drc_errors": 0,
+    "antenna_violating_nets": 0,
+    "antenna_violating_pins": 0,
+    "disconnected_pins": 0,
+    "setup_ws_by_corner": {
+      "nom_tt_025C_1v80": 4.33942627447223,
+      "nom_ss_100C_1v60": 2.056888051435302,
+      "nom_ff_n40C_1v95": 5.208969403251777,
+      "min_tt_025C_1v80": 4.364224216651592,
+      "min_ss_100C_1v60": 2.098168809193624,
+      "min_ff_n40C_1v95": 5.225431346637285,
+      "max_tt_025C_1v80": 4.316855439743255,
+      "max_ss_100C_1v60": 2.0134099402044963,
+      "max_ff_n40C_1v95": 5.193869037422178
+    },
+    "hold_ws_by_corner": {
+      "nom_tt_025C_1v80": 0.36043657967365883,
+      "nom_ss_100C_1v60": 0.9341201410116508,
+      "nom_ff_n40C_1v95": 0.11628418002089218,
+      "min_tt_025C_1v80": 0.3573250407812684,
+      "min_ss_100C_1v60": 0.9290665166829333,
+      "min_ff_n40C_1v95": 0.11395409938206096,
+      "max_tt_025C_1v80": 0.3639114113055568,
+      "max_ss_100C_1v60": 0.9403853517614077,
+      "max_ff_n40C_1v95": 0.11866688523257896
+    },
+    "max_slew_violations": 0,
+    "max_cap_violations": 0,
+    "max_fanout_violations": 0,
+    "wirelength_um": 1563,
+    "utilization": 0.507475,
+    "cts_worst_tree_skew_ns": 0.003713,
+    "cts_target_ns": 1.0
+  },
+  "changes": [],
+  "cts": {
+    "per_corner": {
+      "max_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.25192,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.00192,
+          "source_latency_ns": 0.159249,
+          "target_latency_ns": -0.15733
+        },
+        "hold": {
+          "reported_skew_ns": -0.250138,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.000138,
+          "source_latency_ns": 0.159034,
+          "target_latency_ns": -0.159172
+        }
+      },
+      "max_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.253713,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.003713,
+          "source_latency_ns": 0.405277,
+          "target_latency_ns": -0.401564
+        },
+        "hold": {
+          "reported_skew_ns": -0.250131,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.000131,
+          "source_latency_ns": 0.405076,
+          "target_latency_ns": -0.405207
+        }
+      },
+      "max_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.252578,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.002578,
+          "source_latency_ns": 0.230904,
+          "target_latency_ns": -0.228326
+        },
+        "hold": {
+          "reported_skew_ns": -0.250136,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.000136,
+          "source_latency_ns": 0.230692,
+          "target_latency_ns": -0.230828
+        }
+      },
+      "min_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.25153,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.00153,
+          "source_latency_ns": 0.156097,
+          "target_latency_ns": -0.154566
+        },
+        "hold": {
+          "reported_skew_ns": -0.250048,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 4.8e-05,
+          "source_latency_ns": 0.15603,
+          "target_latency_ns": -0.156078
+        }
+      },
+      "min_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.253046,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.003046,
+          "source_latency_ns": 0.400185,
+          "target_latency_ns": -0.397139
+        },
+        "hold": {
+          "reported_skew_ns": -0.250044,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 4.4e-05,
+          "source_latency_ns": 0.400124,
+          "target_latency_ns": -0.400169
+        }
+      },
+      "min_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.252087,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.002087,
+          "source_latency_ns": 0.227083,
+          "target_latency_ns": -0.224996
+        },
+        "hold": {
+          "reported_skew_ns": -0.250047,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 4.7e-05,
+          "source_latency_ns": 0.227018,
+          "target_latency_ns": -0.227065
+        }
+      },
+      "nom_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.251766,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.001766,
+          "source_latency_ns": 0.157399,
+          "target_latency_ns": -0.155633
+        },
+        "hold": {
+          "reported_skew_ns": -0.250072,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 7.2e-05,
+          "source_latency_ns": 0.157293,
+          "target_latency_ns": -0.157365
+        }
+      },
+      "nom_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.253485,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.003485,
+          "source_latency_ns": 0.402444,
+          "target_latency_ns": -0.398958
+        },
+        "hold": {
+          "reported_skew_ns": -0.250068,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 6.8e-05,
+          "source_latency_ns": 0.402344,
+          "target_latency_ns": -0.402412
+        }
+      },
+      "nom_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.252397,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.002397,
+          "source_latency_ns": 0.228722,
+          "target_latency_ns": -0.226325
+        },
+        "hold": {
+          "reported_skew_ns": -0.250071,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 7.1e-05,
+          "source_latency_ns": 0.228618,
+          "target_latency_ns": -0.228689
+        }
+      }
+    },
+    "corners_with_skew": 9,
+    "worst_tree_skew_ns": 0.003713,
+    "target_ns": 1.0,
+    "clock_buffers": 3,
+    "hold_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 0.34093,
+      "nom_ss_100C_1v60": 0.817408164291696,
+      "nom_ff_n40C_1v95": 0.07729696268507003
+    },
+    "setup_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 4.45417,
+      "nom_ss_100C_1v60": 1.5699468835983306,
+      "nom_ff_n40C_1v95": 5.07880774034192
+    },
+    "hold_buffers": 0,
+    "timing_repair_buffers": 22
+  }
+}

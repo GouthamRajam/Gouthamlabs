@@ -1,0 +1,32 @@
+{
+  "task_id": "task_01M43B9BW6YGQPEFYWNT3242TP",
+  "status": "success",
+  "summary": "Wrote dft/dft_plan.md with all six sections (test strategy, scan approach, test pins, coverage method, memory test approach, open-flow limitations). Plan only: no scan inserted, no tool run, no coverage number claimed.",
+  "outputs": [
+    {
+      "path": "dft/dft_plan.md",
+      "sha256": "48516890d039357e90ff7db02f8dec789eb372af8a1e87680e0643e42325e3ab"
+    }
+  ],
+  "checks_run": [
+    "chk_01M43BPZG0GPZ1EC13ESZ5WQKE",
+    "chk_01M43BPZGJ35BZHFE17R24P7A7"
+  ],
+  "assumptions": [
+    "Phase 0 scope only: no commercial tools.",
+    "Pre-layout slack figures from reports/synth_tool.json are used only as context for later scan timing checks.",
+    "Scan insertion places the scan mux at the flop so shift data is not gated by the synchronous reset; to be confirmed by a real tool.",
+    "Single mux-scan chain of the 8 count flops using sky130_fd_sc_hd scan flops is the intended Phase 1+ style."
+  ],
+  "open_issues": [
+    "Coverage targets can only be measured in Phase 1+ with ATPG tools.",
+    "Scan pins (scan_en, scan_in, scan_out) are not in spec.yaml and spec marks scan/DFT insertion out of scope; adding or sharing pins needs human G1 decision.",
+    "Sharing count[7] as scan_out needs review against REQ-012.",
+    "Worst pre-layout hold slack is small (0.077 ns at nom_ff_n40C_1v95); scan hops may need hold fixing once scan is inserted."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Document is plan-only, covers all six required sections, makes no coverage claim; correctness of tool-specific assumptions is unverified until Phase 1+.",
+    "confidence": "high"
+  }
+}

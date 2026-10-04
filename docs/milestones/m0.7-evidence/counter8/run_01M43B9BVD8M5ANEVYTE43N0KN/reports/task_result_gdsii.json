@@ -1,0 +1,84 @@
+{
+  "task_id": "task_01M43B9BW6ZH5PNC250J61S0SN",
+  "status": "success",
+  "summary": "Wrote tapeout/release_notes.md for counter8 (sky130A, sky130_fd_sc_hd, 100 MHz target). The tape-out checklist records 16 of 16 items done, each with an evidence reference. Readiness is 95.3% against Baseline A (open SKY130 shuttle) and 64.1% against Baseline B (commercial production tape-out), and the notes show the per-check breakdown. Known limits and open items come from the readiness assumptions and gaps, the DFM scorecard (0 high, 2 medium, 5 low), and the spec's open questions and DEFAULT markers. The notes make no pass claim beyond what the checklist and readiness data record.",
+  "outputs": [
+    {
+      "path": "reports/division4_report.md",
+      "sha256": "02185d92e4d5c70a0874c317467eff737ded9b905d1bb16cb078dfd316077f83"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "77da6de4eb1bc08723ec1fc949fe2194f32e960c669c988a385dd2afcdc8e9ec"
+    },
+    {
+      "path": "reports/proof_manifest.json",
+      "sha256": "1b446fa4de8e96b53a928540505c5de635e720c33997a68cd1311df1eb91b599"
+    },
+    {
+      "path": "reports/proof_reproduce.json",
+      "sha256": "0ade25615ebfd9734cef8ac9c2e79e2bfe39a8104a96a46ea04eab9559bc33e8"
+    },
+    {
+      "path": "reports/tapeout_checklist.json",
+      "sha256": "f545405fc5203e610aa9a87cff277477163fb432a9ce095ae6aad693703975c5"
+    },
+    {
+      "path": "reports/tapeout_readiness.json",
+      "sha256": "a3b37279b183ffc4b69b0904126759487dc6fd04d3cbb9e3dbcf07108c12f375"
+    },
+    {
+      "path": "tapeout/release_notes.md",
+      "sha256": "714ecbe1d3f9bbe475f0021faae0968147fc83b2561e9cbc374921f35aba45dc"
+    }
+  ],
+  "checks_run": [
+    "chk_01M43M739NJE5XAD7N24E5EAXJ",
+    "chk_01M43M79EAXAAEEESJJ7ZP2FK1",
+    "chk_01M43M79EAXWZ39F7VHST9RT8S",
+    "chk_01M43M79EAXWZ39F7VHST9RT8V",
+    "chk_01M43M79EJTQY799C5BXYX6R36",
+    "chk_01M43M90M3645CQE3RCA8JBKE3",
+    "chk_01M43M90M89CDEDCC72K44PVV4",
+    "chk_01M43M90MHSZHP8GEZ9YA9KS0X",
+    "chk_01M43M90MQE0X20V24K4GV6NR0",
+    "chk_01M43M90NGY4ZEQG7ZB2337AET",
+    "chk_01M43MAVVGGMB0FWY36FHTX02J",
+    "chk_01M43MCF7QVCSWZM7QA0AQ8BFC"
+  ],
+  "assumptions": [
+    "'Yesterday's deliveries' are taken to be what these reports show as complete; no dated delivery log was provided.",
+    "Baseline A (open SKY130 shuttle) is the relevant target for Phase 0; Baseline B (commercial production) is reported for context only.",
+    "Baseline A excludes the three 'not run' rows (earned_A null) from its denominator (weights_A_total 97 = 106 - 9). Baseline B counts them as 0 of 106. I recomputed both from the rows: A = 92.5/97 = 95.36% (reported 95.3), B = 68/106 = 64.15% (reported 64.1).",
+    "Checklist 'done: true' entries and readiness 'result: clean' entries are restated as the reports record them. I did not re-run or inspect the underlying tool logs, so the notes cite check names as evidence and do not reproduce tool numbers such as WNS or DRC counts.",
+    "File hashes, versions.lock contents and the GDS top cell or layer list were not in my inputs, so the notes point to tapeout/versions.lock and MANIFEST.sha256 and do not copy values from them.",
+    "Partial credit is 0.5, as tapeout_readiness.json states. The IR/EM row earns 2 of 4 under Baseline A even though its result is 'clean', because EM was not analyzed.",
+    "The JSON reports given are the current, final results for this run (run_01M43B9BVD8M5ANEVYTE43N0KN); I did not re-check them, and the runtime checks are the authority on pass/fail.",
+    "The total spend of $0.002669 is the arithmetic sum of the per-agent values in division_cost.json.",
+    "division_cost.json gives spend per agent only; no budget or weekly forecast figure was provided, so cost vs budget and the week forecast cannot be stated from the reports."
+  ],
+  "open_issues": [
+    "Checklist item 11 says 'Power and IR within limits', but the spec sets no power budget and the readiness note says EM was not analyzed. The item covers only an estimated power number and a static IR check.",
+    "DFM-003 (medium): 15 met1 line ends are at near-minimum spacing, and the last two locations nearly overlap, so the true count may be 14. DFM-001 (medium): 2 li windows are at 0.5565 density against a 0.6 max. Both are open with owner Orion. Neither blocks the checklist, which requires zero high-severity items.",
+    "Density data is inconsistent: pv_signoff.json lists density li1 0.7203 and m5 1.0, while dfm_scorecard.json says li windows peak near a PDK max of 0.6, and the checklist marks 'Density rules met'. The meaning/units of the pv_signoff density figures need to be confirmed by Orion/Fabian before G4.",
+    "EM, dynamic IR, signal integrity, reliability (aging/ESD/latch-up) and foundry-certified signoff were not analyzed; DFT is plan only (2.5 of 5 points, Baseline A).",
+    "No division budget or forecast was supplied; Penny/finance input needed to report cost vs budget.",
+    "Power totals differ: OpenLane 0.00014227691281121224 W vs OpenSTA tt 0.0001466368 W; signoff number not chosen.",
+    "STA open items from Chronos: no per-cell path detail, no hold path list, REQ-012 input-to-count combinational path not shown, input/output delay 3.0 ns and uncertainty 0.25 ns are DEFAULT values.",
+    "The spec still has DEFAULT - needs G1 review markers (load while enable=0, up_down encoding, wrap on overflow and underflow, control priority, PDK release not pinned) and three open questions, even though G1 is recorded as approved. A human should confirm these were resolved at G1.",
+    "The spec's open question about which STA corners apply is still open. Checklist item 5 cites sta_all_corners (9 corners), but the spec does not define the required corner set.",
+    "Two medium DFM items remain open (DFM-003: 15 met1 near-minimum line ends, one location possibly duplicated; DFM-001: 2 li windows near the density max). Not tape-out blockers per checklist item 10 (zero high severity), but owner Orion has not dispositioned them.",
+    "tapeout_readiness.json gaps list 'fix and re-run the check (this phase)' for signal integrity, reliability and foundry-certified signoff, but the rows say these are out of open-flow scope / no foundry decks. The closure path wording needs correcting; they cannot be closed in Phase 0.",
+    "tapeout_readiness.json is inconsistent. The rows for signal integrity, reliability and foundry signoff say 'out of open-flow scope' or 'no foundry-certified decks', but their gap entries say 'closes_with: fix and re-run the check (this phase)'. The gap text should probably name Phase 1 or commercial tools. This needs owner review of the readiness generator; I did not change it."
+  ],
+  "messages": [
+    {
+      "from": "Sloane",
+      "summary": "Division 4 report for counter8 at the gdsii stage. Per the input reports: STA passed=true at all 9 corners (worst setup 2.0134 ns, worst hold 0.114 ns), Magic/KLayout DRC 0, LVS 'Circuits match uniquely', antenna 0 violations, DFM 0 high / 2 medium / 5 low, IR worst 5e-05 V vs 0.09 V limit, all 16 checklist items marked done including G3, readiness 95.3% (Baseline A) / 64.1% (Baseline B). Risks and inconsistencies flagged (density figures, DFM medium items, readiness gap wording, power total mismatch, unanalyzed EM/SI/reliability). G4 is presented as a human decision with options and a recommendation."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Every statement in the notes traces to a field in the four inputs, and I recomputed both baseline percentages from the rows. Confidence is limited only by the fact that I relied on the checklist and readiness reports as written and did not see the underlying tool logs.",
+    "confidence": "high"
+  }
+}

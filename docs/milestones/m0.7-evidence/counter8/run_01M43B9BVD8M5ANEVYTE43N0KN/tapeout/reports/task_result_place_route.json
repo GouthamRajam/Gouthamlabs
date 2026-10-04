@@ -1,0 +1,99 @@
+{
+  "task_id": "task_01M43B9BW6YGQPEFYWNT3242TR",
+  "status": "success",
+  "summary": "One P&R iteration (it1) was run with FP_CORE_UTIL 45, PL_TARGET_DENSITY_PCT 55.0, MAX_FANOUT_CONSTRAINT 10; it reported no problems and no parameters were changed. The tool data for it1 shows route_drc_errors 0, antenna_violating_nets 0, antenna_violating_pins 0, disconnected_pins 0, max slew/cap/fanout violations 0, worst setup slack 2.0134099402044963 ns (max_ss_100C_1v60) and worst hold slack 0.11395409938206096 ns (min_ff_n40C_1v95) over 9 corners, wirelength 1563 um, utilization 0.507475, worst CTS tree skew 0.003713 ns against a 1.0 ns target. No routing congestion/overflow figure is present in the input data. These are flow-reported values; the S2S runtime decides pass/fail.",
+  "outputs": [
+    {
+      "path": "reports/cts_report.json",
+      "sha256": "12ad0bf89e4e37787b10de25dd7a5c2fc6e75d713368de4c693315577711833a"
+    },
+    {
+      "path": "reports/cts_tool.json",
+      "sha256": "c4d635d696572c9d79e6151ea0a494d339069f6defa6ae43f698ead417e55313"
+    },
+    {
+      "path": "reports/division3_report.md",
+      "sha256": "687980cb71a272b5d2432bc8fc9462d6b2e29e0b5292b45de86ec9366524fa5c"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "bcc4ce471bf55713728210e3fd1c1dbfb065ed300a411c7cfa768d2052e90900"
+    },
+    {
+      "path": "reports/pnr_iteration_1.json",
+      "sha256": "879de946e4404fabfede941b4d695e5b63eca60f8a650b1322034fa80af10318"
+    },
+    {
+      "path": "reports/pnr_iterations.json",
+      "sha256": "f8de80790b9965efa8723d41b2b0a9a582cd65c593701b3b82eb4c5573ac15fc"
+    },
+    {
+      "path": "reports/pnr_report.json",
+      "sha256": "cc4c232d30ea324b1de48425f91d808251c36062b8e89910b149127809670132"
+    }
+  ],
+  "checks_run": [
+    "chk_01M43KSQ4SY8GCN69ZAB65DYCM",
+    "chk_01M43KT0D7ENY23QDGMJ75J89F",
+    "chk_01M43KTHHX9GNF6FN24MVFXQX5",
+    "chk_01M43KTHJH19NVJSZ5W41WVFA7",
+    "chk_01M43KTHJH6HHHXZP7YEW2F05B",
+    "chk_01M43KTHJHKA1DEG2HZEM02JDW",
+    "chk_01M43KTHJJ9NKMJ2RBQ7YCZJD8",
+    "chk_01M43KTHJJXZS02AKV6Q2M7QJM",
+    "chk_01M43KTHJJXZS02AKV6Q2M7QJP",
+    "chk_01M43KTHJJZXHXJQWME0V9NT6A",
+    "chk_01M43KYVYSE7Z8CZYDSDTCT6VC"
+  ],
+  "assumptions": [
+    "No clock gating cells are used: the spec lists low-power modes and clock gating as out of scope, and the tool data reports none.",
+    "Tess and Sentinel show 0.0 spend, read as no billed model usage in this run.",
+    "The 1.0 ns CTS skew target (cts_target_ns / target_ns) comes from the tool data, not from the spec.",
+    "The pnr_report.json iteration it1 is the final P&R state. Its slack values are post-route worst slacks from the flow's STA.",
+    "The single entry in reports/pnr_iterations.json (iteration 1, tag it1) is the final P&R state; no other iterations exist.",
+    "The skew target is the target_ns value of 1.0 in reports/cts_tool.json; the spec does not state a skew target, so its origin is assumed to be the flow configuration.",
+    "antenna_violating_nets/pins are from the flow's antenna check after routing.",
+    "clock_buffers = 3 counts buffers inserted in the clock tree; timing_repair_buffers = 22 are data-path buffers and not part of the clock tree.",
+    "division_cost.json contains run spend by agent only. It has no budget or weekly forecast, so neither is stated as a number.",
+    "hold_ws_after_cts_by_corner and setup_ws_after_cts_by_corner are worst slacks in ns as reported by the flow's STA after CTS.",
+    "reported_skew_ns includes the 0.25 ns clock_uncertainty_ns; tree_skew_ns is the skew of the clock tree itself, and that is the value compared with the target (the data shows reported_skew_ns = clock_uncertainty_ns + tree_skew_ns in the setup views).",
+    "route_drc_errors is the detailed-router DRC count, not a Magic/KLayout signoff DRC on the final GDS.",
+    "route_drc_errors is the router's count and is not a signoff Magic/KLayout DRC on the final GDS.",
+    "setup_ws_by_corner and hold_ws_by_corner in pnr_iterations.json are post-route worst slacks in ns as reported by the flow's STA; positive means the path meets the constraint.",
+    "source_latency_ns is read as the clock insertion latency from the clock port to the register clock pins; target_latency_ns (negative values) is quoted as given and not interpreted further.",
+    "utilization 0.507475 in pnr_iterations.json is post-placement/route cell utilization (including inserted buffers), which is why it is higher than the floorplan utilization 0.484219."
+  ],
+  "open_issues": [
+    "DFT: there is no scan insertion or ATPG in the Phase 0 open flow. Scan pins would be a spec change needing G1 approval.",
+    "No division budget figure was supplied, so spend vs budget and the weekly forecast cannot be stated.",
+    "No routing congestion or global-route overflow number is present in any input file, so the congestion state cannot be reported from data; the runtime or a report containing overflow should supply it.",
+    "No routing congestion or overflow number is in the inputs.",
+    "Post-CTS hold and setup worst slack are reported only for nom_tt_025C_1v80, nom_ss_100C_1v60 and nom_ff_n40C_1v95. The min_* and max_* corners (6 of the 9 corners with skew data) have no post-CTS slack in this data; hold at min_ff_n40C_1v95 and max_ff_n40C_1v95 is the most likely to be tight and should be reported by Chronos (STA) before REQ-011 is judged.",
+    "Post-CTS setup slack at nom_ss_100C_1v60 was 1.5699468835983306 ns (cts_report.json) but the post-route value in pnr_iterations.json is 2.056888051435302 ns; the inputs do not explain the increase (possibly the 22 timing-repair buffers or different parasitics). Chronos (STA) should confirm which is the signoff number.",
+    "STA corner list and sky130A release are open in the spec. The 1.0 ns CTS skew target is not in the spec.",
+    "STA corners are an open question in the spec ('Which sky130A release and STA corners apply?'); this report uses the 9 corners present in the tool data.",
+    "Setup slack at nom_ss_100C_1v60 is 1.5699468835983306 ns post-CTS but 2.056888051435302 ns post-route. The cause is unexplained and Chronos must confirm the signoff number.",
+    "Signoff DRC and LVS on the final GDS (REQ-013) are not in the inputs.",
+    "Smallest hold slack is 0.11395409938206096 ns at min_ff_n40C_1v95 (all three ff corners are between 0.11395409938206096 and 0.11866688523257896 ns): positive but small margin.",
+    "Smallest reported hold slack is 0.07729696268507003 ns at nom_ff_n40C_1v95: positive, but with small margin; worth watching after routing parasitics are added.",
+    "The 1.0 ns CTS skew target is not stated in the spec; a human should confirm it.",
+    "The skew target of 1.0 ns (10% of the 10 ns period) is not stated in the spec; a human should confirm it is the intended target.",
+    "The spec leaves the sky130A release and STA corner list open; this report uses the 9 corners present in the tool data.",
+    "The synthesis report flagged net _014_ at fanout 13 against a max fanout of 10. P&R reports max_fanout_violations 0, which suggests the 22 timing-repair buffers fixed it, but the runtime should confirm this.",
+    "route_drc_errors 0 is the router's count. REQ-013 requires 0 DRC violations and 0 LVS mismatches on the final GDS; signoff DRC and LVS results are not in the inputs and must come from the real runtime checks."
+  ],
+  "messages": [
+    {
+      "from": "Tick",
+      "summary": "Clock clk (100 MHz, 10 ns per spec): the tool data reports a worst clock-tree skew of 0.003713 ns (max_ss_100C_1v60 setup view) against a target_ns of 1.0, across 9 corners, with 3 clock buffers. Source latency ranges from 0.156097 ns (min_ff_n40C_1v95, setup) to 0.405277 ns (max_ss_100C_1v60, setup). Post-CTS hold worst slack is positive in the 3 corners reported (smallest 0.07729696268507003 ns at nom_ff_n40C_1v95); 0 hold buffers and 22 timing-repair buffers are reported. Hold slack after CTS is only given for the 3 nom corners, so the min/max corners are not covered by this data. No check is claimed passed here; the runtime runs the real checks."
+    },
+    {
+      "from": "Mason",
+      "summary": "Wrote the Division 3 (Zone 3) VP report for counter8 at place_route. Synthesis, floorplan, CTS and P&R iteration it1 were delivered. The flow reports 0 route DRC, antenna, slew, cap and fanout problems, and positive setup and hold slack in all 9 corners (worst setup 2.0134099402044963 ns at max_ss_100C_1v60, worst hold 0.11395409938206096 ns at min_ff_n40C_1v95). Risks are the missing signoff DRC/LVS (REQ-013), the missing congestion data, the thin hold margin, an unexplained jump in setup slack between CTS and route, open spec questions on corners and PDK release, and DFT that cannot be done in Phase 0. Cost is reported per agent only, because no budget figure was supplied. The report lists 4 decisions for the human, each with a recommendation."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All numbers are copied directly from the three input reports; the data set is small (one iteration). Confidence is limited only by what the inputs do not contain (congestion/overflow, signoff DRC/LVS), which is listed as open.",
+    "confidence": "high"
+  }
+}

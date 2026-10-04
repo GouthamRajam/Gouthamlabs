@@ -1,0 +1,68 @@
+{
+  "iterations": [
+    {
+      "iteration": 1,
+      "tag": "it1",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 55.0,
+        "MAX_FANOUT_CONSTRAINT": 10
+      },
+      "problems": [],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 4.33942627447223,
+          "nom_ss_100C_1v60": 2.056888051435302,
+          "nom_ff_n40C_1v95": 5.208969403251777,
+          "min_tt_025C_1v80": 4.364224216651592,
+          "min_ss_100C_1v60": 2.098168809193624,
+          "min_ff_n40C_1v95": 5.225431346637285,
+          "max_tt_025C_1v80": 4.316855439743255,
+          "max_ss_100C_1v60": 2.0134099402044963,
+          "max_ff_n40C_1v95": 5.193869037422178
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.36043657967365883,
+          "nom_ss_100C_1v60": 0.9341201410116508,
+          "nom_ff_n40C_1v95": 0.11628418002089218,
+          "min_tt_025C_1v80": 0.3573250407812684,
+          "min_ss_100C_1v60": 0.9290665166829333,
+          "min_ff_n40C_1v95": 0.11395409938206096,
+          "max_tt_025C_1v80": 0.3639114113055568,
+          "max_ss_100C_1v60": 0.9403853517614077,
+          "max_ff_n40C_1v95": 0.11866688523257896
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 0,
+        "wirelength_um": 1563,
+        "utilization": 0.507475,
+        "cts_worst_tree_skew_ns": 0.003713,
+        "cts_target_ns": 1.0
+      },
+      "changes": []
+    }
+  ],
+  "explained_by": "Orion",
+  "explanation": "# Place and route report - counter8\n\nSources: `reports/pnr_iterations.json`, `reports/cts_report.json`, `reports/floorplan_report.json`. Every number below is quoted from those files. No check is claimed passed here; the S2S runtime runs the real checks.\n\n## Iteration table\n\n| Iteration | Tag | FP_CORE_UTIL | PL_TARGET_DENSITY_PCT | MAX_FANOUT_CONSTRAINT | Problems | Changes |\n|---|---|---|---|---|---|---|\n| 1 | it1 | 45 | 55.0 | 10 | none | none |\n\nIn plain terms: one iteration was run with the starting parameters. The flow reported no problems, so no parameter was changed and no further iterations were needed (budget default is 8).\n\n## Floorplan (for context)\n\n- Die area: 3119.04 um2; core area: 1506.44 um2; floorplan utilization: 0.484219\n- Power grid violations: 0\n- Pins: inputs on West, `count[7:0]` on East, `clk` North, `rst_n` South\n\n## Final state (iteration it1)\n\n### Congestion\n\n- Wirelength: 1563 um\n- Utilization after P&R: 0.507475\n- Routing congestion / overflow: **not present in the input data** (see open issues).\n\n### DRC, antenna, connectivity, electrical\n\n| Item | Value |\n|---|---|\n| route_drc_errors | 0 |\n| antenna_violating_nets | 0 |\n| antenna_violating_pins | 0 |\n| disconnected_pins | 0 |\n| max_slew_violations | 0 |\n| max_cap_violations | 0 |\n| max_fanout_violations | 0 |\n\nThese are the router's and flow's counts. Signoff DRC and LVS on the final GDS (REQ-013) are not in the inputs.\n\n### Clock tree\n\n- Worst tree skew: 0.003713 ns (max_ss_100C_1v60, setup view) vs target 1.0 ns\n- Clock buffers: 3; hold buffers: 0; timing-repair buffers: 22\n- Reported skew of about 0.25 ns per corner is the 0.25 ns clock uncertainty plus the tree skew.\n\n### Timing after routing (worst slack, ns; 10 ns clock)\n\n| Corner | Setup WS | Hold WS |\n|---|---|---|\n| nom_tt_025C_1v80 | 4.33942627447223 | 0.36043657967365883 |\n| nom_ss_100C_1v60 | 2.056888051435302 | 0.9341201410116508 |\n| nom_ff_n40C_1v95 | 5.208969403251777 | 0.11628418002089218 |\n| min_tt_025C_1v80 | 4.364224216651592 | 0.3573250407812684 |\n| min_ss_100C_1v60 | 2.098168809193624 | 0.9290665166829333 |\n| min_ff_n40C_1v95 | 5.225431346637285 | 0.11395409938206096 |\n| max_tt_025C_1v80 | 4.316855439743255 | 0.3639114113055568 |\n| max_ss_100C_1v60 | 2.0134099402044963 | 0.9403853517614077 |\n| max_ff_n40C_1v95 | 5.193869037422178 | 0.11866688523257896 |\n\n- Worst setup slack: **2.0134099402044963 ns** at max_ss_100C_1v60\n- Worst hold slack: **0.11395409938206096 ns** at min_ff_n40C_1v95\n\nIn plain terms: the flow reports positive setup and hold slack in all 9 corners. Hold margin is smallest in the fast (ff) corners, at about 0.11 ns. Whether REQ-011 is met is for the runtime STA check (Chronos) to decide.\n\n## Open issues\n\n1. No congestion/overflow number in the inputs.\n2. Signoff DRC and LVS (REQ-013) are not in the inputs.\n3. Smallest hold slack 0.11395409938206096 ns at min_ff_n40C_1v95: positive, small margin.\n4. Post-CTS setup slack at nom_ss_100C_1v60 was 1.5699468835983306 ns; post-route it is 2.056888051435302 ns. The inputs do not explain the difference; Chronos should confirm the signoff value.\n5. STA corners and sky130A release are open questions in the spec; the 1.0 ns skew target is not in the spec.\n",
+  "assumptions": [
+    "The single entry in reports/pnr_iterations.json (iteration 1, tag it1) is the final P&R state; no other iterations exist.",
+    "setup_ws_by_corner and hold_ws_by_corner in pnr_iterations.json are post-route worst slacks in ns as reported by the flow's STA; positive means the path meets the constraint.",
+    "route_drc_errors is the detailed-router DRC count, not a Magic/KLayout signoff DRC on the final GDS.",
+    "antenna_violating_nets/pins are from the flow's antenna check after routing.",
+    "utilization 0.507475 in pnr_iterations.json is post-placement/route cell utilization (including inserted buffers), which is why it is higher than the floorplan utilization 0.484219.",
+    "The 1.0 ns CTS skew target (cts_target_ns / target_ns) comes from the tool data, not from the spec."
+  ],
+  "open_issues": [
+    "No routing congestion or global-route overflow number is present in any input file, so the congestion state cannot be reported from data; the runtime or a report containing overflow should supply it.",
+    "route_drc_errors 0 is the router's count. REQ-013 requires 0 DRC violations and 0 LVS mismatches on the final GDS; signoff DRC and LVS results are not in the inputs and must come from the real runtime checks.",
+    "Smallest hold slack is 0.11395409938206096 ns at min_ff_n40C_1v95 (all three ff corners are between 0.11395409938206096 and 0.11866688523257896 ns): positive but small margin.",
+    "Post-CTS setup slack at nom_ss_100C_1v60 was 1.5699468835983306 ns (cts_report.json) but the post-route value in pnr_iterations.json is 2.056888051435302 ns; the inputs do not explain the increase (possibly the 22 timing-repair buffers or different parasitics). Chronos (STA) should confirm which is the signoff number.",
+    "The spec leaves the sky130A release and STA corner list open; this report uses the 9 corners present in the tool data.",
+    "The 1.0 ns CTS skew target is not stated in the spec; a human should confirm it."
+  ]
+}

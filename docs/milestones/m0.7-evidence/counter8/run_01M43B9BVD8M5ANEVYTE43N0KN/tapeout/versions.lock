@@ -1,0 +1,60 @@
+# s2s-eda pinned versions (M0.1). One line per item: name=version.
+# The image is built FROM the official OpenLane 2 image pinned by digest, so every
+# tool below is exactly the build that OpenLane 2.3.10 was released and tested with.
+# eda/scripts/selftest.sh checks each tool's reported version against this file.
+# The PDK and cocotb lines are what eda/Dockerfile installs on top of the base.
+
+# Base image (provides all tools except cocotb and the PDK)
+base_image=ghcr.io/efabless/openlane2:2.3.10@sha256:37c3bd4ea0534a276cb2deb88d601044857bad2807b9bc5b36efe9d02c62624e
+
+# Tools (value = the version string the tool itself reports)
+openlane=2.3.10
+yosys=0.46
+openroad=edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6
+opensta=2.6.0
+verilator=5.018
+iverilog=12.0
+cocotb=1.9.2
+sby=yosys-0.47
+eqy=yosys-0.46
+magic=8.3.489
+klayout=0.29.4
+netgen=1.5.278
+
+# Support tools the base image lacks (added in M0.2): make + C++ compiler + perl for
+# Verilator simulation, awk/sed for eqy's generated scripts, SMT solvers for SymbiYosys/eqy, and
+# click for yosys-witness (counterexample traces). All come from the SAME nixpkgs revision
+# the base image was built from (OpenLane 2.3.10's flake.lock), as prebuilt, signed binaries
+# from cache.nixos.org, pinned by exact store path (the store hash pins the content).
+nixpkgs_rev=805a384895c696f802a9bf5bf4720f37385df547
+make=4.4.1
+gawk=5.2.2
+sed=4.9
+clang=17.0.6
+yices=2.6.4
+z3=4.8.17
+perl=5.38.2
+nix_store_path_make=/nix/store/y9mnxlhj1hda3b75j0hbx80gqfaysvfh-gnumake-4.4.1
+nix_store_path_gawk=/nix/store/8vvkbgmnin1x2jkp7wcb2zg1p0vc4ks9-gawk-5.2.2
+nix_store_path_sed=/nix/store/5zjms21vpxlkbc0qyl5pmj2sidfmzmd7-gnused-4.9
+nix_store_path_clang=/nix/store/mzhqknx2mc94jdz4n320hn1lml86398y-clang-wrapper-17.0.6
+nix_store_path_yices=/nix/store/cn15cs8nwhx8i440r1zpvkbsjl4b2xag-yices-2.6.4
+nix_store_path_z3=/nix/store/l9mpxhr9j4q14cfnw95hm1dnk8bh7mh6-z3-4.8.17
+nix_store_path_perl=/nix/store/1iscdpbd3x9x3s3s25jd5ppl7yra0b77-perl-5.38.2
+nix_store_path_click=/nix/store/4flhri1nwh8n0d8a4bx2yjnyigpz00bg-python3.11-click-8.1.7
+
+# SkyWater SKY130 PDK, built by open_pdks at this commit (the revision OpenLane 2.3.10 expects).
+# Libraries = volare's "default" set for sky130, which is what OpenLane installs for itself;
+# OpenLane's sky130 config needs sky130_fd_io etc. even though designs use only sky130_fd_sc_hd.
+sky130_pdk=0fe599b2afb6708d281543108caf8310912f54af
+sky130_pdk_variant=sky130A
+sky130_std_cell_lib=sky130_fd_sc_hd
+# sha256 of each prebuilt archive from the volare release for that commit.
+# eda/Dockerfile downloads exactly these archives and refuses any checksum mismatch.
+sky130_pdk_sha256_common=970d671d28ffcc4dcc9bc9c22d5ed3924c4ec308751fa8536b195eb2d60c3209
+sky130_pdk_sha256_sky130_fd_io=209dc12c8375ba98465713bd85200db76e003da578c2b54fa3be2edf8b184082
+sky130_pdk_sha256_sky130_fd_pr=c1cee2a6c1c40fb9dc652cfdbf917a1dee19e18ee071fad85a41c52befd5b7a6
+sky130_pdk_sha256_sky130_fd_sc_hd=0612e9d8f5bab0a9d44fc429e31920302ef483b3e7832639fc23442970384013
+sky130_pdk_sha256_sky130_fd_sc_hvl=6bfd4b471d706552cdd7503df323ed7804b67e3fd876b649f9a814d3f653c6eb
+sky130_pdk_sha256_sky130_ml_xx_hd=e17a443edcc220e6e32d17f699e143f870d75dfac95c04904fbadcae8d6ed3a2
+sky130_pdk_sha256_sky130_sram_macros=5b142ca8e516f13693c46fbadbecfc6dde4b8da49f928cbe40997358b073c366

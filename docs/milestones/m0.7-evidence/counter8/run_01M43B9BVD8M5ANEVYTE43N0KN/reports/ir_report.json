@@ -1,0 +1,21 @@
+{
+  "worst_drop_v": 5e-05,
+  "avg_drop_v": 2.48e-05,
+  "limit_v": 0.09,
+  "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)",
+  "assumptions": [
+    "Switching activity: input_activity = 0.2 (20% toggle rate) as recorded in power_tool.json. This is the A.13 default. No simulation activity (VCD/SAIF) was used, so dynamic power is an estimate and may be above or below real operating power.",
+    "Clock: 100 MHz (10 ns period) from spec.yaml target_clock_mhz. I assume the power runs used this clock; the input does not show the clock the power scripts used.",
+    "Corners: power figures are from three PVT corners: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95. These corner names come from the tool data. The spec has not confirmed them (spec open question: 'Which sky130A release and STA corners apply?').",
+    "Supply voltage for the IR limit: 1.8 V nominal (limit_rule '5% of 1.8 V'), so limit_v = 0.09 V. The IR data does not name its corner. I assume it was run at nominal 1.8 V (tt). The ss corner uses 1.60 V and the ff corner 1.95 V, and their IR margins were not reported.",
+    "Voltage source locations: power_tool.json does not record where the VPWR/VGND sources (pins/pads) were placed for the IR analysis. I assume the flow default (OpenLane/OpenROAD PDN pins at the core boundary). This is unverified.",
+    "IR analysis type: I assume the worst_drop_v/avg_drop_v values are static (average-current) IR drop from the OpenLane/OpenROAD IR step. Dynamic (vectorless or vector-based) IR drop was not analyzed.",
+    "IR coverage: the values are reported as one drop figure. I assume this covers VPWR. The input does not say whether VGND ground bounce was reported separately.",
+    "Electromigration (EM): not analyzed. The open flow used here gives no EM check of the PDN straps, vias or signal wires.",
+    "Leakage: taken from the sky130_fd_sc_hd liberty data at each corner (5.328549e-10 W tt, 4.81806e-07 W ss, 9.40391e-10 W ff). It is negligible at tt/ff and below 0.5% of total even at ss_100C.",
+    "Parasitics: the input does not show whether the power runs used post-route extracted parasitics (SPEF) or wire-load estimates. I assume post-route SPEF because this is the signoff stage. This is unverified.",
+    "PDK release: not pinned (spec target_clock_note). Numbers apply to the sky130A release installed in the run environment.",
+    "Spec lists power and area targets as out of scope, so there is no power budget to compare against; power is reported for information only."
+  ],
+  "explained_by": "Volta"
+}
