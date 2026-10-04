@@ -1,0 +1,24 @@
+M0.5 acceptance on run_01M426JH3YWRXXHKAKSF3J94CP (uart)
+
+[PASS] 1. spec schema (B.1): 0 problems
+[PASS] 1. spec consistency: 0 problems
+[PASS] 1. arch schema (B.2): 0 problems
+[PASS] 1. arch consistency: 0 problems
+   spec: 24 requirements, 14 interfaces, target 50 MHz; arch: top uart_top, modules ['uart_top(interface)', 'sync2(interface)', 'baud_gen(datapath)', 'uart_tx(control)', 'uart_rx(control)']
+   $ verilator --lint-only -Wall --top-module uart_top /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/baud_gen.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/sync2.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/uart_rx.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/uart_top.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/uart_tx.v
+   tool verilator_lint 5.018  exit 0  errors 0  warnings 0  status PASS
+   log tail: 
+[PASS] 2. verilator_lint (re-run): 0 errors, 0 warnings
+   $ yosys -p read_verilog -sv /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/baud_gen.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/sync2.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/uart_rx.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/uart_top.v /home/user/Gouthamlabs/var/artifacts/acceptance/run_01M426JH3YWRXXHKAKSF3J94CP/rtl/uart_tx.v; hierarchy -check -top uart_top; proc; check -assert
+   tool yosys_elab 0.46  exit 0  errors 0  warnings 0  status PASS
+   log tail: End of script. Logfile hash: 057e7506d6, CPU: user 0.08s system 0.02s, MEM: 35.78 MB peak | Yosys 0.46 (git sha1 e97731b9dda91fa5fa53ed87df7c34163ba59a41, clang++ 17.0.6 -fPIC -O3) | Time spent: 40% 6x read_verilog (0 sec), 22% 1x opt_expr (0 sec), ...
+[PASS] 2. yosys_elab (re-run): 0 errors, 0 warnings
+   171 events in the database; 171 via API /events; 171 in the live stream
+   by type: {'agent.status': 15, 'artifact.created': 22, 'check.failed': 1, 'check.passed': 14, 'finding': 14, 'gate.decided': 1, 'gate.requested': 1, 'handoff': 9, 'manager.checkin': 6, 'plan': 15, 'stage.changed': 4, 'task.completed': 3, 'task.heartbeat': 19, 'task.started': 3, 'tool_call': 22, 'tool_result': 22}
+   acting agents: ['Ada', 'Ada-C', 'Ada-I', 'Atlas', 'Iris', 'Ivy', 'Juno', 'Kepler', 'Lumen', 'Pascal', 'Reid', 'Sage', 'Sentinel', 'Watt']
+[PASS] 4a. every event served by /events (Live Office load/replay): 171/171
+[PASS] 4b. every event pushed on the live stream (/ws/events): 171/171
+[PASS] 4c. every acting agent has a Live Office seat: missing: []
+   M0.5 roster agents that acted in this run: ['Ada', 'Ada-C', 'Ada-I', 'Iris', 'Ivy', 'Juno', 'Kepler', 'Lumen', 'Pascal', 'Reid', 'Sage', 'Sentinel', 'Watt']; not needed by counter8: []
+
+9/9 acceptance checks passed (test 3 not re-run; see below)

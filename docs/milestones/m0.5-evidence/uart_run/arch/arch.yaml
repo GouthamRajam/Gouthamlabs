@@ -1,0 +1,103 @@
+design: uart
+top: uart_top
+modules:
+  - name: uart_top
+    kind: interface
+    ports_from_spec: true
+    instances: [baud_gen, uart_tx, uart_rx, sync2]
+    implements: [REQ-003, REQ-004, REQ-005, REQ-024]
+    description: "Top level wiring; single clock clk, sync active-low rst_n."
+  - name: sync2
+    kind: interface
+    params: {STAGES: 2}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: d, dir: in, width: 1}
+      - {name: q, dir: out, width: 1}
+    implements: [REQ-004, REQ-005]
+    description: "2-flop synchronizer for async rx; both flops reset to 1."
+  - name: baud_gen
+    kind: datapath
+    params: {DIV_W: 16}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: baud_div, dir: in, width: DIV_W}
+      - {name: tick16, dir: out, width: 1}
+    implements: [REQ-004, REQ-006, REQ-007, REQ-008]
+    max_logic_depth: 9
+    description: "Down/up counter, one-cycle tick every max(baud_div,1) clk cycles; counter reloads when baud_div changes below count so it cannot hang."
+  - name: uart_tx
+    kind: control
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: tick16, dir: in, width: 1}
+      - {name: parity_mode, dir: in, width: 2}
+      - {name: tx_data, dir: in, width: 8}
+      - {name: tx_valid, dir: in, width: 1}
+      - {name: tx_ready, dir: out, width: 1}
+      - {name: tx, dir: out, width: 1}
+    implements: [REQ-001, REQ-003, REQ-004, REQ-009, REQ-010, REQ-011, REQ-012, REQ-013, REQ-023]
+    max_logic_depth: 8
+    description: "FSM IDLE/START/DATA/PARITY/STOP, 4-bit tick divider, 8-bit shift register, running parity bit; tx_ready low from accept to end of stop."
+  - name: uart_rx
+    kind: control
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: tick16, dir: in, width: 1}
+      - {name: parity_mode, dir: in, width: 2}
+      - {name: rx_sync, dir: in, width: 1}
+      - {name: rx_data, dir: out, width: 8}
+      - {name: rx_valid, dir: out, width: 1}
+      - {name: frame_err, dir: out, width: 1}
+      - {name: parity_err, dir: out, width: 1}
+      - {name: overrun_err, dir: out, width: 1}
+    implements: [REQ-002, REQ-003, REQ-004, REQ-010, REQ-014, REQ-015, REQ-016, REQ-017, REQ-018, REQ-019, REQ-020, REQ-021, REQ-022, REQ-023]
+    max_logic_depth: 9
+    description: "FSM IDLE/START/DATA/PARITY/STOP/WAIT_HIGH; 4-bit tick counter, majority-of-3 at ticks 7,8,9, 8-bit shift register; overrun_err driven constant 0 inside this module."
+connections:
+  - {from: uart_top.clk, to: [baud_gen.clk, uart_tx.clk, uart_rx.clk, sync2.clk]}
+  - {from: uart_top.rst_n, to: [baud_gen.rst_n, uart_tx.rst_n, uart_rx.rst_n, sync2.rst_n]}
+  - {from: uart_top.baud_div, to: [baud_gen.baud_div]}
+  - {from: uart_top.parity_mode, to: [uart_tx.parity_mode, uart_rx.parity_mode]}
+  - {from: baud_gen.tick16, to: [uart_tx.tick16, uart_rx.tick16]}
+  - {from: uart_top.rx, to: [sync2.d]}
+  - {from: sync2.q, to: [uart_rx.rx_sync]}
+  - {from: uart_top.tx_data, to: [uart_tx.tx_data]}
+  - {from: uart_top.tx_valid, to: [uart_tx.tx_valid]}
+  - {from: uart_tx.tx_ready, to: [uart_top.tx_ready]}
+  - {from: uart_tx.tx, to: [uart_top.tx]}
+  - {from: uart_rx.rx_data, to: [uart_top.rx_data]}
+  - {from: uart_rx.rx_valid, to: [uart_top.rx_valid]}
+  - {from: uart_rx.frame_err, to: [uart_top.frame_err]}
+  - {from: uart_rx.parity_err, to: [uart_top.parity_err]}
+  - {from: uart_rx.overrun_err, to: [uart_top.overrun_err]}
+cdc:
+  - {signal: rx, from: async, to: clk, synchronizer: sync2}
+state_machines:
+  - module: uart_tx
+    states: [IDLE, START, DATA, PARITY, STOP]
+  - module: uart_rx
+    states: [IDLE, START, DATA, PARITY, STOP, WAIT_HIGH]
+ppa_estimate:
+  cells: 420
+  critical_path_levels: 9
+  slack_margin_pct: 35
+rationale:
+  - "Shared 16x tick for TX and RX keeps one divider; TX uses every 16th tick via a 4-bit counter."
+  - "baud_div==0 clamped to 1 in baud_gen so a single place implements REQ-008."
+  - "parity_mode 3 folds to none in both TX and RX using parity_en = pm[0] ^ pm[1]."
+  - "RX WAIT_HIGH state after a framing error requires rx high before re-arming, giving one frame_err per break (REQ-019)."
+  - "overrun_err is a constant-0 output of uart_rx rather than a pseudo-source, so every connection endpoint is a real module port."
+  - "Single clock domain; rx is the only crossing, through a 2-flop synchronizer reset to 1."
+  - "Counters and FSMs are reloaded or return to IDLE on parameter change so the design cannot hang (REQ-023)."
+verification_hooks:
+  - "Assert tx==1 and tx_ready==1 and all rx outputs 0 in the cycle after reset."
+  - "Assert rx_valid is a one-cycle pulse and frame_err/parity_err are 0 when rx_valid is 0."
+  - "Assert overrun_err==0 always."
+  - "Observe tick16 period equals max(baud_div,1) cycles."
+  - "Observe uart_tx and uart_rx FSM state for coverage."
+  - "Assert tx_ready low for exactly one frame time after an accepted handshake."

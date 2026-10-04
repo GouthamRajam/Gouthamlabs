@@ -1,0 +1,30 @@
+[
+  {
+    "severity": "major",
+    "target": "arch/arch.yaml: uart_rx (description) / REQ-016, REQ-019",
+    "what": "No output holding register for rx_data. The only storage listed is an '8-bit shift register', yet REQ-016 requires rx_data to hold its value until the next frame completes, and REQ-019 expects rx_data=0 after a break.",
+    "evidence": "uart_rx description lists '8-bit shift register' only; port rx_data is out 8 with no separate holding register. If rx_data is wired to the shift register it changes during every received frame, and a glitch-rejected start or a partial frame would also corrupt it.",
+    "suggested_action": "Add an explicit 8-bit rx_data output register in uart_rx, loaded only on frame completion together with the rx_valid pulse, with its own reset to 0. Update the cell estimate. Define the shift register state at break so REQ-019 gives rx_data=0."
+  },
+  {
+    "severity": "major",
+    "target": "arch/arch.yaml: uart_tx (description, rationale) / REQ-011, REQ-013",
+    "what": "The alignment between handshake accept and start-bit launch is not defined. TX advances on tick16 through a '4-bit tick divider', but the arch does not say whether the divider is cleared on accept or free-running, nor when the start bit begins relative to tick16.",
+    "evidence": "uart_tx: 'tx_ready low from accept to end of stop' and rationale 'TX uses every 16th tick via a 4-bit counter'. If the divider is free-running, the start bit can be delayed by up to 16 ticks (one bit period) after accept. Even if cleared on accept, the start waits for the next tick16, up to baud_div cycles. Either way tx_ready would be low for more than the 10/11 bit periods that REQ-011's 'exactly one frame time' acceptance measures.",
+    "suggested_action": "Specify the mechanism: clear the divider on accept and launch the start bit on the next tick16, or on the accept cycle itself. State where the latency counts, and have the spec owner confirm how REQ-011 'exactly' is measured (accept to stop end versus start to stop end). Add a verification hook for accept-to-start latency."
+  },
+  {
+    "severity": "minor",
+    "target": "arch/arch.yaml: uart_rx, sync2 / REQ-014",
+    "what": "REQ-014 requires detection of a 'synchronized falling edge', but no previous-sample flop for edge detection is listed, and its reset value and the behavior when rx is already low at reset release or after WAIT_HIGH are not stated.",
+    "evidence": "The only rx-path state is sync2 (2 flops, reset to 1). uart_rx has no edge-detect register in its description. Level-versus-edge detection differs when rx is low at reset release.",
+    "suggested_action": "Either state that IDLE detects on level low, which is consistent with WAIT_HIGH, or add a third flop reset to 1 for edge detection. Make REQ-005's 'exactly 1 crossing, 2 stages' lint expectation consistent with that choice."
+  },
+  {
+    "severity": "minor",
+    "target": "arch/arch.yaml: rationale, uart_tx / uart_rx / REQ-023",
+    "what": "The REQ-023 hang-avoidance mechanism is asserted but not described for the FSMs. The rationale says 'Counters and FSMs are reloaded or return to IDLE on parameter change', but no module description defines a parameter-change detector or the resulting transitions.",
+    "evidence": "Only baud_gen mentions reload on baud_div change. uart_tx and uart_rx list no change-detect logic or transition. Neither is there a verification hook for REQ-023 (random mid-frame changes), and the hooks omit a mid-frame reset check for REQ-004.",
+    "suggested_action": "Describe the concrete mechanism, or state that no FSM change detection exists and that termination follows from the free-running tick16 and bounded FSM paths. Add verification hooks for REQ-023 and for mid-frame reset (REQ-004)."
+  }
+]

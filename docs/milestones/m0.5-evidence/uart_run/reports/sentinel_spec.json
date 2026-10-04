@@ -1,0 +1,72 @@
+[
+  {
+    "severity": "major",
+    "target": "request.md vs spec/spec.yaml out_of_scope and open_questions[0]",
+    "what": "The request asks for a 'baud divisor register', but the spec provides a 16-bit baud_div input port with no register or write mechanism. It lists 'register bus (APB/AXI/Wishbone)' as out of scope and also asks in open_questions whether a register bus is required. These two statements contradict each other.",
+    "evidence": "request.md: 'baud divisor register'. spec.yaml out_of_scope: 'register bus (APB/AXI/Wishbone)'. open_questions: 'Is a register bus ... required instead of plain ports?'. Interface: baud_div dir: in, width 16.",
+    "suggested_action": "Spec author should resolve this before G1 by stating explicitly either 'baud_div is a port, and the request wording is interpreted as such' or defining a register interface. Remove the item from out_of_scope while it is still an open question. Record the interpretation as an assumption."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml REQ-023 acceptance and text; spec/spec.md REQ-023 acceptance",
+    "what": "The requirement text says the design must return to idle 'within 1 frame time after the frame ends', but the acceptance allows 11*16*65535 clk cycles (about 11.5M cycles, 230 ms at 50 MHz), which is not 1 frame time at any realistic divisor. Running 1,000 trials at that bound would be about 1.15e10 cycles. spec.md drops the numeric bound entirely ('bounded time'), so the two files disagree. It is also unstated whether the receiver is covered.",
+    "evidence": "yaml REQ-023: 'within 1 frame time after the frame ends' vs acceptance 'within 11*16*65535 clk cycles after the last change'. md acceptance: 'Returns to idle in bounded time'.",
+    "suggested_action": "Define the bound in terms of the frame time at the old and new divisor (for example max(old, new) frame time). Make md and yaml identical. State whether the rx FSM must also recover. Alternatively require that baud_div and parity_mode be latched at frame start so mid-frame changes are harmless."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml REQ-011 and REQ-013 (with REQ-006)",
+    "what": "The latency from handshake accept to the start-bit falling edge is undefined, and it is unstated whether the tick/bit counter restarts on accept. REQ-006 implies a free-running tick. If it is free-running, tx_ready cannot be 'low for exactly one frame time' (REQ-011) because start latency can be up to one tick. REQ-013 allows a stop-to-start gap of up to a full bit period, which is too loose to verify back-to-back behavior and would let a design with an idle bit pass.",
+    "evidence": "REQ-011 acceptance: 'exactly one frame time (10 or 11 bit periods)'. REQ-006: 'one 16x tick every baud_div clk cycles'. REQ-013 acceptance: 'stop-to-start gap is <= 1 bit period'.",
+    "suggested_action": "Specify the start-bit latency in clk cycles (for example the start bit begins N cycles after accept, with the bit counter restarted). Tighten REQ-013 to a few clk cycles. Define the exact instant tx_ready returns to 1 relative to the end of the stop bit."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml resets, REQ-004, REQ-005",
+    "what": "rst_n is declared synchronous to clk with 'the only asynchronous crossing is rx'. An external reset pin is asynchronous to clk, and its deassertion needs a synchronizer or a documented system-level guarantee. The REQ-005 acceptance 'CDC lint reports exactly 1 crossing' will conflict with the real flow, because a CDC tool will flag rst_n unless it is constrained.",
+    "evidence": "REQ-005: 'the only asynchronous crossing is rx'. interfaces: rst_n 'clock_domain: clk, Synchronous active-low reset'.",
+    "suggested_action": "Add an explicit assumption that rst_n is synchronized outside the block, or add a reset synchronizer to scope. Mark the choice 'DEFAULT - needs G1 review'."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml REQ-005 acceptance",
+    "what": "The timing acceptance requires setup slack >= 0 at the typical corner only. There is no hold requirement, no worst-case (slow) corner, and no I/O delay assumptions for the inputs (tx_data, tx_valid, baud_div, parity_mode) or outputs. Tape-out readiness cannot be judged from a typical-corner setup check.",
+    "evidence": "REQ-005: 'static timing meets 20 ns period with setup slack >= 0 at the typical corner'.",
+    "suggested_action": "Specify the corner set (at least the slow-corner setup and fast-corner hold), include hold slack >= 0, and state the assumed input and output delays or clock uncertainty."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml overrun_err (interfaces) and REQ-022; spec.md REQ-022",
+    "what": "overrun_err is invented scope that is not in the request. It is a constant-0 output whose acceptance ('0 in every cycle') cannot fail, so it is a test that cannot fail. The definitions also contradict each other: the interface description says 'pulse when a frame completes while the previous rx_valid pulse was not the immediately preceding cycle', while REQ-022 defines overrun relative to a 'read' that does not exist. The interface description is truncated with '...'.",
+    "evidence": "yaml interface overrun_err description with '... see REQ-022'. REQ-022 note: 'No read handshake is specified, so overrun cannot occur; the output is kept for future extension.'",
+    "suggested_action": "Remove overrun_err from this version (preferred, since the note itself allows it). Otherwise delete the contradictory interface description and make the output explicitly 'tied to 0, reserved', excluded from the functional coverage claims in REQ-024."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml REQ-018 and REQ-017 (and REQ-019)",
+    "what": "REQ-017 states that rx_valid is still asserted with a framing error, but REQ-018 does not say whether rx_valid and rx_data are delivered on a parity error. The combined case (frame_err and parity_err in the same frame) is also unstated. This matters for REQ-019: in parity_mode 2 a break (all zeros) has a parity mismatch, since the expected bit is 1 and the received bit is 0. The break acceptance checks rx_valid, frame_err and rx_data but not parity_err, so the expected value in modes 1, 2 is undefined.",
+    "evidence": "REQ-018 text: 'parity_err is 1 in the rx_valid cycle if ...' (no statement on rx_valid assertion). REQ-019 acceptance: 'exactly 1 rx_valid pulse with frame_err=1 and rx_data=0'.",
+    "suggested_action": "State that rx_valid is always asserted with the data on a parity error and that flags are independent. Specify parity_err for the break case in each parity mode and include it in the REQ-019 acceptance."
+  },
+  {
+    "severity": "minor",
+    "target": "spec/spec.yaml REQ-002, REQ-014, REQ-015",
+    "what": "The sample-point definition is inconsistent. REQ-002 votes over ticks 7, 8, 9, REQ-014 re-checks a single sample at tick 8, and REQ-015 uses 'sample points 16 ticks apart' without defining the tick index relative to the synchronized falling edge. The glitch criterion covers only glitches shorter than 7 ticks, so 7 to 15 ticks is undefined, and 'a valid start bit always starts a frame' has no measurable criterion (minimum start-bit width).",
+    "evidence": "REQ-014 text: 'waits 8 ticks, and re-checks rx'; acceptance: 'glitch shorter than 7 ticks'.",
+    "suggested_action": "Define tick 0 as the first tick after the synchronized falling edge and fix the vote window and sample instants. Specify the behavior for low pulses of 7 to 15 ticks and the minimum valid start width. Decide whether the start check is also a majority vote."
+  },
+  {
+    "severity": "minor",
+    "target": "spec/spec.yaml REQ-008, REQ-010, REQ-022, target_clock_note; spec/spec.md",
+    "what": "Defaults are tagged inconsistently ('RECOMMENDED - default on' versus 'DEFAULT - needs G1 review'). The G1 checklist looks for the DEFAULT tag, so the baud_div=0, parity_mode=3 and overrun_err defaults could be missed at the gate.",
+    "evidence": "REQ-008/010/022 use 'RECOMMENDED - default on'; target_clock_note uses 'DEFAULT - needs G1 review'.",
+    "suggested_action": "Use the single tag 'DEFAULT - needs G1 review' on every assumed behavior, including REQ-008, REQ-010 and REQ-022."
+  },
+  {
+    "severity": "minor",
+    "target": "spec/spec.yaml REQ-020 and REQ-002 acceptance",
+    "what": "The \u00b12% sender offset test at baud_div=1 (16 clk per bit) cannot be generated by a clock-cycle-based sender, because 2% of 16 cycles is 0.32 cycles. The testbench must model the sender in real time. REQ-002 gives no divisor list, while REQ-020 does. Also, the REQ-020 text says 'combined mismatch' while the acceptance only offsets the sender.",
+    "evidence": "REQ-020 acceptance: 'baud_div in {1, 27, 255}', '+2% and -2% sender baud offset'.",
+    "suggested_action": "State that the sender is modeled with fractional or real-time bit periods. Align the divisor lists in REQ-002 and REQ-020. Clarify whether \u00b12% is the total budget across sender and receiver clocks."
+  }
+]
