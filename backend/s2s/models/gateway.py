@@ -195,11 +195,16 @@ class ModelGateway:
 
     @classmethod
     def from_settings(cls) -> "ModelGateway":
-        """The gateway real agents use: the provider saved in Settings -> Model access, or the Claude
-        Code bridge when S2S_MODEL_PROVIDER=bridge (personal localhost dev mode)."""
-        if os.environ.get("S2S_MODEL_PROVIDER") == "bridge":
+        """The gateway real agents use: config/finance.yaml `model_provider` (S2S_MODEL_PROVIDER
+        overrides it): "bridge" = Claude Code subagents (personal localhost mode, no API usage),
+        "anthropic" = the provider saved in Settings -> Model access."""
+        from s2s.config import finance
+        name = os.environ.get("S2S_MODEL_PROVIDER") or finance().get("model_provider") or "anthropic"
+        if name == "bridge":
             return cls(BridgeProvider())
-        return cls(AnthropicProvider())
+        if name == "anthropic":
+            return cls(AnthropicProvider())
+        raise ValueError(f"unknown model provider {name!r} (config/finance.yaml model_provider)")
 
     def complete(self, *, task: meter.TaskRef, system: str, messages: list[dict],
                  tools: list[dict] | None = None, max_tokens: int = 1024, temperature: float = 0.2,

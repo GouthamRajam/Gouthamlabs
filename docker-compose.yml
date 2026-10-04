@@ -4,7 +4,8 @@
 # as sibling containers through the host's Docker socket. A sibling mounts a run folder by its HOST path,
 # so run data (var/artifacts) and the Claude Code bridge folder (var/bridge) are bind-mounted at the
 # SAME absolute path inside the backend containers (${PWD} = the repo root where you run compose).
-# Optional: S2S_MODEL_PROVIDER=bridge docker compose up (personal dev mode, see docs/DECISIONS.md).
+# Model calls go to the Claude Code bridge by default (config/finance.yaml model_provider: bridge);
+# S2S_MODEL_PROVIDER=anthropic overrides it (see docs/DECISIONS.md).
 x-backend: &backend
   build: {context: ., dockerfile: backend/Dockerfile}
   image: s2s-backend

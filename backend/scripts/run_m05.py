@@ -34,6 +34,7 @@ from s2s.db.session import session  # noqa: E402
 from s2s.finance.meter import spend_so_far  # noqa: E402
 from s2s.ids import new_id  # noqa: E402
 from s2s.models import access  # noqa: E402
+from s2s.models.gateway import ModelGateway  # noqa: E402
 from s2s.orchestrator.engine import create_run  # noqa: E402
 
 
@@ -44,7 +45,9 @@ def main() -> int:
     args = p.parse_args()
 
     view = access.public_view()
-    print(f"model access: provider={view['provider']} model={view['model']} key_saved={view['key_set']}")
+    gw = type(ModelGateway.from_settings().provider).__name__
+    print(f"model calls: {gw} (config/finance.yaml model_provider); Settings: provider={view['provider']} "
+          f"model={view['model']} key_saved={view['key_set']}")
     if not view["key_set"]:
         print("no API key saved in Settings -> Model access")
         return 2

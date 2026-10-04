@@ -33,6 +33,7 @@ from s2s.db.models import Check, Design, Event, Run, Task, UsageRecord  # noqa: 
 from s2s.db.session import session  # noqa: E402
 from s2s.finance.meter import spend_so_far  # noqa: E402
 from s2s.models import access  # noqa: E402
+from s2s.models.gateway import ModelGateway  # noqa: E402
 from s2s.orchestrator.engine import create_run  # noqa: E402
 
 
@@ -46,7 +47,9 @@ def main() -> int:
     src = sys.argv[2] if resume else sys.argv[1]
     timeout_min = float(os.environ.get("S2S_M07_TIMEOUT_MIN", "240"))
     view = access.public_view()
-    print(f"model access: provider={view['provider']} model={view['model']} key_saved={view['key_set']}")
+    gw = type(ModelGateway.from_settings().provider).__name__
+    print(f"model calls: {gw} (config/finance.yaml model_provider); Settings: provider={view['provider']} "
+          f"model={view['model']} key_saved={view['key_set']}")
     caps = spend_caps()
     with session() as s:
         srun = s.get(Run, src)
