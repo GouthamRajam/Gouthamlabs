@@ -4,6 +4,8 @@ GET  /projects                               projects with their designs, newest
 GET  /designs/{id}/overview                  the 10 stages (Part 5 flow) with status, owner, checks,
                                              gate, spend and time; current activity; timeline; spend
 GET  /designs/{id}/stages/{stage}/events     the stage's log (its events, oldest first)
+GET  /designs/{id}/gates                     the design's human gates (all runs), each with its evidence: the
+                                             gated stage's latest checks (passed/failed counts, failed names)
 POST /projects/requests                      new project + design from a plain-English request
                                              (creates records only; starting a run is a separate,
                                              explicit POST /designs/{id}/runs)
@@ -164,8 +166,8 @@ def design_overview(design_id: str, s: Session = Depends(_db)) -> dict:
                         "records": history[n], "metrics": _short(c.metrics)} for n, c in latest.items()],
             "checks_passed": sum(1 for c in latest.values() if c.passed),
             "checks_failed": sum(1 for c in latest.values() if not c.passed),
-            "gate": None if gate is None else {"gate": gate.gate, "status": gate.status, "reviewer": gate.reviewer,
-                                               "decided_at": _iso(gate.decided_at), "comments": gate.comments},
+            "gate": None if gate is None else {"id": gate.id, "gate": gate.gate, "status": gate.status,
+                                               "reviewer": gate.reviewer, "decided_at": _iso(gate.decided_at), "comments": gate.comments},
             "spend_usd": round(sum(float(usage_by_task.get(t.id, 0) or 0) for t in attempts), 4),
             "events": ev_counts.get(st.name, 0),
         })
@@ -210,6 +212,41 @@ def design_overview(design_id: str, s: Session = Depends(_db)) -> dict:
                     "failed": sum(1 for x in stages if x["status"] == "failed"),
                     "stages": len(stages)},
     }
+
+
+@router.get("/designs/{design_id}/gates")
+def design_gates(design_id: str, s: Session = Depends(_db)) -> list[dict]:
+    """The design's gates across all runs (G1..G4, then run order), each with the evidence a reviewer
+    decides on: the latest record of every check of the gated stage's task in that run. Read-only;
+    the decision itself is POST /gates/{id}/decision (humans only)."""
+    if s.get(Design, design_id) is None:
+        raise HTTPException(404, f"design {design_id!r} not found")
+    runs = _runs_of(s, design_id)
+    run_order = {r.id: i for i, r in enumerate(runs)}
+    gates = list(s.scalars(select(Gate).where(Gate.run_id.in_(list(run_order) or [""]))))
+    gates.sort(key=lambda g: (g.gate, run_order.get(g.run_id, 0), g.id))
+    titles = {st.name: st.title for st in flow.STAGES}
+    out = []
+    for g in gates:
+        stage = g.after_stage or next((st.name for st in flow.STAGES if st.gate_after == g.gate), None)
+        task = s.scalars(select(Task).where(Task.run_id == g.run_id, Task.stage == stage)
+                         .order_by(Task.seq.desc(), Task.id.desc())).first() if stage else None
+        latest: dict[str, Check] = {}
+        if task is not None:
+            for c in s.scalars(select(Check).where(Check.task_id == task.id).order_by(Check.id)):
+                latest[c.check_name] = c
+        out.append({
+            "id": g.id, "gate": g.gate, "status": g.status, "after_stage": g.after_stage, "run_id": g.run_id,
+            "reviewer": g.reviewer, "decision": g.decision, "comments": g.comments, "decided_at": _iso(g.decided_at),
+            "stage": stage, "stage_title": titles.get(stage or ""),
+            "evidence": {"task_id": task.id if task else None, "task_status": task.status if task else None,
+                         "checks_passed": sum(1 for c in latest.values() if c.passed),
+                         "checks_failed": sum(1 for c in latest.values() if not c.passed),
+                         "failed_checks": [n for n, c in latest.items() if not c.passed],
+                         "checks": [{"name": n, "passed": c.passed, "tool": c.tool, "metrics": _short(c.metrics)}
+                                    for n, c in latest.items()]},
+        })
+    return out
 
 
 OUTPUT_FILES = (  # (label, path in the run folder); the GDSII is the deliverable
