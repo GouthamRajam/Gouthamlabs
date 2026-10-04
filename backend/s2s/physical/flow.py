@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -155,9 +156,12 @@ def fork(pnr: Path, src_tag: str, dst_tag: str, before_stage: str) -> None:
     for f in ("resolved.json",):
         if (src / f).exists():
             shutil.copy2(src / f, dst / f)
-    # state files hold absolute paths of the source run: point them at the copy
+    # state files hold absolute paths of the source run: point them at the copy. OpenLane resumes from
+    # the most recently MODIFIED state_out.json, so each rewritten file keeps its original timestamps.
     for state in dst.glob("*/state_*.json"):
+        st = state.stat()
         state.write_text(state.read_text().replace(str(src) + "/", str(dst) + "/"))
+        os.utime(state, ns=(st.st_atime_ns, st.st_mtime_ns))
 
 
 def run_stage(pnr: Path, tag: str, stage: str, timeout_s: float = 3600, jobs: int = 4) -> dict:
