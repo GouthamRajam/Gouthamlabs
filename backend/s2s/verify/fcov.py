@@ -66,9 +66,10 @@ def evaluate(tree: ast.AST, v: dict[str, int | None]) -> bool:
             if x is None:  # X/Z: the bin is not hit on this sample
                 raise _Unknown
             return x
-        if isinstance(n, ast.BoolOp):
-            vals = [ev(x) for x in n.values]
-            return int(all(vals)) if isinstance(n.op, ast.And) else int(any(vals))
+        if isinstance(n, ast.BoolOp):  # short-circuit like Python: a guard can protect the operands after it
+            if isinstance(n.op, ast.And):
+                return int(all(ev(x) for x in n.values))
+            return int(any(ev(x) for x in n.values))
         if isinstance(n, ast.UnaryOp):
             x = ev(n.operand)
             return int(not x) if isinstance(n.op, ast.Not) else (~x if isinstance(n.op, ast.Invert) else -x)

@@ -39,3 +39,12 @@ def test_bin_hits_counts_every_sampled_edge(tmp_path):
     hits = fcov.bin_hits([p, p], "clk", bins, {"clk", "en", "count"})
     # edges sample (en,count): (0,0), (1,3), (1,3), (1,15); two copies of the waveform
     assert hits == {"en_three": 4, "full": 2, "idle": 2}
+
+
+def test_and_short_circuits_like_python():
+    names = {"a", "b"}
+    tree = fcov.compile_expr("(b & 7) != 0 and ((a >> ((b & 7) - 1)) & 1) == 1", names)
+    assert fcov.evaluate(tree, {"a": 0xFF, "b": 8}) is False  # guard false: the -1 shift is never computed
+    assert fcov.evaluate(tree, {"a": 0b100, "b": 3}) is True
+    tree_or = fcov.compile_expr("b == 0 or (a >> (b - 1)) == 1", names)
+    assert fcov.evaluate(tree_or, {"a": 5, "b": 0}) is True
