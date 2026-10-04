@@ -14,6 +14,7 @@ Detection: the regression (seed 1, Verilator) has any failing test, crashes, or 
 from __future__ import annotations
 
 import json
+import os
 import shutil
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -70,8 +71,11 @@ class MutationHarnessError(RuntimeError):
 
 
 def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: Path, test_module: str,
-                 n: int = 20, timeout_s: float = 900, parallel: int = 4, log=print) -> dict:
+                 n: int = 20, timeout_s: float = 900, parallel: int | None = None, log=print) -> dict:
     """Returns {"mutants": [...], "detected": k, "total": n, "rate": k/n, "screened_out": [...]}."""
+    # Concurrent design runs share the cores: S2S_MUTATION_PARALLEL keeps mutants from timing out
+    # for lack of CPU (a timeout counts as a catch, so oversubscription would inflate the rate).
+    parallel = parallel or int(os.environ.get("S2S_MUTATION_PARALLEL", "4"))
     base = (workdir / "mutation").resolve()
     shutil.rmtree(base, ignore_errors=True)
     base.mkdir(parents=True)

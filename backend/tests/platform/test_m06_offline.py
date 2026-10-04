@@ -198,3 +198,52 @@ def test_large_plan_is_written_as_env_plus_test_batches(platform, monkeypatch):
     assert got["testbench_env_static"] and got["testbench_batch_static"] and got["testbench_static"]
     assert got["regression_100pct"] and got["requirements_traced"]
     assert "test_reset, test_load" in provider.calls[4]["messages"][0]["content"]
+
+
+def test_impossible_bin_is_reclassified_as_an_illegal_state(platform):
+    """Operator decision: an unreachable coverage bin becomes a must-never-happen assertion (not a waiver).
+    Mechanics only (setup + change request): Vera moves the bin, Euclid adds the assertion, the guard flags
+    the removed bin and Sentinel must approve. (On counter8 no behavioural illegal state exists - "count >
+    255" is impossible by construction and the formal tautology check rightly rejects it - so the end-to-end
+    proof is the real sync_fifo run.)"""
+    from s2s.agents.m06 import verification_steps
+    from s2s.agents.runtime import Agent, run_task
+    from s2s.db.models import Design, Run, Task
+    from s2s.db.session import session
+    from s2s.models.gateway import ModelGateway, ScriptedProvider
+    from s2s.orchestrator.engine import create_run
+    from s2s.agents.runtime import artifact_dir
+    imp = "  - {name: count_above_255, expr: \"count > 255\", req: REQ-003}\n"
+    run1, _, _ = run_m06(platform, [files(("tb/testplan.yaml", PLAN + imp)), *TEST_BUILD[1:]], stages=("test_build",))
+    plan_new = PLAN + ("illegal_states:\n  - {name: count_above_255, expr: \"count > 255\", req: REQ-003, "
+                       "assertion: never_count_above_255, reason: \"an 8-bit count cannot exceed 255\"}\n")
+    props_new = PROPS.replace("  end\nendmodule", "    ap_never_count_above_255: assert (!(count > 9'd255));\n"
+                              "    cp_never_count_above_255: cover (count == 8'd255);\n  end\nendmodule")
+    provider = ScriptedProvider(deque([files(("tb/testplan.yaml", plan_new)), files(("formal/formal_top.sv", props_new)),
+                                       ans(findings=[])]))
+
+    class FirstSteps(Agent):
+        def steps(self, task):
+            return verification_steps()[:3]  # setup, change_requests, stop_if_blocked
+    with session() as s:
+        dsn = s.get(Design, s.get(Run, run1).design_id)
+        run2 = create_run(s, dsn, from_stage="verification", to_stage="verification", agent_kind="s2s",
+                          inputs={"source_run": run1, "change_requests": [
+                              {"kind": "reclassify_bin_to_illegal_state", "bin": "count_above_255",
+                               "reason": "an 8-bit count can never exceed 255"}]}).id
+        t = s.scalar(select(Task).where(Task.run_id == run2))
+        t.status, tid = "running", t.id
+    out = run_task(tid, FirstSteps(), ModelGateway(provider))
+    assert out.status == "completed", out.detail
+    root = artifact_dir() / "runs" / run2
+    import yaml
+    plan = yaml.safe_load((root / "tb/testplan.yaml").read_text())
+    assert "count_above_255" not in [b["name"] for b in plan["coverage_bins"]]
+    assert plan["illegal_states"][0]["assertion"] == "never_count_above_255"
+    assert "ap_never_count_above_255" in (root / "formal/formal_top.sv").read_text()
+    assert (root / "guard_baseline/tb/testplan.yaml").read_text().count("count_above_255") == 1  # baseline kept
+    flagged = [e for e in events(run2) if e[0] == "finding" and "Anti-cheating guard" in e[2]]
+    print(flagged[0][3]["flags"])
+    assert any("coverage bin 'count_above_255' was removed" in f for f in flagged[0][3]["flags"])
+    assert [p for n, p in checks_of(run2) if n == "anti_cheat_guard"] == [True]  # flagged, approved by Sentinel
+    assert not provider.replies

@@ -189,6 +189,13 @@ TESTPLAN_SCHEMA = {
             "type": "object", "required": ["name", "expr", "req"],
             "properties": {"name": _IDENT, "expr": {"type": "string", "minLength": 1},
                            "req": {"type": "string", "pattern": "^REQ-[0-9]{3}$"}}}},
+        # must-never-happen states: never a coverage target; each is proven by a formal assertion
+        # ap_<assertion> and must never be seen in simulation
+        "illegal_states": {"type": "array", "items": {
+            "type": "object", "required": ["name", "expr", "req", "assertion"],
+            "properties": {"name": _IDENT, "expr": {"type": "string", "minLength": 1},
+                           "req": {"type": "string", "pattern": "^REQ-[0-9]{3}$"}, "assertion": _IDENT,
+                           "reason": {"type": "string"}}}},
     },
 }
 

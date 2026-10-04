@@ -564,6 +564,66 @@ def theo_revise(ctx: StepContext, previous: str) -> None:
         constraints=TB_CONTRACT), previous[:300])
 
 
+def reclassify_bin(ctx: StepContext, bin_name: str, reason: str) -> None:
+    """Operator decision: a coverage bin that can never be hit is a must-never-happen state. Vera moves it
+    from coverage_bins to illegal_states and Euclid proves it never happens; one guarded change, which
+    Sentinel must approve (the guard flags the removed bin)."""
+    plan = _plan(ctx)
+    b = next((x for x in plan["coverage_bins"] if x["name"] == bin_name), None)
+    if b is None:
+        raise ValueError(f"coverage bin {bin_name!r} is not in the test plan")
+    assertion = f"never_{bin_name}"
+    _assign(ctx, "Nadia", "Vera", f"Reclassify bin {bin_name} as an illegal state (operator decision)",
+            ["bin moved to illegal_states", f"Euclid proves ap_{assertion}"], "files passing checks")
+
+    def v_plan(c: StepContext) -> list[str]:
+        probs = validate_testplan(c)
+        p = _plan(c) if not probs else {}
+        if not probs:
+            if any(x["name"] == bin_name for x in p["coverage_bins"]):
+                probs.append(f"coverage bin {bin_name} is still a coverage bin")
+            st = next((x for x in p.get("illegal_states") or [] if x["name"] == bin_name), None)
+            if st is None:
+                probs.append(f"illegal_states has no entry {bin_name}")
+            elif st["assertion"] != assertion:
+                probs.append(f"illegal state {bin_name} must name assertion {assertion}")
+            else:
+                try:
+                    fcov.compile_expr(st["expr"], {x["name"] for x in _ports(c)})
+                except fcov.BadExpression as e:
+                    probs.append(f"illegal state {bin_name}: {e}")
+        return probs
+
+    def v_props(c: StepContext) -> list[str]:
+        probs = validate_props(c)
+        if not probs and f"ap_{assertion}" not in _read(c, "formal/formal_top.sv"):
+            probs.append(f"formal/formal_top.sv has no ap_{assertion}")
+        return probs
+
+    def change() -> None:
+        _author_loop(ctx, "Vera", goal=f"Operator decision: coverage bin '{bin_name}' ({b['expr']}) can never be hit by a "
+                     "correct design; it is a must-never-happen state, not a coverage target. Move it from coverage_bins "
+                     f"to a new top-level list `illegal_states` as {{name: {bin_name}, expr: <same condition>, req: "
+                     f"{b['req']}, assertion: {assertion}, reason: <one sentence>}}. Change NOTHING else in the plan.",
+                     inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml"], validate=v_plan, kind="testplan",
+                     previous=f"Reason from the operator: {reason}",
+                     constraints="tb/testplan.yaml JSON Schema:\n" + json.dumps(TESTPLAN_SCHEMA, indent=1))
+        if ctx.state.get("blocked"):
+            return
+        _author_loop(ctx, "Euclid", goal=f"Add ONE property to formal/formal_top.sv: ap_{assertion} asserting that the "
+                     f"illegal state never happens ({b['expr']}, on ports), with a cover cp_{assertion} whose trigger is "
+                     "reachable (e.g. the FIFO is full, or it is empty) so the vacuity check is meaningful. Keep every "
+                     "existing property, cover and assumption unchanged.",
+                     inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv"],
+                     validate=v_props, kind="formal",
+                     constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"])))
+    guarded(ctx, "Vera", change, f"operator decision: reclassify coverage bin {bin_name} as an illegal-state "
+            f"assertion ap_{assertion} (not a waiver: it is now proven never to happen). {reason}")
+    rejected = [g for g in ctx.state.get("guard_rejections", []) if g["author"] == "Vera"]
+    if rejected:
+        ctx.state["blocked"] = f"Sentinel rejected the reclassification of {bin_name}"
+
+
 # --- Zone 2C: verification ---------------------------------------------------------------------
 def _regress(ctx: StepContext, name: str, seeds=SEEDS, sims=("verilator", "icarus")):
     who = _who("Rex")
@@ -738,6 +798,19 @@ def _coverage(ctx: StepContext, r) -> dict:
 
 def verification_steps() -> list[Step]:
     def setup(ctx: StepContext) -> None:
+        src = ctx.task.inputs.get("source_run")
+        if src and not (ctx.workdir / "tb").exists():
+            # a verification-only run (e.g. after a change request) starts from a previous M0.6 run's files
+            # and its REVIEWED guard baseline, so the anti-cheating guard still compares against that baseline
+            from s2s.agents.runtime import artifact_dir
+            root = artifact_dir() / "runs" / src
+            for d in ("spec", "arch", "rtl", "tb", "formal", "guard_baseline"):
+                shutil.copytree(root / d, ctx.workdir / d, dirs_exist_ok=True,
+                                ignore=shutil.ignore_patterns("__pycache__", "props_*", "stub"))
+            for f in ("request.md",):
+                if (root / f).exists():
+                    shutil.copy(root / f, ctx.workdir / f)
+            ctx.emit("plan", f"Rex: verification continues from run {src} (its files and reviewed baseline)", **_who("Rex"))
         ctx.state.update({"top": _arch(ctx)["top"], "design": _spec(ctx)["design"]})
         ctx.emit("plan", "Rex: plan - regression (Verilator 3 seeds + Icarus), formal (prove/cover/free-stub), Dex "
                  "triage of every failure, Cora coverage closure, Myra mutation testing, anti-cheating guard; report",
@@ -746,6 +819,15 @@ def verification_steps() -> list[Step]:
                             ("Cora", "Close coverage to the targets in coverage_targets.yaml"),
                             ("Myra", "Mutation-test the regression (20 screened mutants)")):
             _assign(ctx, "Rhea", owner, goal, ["checks pass in the Trust Layer"], "checks passed / checks")
+
+    def change_requests(ctx: StepContext) -> None:
+        """Operator change requests (task.inputs.change_requests), each a guarded change Sentinel must approve."""
+        for cr in ctx.task.inputs.get("change_requests") or []:
+            if cr["kind"] != "reclassify_bin_to_illegal_state":
+                raise ValueError(f"unknown change request {cr['kind']!r}")
+            reclassify_bin(ctx, cr["bin"], cr["reason"])
+            if ctx.state.get("blocked"):
+                return
 
     def regress_debug(ctx: StepContext) -> None:
         r, f = _debug_loop(ctx, "main")
@@ -802,6 +884,13 @@ def verification_steps() -> list[Step]:
         _record(ctx, "coverage_toggle", [] if (cov["toggle"] or 0) >= t["toggle"] else [f"toggle {cov['toggle']} < {t['toggle']}"], "verilator_coverage", "Cora")
         _record(ctx, "coverage_functional", [f"bin {b} never hit" for b in cov["unhit_bins"]] if cov["functional"] is not None else ["no waveform"],
                 "vcd bins", "Cora")
+        illegal = _plan(ctx).get("illegal_states") or []
+        ill_probs: list[str] = []
+        if illegal:
+            ports = {p["name"] for p in _ports(ctx)}
+            seen = fcov.bin_hits([Path(v) for v in r.metrics.get("vcds", []) if v], _plan(ctx)["clock"], illegal, ports)
+            ill_probs += [f"illegal state {n} was SEEN {k} time(s) in simulation" for n, k in seen.items() if k]
+            ctx.state["illegal_states_seen"] = seen
         reg_ok = not _failures(r)
         _record(ctx, "regression_100pct", [] if reg_ok else ["failures in the final regression"], "cocotb_regress", "Rex")
         tests = r.metrics.get("tests_by_name", {})
@@ -814,6 +903,14 @@ def verification_steps() -> list[Step]:
         _record(ctx, "formal_3_meaningful", [] if fr["proven_meaningful"] >= 3 else
                 [f"only {fr['proven_meaningful']} meaningful proven properties"], "sby", "Euclid")
         _record(ctx, "formal_vacuity", [f"ap_{n}: cover never reached" for n in fr.get("vacuous", [])], "sby", "Euclid")
+        if illegal:
+            props = fr.get("properties") or {}
+            for st in illegal:
+                pr = props.get(st["assertion"])
+                if not pr or not pr["counts"]:
+                    ill_probs.append(f"illegal state {st['name']}: assertion ap_{st['assertion']} is "
+                                     f"{'missing' if not pr else pr['status'] + ('' if pr['depends_on_design'] else ', tautology')}")
+            _record(ctx, "illegal_states_never_happen", ill_probs, "vcd + sby", "Euclid")
         ctx.state["formal"] = {k: fr.get(k) for k in ("proven_meaningful", "failed", "vacuous", "tautologies", "error")}
         ctx.state["formal_props"] = fr.get("properties")
         ctx.evidence = f"coverage met={cov['met']}"
@@ -888,7 +985,8 @@ def verification_steps() -> list[Step]:
             "self_assessment": {"confidence": "medium", "reason": "tool results; see verification_report.json"}}
         _task_result(ctx, "verification")
 
-    return [setup, regress_debug, stop_if_blocked, cora, stop_if_blocked, myra, stop_if_blocked, anticheat, report]
+    return [setup, change_requests, stop_if_blocked, regress_debug, stop_if_blocked, cora, stop_if_blocked, myra,
+            stop_if_blocked, anticheat, report]
 
 
 # Registered with the design agent (orchestrator agent kind "s2s").
