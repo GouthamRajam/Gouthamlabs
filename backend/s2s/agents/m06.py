@@ -51,6 +51,7 @@ SEEDS = [1, 2, 3]
 THEO_SINGLE_ANSWER_MAX_TESTS = 12  # larger plans: shared env + tests in batches (one answer cannot hold them)
 THEO_BATCH = 6
 DEBUG_ROUNDS = 3
+MAX_FIX_ATTEMPTS = 3  # an RTL fix that breaks lint gets the tool output back, like the M0.5 RTL loop
 CORA_ROUNDS = 2
 ALLOWED_IMPORTS = {"cocotb", "random", "math", "itertools", "collections", "dataclasses", "typing", "enum",
                    "functools", "ref_model", "statistics", "operator"}
@@ -707,17 +708,30 @@ def _fix(ctx: StepContext, bug: dict) -> None:
     if bug["classification"] == "DESIGN":
         owner, mod = bug["routed_to"], bug["module"]
         coding_std = (REPO / "docs" / "coding_standard.md").read_text()
-        data = llm.ask(ctx, owner, goal=f"Fix the bug in rtl/{mod}.v: reproduce it from the report, explain the root "
-                       "cause, fix it, and say which other code could share the mistake. Do not change the testbench.",
-                       inputs=_inputs(ctx, ["spec/spec.yaml", "arch/arch.yaml", *[f"rtl/{p.name}" for p in _rtl_files(ctx)]]),
-                       exit_criteria=["lint clean", "the failing tests pass"], schema=WRITER_ANSWER,
-                       previous_attempts=prev, constraints="Coding standard:\n" + coding_std,
-                       extra_note="Put the fixed file(s) in `files` (rtl/<module>.v). ")
-        _answer_fields(ctx, owner, data)
-        _write(ctx, owner, data["files"], "rtl", assigned={f"rtl/{mod}.v"})
-        problems = lumen_checks(ctx)
-        if problems:
-            ctx.state["blocked"] = f"RTL fix by {owner} broke lint/elaboration: {problems[:3]}"
+        before = {p.name: p.read_text() for p in _rtl_files(ctx)}  # last lint-clean RTL (it ran in the regression)
+        previous = prev
+        for attempt in range(1, MAX_FIX_ATTEMPTS + 1):
+            data = llm.ask(ctx, owner, goal=f"Fix the bug in rtl/{mod}.v: reproduce it from the report, explain the root "
+                           "cause, fix it, and say which other code could share the mistake. Keep the module's ports "
+                           "EXACTLY as arch.yaml defines them (other modules instantiate it; you may not edit them). "
+                           "Do not change the testbench.",
+                           inputs=_inputs(ctx, ["spec/spec.yaml", "arch/arch.yaml", *[f"rtl/{p.name}" for p in _rtl_files(ctx)]]),
+                           exit_criteria=["lint clean", "ports unchanged", "the failing tests pass"], schema=WRITER_ANSWER,
+                           previous_attempts=previous, constraints="Coding standard:\n" + coding_std,
+                           extra_note="Put the fixed file(s) in `files` (rtl/<module>.v). ")
+            _answer_fields(ctx, owner, data)
+            _write(ctx, owner, data["files"], "rtl", assigned={f"rtl/{mod}.v"})
+            problems = lumen_checks(ctx)
+            if not problems:
+                return
+            previous = (prev + f"\n\nYour fix attempt {attempt} broke lint/elaboration (exact tool output):\n- "
+                        + "\n- ".join(problems[:20]))
+            ctx.emit("handoff", f"Lumen -> {owner}: fix attempt {attempt} broke lint/elaboration ({len(problems)} issue(s))",
+                     **_who("Lumen"), to_agent_id=owner, detail={"issues": problems[:20]})
+        for name, text in before.items():  # never leave broken RTL behind
+            (ctx.workdir / "rtl" / name).write_text(text)
+        ctx.state["blocked"] = (f"RTL fix by {owner} still breaks lint/elaboration after {MAX_FIX_ATTEMPTS} attempts "
+                                f"(RTL reverted to the last lint-clean version): {problems[:3]}")
     elif bug["routed_to"] == "Euclid":
         guarded(ctx, "Euclid", lambda: _author_loop(
             ctx, "Euclid", goal="Fix formal/formal_top.sv per the bug report (the property or assumption is wrong "
