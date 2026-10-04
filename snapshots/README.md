@@ -6,8 +6,8 @@ Restore it locally to see that history in the Live Office. It is a **snapshot**:
 milestones, never a live link.
 
 Not included: the API key (it lives in an encrypted file, not the database; the dump was checked for it),
-and the large run files under `var/artifacts/` (waveforms, GDS, logs). Pages that open those files will
-show them as missing.
+and the large run files under `var/artifacts/` (waveforms, logs). Pages that open those files will
+show them as missing. The tape-out outputs (GDSII, reports) are committed separately, see below.
 
 ## Restore (local machine)
 
@@ -22,6 +22,23 @@ cd web && npm run dev                                 # in another: http://local
 ```
 
 Open http://localhost:3000, then use **Replay** or pick a run.
+
+## GDSII and reports
+
+The M0.7 tape-out packages are committed separately from the dump, under
+`docs/milestones/m0.7-evidence/<design>/<run_id>/`: the whole `tapeout/` package (GDS, netlists, SPEF,
+constraints, flow, RTL, reports, evidence, checklist, `reproduce.sh`, `MANIFEST.sha256`, ...), plus the run's
+`reports/*.md|json`, `signoff/layout3d.json` (the 3D viewer's geometry), `arch/arch.yaml` (the API reads the
+top name from it) and `spec/spec.yaml`. The cloud session writes them with
+
+```bash
+cd backend && python scripts/export_evidence.py     # re-hashes every file against MANIFEST.sha256
+```
+
+`snapshots/restore.sh` copies them back to `var/artifacts/runs/<run_id>/` and re-checks each manifest, so the
+local API's Outputs downloads (`GET /runs/{id}/files/...`) and 3D layout (`GET /runs/{id}/layout3d`) work.
+Start the API with `S2S_ARTIFACT_DIR` pointing at that folder (restore.sh prints the command). The GDS is
+also a plain file you can open directly in KLayout.
 
 ## Warning: do not start the orchestrator on this snapshot
 
