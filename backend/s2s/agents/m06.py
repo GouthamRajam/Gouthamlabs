@@ -626,6 +626,13 @@ def reclassify_bin(ctx: StepContext, bin_name: str, reason: str) -> None:
 
 
 # --- Zone 2C: verification ---------------------------------------------------------------------
+def regress_timeout_s() -> float:
+    """Harness capacity for one regression (all seeds + Icarus): S2S_REGRESS_TIMEOUT_S, default 2400 s.
+    A regression whose tests pass runs full length (uart: ~14 min per seed), so long designs need more."""
+    import os
+    return float(os.environ.get("S2S_REGRESS_TIMEOUT_S", "2400"))
+
+
 def _regress(ctx: StepContext, name: str, seeds=SEEDS, sims=("verilator", "icarus")):
     who = _who("Rex")
     mods = _test_modules(ctx)
@@ -633,7 +640,8 @@ def _regress(ctx: StepContext, name: str, seeds=SEEDS, sims=("verilator", "icaru
     ctx.emit("tool_call", f"Rex: regression {name}: {', '.join(mods)} x seeds {list(seeds)} ({', '.join(sims)})",
              status="working", detail={"tool": "cocotb_regress", "seeds": list(seeds)}, **who)
     r = run_cocotb_regress(_rtl_files(ctx), ctx.state["top"], ",".join(mods), ctx.workdir / "tb", ctx.workdir,
-                           f"sim/{name}", list(seeds), simulators=sims, coverage=True, waves=True, timeout_s=2400)
+                           f"sim/{name}", list(seeds), simulators=sims, coverage=True, waves=True,
+                           timeout_s=regress_timeout_s())
     ctx.compute("cocotb_regress", r.duration_s or 0.0, agent_id="Rex")
     ctx.beat(f"regression {name}: {r.metrics.get('test_runs', 0) - r.metrics.get('failed_runs', 0)}/"
              f"{r.metrics.get('test_runs', 0)} test runs passed")

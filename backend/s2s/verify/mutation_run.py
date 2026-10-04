@@ -125,19 +125,23 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
                 kept.append(m)
         log(f"mutation screening: {len(kept)}/{n} kept, {len(screened_out)} screened out so far")
 
-    def regress(rtl_dir: Path, name: str):
+    def regress(rtl_dir: Path, name: str, limit: float):
         return run_cocotb_regress([rtl_dir / Path(p).name for p in rtl_files], top, test_module, tb_copy, base,
                                   f"{name}/regress", [1], simulators=("verilator",), coverage=False, waves=False,
-                                  timeout_s=timeout_s, extra_build_args=["-Wno-fatal"])
+                                  timeout_s=limit, extra_build_args=["-Wno-fatal"])
 
-    # The unmutated original must pass through the identical path, or the measurement is void.
-    ref = regress(orig_dir / "rtl", "orig")
+    # The unmutated original must pass through the identical path, or the measurement is void. Its own
+    # limit is the regression capacity; each mutant then gets max(timeout_s, 3 x the original's run
+    # time), so a long but normal test run is never mistaken for a hang (a timeout counts as a catch).
+    ref = regress(orig_dir / "rtl", "orig", float(os.environ.get("S2S_REGRESS_TIMEOUT_S", str(max(timeout_s, 2400)))))
     if not ref.passed:
         raise MutationHarnessError("the unmutated RTL does not pass the regression in the mutation harness: "
                                    + "; ".join(ref.reasons[:3]))
+    mutant_timeout = max(timeout_s, 3 * (ref.duration_s or 0))
+    log(f"mutation: unmutated regression passed in {ref.duration_s:.0f} s; mutant limit {mutant_timeout:.0f} s")
 
     def run_one(m: Mutant) -> dict:
-        r = regress(base / m.id / "rtl", m.id)
+        r = regress(base / m.id / "rtl", m.id, mutant_timeout)
         failed = r.metrics.get("failed_runs", 0)
         ran = bool(r.metrics.get("test_runs"))
         if r.timed_out:
