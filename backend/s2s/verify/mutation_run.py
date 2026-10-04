@@ -135,6 +135,7 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
             detected, how = False, "all tests passed"
         else:  # build or harness error: never counted as a detection
             detected, how = None, "harness error: " + "; ".join(r.reasons[:2])
+        log(f"mutant {m.id}: {'caught' if detected else ('missed' if detected is False else 'harness error')}")
         return {"id": m.id, "type": m.type, "file": m.file, "line": m.line, "description": m.description,
                 "reqs": list(m.reqs), "before": m.before.strip(), "after": m.after.strip(), "detected": detected,
                 "how": how, "duration_s": r.duration_s, "equivalence_screen": screen.get(m.id)}

@@ -41,7 +41,8 @@ def fmt(e: Event) -> str:
 
 
 def main() -> int:
-    src = sys.argv[1]
+    resume = sys.argv[1] == "--resume"
+    src = sys.argv[2] if resume else sys.argv[1]
     timeout_min = float(os.environ.get("S2S_M06_TIMEOUT_MIN", "120"))
     view = access.public_view()
     print(f"model access: provider={view['provider']} model={view['model']} key_saved={view['key_set']}")
@@ -50,17 +51,20 @@ def main() -> int:
         srun = s.get(Run, src)
         design = s.get(Design, srun.design_id)
         spent = spend_so_far(s, src)
-        run_id = create_run(s, design, from_stage="test_build", to_stage="verification", agent_kind="s2s",
-                            inputs={"source_run": src}).id
+        # --resume <m06_run_id>: watch an existing run (the orchestrator resumes it from its checkpoint)
+        run_id = src if resume else create_run(s, design, from_stage="test_build", to_stage="verification",
+                                               agent_kind="s2s", inputs={"source_run": src}).id
     print(f"spend caps: per design ${caps['per_design_usd']:.2f}, daily ${caps['daily_usd']:.2f}; before this run: "
           f"today ${spent['today_usd']:.4f}, design {design.name} ${spent['design_usd']:.4f}")
     print(f"design {design.name}: verification run {run_id} (from M0.5 run {src}: test_build -> verification)\n")
     logs = REPO / "var" / "logs"
     logs.mkdir(parents=True, exist_ok=True)
-    evlog = open(logs / f"events_{run_id}.txt", "w")
-    orc = subprocess.Popen([sys.executable, "-m", "s2s.orchestrator", "--poll", "0.2"], cwd=BACKEND,
-                           env=os.environ.copy(), stdout=open(logs / f"orchestrator_{run_id}.log", "ab"),
-                           stderr=subprocess.STDOUT, start_new_session=True)
+    evlog = open(logs / f"events_{run_id}.txt", "a" if resume else "w")
+    # Starts an orchestrator; if one is already running (one per database), this one exits at once and
+    # the running one does the work. Every run in the database is scheduled by whichever is running.
+    orc = None if os.environ.get("S2S_NO_ORCHESTRATOR") == "1" else subprocess.Popen(
+        [sys.executable, "-m", "s2s.orchestrator", "--poll", "0.2"], cwd=BACKEND, env=os.environ.copy(),
+        stdout=open(logs / f"orchestrator_{run_id}.log", "ab"), stderr=subprocess.STDOUT, start_new_session=True)
     quiet = {"task.heartbeat", "manager.checkin", "agent.status", "artifact.created"}
     seen, t0 = 0, time.monotonic()
     try:
@@ -87,8 +91,9 @@ def main() -> int:
                 evlog.write(fmt(e) + "\n")
                 print(fmt(e)[:220])
     finally:
-        os.killpg(orc.pid, signal.SIGTERM)
-        orc.wait(timeout=60)
+        if orc is not None:
+            os.killpg(orc.pid, signal.SIGTERM)
+            orc.wait(timeout=60)
         evlog.close()
     return report(run_id, design.id, time.monotonic() - t0)
 

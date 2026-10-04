@@ -517,11 +517,14 @@ def theo_revise(ctx: StepContext, previous: str) -> None:
 def _regress(ctx: StepContext, name: str, seeds=SEEDS, sims=("verilator", "icarus")):
     who = _who("Rex")
     mods = _test_modules(ctx)
+    ctx.beat(f"regression {name} started")
     ctx.emit("tool_call", f"Rex: regression {name}: {', '.join(mods)} x seeds {list(seeds)} ({', '.join(sims)})",
              status="working", detail={"tool": "cocotb_regress", "seeds": list(seeds)}, **who)
     r = run_cocotb_regress(_rtl_files(ctx), ctx.state["top"], ",".join(mods), ctx.workdir / "tb", ctx.workdir,
                            f"sim/{name}", list(seeds), simulators=sims, coverage=True, waves=True, timeout_s=2400)
     ctx.compute("cocotb_regress", r.duration_s or 0.0, agent_id="Rex")
+    ctx.beat(f"regression {name}: {r.metrics.get('test_runs', 0) - r.metrics.get('failed_runs', 0)}/"
+             f"{r.metrics.get('test_runs', 0)} test runs passed")
     m = r.metrics
     ctx.emit("tool_result", f"Rex: {name}: {m.get('test_runs', 0) - m.get('failed_runs', 0)}/{m.get('test_runs', 0)} "
              f"test runs passed; line {m.get('line_coverage')}, toggle {m.get('toggle_coverage')} ({r.status})",
@@ -540,6 +543,7 @@ def _failures(r) -> list[dict]:
 
 def _formal(ctx: StepContext) -> dict:
     who = _who("Euclid")
+    ctx.beat("formal run started")
     ctx.emit("tool_call", "Euclid: SymbiYosys prove + cover + free-stub check", status="working",
              detail={"tool": "sby"}, **who)
     try:
@@ -551,6 +555,7 @@ def _formal(ctx: StepContext) -> dict:
              f"{f.get('failed')}; vacuous {f.get('vacuous')}; tautologies {f.get('tautologies')}",
              detail={"tool": "sby", **{k: v for k, v in f.items() if k != "runs"}}, **who)
     _json_report(ctx, "Euclid", "reports/formal_report.json", f)
+    ctx.beat(f"formal: {f.get('proven_meaningful', 0)} meaningful proven")
     return f
 
 
@@ -630,7 +635,10 @@ def _debug_loop(ctx: StepContext, label: str) -> tuple[object, dict]:
                       f"{(f.get('runs', {}).get('prove') or {}).get('counterexample_vcd')})"} for n in f.get("failed", [])]
         if f.get("error"):
             form_fail.append({"kind": "harness", "message": f["error"]})
-        quality = [f"ap_{n}: its cover cp_{n} is never reached (vacuous)" for n in f.get("vacuous", [])] + \
+        quality = [f"the {m} run did not finish within {600 // 60} minutes: the properties (or a model embedded in "
+                   "formal_top) are too expensive for the solver; keep each property small and port-level"
+                   for m in f.get("timed_out", [])] + \
+                  [f"ap_{n}: its cover cp_{n} is never reached (vacuous)" for n in f.get("vacuous", [])] + \
                   [f"ap_{n}: holds even with the DUT replaced by free outputs (tautology: it checks nothing about the design)"
                    for n in f.get("tautologies", [])]
         if not sim_fail and not form_fail and not quality:
@@ -768,7 +776,7 @@ def verification_steps() -> list[Step]:
                      detail={"tool": "mutation"}, **who)
             try:
                 res = run_mutation(workdir=ctx.workdir, rtl_files=rtl, top=ctx.state["top"], tb_dir=ctx.workdir / "tb",
-                                   test_module=mods, log=lambda s: None)
+                                   test_module=mods, log=ctx.beat)
             except MutationHarnessError as e:
                 _record(ctx, "mutation_detection", [f"harness error: {e}"], "mutation", "Myra")
                 ctx.state["blocked"] = f"mutation harness error: {e}"

@@ -41,7 +41,10 @@ def tick(now: dt.datetime | None = None) -> dict[str, int]:
         ids = s.scalars(select(Task.id).where(Task.status == "running")).all()
     for tid in ids:
         with db_session() as s:
-            t = s.get(Task, tid, with_for_update=True)
+            # FOR NO KEY UPDATE: compatible with the key-share locks a working step holds on its task row
+            # (its inserts of checks/artifacts/events reference the task); FOR UPDATE would wait for the
+            # whole step to commit and freeze the orchestrator loop.
+            t = s.get(Task, tid, with_for_update={"key_share": True, "skip_locked": True})
             if t is None or t.status != "running":
                 continue
             mgr = _manager(t)

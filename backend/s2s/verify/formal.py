@@ -53,8 +53,10 @@ def lint_properties(text: str) -> tuple[dict[str, dict[str, bool]], list[str]]:
 def _sby(name: str, mode: str, depth: int, rtl: list[Path], props: Path) -> str:
     files = [*rtl, props]
     return (f"[options]\nmode {mode}\ndepth {depth}\n\n[engines]\nsmtbmc yices\n\n[script]\n"
-            f"read -formal {' '.join(f.name for f in files)}\nprep -top formal_top\n\n[files]\n"
-            + "\n".join(str(f.resolve()) for f in files) + "\n")
+            f"read -formal {' '.join(f.name for f in files)}\nprep -top formal_top\n"
+            # vacuity = can each trigger happen under the assumptions; a failing assertion must not hide it
+            + ("chformal -assert -remove\n" if mode == "cover" else "")
+            + "\n[files]\n" + "\n".join(str(f.resolve()) for f in files) + "\n")
 
 
 def stub_module(top: str, ports: list[dict]) -> str:
@@ -78,7 +80,7 @@ def _free_sby(stub: Path, props: Path, depth: int) -> str:
             + "\n".join(str(f.resolve()) for f in files) + "\n")
 
 
-def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_s: float = 1800,
+def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_s: float = 600,
                top: str | None = None, ports: list[dict] | None = None) -> dict:
     fdir = workdir / "formal"
     fdir.mkdir(exist_ok=True)
@@ -136,5 +138,7 @@ def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_
     out["proven_meaningful"] = sum(1 for p in out["properties"].values() if p["counts"])
     out["vacuous"] = [n for n, p in out["properties"].items() if not p["cover_reached"]]
     out["tautologies"] = [n for n, p in out["properties"].items() if not p["depends_on_design"]]
+    # a proof the solver cannot finish within the time limit is a property problem (too expensive)
+    out["timed_out"] = [m for m, r in results.items() if r.timed_out]
     out["failed"] = sorted(failed & set(names))
     return out

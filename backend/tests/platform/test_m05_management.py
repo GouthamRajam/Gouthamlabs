@@ -134,3 +134,47 @@ def test_spot_check_rehashes_completed_outputs(platform):
     checks = [e for e in _events(run_id, "manager.checkin") if e[3].get("rule") == "spot check"]
     assert [c[3]["passed"] for c in checks] == [True, False]
     assert checks[1][3]["mismatches"] == ["spec/spec.yaml"]
+
+
+def test_watchdog_is_not_blocked_by_a_working_step(platform):
+    """A step that has inserted rows referencing its task (checks, artifacts) holds a key-share lock
+    on the task row until it commits. The watchdog, the manager stall pass and in-step heartbeats must
+    not wait for that (found in M0.6: a 50-minute formal step froze the orchestrator loop)."""
+    import threading
+    import time as _t
+    from sqlalchemy import text
+    from s2s.agents import management as mgmt
+    from s2s.db.models import Check, Run
+    from s2s.db.session import session
+    from s2s.events.bus import utcnow
+    from s2s.ids import new_id
+    from s2s.orchestrator import watchdog
+    with session() as s:
+        d = new_design(s)
+        run = Run(id=new_id("run"), design_id=d.id, status="running", stages=["spec"], agent_kind="dummy")
+        s.add(run)
+        s.flush()
+        t = _mk_task(s, run.id, "spec", "spec_requirements", "Iris", "running",
+                     last_progress_at=utcnow() - dt.timedelta(minutes=5))
+        tid = t.id
+    held, release = threading.Event(), threading.Event()
+
+    def working_step():
+        with session() as s:  # like a step: FK insert, transaction left open
+            s.add(Check(id=new_id("chk"), task_id=tid, check_name="x", tool="t", command="", passed=True, metrics={}))
+            s.flush()
+            held.set()
+            release.wait(30)
+    th = threading.Thread(target=working_step)
+    th.start()
+    held.wait(10)
+    t0 = _t.monotonic()
+    with session() as s:
+        s.execute(text("set local lock_timeout = '5s'"))
+    done = watchdog.tick()
+    mgmt.tick()
+    took = _t.monotonic() - t0
+    release.set()
+    th.join()
+    print(f"watchdog + manager pass took {took:.2f}s while a step held its task row; {done}")
+    assert took < 3 and done["stalled"] == 1

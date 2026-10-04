@@ -74,6 +74,21 @@ class StepContext:
         return self.gateway.complete(task=self.ref, system=system,
                                      messages=[{"role": "user", "content": prompt}]).text
 
+    def beat(self, evidence: str) -> None:
+        """A heartbeat from inside a long step (e.g. a 20-minute regression): progress evidence is
+        committed at once in its own short transaction, so the watchdog sees a live task. The step's
+        own transaction still commits the checkpoint at the end."""
+        from s2s.db.session import session as own_session
+        with own_session() as s:
+            t = s.get(Task, self.task.id, with_for_update={"key_share": True})
+            now = utcnow()
+            t.last_progress_at, t.evidence_signal, t.stalled_at = now, evidence[:200], None
+            s.add(Heartbeat(task_id=t.id, percent=t.percent, evidence_signal=evidence[:200],
+                            step=f"step {self.step_index + 1}/{self.step_count} (in progress)", blockers=[]))
+        self.emit("task.heartbeat", f"{self.task.agent_id}: {evidence[:160]}", status="working", immediate=True,
+                  progress=self.task.percent, detail={"step": self.step_index + 1, "of": self.step_count,
+                                                       "evidence_signal": evidence, "in_step": True})
+
     def compute(self, tool: str, cpu_seconds: float, agent_id: str | None = None) -> None:
         ref = self.ref if not agent_id else dataclasses.replace(self.ref, agent_id=agent_id)
         meter.record_compute(ref, cpu_seconds, tool)

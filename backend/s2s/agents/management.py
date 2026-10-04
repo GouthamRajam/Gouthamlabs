@@ -102,7 +102,7 @@ def tick(inflight: set[str] | None = None, now: dt.datetime | None = None) -> di
                 done["assign_sla_flags"] += 1
     with db_session() as s:  # stall handling (watchdog flagged the stall)
         stalled = s.scalars(select(Task).where(Task.status == "running", Task.stalled_at.is_not(None))
-                            .with_for_update(skip_locked=True)).all()
+                            .with_for_update(key_share=True, skip_locked=True)).all()
         for t in stalled:
             if _already(s, t.id, f"stall handled {t.stalled_at.isoformat()}"):
                 continue
