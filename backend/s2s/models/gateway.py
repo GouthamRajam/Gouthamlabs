@@ -34,6 +34,7 @@ import os
 import time
 from collections import deque
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from s2s.finance import meter
@@ -127,13 +128,77 @@ class AnthropicProvider:
         return ProviderReply(text, r.usage.input_tokens, r.usage.output_tokens, r.stop_reason, r.model)
 
 
+@dataclass
+class BridgeProvider:
+    """PERSONAL / LOCALHOST DEV MODE, approved by the CEO 2026-10-04 (env S2S_MODEL_PROVIDER=bridge;
+    never a production path).
+
+    Each call is handed to a Claude Code session instead of the API: the request is written to
+    <bridge>/requests/<id>.json and this call waits for <bridge>/responses/<id>.json, written by a
+    Claude Code subagent. The answer is checked against the schema here (one retry with the exact
+    error). Metered with ESTIMATED tokens (~4 chars/token) under model "claude-code-bridge" at $0:
+    the real cost is the Claude Code session's usage, which S2S cannot see, so the S2S spend caps do
+    not limit bridge calls. Limits (docs/DECISIONS.md): a subagent has filesystem access, so the
+    reads_from isolation is an instruction, not enforced.
+    """
+    root: str = field(default_factory=lambda: os.environ.get(
+        "S2S_BRIDGE_DIR", str(Path(__file__).resolve().parents[3] / "var" / "bridge")))
+    timeout_s: float = field(default_factory=lambda: float(os.environ.get("S2S_BRIDGE_TIMEOUT_S", "5400")))
+    model: str = "claude-code-bridge"
+
+    def complete(self, system: str, messages: list[dict], max_tokens: int, output_schema: dict | None = None,
+                 effort: str | None = None) -> ProviderReply:
+        root = Path(self.root)
+        (root / "requests").mkdir(parents=True, exist_ok=True)
+        (root / "responses").mkdir(parents=True, exist_ok=True)
+        rid = new_id("br")
+        prompt = system + "".join(str(m.get("content", "")) for m in messages)
+        feedback, problem = "", None
+        for attempt in (1, 2):
+            req_id = rid if attempt == 1 else f"{rid}_retry"
+            out = root / "responses" / f"{req_id}.json"
+            req = {"id": req_id, "system": system, "messages": messages, "output_schema": output_schema,
+                   "max_tokens": max_tokens, "effort": effort, "feedback": feedback, "response_path": str(out)}
+            tmp = root / "requests" / f".{req_id}.tmp"
+            tmp.write_text(json.dumps(req, indent=1))
+            tmp.rename(root / "requests" / f"{req_id}.json")  # atomic: the watcher never sees half a file
+            end = time.monotonic() + self.timeout_s
+            while not out.exists():
+                if time.monotonic() > end:
+                    raise ModelOutputError(f"bridge: no answer for {req_id} within {self.timeout_s:.0f} s")
+                time.sleep(2)
+            time.sleep(0.5)
+            text = out.read_text()
+            problem = bridge_problem(text, output_schema)
+            if not problem:
+                return ProviderReply(text, _tokens(prompt), _tokens(text), "end_turn", self.model)
+            feedback = f"Your previous answer was rejected: {problem}. Answer again, exactly in the schema."
+        raise ModelOutputError(f"bridge: answer for {rid} still invalid after a retry: {problem}")
+
+
+def bridge_problem(text: str, schema: dict | None) -> str | None:
+    """None if `text` is a valid answer for `schema`, else the exact problems."""
+    if schema is None:
+        return None if text.strip() else "empty answer"
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as e:
+        return f"not valid JSON ({e})"
+    import jsonschema
+    errs = sorted(jsonschema.Draft202012Validator(schema).iter_errors(data), key=lambda e: list(e.path))
+    return "; ".join(f"{'/'.join(map(str, e.path)) or '(root)'}: {e.message[:200]}" for e in errs[:5]) or None
+
+
 class ModelGateway:
     def __init__(self, provider: DummyProvider | ScriptedProvider | AnthropicProvider | None = None):
         self.provider = provider or DummyProvider()
 
     @classmethod
     def from_settings(cls) -> "ModelGateway":
-        """The gateway real agents use: the provider saved in Settings -> Model access."""
+        """The gateway real agents use: the provider saved in Settings -> Model access, or the Claude
+        Code bridge when S2S_MODEL_PROVIDER=bridge (personal localhost dev mode)."""
+        if os.environ.get("S2S_MODEL_PROVIDER") == "bridge":
+            return cls(BridgeProvider())
         return cls(AnthropicProvider())
 
     def complete(self, *, task: meter.TaskRef, system: str, messages: list[dict],
