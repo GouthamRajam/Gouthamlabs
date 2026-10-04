@@ -1,0 +1,88 @@
+
+=== counter8 (run_01M42AMRGN6GWFF42K2CR5PYRT) - fresh copy /home/user/Gouthamlabs/var/artifacts/acceptance_m06/run_01M42AMRGN6GWFF42K2CR5PYRT ===
+   $ /home/user/Gouthamlabs/var/artifacts/acceptance_m06/run_01M42AMRGN6GWFF42K2CR5PYRT/sim/run_regress.py /home/user/Gouthamlabs/var/artifacts/acceptance_m06/run_01M42AMRGN6GWFF42K2CR5PYRT/sim/regress_args.json  (1.9.2, 186.409s)
+   tests: 18 x runs: 72 (verilator seeds 1-3 + icarus seed 1), failed runs: 0
+     test_count_changes_only_on_clock             pass 4 fail 0
+     test_count_down_all_starts                   pass 4 fail 0
+     test_count_registered_no_comb_path           pass 4 fail 0
+     test_count_up_all_starts                     pass 4 fail 0
+     test_hold_all_values                         pass 4 fail 0
+     test_layout_drc_lvs_clean                    pass 4 fail 0
+     test_load_exhaustive                         pass 4 fail 0
+     test_netlist_all_state_reset                 pass 4 fail 0
+     test_priority_exhaustive                     pass 4 fail 0
+     test_random_vs_model                         pass 4 fail 0
+     test_random_vs_model_multi_seed              pass 4 fail 0
+     test_reset_formal                            pass 4 fail 0
+     test_reset_overrides_all                     pass 4 fail 0
+     test_reset_sync_glitch                       pass 4 fail 0
+     test_reset_value_and_recovery                pass 4 fail 0
+     test_timing_sta_10ns                         pass 4 fail 0
+     test_wrap_overflow                           pass 4 fail 0
+     test_wrap_underflow                          pass 4 fail 0
+[PASS] 1. counter8: regression 100% passing: 72/72 test runs passed
+[PASS] 1. counter8: line coverage >= 0.95: 0.9767 (42/43 lines)
+[PASS] 1. counter8: toggle coverage >= 0.9: 1.0 (64/64 toggle points)
+[PASS] 1. counter8: functional bins = 1.0: 28/28 bins hit; unhit: []
+     CAUGHT  wrong_operator     rtl/cnt_ctrl.v:32: op driven inverted
+     CAUGHT  off_by_one         rtl/cnt_dp.v:21: localparam 2'b01 -> 2'b10
+     CAUGHT  stuck_bit          rtl/cnt_dp.v:46: count_q stuck (never updates)
+     CAUGHT  missing_reset      rtl/cnt_dp.v:44: reset assignment of count_q removed
+     CAUGHT  swapped_condition  rtl/cnt_ctrl.v:29: condition (up_down) negated
+     CAUGHT  wrong_operator     rtl/cnt_dp.v:34: count_d driven inverted
+     CAUGHT  off_by_one         rtl/cnt_ctrl.v:22: localparam 2'b11 -> 2'b00
+     CAUGHT  swapped_condition  rtl/cnt_ctrl.v:28: condition (enable) negated
+     CAUGHT  wrong_operator     rtl/cnt_dp.v:36: operand load_data replaced by count
+     CAUGHT  off_by_one         rtl/cnt_dp.v:22: localparam 2'b10 -> 2'b11
+     CAUGHT  stuck_bit          rtl/cnt_ctrl.v:27: op keeps its old value (update lost)
+     CAUGHT  swapped_condition  rtl/cnt_dp.v:43: condition (!rst_n) negated
+     CAUGHT  wrong_operator     rtl/cnt_dp.v:46: count_q driven inverted
+     CAUGHT  off_by_one         rtl/cnt_ctrl.v:21: localparam 2'b10 -> 2'b11
+     CAUGHT  stuck_bit          rtl/cnt_dp.v:35: count_d keeps its old value (update lost)
+     CAUGHT  swapped_condition  rtl/cnt_ctrl.v:26: condition (load) negated
+     CAUGHT  wrong_operator     rtl/cnt_dp.v:50: operand count_q replaced by count_d
+     CAUGHT  off_by_one         rtl/cnt_dp.v:23: localparam 2'b11 -> 2'b00
+     CAUGHT  stuck_bit          rtl/cnt_dp.v:36: count_d keeps its old value (update lost)
+     CAUGHT  wrong_operator     rtl/cnt_dp.v:33: count_d driven inverted
+     (screened out: proven equivalent to the original (yosys) rtl/cnt_dp.v:31: count_d keeps its old value (update lost)
+     (screened out: proven equivalent to the original (yosys) rtl/cnt_ctrl.v:35: op keeps its old value (update lost)
+[PASS] 2. counter8: mutation detection >= 85% of 20: 20/20 caught = 100%; by type {'wrong_operator': '6/6', 'off_by_one': '5/5', 'stuck_bit': '4/4', 'missing_reset': '1/1', 'swapped_condition': '4/4'}; 2 proven-equivalent/non-compiling mutants screened out
+     ap_reset                        proven     cover reached, depends on the design
+     ap_load                         proven     cover reached, depends on the design
+     ap_up                           proven     cover reached, depends on the design
+     ap_down                         proven     cover reached, depends on the design
+     ap_hold                         proven     cover reached, depends on the design
+     ap_overflow_wrap                proven     cover reached, depends on the design
+     ap_underflow_wrap               proven     cover reached, depends on the design
+[PASS] 3. counter8: >= 3 meaningful properties proven, vacuity check passes: 7 meaningful proven (depth 30, prove PASS); vacuous []; failed []
+     weakening 'assertion removed': ["tb/test_counter8.py: test 'test_reset_overrides_all' has fewer assertions (4 -> 3)"]
+     weakening 'test deleted': ["tb/test_counter8.py: test 'test_layout_drc_lvs_clean' was deleted"]
+     weakening 'skip marker added': ["tb/test_counter8.py: test 'test_layout_drc_lvs_clean' gained a 'skip' marker"]
+     weakening 'iterations reduced': ["tb/test_counter8.py: test 'test_reset_overrides_all' runs fewer iterations (loop bounds [256, 6, 16] -> [1, 6, 16])"]
+[PASS] 4. counter8: anti-cheating guard flags weakened tests: 4/4 weakened versions flagged
+
+=== 5. Dex triage suite (10 seeded failures, real simulations, real model) ===
+   D1  truth DESIGN  Dex DESIGN  OK   failing ['test_hold', 'test_load', 'test_random']  | seeded: RTL loads only when enable is also high
+        Dex root cause: The RTL conditions the synchronous load on en (`if (load && en)`), so load is ignored when en=0, contradicting REQ-002, which makes load independent of en.
+   D2  truth DESIGN  Dex DESIGN  OK   failing ['test_random']  | seeded: RTL saturates at 255 instead of wrapping
+        Dex root cause: The RTL up-count path saturates at 255 instead of wrapping to 0 modulo 256, contrary to REQ-003 (saturation is out of scope).
+   D3  truth DESIGN  Dex DESIGN  OK   failing ['test_hold', 'test_load', 'test_random', 'test_reset']  | seeded: RTL resets to 1 instead of 0
+        Dex root cause: The RTL reset branch in counter8.v assigns count_q the value 1 ({{(WIDTH-1){1'b0}}, 1'b1}) instead of 0, contradicting REQ-001 and the spec's count reset_value of 0.
+   D4  truth DESIGN  Dex DESIGN  OK   failing ['test_random', 'test_reset']  | seeded: RTL counts down when up=1 and up when up=0
+        Dex root cause: The up/down direction is inverted in rtl/counter8.v: the RTL decrements when up is 1 and increments when up is 0, the opposite of REQ-003.
+   T1  truth TEST    Dex TEST    OK   failing ['test_random']  | seeded: reference model decrements by 2
+        Dex root cause: The reference model in tb/ref_model.py decrements by 2 instead of 1 when up=0, contradicting REQ-003 (decrement by 1), so it disagrees with the correct RTL.
+   T2  truth TEST    Dex TEST    OK   failing ['test_hold', 'test_load', 'test_random', 'test_reset']  | seeded: testbench reads count before the clock edge (sampling one cycle early)
+        Dex root cause: The cycle() helper in tb/test_counter8.py reads dut.count (await ReadOnly) before awaiting the RisingEdge, so it compares the pre-edge DUT output against the reference model's post-edge value, one cyc
+   T3  truth TEST    Dex TEST    OK   failing ['test_hold']  | seeded: test_hold expects count to be 0 while holding a loaded 77
+        Dex root cause: test_hold wrongly asserts count == 0 after a cycle that loads 77 with load=1, which REQ-002 says takes priority over en=0, so the hard-coded expected value contradicts the spec.
+   S1  truth SPEC    Dex DESIGN  WRONG  failing ['test_load', 'test_random']  | seeded: spec contradicts itself on load vs enable priority; RTL and model each follow one REQ
+        Dex root cause: The RTL checks load before en in the next-state logic, so load overrides enable, which contradicts REQ-003's rule that enable takes priority over every other control.
+   S2  truth SPEC    Dex SPEC    OK   failing ['test_random']  | seeded: spec says both 'wraps modulo 256' and 'saturates at 255'; RTL wraps, model saturates
+        Dex root cause: The spec contradicts itself: REQ-003 requires wrap modulo 256 (255+1==0), REQ-005 requires saturation at 255 and 0, and out_of_scope excludes saturation, so the RTL (wrap) and the reference model (sat
+   S3  truth SPEC    Dex SPEC    OK   failing ['test_hold', 'test_random']  | seeded: spec no longer says what happens when en=0 and load=0; model clears, RTL holds
+        Dex root cause: The spec does not define behaviour when en=0 and load=0, so the RTL (holds) and the reference model (clears to 0) implemented different guesses.
+   suite run run_01M42HCP67RFVJBTTZ4ZRYEN3H: task completed; cost $0.2832
+[PASS] 5. Dex classifies 10 seeded failures, >= 9 correct: 9/10 correct
+
+8/8 acceptance checks passed
