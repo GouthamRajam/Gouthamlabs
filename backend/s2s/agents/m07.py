@@ -170,14 +170,38 @@ SDC_RULES = """CONSTRAINTS CONTRACT (checked by a deterministic SDC guard, then 
 - Do not set set_propagated_clock (the flow propagates clocks after CTS)."""
 
 
+def _clock_override(ctx: StepContext):
+    """Experiment runs only (M0.7 acceptance 2): task input `clock_override_mhz`; None on the product path."""
+    return (ctx.task.inputs or {}).get("clock_override_mhz")
+
+
+def _clocks(ctx: StepContext) -> list[dict]:
+    """The clocks this run is constrained to: the spec's, or on an experiment run the first clock at the
+    override frequency (recorded by the check clock_override_recorded). The SDC guard checks against these."""
+    clocks = _spec(ctx)["clocks"]
+    mhz = _clock_override(ctx)
+    return clocks if mhz is None else [{**clocks[0], "freq_mhz": mhz}, *clocks[1:]]
+
+
+def _override_note(ctx: StepContext) -> str:
+    mhz = _clock_override(ctx)
+    if mhz is None:
+        return ""
+    return (f"EXPERIMENT RUN (recorded): clock {_clocks(ctx)[0]['name']} is overridden from the spec's "
+            f"{_spec(ctx)['clocks'][0]['freq_mhz']} MHz to {mhz} MHz ({1000.0 / float(mhz):g} ns) - acceptance "
+            "experiment: intentionally tight clock. The constraints must use the override clock, not spec.yaml's.")
+
+
 def _sdc_contract(ctx: StepContext) -> str:
     r = olf.ranges()
     spec = _spec(ctx)
     _, ins, outs = olf.port_bits(spec)
-    clocks = ", ".join(f"{c['name']}: {1000.0 / float(c['freq_mhz']):g} ns ({c['freq_mhz']} MHz)" for c in spec["clocks"])
+    clocks = ", ".join(f"{c['name']}: {1000.0 / float(c['freq_mhz']):g} ns ({c['freq_mhz']} MHz)" for c in _clocks(ctx))
     u, f = r["clock_uncertainty_ns"], r["max_fanout"]
+    note = _override_note(ctx)
     return SDC_RULES.format(clocks=clocks, umin=u["min"], umax=u["max"], udef=u["default"], fmin=f["min"],
-                            fmax=f["max"], fdef=f["default"], ins=", ".join(ins), outs=", ".join(outs))
+                            fmax=f["max"], fdef=f["default"], ins=", ".join(ins), outs=", ".join(outs)) + \
+        ("\n- " + note if note else "")
 
 
 def validate_sdc(ctx: StepContext) -> list[str]:
@@ -188,7 +212,7 @@ def validate_sdc(ctx: StepContext) -> list[str]:
     else:
         spec = _spec(ctx)
         _, ins, outs = olf.port_bits(spec)
-        problems, found = olf.sdc_problems(p.read_text(), clocks=spec["clocks"], inputs=ins, outputs=outs)
+        problems, found = olf.sdc_problems(p.read_text(), clocks=_clocks(ctx), inputs=ins, outputs=outs)
     _check(ctx, "Sienna", "sdc_guard", "s2s.physical.flow.sdc_problems", not problems,
            {"problems": len(problems), "detail": problems[:20], "found": found})
     return problems
@@ -228,7 +252,19 @@ def synthesis_steps() -> list[Step]:
             ctx.state["blocked"] = "; ".join(problems)
             return
         spec = _spec(ctx)
-        clk = spec["clocks"][0]
+        mhz = _clock_override(ctx)
+        if mhz is not None:
+            ok = isinstance(mhz, (int, float)) and not isinstance(mhz, bool) and mhz > 0
+            _check(ctx, "Mason", "clock_override_recorded", "s2s task input clock_override_mhz", ok,
+                   {"spec_mhz": spec["clocks"][0]["freq_mhz"], "override_mhz": mhz,
+                    "override_period_ns": round(1000.0 / float(mhz), 6) if ok else None,
+                    "reason": "acceptance experiment: intentionally tight clock"})
+            if not ok:
+                ctx.state["blocked"] = f"clock_override_mhz {mhz!r} is not a positive number"
+                return
+            ctx.emit("plan", f"Mason: plan - {_override_note(ctx)} The SDC guard and the config guard check "
+                     f"against {mhz} MHz.", agent_id="Mason")
+        clk = _clocks(ctx)[0]
         _save_phys(ctx, source_run=src, lineage=lineage, frozen_rtl=frozen, top=_top(ctx),
                    clock_port=clk["name"], period_ns=round(1000.0 / float(clk["freq_mhz"]), 6),
                    params=olf.default_params(), tag="it1", iteration=1)
@@ -251,7 +287,8 @@ def synthesis_steps() -> list[Step]:
         for rnd in (1, 2):
             data = llm.ask(ctx, "Sentinel", goal="Review constraints/constraints.sdc against the spec: is the clock "
                            "exactly the spec's, are I/O delays and uncertainty reasonable, is anything loosened or "
-                           "any exception hiding timing? File findings only for real, specific problems.",
+                           "any exception hiding timing? File findings only for real, specific problems."
+                           + (" " + _override_note(ctx) if _clock_override(ctx) is not None else ""),
                            inputs=_inputs(ctx, ["spec/spec.yaml", "constraints/constraints.sdc"]),
                            exit_criteria=["every finding is specific: location, evidence, suggested action"],
                            schema=REVIEW_ANSWER, extra_note="Put each finding in `findings` (empty list if none). ")
