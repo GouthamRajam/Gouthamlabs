@@ -375,6 +375,34 @@ def pin_cfg_problems(text: str, port_bits: list[str]) -> list[str]:
     return problems
 
 
+_PIN_PARSE = r'''
+import sys
+import ioplace_parser
+try:
+    sides = ioplace_parser.parse(open(sys.argv[1]).read())
+except Exception as e:  # the parser's own message (line:column)
+    print("S2S_PINCFG_ERROR " + str(e).replace("\n", " "))
+    sys.exit(1)
+print("S2S_PINCFG_OK " + " ".join(sorted(sides)))
+'''
+
+
+def pin_cfg_parser_problems(cfg: Path, workdir: Path) -> list[str]:
+    """Parse the pin file with OpenLane's own parser (ioplace_parser, inside s2s-eda): its grammar is
+    narrower than Python regexes (e.g. it rejects '[0-7]'), so the tool decides, not a guess."""
+    workdir = workdir.resolve()
+    script = workdir / ".s2s" / "pin_cfg_parse.py"
+    script.parent.mkdir(parents=True, exist_ok=True)
+    script.write_text(_PIN_PARSE)
+    rec = runner.run(["python3", str(script), str(Path(cfg).resolve())], workdir, workdir / "logs" / "pin_cfg_parse.log",
+                     "openlane", 120)
+    log = Path(rec.log_path).read_text(errors="replace")
+    if "S2S_PINCFG_OK" in log and rec.exit_code == 0:
+        return []
+    err = next((ln[len("S2S_PINCFG_ERROR "):] for ln in log.splitlines() if ln.startswith("S2S_PINCFG_ERROR ")), log[-300:])
+    return [f"OpenLane's pin-config parser (ioplace_parser) rejects pnr/pin_order.cfg: {err}"]
+
+
 def port_bits(spec: dict) -> tuple[list[str], list[str], list[str]]:
     """(all pin bits, input port names without clocks, output port names) from spec.yaml."""
     clocks = {c["name"] for c in spec.get("clocks", [])}

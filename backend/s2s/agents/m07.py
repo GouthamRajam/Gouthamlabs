@@ -394,6 +394,8 @@ def validate_floorplan(ctx: StepContext) -> list[str]:
     cfg = ctx.workdir / "pnr/pin_order.cfg"
     bits, _, _ = olf.port_bits(_spec(ctx))
     problems += olf.pin_cfg_problems(cfg.read_text(), bits) if cfg.exists() else ["pnr/pin_order.cfg was not written"]
+    if cfg.exists() and not problems:  # the real parser OpenLane will use decides the syntax
+        problems += olf.pin_cfg_parser_problems(cfg, ctx.workdir)
     _check(ctx, "Grid", "floorplan_plan", "s2s.physical.flow (ranges + pin file)", not problems, {"problems": problems})
     return problems
 
@@ -402,8 +404,10 @@ FLOORPLAN_FORMAT = """FILES TO WRITE
 1. pnr/floorplan.json: {"core_utilization_pct": <number within config/pnr_ranges.yaml core_utilization_pct>,
    "reasons": {"utilization": "...", "pins": "...", "power_grid": "...", "clock_reset": "..."}}
    The power grid uses the PDK's default SKY130 PDN (pnr_ranges.yaml has no strap ranges, so straps stay at default).
-2. pnr/pin_order.cfg: OpenLane pin order file. Sections `#N`, `#S`, `#E`, `#W`, then one Python regex per line
-   matching pin names (bus bits are named like count[3], so use e.g. `count.*` or `count\\[[0-7]\\]`).
+2. pnr/pin_order.cfg: OpenLane pin order file. Sections `#N`, `#S`, `#E`, `#W`, then one pin pattern per line.
+   Keep patterns simple: a port name (`clk`) or a bus prefix with `.*` (`count.*` matches count[0]..count[7]).
+   OpenLane's own parser checks the file and has a narrow grammar (no anchors `^`/`$`, no character ranges
+   like `[0-7]`); its exact error comes back to you if it rejects a line.
    Every pin must match exactly one pattern; every pattern must match a pin. Inputs on one side and outputs on
    the other where sensible, following the data flow in arch.yaml."""
 
