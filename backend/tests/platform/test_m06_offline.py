@@ -164,3 +164,18 @@ def test_guard_rejects_a_weakened_test_fix(platform):
     from s2s.agents.runtime import artifact_dir
     assert "assert got == exp" in (artifact_dir() / "runs" / run_id / "tb/test_counter8.py").read_text()  # reverted
     assert out["verification"].status == "paused"  # the planted test bug was never legitimately fixed
+
+
+def test_tautological_property_goes_back_to_euclid(platform):
+    taut = PROPS.replace("    ap_reset: assert ($past(rst_n) || count == 8'd0);", "    ap_reset: assert ($past(rst_n) || 1'b1);")
+    assert taut != PROPS
+    replies = [*TEST_BUILD[:4], files(("formal/formal_top.sv", taut)), NO_FINDINGS,
+               files(("formal/formal_top.sv", PROPS))]
+    run_id, out, provider = run_m06(platform, replies)
+    assert out["verification"].status == "completed", out["verification"].detail
+    evs = events(run_id)
+    h = [e for e in evs if e[0] == "handoff" and "formal quality" in e[2]]
+    print(h[0][3]["issues"])
+    assert any("ap_reset" in i and "tautology" in i for i in h[0][3]["issues"])
+    assert dict(checks_of(run_id))["formal_3_meaningful"] is True
+    assert report(run_id)["formal"]["tautologies"] == []

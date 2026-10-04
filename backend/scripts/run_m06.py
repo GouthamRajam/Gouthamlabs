@@ -74,8 +74,11 @@ def main() -> int:
                 evlog.flush()
                 seen = len(evs)
                 run = s.get(Run, run_id)
-                stopped = [t for t in s.scalars(select(Task).where(Task.run_id == run_id)) if t.status in ("paused", "failed")]
-            if run.status in ("completed", "failed") or stopped or time.monotonic() - t0 > timeout_min * 60:
+                tasks = s.scalars(select(Task).where(Task.run_id == run_id)).all()
+                stopped = [t for t in tasks if t.status in ("paused", "failed")]
+                all_done = tasks and all(t.status == "completed" for t in tasks)  # e.g. G2 left pending
+            if run.status in ("completed", "failed") or stopped or (all_done and time.monotonic() - t0 > 5) \
+                    or time.monotonic() - t0 > timeout_min * 60:
                 break
             time.sleep(2.0)
         time.sleep(2)

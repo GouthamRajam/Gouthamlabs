@@ -103,6 +103,17 @@ def _json_report(ctx: StepContext, who: str, path: str, data) -> None:
 
 
 # --- static checks on model-written verification code ---------------------------------------------
+def _always_true(t: ast.AST) -> bool:
+    """`assert True`, `assert x or True`, `assert 1`, `assert x == x`: an assertion that cannot fail."""
+    if isinstance(t, ast.Constant):
+        return bool(t.value)
+    if isinstance(t, ast.BoolOp) and isinstance(t.op, ast.Or):
+        return any(_always_true(v) for v in t.values)
+    if isinstance(t, ast.Compare) and len(t.ops) == 1 and isinstance(t.ops[0], (ast.Eq, ast.LtE, ast.GtE)):
+        return ast.dump(t.left) == ast.dump(t.comparators[0])
+    return False
+
+
 def tb_static_problems(files: dict[str, str], plan: dict | None, test_files_only: bool = False) -> list[str]:
     """Parse (never import) every testbench file: allowed imports, no file/exec access, and every
     test-plan test present as a @cocotb.test function."""
@@ -124,6 +135,8 @@ def tb_static_problems(files: dict[str, str], plan: dict | None, test_files_only
             for m in mods:
                 if m not in ALLOWED_IMPORTS and not m.startswith(("proto_", "tb_")):
                     p.append(f"{path}:{n.lineno}: import '{m}' is not allowed in the testbench")
+            if isinstance(n, ast.Assert) and _always_true(n.test):
+                p.append(f"{path}:{n.lineno}: assertion can never fail ({ast.unparse(n.test)[:80]})")
             if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in FORBIDDEN_CALLS:
                 p.append(f"{path}:{n.lineno}: call to {n.func.id}() is not allowed (no file or code access)")
             if isinstance(n, ast.Attribute) and n.attr in ("system", "popen", "_sub_handles") :
@@ -617,15 +630,32 @@ def _debug_loop(ctx: StepContext, label: str) -> tuple[object, dict]:
                       f"{(f.get('runs', {}).get('prove') or {}).get('counterexample_vcd')})"} for n in f.get("failed", [])]
         if f.get("error"):
             form_fail.append({"kind": "harness", "message": f["error"]})
-        if not sim_fail and not form_fail:
+        quality = [f"ap_{n}: its cover cp_{n} is never reached (vacuous)" for n in f.get("vacuous", [])] + \
+                  [f"ap_{n}: holds even with the DUT replaced by free outputs (tautology: it checks nothing about the design)"
+                   for n in f.get("tautologies", [])]
+        if not sim_fail and not form_fail and not quality:
             return r, f
         if rnd == DEBUG_ROUNDS:
             break
-        ctx.state["dex_round"] = ctx.state.get("dex_round", 0) + 1
-        for bug in _dex(ctx, sim_fail + form_fail, ctx.state["dex_round"]):
-            _fix(ctx, bug)
-            if ctx.state.get("blocked"):
-                return r, f
+        if sim_fail or form_fail:
+            ctx.state["dex_round"] = ctx.state.get("dex_round", 0) + 1
+            for bug in _dex(ctx, sim_fail + form_fail, ctx.state["dex_round"]):
+                _fix(ctx, bug)
+                if ctx.state.get("blocked"):
+                    return r, f
+        if quality:  # decided by the tools, not a triage question: back to the property author
+            ctx.emit("handoff", f"Euclid's properties fail the formal quality checks: {len(quality)} issue(s)",
+                     **_who("Euclid"), detail={"issues": quality})
+            prev = ("The formal harness found these property-quality problems (vacuous = the cover is never "
+                    "reached, so the assertion can pass without ever being exercised; tautology = it holds even "
+                    "when the DUT outputs are free, so it says nothing about the design). Rewrite those properties "
+                    "so each constrains the DUT's behavior and its trigger is reachable; keep every other property:\n- "
+                    + "\n- ".join(quality))
+            guarded(ctx, "Euclid", lambda: _author_loop(
+                ctx, "Euclid", goal="Fix the vacuous/tautological properties in formal/formal_top.sv.",
+                inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv",
+                        "reports/formal_report.json"], validate=validate_props, kind="formal", previous=prev,
+                constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"]))), "formal quality")
     ctx.state["blocked"] = f"{label}: failures remain after {DEBUG_ROUNDS} debug rounds"
     return r, f
 
