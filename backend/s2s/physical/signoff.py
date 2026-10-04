@@ -184,7 +184,61 @@ depth 5
 use sby
 engine abc pdr -rfi
 """)
-    return run_eqy(eqy, workdir, timeout_s=1800)
+    r = run_eqy(eqy, workdir, timeout_s=1800)
+    if r.passed:
+        r.metrics["method"] = "eqy (partitioned)"
+        return r
+    return _lec_fallback(r, rtl, pdk, netlist, top, workdir, name, d)
+
+
+_LEC_PROVEN = re.compile(r"Of those cells (?P<p>\d+) are proven and (?P<u>\d+) are unproven")
+
+
+def _lec_fallback(eqy_res, rtl: list[Path], pdk: Path, netlist: Path, top: str, workdir: Path, name: str, d: Path):
+    """eqy did not prove the designs (its partitioning cannot always pair memories / registers; it can also
+    error without a counterexample). Second, independent proof: Yosys sequential equivalence with register
+    correspondence (equiv_make on bit-level names, equiv_simple + equiv_induct; matched registers are
+    assumed to start equal, as in standard LEC). Passes only if EVERY $equiv point is proven; any unproven
+    point keeps the check failed. The eqy result stays in the metrics."""
+    import dataclasses
+    ys = d / f"{name}_lec.ys"
+    prep = "hierarchy -top {t}\nproc\nflatten\nopt_clean\nmemory -nomap\nmemory_map\nopt_clean\nsplitnets -format []"
+    ys.write_text(f"""read_verilog -sv {' '.join(str(Path(p).resolve()) for p in rtl)}
+{prep.format(t=top)}
+rename {top} gold
+design -stash gold
+read_verilog -sv {pdk} {Path(netlist).resolve()}
+{prep.format(t=top)}
+rename {top} gate
+design -stash gate
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+async2sync
+equiv_make gold gate equiv
+hierarchy -top equiv
+equiv_simple -seq 5
+equiv_induct -seq 5
+equiv_status
+equiv_status -assert
+""")
+    log = workdir / "logs" / f"lec_{name}.log"
+    rec = runner.run(["yosys", "-q", "-l", str(log), str(ys)], workdir, workdir / "logs" / f"lec_{name}_run.log",
+                     "yosys", 2400)
+    text = log.read_text(errors="replace") if log.exists() else ""
+    counts = [(int(m["p"]), int(m["u"])) for m in _LEC_PROVEN.finditer(text)]
+    proven, unproven = counts[-1] if counts else (0, None)
+    ok = (rec.exit_code == 0 and not rec.timed_out and "Equivalence successfully proven!" in text
+          and unproven == 0 and proven > 0)
+    metrics = {**eqy_res.metrics, "method": "yosys LEC (equiv_make/equiv_simple/equiv_induct, register correspondence)"
+               if ok else "eqy failed; yosys LEC fallback did not prove", "eqy_status": eqy_res.metrics.get("status"),
+               "eqy_reasons": eqy_res.reasons[:3], "lec_points_proven": proven, "lec_points_unproven": unproven,
+               "lec_log": str(log)}
+    if ok:
+        metrics["status"] = "PASS"
+    reasons = [] if ok else [*eqy_res.reasons[:3], f"yosys LEC: {proven} proven, {unproven} unproven"
+                                                    + (" (timed out)" if rec.timed_out else "")]
+    return dataclasses.replace(eqy_res, passed=ok, status="PASS" if ok else eqy_res.status, metrics=metrics,
+                               reasons=reasons, command=["yosys", "-q", "-l", str(log), str(ys)])
 
 
 def gls(netlist: Path, top: str, tb_dir: Path, test_module: str, workdir: Path, seeds: list[int]):

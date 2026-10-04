@@ -373,11 +373,15 @@ def synthesis_steps() -> list[Step]:
         nl = json.loads((ctx.workdir / "reports/synth_tool.json").read_text())["netlist"]
         r = _run(ctx, "Sienna", "eqy RTL vs synthesized netlist", so.equivalence,
                  sorted((ctx.workdir / "rtl").glob("*.v")), Path(nl), ph["top"], ctx.workdir, "synth")
-        _result(ctx, "Sienna", f"eqy RTL vs synthesized netlist: {r.status} ({len(r.metrics['partitions_proven'])} "
-                f"partitions proven, failed {r.metrics['partitions_failed']})")
+        _result(ctx, "Sienna", f"equivalence RTL vs synthesized netlist: {r.status} via {r.metrics.get('method')} "
+                f"(eqy {len(r.metrics['partitions_proven'])} partitions proven, failed {r.metrics['partitions_failed']}; "
+                f"LEC points proven {r.metrics.get('lec_points_proven')}, unproven {r.metrics.get('lec_points_unproven')})")
         _check(ctx, "Sienna", "eqy_rtl_vs_synth", f"eqy {r.tool_version}", r.passed,
-               {"status": r.metrics["status"], "proven": len(r.metrics["partitions_proven"]),
-                "failed": r.metrics["partitions_failed"], "reasons": r.reasons[:3], "log": r.log_path}, r.command)
+               {"status": r.metrics["status"], "method": r.metrics.get("method"),
+                "proven": len(r.metrics["partitions_proven"]), "failed": r.metrics["partitions_failed"],
+                "lec_points_proven": r.metrics.get("lec_points_proven"),
+                "lec_points_unproven": r.metrics.get("lec_points_unproven"), "reasons": r.reasons[:3],
+                "log": r.log_path, "lec_log": r.metrics.get("lec_log")}, r.command)
         if not r.passed:
             ctx.state["blocked"] = "RTL and synthesized netlist are not proven equivalent (A.8: blocking)"
 
@@ -919,8 +923,11 @@ def signoff_steps() -> list[Step]:
         rtl = sorted((ctx.workdir / "rtl").glob("*.v"))
         eq = _run(ctx, "Sienna", "eqy RTL vs final routed netlist", so.equivalence, rtl, F["nl"], ph["top"], ctx.workdir, "final")
         _check(ctx, "Sienna", "eqy_rtl_vs_final", f"eqy {eq.tool_version}", eq.passed,
-               {"status": eq.metrics["status"], "proven": len(eq.metrics["partitions_proven"]),
-                "failed": eq.metrics["partitions_failed"], "log": eq.log_path}, eq.command)
+               {"status": eq.metrics["status"], "method": eq.metrics.get("method"),
+                "proven": len(eq.metrics["partitions_proven"]), "failed": eq.metrics["partitions_failed"],
+                "lec_points_proven": eq.metrics.get("lec_points_proven"),
+                "lec_points_unproven": eq.metrics.get("lec_points_unproven"), "log": eq.log_path,
+                "lec_log": eq.metrics.get("lec_log")}, eq.command)
         mods = sorted(p.stem for p in (ctx.workdir / "tb").glob("test_*.py"))
         tb = ctx.workdir / "signoff" / "gls_tb"
         shutil.copytree(ctx.workdir / "tb", tb, dirs_exist_ok=True, ignore=shutil.ignore_patterns("__pycache__"))
