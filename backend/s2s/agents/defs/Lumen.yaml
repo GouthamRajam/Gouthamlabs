@@ -1,0 +1,13 @@
+id: A04
+name: Lumen
+role: Lint & CDC Agent
+prompt: A04_Lumen.md
+preamble: design
+stages: [rtl]
+model_hint: default
+effort: low
+max_tokens: 8000
+tools: [run_verilator_lint, run_yosys_elab, emit_note]
+budget: {max_tokens: 200000, max_minutes: 20, max_tool_runs: 40}
+writes_to: ["reports/lint_report.json", "reports/waivers.yaml"]
+reads_from: ["rtl/**", "arch/**", "spec/**"]

@@ -24,20 +24,26 @@ from concurrent.futures import Future, ThreadPoolExecutor
 
 from sqlalchemy import select, text
 
+from s2s.agents import management as mgmt
 from s2s.agents.dummy import DummyAgent
+from s2s.agents.m05 import DesignAgent
 from s2s.agents.runtime import Agent, run_task
 from s2s.config import management
 from s2s.db.models import Design, Gate, Run, Task
 from s2s.db.session import engine, session as db_session
 from s2s.events.bus import emit, utcnow
 from s2s.ids import new_id
+from s2s.models.gateway import ModelGateway
 from s2s.orchestrator import flow, watchdog
 from s2s.org import sync_org
 
 log = logging.getLogger("s2s.orchestrator")
 
 ADVISORY_LOCK_KEY = 0x5325_0003  # one orchestrator per database
-AGENTS: dict[str, type[Agent]] = {"dummy": DummyAgent}
+AGENTS: dict[str, type[Agent]] = {"dummy": DummyAgent, "s2s": DesignAgent}
+# The gateway each agent kind uses: the dummy agent never makes a real call; the M0.5 design
+# agents use the model saved in Settings -> Model access.
+GATEWAYS = {"dummy": ModelGateway, "s2s": ModelGateway.from_settings}
 
 
 class AlreadyRunning(RuntimeError):
@@ -100,6 +106,7 @@ class Orchestrator:
         if time.monotonic() - self._last_watchdog >= self.watchdog_s:
             self._last_watchdog = time.monotonic()
             watchdog.tick()
+            mgmt.tick(inflight=set(self.inflight))
 
     def _reap(self) -> None:
         for tid, fut in list(self.inflight.items()):
@@ -182,13 +189,14 @@ class Orchestrator:
                          detail={"from": run.current_stage, "to": t.stage},
                          **{**base, "agent_id": "Atlas", "team": "program_office", "task_id": None})
                     run.current_stage = t.stage
+                mgmt.on_assign(s, t, run)
                 emit(s, "task.started", (f"{t.agent_id} resumed: {t.title} (from step {resumed_from})"
                                          if resumed_from else f"{t.agent_id} started: {t.title}"),
                      status="working", detail={"attempt": t.attempts, "resumed_from_step": resumed_from,
                                                "orchestrator": self.instance}, **base)
                 started.append((t.id, run.agent_kind))
         for tid, kind in started:
-            self.inflight[tid] = self.pool.submit(run_task, tid, AGENTS[kind]())
+            self.inflight[tid] = self.pool.submit(run_task, tid, AGENTS[kind](), GATEWAYS[kind]())
 
 
 def _stage_checks_ok(s, task_id: str) -> bool:
@@ -202,12 +210,17 @@ def _stage_checks_ok(s, task_id: str) -> bool:
 
 def create_run(s, design: Design, from_stage: str | None = None, to_stage: str | None = None,
                agent_kind: str = "dummy", dummy: dict | None = None) -> Run:
+    """agent_kind "s2s" runs the real M0.5 agents (spec, architecture, rtl only)."""
     """Create a run and its tasks (status pending). The orchestrator picks it up."""
     from s2s.finance.meter import ensure_run_budget, task_budget
     from s2s.org import load_org
     if agent_kind not in AGENTS:
         raise ValueError(f"unknown agent kind {agent_kind!r}")
     stages = flow.select_stages(from_stage, to_stage)
+    if agent_kind == "s2s":
+        unbuilt = [st.name for st in stages if st.name not in DesignAgent.STAGES]
+        if unbuilt:
+            raise ValueError(f"stages {unbuilt} have no agents yet (M0.5 builds spec, architecture, rtl)")
     run = Run(id=new_id("run"), design_id=design.id, status="pending",
               stages=[st.name for st in stages], agent_kind=agent_kind)
     s.add(run)
@@ -225,7 +238,8 @@ def create_run(s, design: Design, from_stage: str | None = None, to_stage: str |
         lead = org.by_id(st.team_id).manager_agent_id
         s.add(Task(id=tid, run_id=run.id, agent_id=lead, stage=st.name, status="pending", title=st.title,
                    seq=i, team_id=st.team_id, depends_on=[ids[d] for d in st.depends_on if d in ids],
-                   inputs={"design_id": design.id, "design_name": design.name, "dummy": dummy or {}},
+                   inputs={"design_id": design.id, "design_name": design.name, "dummy": dummy or {},
+                           "request_text": design.request_text},
                    budget=task_budget(lead), expected_step_seconds=expected))
     ensure_run_budget(s, run.id)
     s.flush()

@@ -1,0 +1,11 @@
+id: A3.2
+name: Reid
+role: Manager of RTL Design
+prompt: A3.2_manager_template.md
+preamble: none
+stages: []
+model_hint: default
+runtime: manager
+budget: {max_tokens: 100000, max_minutes: 600, max_tool_runs: 0}
+writes_to: []
+reads_from: []

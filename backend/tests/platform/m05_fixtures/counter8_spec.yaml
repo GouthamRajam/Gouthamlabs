@@ -1,0 +1,26 @@
+# Hand-written test fixture (scripted model answer for offline plumbing tests). Not agent output.
+design: counter8
+version: 1
+summary: "8-bit up/down counter with synchronous reset, enable and synchronous load."
+pdk: sky130A
+std_cell_library: sky130_fd_sc_hd
+target_clock_mhz: 100
+clocks:
+  - {name: clk, freq_mhz: 100}
+resets:
+  - {name: rst_n, active: low, type: synchronous}
+interfaces:
+  - {name: clk, dir: in, width: 1}
+  - {name: rst_n, dir: in, width: 1}
+  - {name: en, dir: in, width: 1}
+  - {name: up, dir: in, width: 1}
+  - {name: load, dir: in, width: 1}
+  - {name: load_value, dir: in, width: 8}
+  - {name: count, dir: out, width: 8, reset_value: 0}
+requirements:
+  - {id: REQ-001, type: reset, text: "When rst_n is 0 at a rising clk edge, count becomes 0.", acceptance: "count == 0 one cycle after rst_n low, for any other input values."}
+  - {id: REQ-002, type: functional, text: "When load is 1 (and rst_n is 1), count takes load_value at the next rising edge.", acceptance: "Directed test for 16 random load values."}
+  - {id: REQ-003, type: functional, text: "When en is 1 and load is 0, count increments by 1 if up is 1, else decrements by 1, wrapping modulo 256.", acceptance: "255+1 == 0 and 0-1 == 255 checked; 10,000 random cycles match a reference model."}
+  - {id: REQ-004, type: functional, text: "When en is 0 and load is 0, count holds its value.", acceptance: "count unchanged over 100 random cycles with en=0."}
+out_of_scope: ["saturation", "terminal-count output"]
+open_questions: []

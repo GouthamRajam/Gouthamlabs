@@ -1,0 +1,37 @@
+[
+  {
+    "severity": "major",
+    "target": "arch/arch.yaml: modules[counter8].implements and modules[cnt_dp].implements",
+    "what": "REQ-002 (every state element reset; count reads 0 after reset) is listed only under cnt_dp, and REQ-010 (priority reset > load > enable) is listed only under cnt_ctrl. The reset-over-load priority is actually realized in cnt_dp, but cnt_ctrl does not receive rst_n. Top-level traceability does not make this split explicit.",
+    "evidence": "cnt_ctrl ports: load, enable, up_down, op (no rst_n); cnt_ctrl.implements includes REQ-010; cnt_dp.implements omits REQ-010. Rationale says reset is only in the datapath register.",
+    "suggested_action": "Add REQ-010 to cnt_dp.implements, or state in the description that reset priority is enforced in cnt_dp and the load/enable priority in cnt_ctrl. Make the verification hook test the full 5-input priority table (including rst_n), not only the 8-combination op table."
+  },
+  {
+    "severity": "major",
+    "target": "arch/arch.yaml: ppa_estimate and rationale[4]",
+    "what": "Timing estimate is unsupported: 10 levels at about 2 ns is a hand figure, and slack_margin_pct: 60 is stated without the corner or the cell delays assumed. cnt_dp max_logic_depth: 10 is also inconsistent with an 8-bit incrementer/decrementer plus a 4-way mux, which ripple-style could be deeper than 10 levels, and the input-to-flop path through cnt_ctrl (depth 2) adds to cnt_dp depth, so the total may exceed the stated critical_path_levels: 10.",
+    "evidence": "cnt_ctrl.max_logic_depth: 2 + cnt_dp.max_logic_depth: 10 = 12 levels on the load/enable/up_down to flop path, while ppa_estimate.critical_path_levels: 10. The sky130_fd_sc_hd corner is unspecified in spec (open question 3).",
+    "suggested_action": "Reconcile depth numbers (ctrl + dp path). Label the estimate as non-binding, and name the corner and typical sky130_fd_sc_hd gate delay assumed. Leave pass/fail to STA (REQ-011)."
+  },
+  {
+    "severity": "major",
+    "target": "arch/arch.yaml: verification_hooks[1] and REQ-012",
+    "what": "The assertion 'count changes only on posedge clk' cannot meaningfully verify REQ-012 in RTL simulation or formal as a clocked property. It misses the actual requirement of no combinational input-to-count path, which is checked by structure (STA path report) and by input-toggle simulation between edges.",
+    "evidence": "Hook text: 'Assertion: count changes only on posedge clk (REQ-012)'. REQ-012 acceptance requires STA to show 0 input-to-count combinational paths and simulation of input changes between edges.",
+    "suggested_action": "Add hooks for the STA input-to-output path report (set_false_path is not allowed; use report_checks -from inputs -to count) and for the simulation test that toggles inputs between edges (also covers REQ-003). Keep the assertion only as a supplement."
+  },
+  {
+    "severity": "minor",
+    "target": "arch/arch.yaml: modules[counter8].implements",
+    "what": "The top module claims REQ-013 (layout clean, verified against reference model), which is a flow/verification outcome that no architecture block implements. It also lists REQ-011, which is a timing property of the whole design. Without an owner this can hide gaps in the coverage matrix.",
+    "evidence": "counter8.implements: [REQ-011, REQ-012, REQ-013]; description says top has no logic of its own.",
+    "suggested_action": "Mark REQ-011 and REQ-013 as flow-level requirements verified at later stages, rather than module-implemented, so coverage tracking is honest."
+  },
+  {
+    "severity": "minor",
+    "target": "arch/arch.yaml: modules[cnt_ctrl] and spec REQ-010",
+    "what": "Defaults are inherited without a recorded decision. The op encoding (00 hold, 01 up, 10 down, 11 load) relies on spec defaults (load priority over enable, up_down=1 meaning up, load working with enable=0), all marked 'needs G1 review'. The architecture does not flag the dependency.",
+    "evidence": "spec REQ-010, load and up_down interface descriptions: 'DEFAULT - needs G1 review'; arch has no open_questions or reference to G1.",
+    "suggested_action": "Add a note in arch.yaml that cnt_ctrl truth table depends on these unresolved defaults, so a G1 change triggers an architecture update."
+  }
+]

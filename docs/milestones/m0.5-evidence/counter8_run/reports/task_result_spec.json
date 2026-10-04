@@ -1,0 +1,66 @@
+{
+  "task_id": "task_01M4259SC7WVVTXKGZZCZYG3ZH",
+  "status": "success",
+  "summary": "Wrote spec/spec.yaml and spec/spec.md for counter8, an 8-bit up/down counter with synchronous active-low reset, enable and load. There are 13 typed requirements, each with a numeric acceptance criterion. Count resets to 0x00, wraps on overflow and underflow, and control priority is reset > load > enable. The 100 MHz clock on sky130A/sky130_fd_sc_hd is stated in the request. Schema validation and consistency checks have not been run by me; the runtime will run them.",
+  "outputs": [
+    {
+      "path": "reports/sentinel_spec.json",
+      "sha256": "89a0edd098fc274d91ea9a6a6894601643d296bcdb4a6805293f32c2b7586f27"
+    },
+    {
+      "path": "reports/standards.md",
+      "sha256": "be2d6741b623005bdc3659011e9af7cfa5b6b633423daa26c63e8686b8f64fd9"
+    },
+    {
+      "path": "spec/spec.md",
+      "sha256": "78ca6574b8a7a73ac0072fb650552fd1cd12acb42c9d10fc477d282dc52323cf"
+    },
+    {
+      "path": "spec/spec.yaml",
+      "sha256": "6ffb96cf6849e7362c67c0ce3bf5a77c6861a1727f919835ded02b0381da5789"
+    }
+  ],
+  "checks_run": [
+    "chk_01M425BDSP0H3XMWZ7J90FQWWW",
+    "chk_01M425BDSPZPEV7H11JMV4QRX5",
+    "chk_01M425CAGWHF4WFJ8EKKQNGPJ6",
+    "chk_01M425CAHGK3FGNJJ8AKCXW9F5"
+  ],
+  "assumptions": [
+    "All inputs are synchronous to clk, so no synchronizers are needed.",
+    "I did not run tools or web research, and no tool output is claimed. Knowledge-base entries are used as the sources.",
+    "No bus or protocol (AMBA, SPI, I2C, etc.) is implied, because request.md mentions none.",
+    "No carry or overflow flag output is included because the request does not ask for one.",
+    "Port names (enable, load, up_down, load_data, count) are my choice because the request gives none. DEFAULT - needs G1 review.",
+    "Priority is reset > load > enable, and load takes effect even when enable=0. DEFAULT - needs G1 review.",
+    "Reset is active-low and named rst_n, following the S2S RTL checklist (synchronous active-low rst_n).",
+    "Reset value of count is 8'h00. DEFAULT - needs G1 review.",
+    "SKY130 PDK and sky130_fd_sc_hd versions are taken from kb-tk-003 (sky130A, high-density library). I did not verify the exact release tag in this task.",
+    "The counter is a self-contained block whose pins are plain synchronous digital signals, so no standard governs them.",
+    "The load data input and the up/down direction control are inferred from the phrase 'up/down counter with load'. The request does not name them.",
+    "The sky130A release is not pinned, as in the standards report.",
+    "Wrap (not saturate) on overflow and underflow. DEFAULT - needs G1 review.",
+    "up_down=1 means count up and 0 means count down. DEFAULT - needs G1 review."
+  ],
+  "open_issues": [
+    "Does the customer want a carry/overflow output? It is not included.",
+    "Exact SKY130 PDK and library release/commit should be pinned by the flow owner. I have not confirmed it.",
+    "Is the load-while-disabled behavior (load works when enable=0) acceptable? It is a default awaiting G1 review.",
+    "Overflow/underflow behavior (wrap vs saturate) is unspecified (kb-fc-007). Proposed default: wrap. Mark 'DEFAULT - needs G1 review'.",
+    "Priority among reset, load, enable and direction is unspecified. Proposed default: reset > load > enable, with direction only used when counting. Needs G1 review.",
+    "Reset value of the count output is not stated. Proposed default: 8'h00 (needs G1 review). The reset style is stated as synchronous, with the active level unspecified.",
+    "STA corners are not specified. REQ-011 refers to the flow's configured signoff corners.",
+    "The sky130A PDK release is not pinned and needs a decision from the flow owner.",
+    "The timing target (100 MHz = 10 ns period) lacks I/O constraints and clock uncertainty, which belong to the spec/constraints agents."
+  ],
+  "messages": [
+    {
+      "from": "Ivy",
+      "summary": "No external interface standard applies to counter8: it is a standalone 8-bit up/down counter with only clock, synchronous reset, enable, load and data pins, and no bus, protocol, or serial interface. The only external references are the SKY130 PDK and the sky130_fd_sc_hd library (the implementation target, not an interface standard). No third-party IP is needed. The spec still has open behavioral gaps that Iris should close at G1."
+    }
+  ],
+  "self_assessment": {
+    "reason": "The spec follows the checklist and schema, but several behaviors are defaults awaiting G1 review. I could not run the schema validator here.",
+    "confidence": "medium"
+  }
+}

@@ -11,6 +11,7 @@ that happened is paid for even if its step is later re-run.
 """
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import hashlib
 import logging
@@ -50,6 +51,11 @@ class StepContext:
     evidence: str | None = None  # measurable progress signal for this step's heartbeat
 
     @property
+    def workdir(self) -> Path:
+        """The run's working folder (spec/, arch/, rtl/, reports/, logs/); EDA tools mount it."""
+        return artifact_dir() / "runs" / self.task.run_id
+
+    @property
     def ref(self) -> meter.TaskRef:
         t = self.task
         return meter.TaskRef(t.id, t.run_id, t.agent_id, t.stage, t.team_id, dict(t.budget or {}))
@@ -68,10 +74,12 @@ class StepContext:
         return self.gateway.complete(task=self.ref, system=system,
                                      messages=[{"role": "user", "content": prompt}]).text
 
-    def compute(self, tool: str, cpu_seconds: float) -> None:
-        meter.record_compute(self.ref, cpu_seconds, tool)
+    def compute(self, tool: str, cpu_seconds: float, agent_id: str | None = None) -> None:
+        ref = self.ref if not agent_id else dataclasses.replace(self.ref, agent_id=agent_id)
+        meter.record_compute(ref, cpu_seconds, tool)
 
-    def artifact(self, kind: str, path: str, content: bytes) -> str:
+    def artifact(self, kind: str, path: str, content: bytes, agent_id: str | None = None,
+                 team: str | None = None) -> str:
         sha = hashlib.sha256(content).hexdigest()
         store = artifact_dir()
         store.mkdir(parents=True, exist_ok=True)
@@ -81,17 +89,24 @@ class StepContext:
         if self.session.get(Artifact, sha) is None:
             self.session.add(Artifact(sha256=sha, kind=kind, path=path, size=len(content),
                                       created_by_task=self.task.id))
-        self.emit("artifact.created", f"{self.task.agent_id} wrote {path}",
-                  detail={"path": path, "kind": kind, "artifacts": [f"sha256:{sha}"], "size": len(content)})
+        who = agent_id or self.task.agent_id
+        self.emit("artifact.created", f"{who} wrote {path}",
+                  detail={"path": path, "kind": kind, "artifacts": [f"sha256:{sha}"], "size": len(content)},
+                  **{k: v for k, v in (("agent_id", agent_id), ("team", team)) if v})
         return sha
 
-    def check(self, name: str, tool: str, passed: bool, metrics: dict, command: str = "") -> bool:
+    def check(self, name: str, tool: str, passed: bool, metrics: dict, command: str = "",
+              agent_id: str | None = None, team: str | None = None) -> bool:
         """Record a deterministic check result; 3 identical failures in a row escalate (Part 6.6.2)."""
         from s2s.ids import new_id
-        self.session.add(Check(id=new_id("chk"), task_id=self.task.id, check_name=name, tool=tool,
+        chk_id = new_id("chk")
+        self.session.add(Check(id=chk_id, task_id=self.task.id, check_name=name, tool=tool,
                                command=command, passed=passed, metrics=metrics))
+        who = {k: v for k, v in (("agent_id", agent_id), ("team", team)) if v}
         self.emit("check.passed" if passed else "check.failed",
-                  f"{name}: {'passed' if passed else 'FAILED'}", detail={"tool": tool, "metrics": metrics})
+                  f"{name}: {'passed' if passed else 'FAILED'}",
+                  detail={"tool": tool, "metrics": metrics, "check_id": chk_id, "command": command}, **who)
+        self.state.setdefault("checks_run", []).append(chk_id)
         fails = self.state.setdefault("consecutive_failures", {})
         fails[name] = 0 if passed else fails.get(name, 0) + 1
         if fails[name] == 3:
@@ -109,6 +124,11 @@ class Agent:
     """Base class: subclasses return the task's steps."""
     def steps(self, task: Task) -> list[Step]:
         raise NotImplementedError
+
+
+class NeedsHuman(RuntimeError):
+    """The stage cannot finish on its own (e.g. blocking Sentinel findings remain, or the same
+    check failed three times): the task pauses and a human decides (Sentinel rule, Part 6.6.2)."""
 
 
 @dataclass
@@ -152,6 +172,9 @@ def run_task(task_id: str, agent: Agent, gateway: ModelGateway | None = None) ->
         return _finish(task_id, "paused", "blocked", "escalation",
                        f"Hard budget stop: {e}; task paused for approval",
                        {"budget": e.what, "used": e.used, "limit": e.limit, "rule": "hard stop"})
+    except NeedsHuman as e:
+        return _finish(task_id, "paused", "blocked", "escalation", f"Needs a human: {e}",
+                       {"rule": "needs human", "reason": str(e)}, to_human=True)
     except Exception as e:  # noqa: BLE001 - any agent crash fails the task, visibly
         log.exception("task %s failed", task_id)
         return _finish(task_id, "failed", "blocked", "escalation", f"Task failed: {e!r}",
@@ -160,7 +183,7 @@ def run_task(task_id: str, agent: Agent, gateway: ModelGateway | None = None) ->
 
 
 def _finish(task_id: str, status: str, agent_status: str, event: str, summary: str | None,
-            detail: dict) -> Outcome:
+            detail: dict, to_human: bool = False) -> Outcome:
     with db_session() as s:
         task = s.get(Task, task_id, with_for_update=True)
         task.status = status
@@ -175,7 +198,8 @@ def _finish(task_id: str, status: str, agent_status: str, event: str, summary: s
                      status="idle", detail={"usage": task.usage})
         else:
             chain = load_org().manager_chain(task.team_id) if task.team_id else []
-            ctx.emit(event, summary, to_agent_id=chain[0] if chain else None, detail=detail)
+            ctx.emit(event, summary, to_agent_id="human" if to_human else (chain[0] if chain else None),
+                     detail=detail)
         # final status is part of the task's final state: committed with it, not ahead of it
         ctx.emit("agent.status", f"{task.agent_id} is {agent_status}", status=agent_status, immediate=False)
     return Outcome(status, detail)

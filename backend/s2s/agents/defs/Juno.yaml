@@ -1,0 +1,11 @@
+id: A3.1
+name: Juno
+role: Director of Architecture & Specification
+prompt: A3.1_director_template.md
+preamble: none           # management: rule-driven loop in Phase 0 (s2s.agents.management)
+stages: []
+model_hint: default
+runtime: director
+budget: {max_tokens: 100000, max_minutes: 600, max_tool_runs: 0}
+writes_to: []
+reads_from: []

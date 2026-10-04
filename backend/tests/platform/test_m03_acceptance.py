@@ -193,8 +193,12 @@ def test_4_stalled_task_is_flagged_within_configured_time(platform):
     print(f"\nconfigured stall threshold {threshold:.1f}s; flagged {flagged_after:.2f}s after the last "
           f"heartbeat (watchdog runs every 0.5 s)")
     assert threshold < flagged_after <= threshold + 1.0
-    [esc] = _events(run_id, type="escalation", task_id=spec.id)
-    assert esc.detail["rule"] == "stall unresolved"
+    escalations = _events(run_id, type="escalation", task_id=spec.id)
+    [esc] = [e for e in escalations if e.detail["rule"] == "stall unresolved"]  # watchdog -> human, once
+    # M0.5 manager runtime (A3.2 stall handling): the manager also reviewed the stall; the worker was
+    # still running, so it escalated one level up (Juno manages Spec directly -> Atlas).
+    [review] = [e for e in escalations if e.detail["rule"].startswith("stall handled")]
+    assert (review.agent_id, review.to_agent_id, review.detail["action"]) == ("Juno", "Atlas", "escalate")
     assert _events(run_id, type="manager.checkin")
     with session() as s:
         assert s.get(Task, spec.id).stalled_at is None  # progress resumed and cleared the flag
