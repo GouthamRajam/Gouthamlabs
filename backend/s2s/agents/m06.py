@@ -48,6 +48,8 @@ from s2s.verify.mutation_run import MutationHarnessError, run_mutation
 from s2s.verify.nversion import run_nversion
 
 SEEDS = [1, 2, 3]
+THEO_SINGLE_ANSWER_MAX_TESTS = 12  # larger plans: shared env + tests in batches (one answer cannot hold them)
+THEO_BATCH = 6
 DEBUG_ROUNDS = 3
 CORA_ROUNDS = 2
 ALLOWED_IMPORTS = {"cocotb", "random", "math", "itertools", "collections", "dataclasses", "typing", "enum",
@@ -392,12 +394,50 @@ def test_build_steps() -> list[Step]:
 
     def theo(ctx: StepContext) -> None:
         protos = [f"tb/{p.name}" for p in sorted((ctx.workdir / "tb").glob("proto_*.py"))]
-        _author_loop(ctx, "Theo", goal=f"Write the cocotb testbench tb/test_{ctx.state['design']}.py implementing "
-                     "EVERY test in tb/testplan.yaml (same names), with a scoreboard against RefModel, constrained-random "
-                     "plus directed corner cases (reset during operation, min/max values, simultaneous events).",
-                     inputs=["spec/spec.yaml", "arch/arch.yaml", "tb/dut_ports.json", "tb/testplan.yaml",
-                             "tb/ref_model.py", *protos], validate=validate_tb, kind="testbench",
-                     constraints=TB_CONTRACT)
+        base = ["spec/spec.yaml", "arch/arch.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "tb/ref_model.py", *protos]
+        d = ctx.state["design"]
+        tests = [t["name"] for r in _plan(ctx)["requirements"] for t in r["tests"] if t["kind"] != "formal"]
+        if len(tests) <= THEO_SINGLE_ANSWER_MAX_TESTS:
+            _author_loop(ctx, "Theo", goal=f"Write the cocotb testbench tb/test_{d}.py implementing EVERY test in "
+                         "tb/testplan.yaml (same names), with a scoreboard against RefModel, constrained-random plus "
+                         "directed corner cases (reset during operation, min/max values, simultaneous events).",
+                         inputs=base, validate=validate_tb, kind="testbench", constraints=TB_CONTRACT)
+            return
+        # A large plan does not fit one answer: the shared environment first, then the tests in batches.
+        env = f"tb/tb_{d}.py"
+
+        def v_env(c: StepContext) -> list[str]:
+            f = c.workdir / env
+            probs = tb_static_problems({env: f.read_text()}, None) if f.exists() else [f"{env} was not written"]
+            if not probs and guard.analyze_tests(f.read_text()):
+                probs = [f"{env} must not contain @cocotb.test functions (tests go in the batch files)"]
+            _record(c, "testbench_env_static", probs, "python ast", "Theo")
+            return probs
+        _author_loop(ctx, "Theo", goal=f"Write ONLY the shared verification environment {env} (no tests): clock and "
+                     "reset helpers, drivers, monitors and a scoreboard that compares the DUT against RefModel (and "
+                     "the protocol checker if any), as functions/classes the test files will import. The tests "
+                     f"themselves ({len(tests)} of them) are written next, in batches, and import this module.",
+                     inputs=base, validate=v_env, kind="testbench", constraints=TB_CONTRACT)
+        if ctx.state.get("blocked"):
+            return
+        for k, i in enumerate(range(0, len(tests), THEO_BATCH), 1):
+            names = tests[i:i + THEO_BATCH]
+            path = f"tb/test_{d}_{k}.py"
+
+            def v_batch(c: StepContext, path=path, names=names) -> list[str]:
+                f = c.workdir / path
+                probs = tb_static_problems({path: f.read_text()}, None) if f.exists() else [f"{path} was not written"]
+                if not probs:
+                    missing = sorted(set(names) - set(guard.analyze_tests(f.read_text())))
+                    probs = [f"{path}: test '{n}' missing" for n in missing]
+                _record(c, "testbench_batch_static", probs, "python ast", "Theo")
+                return probs
+            _author_loop(ctx, "Theo", goal=f"Write {path} with exactly these test-plan tests (same names), each a "
+                         f"@cocotb.test using the shared environment from {env}: {', '.join(names)}.",
+                         inputs=[*base, env], validate=v_batch, kind="testbench", constraints=TB_CONTRACT)
+            if ctx.state.get("blocked"):
+                return
+        validate_tb(ctx)  # every test-plan test present across the files
 
     def euclid(ctx: StepContext) -> None:
         _author_loop(ctx, "Euclid", goal="Write formal/formal_top.sv with at least 3 meaningful port-level "
@@ -503,11 +543,13 @@ def guarded(ctx: StepContext, author: str, change, reason: str) -> list[str]:
 def theo_revise(ctx: StepContext, previous: str) -> None:
     protos = [f"tb/{p.name}" for p in sorted((ctx.workdir / "tb").glob("proto_*.py"))]
     tbs = [f"tb/{p.name}" for p in sorted((ctx.workdir / "tb").glob("test_*.py")) if not p.name.startswith("test_cora_")]
+    tbs += [f"tb/{p.name}" for p in sorted((ctx.workdir / "tb").glob("tb_*.py"))]
     extras = [p for p in ("reports/sentinel_tests.json", "reports/mutation_missed.json") if (ctx.workdir / p).exists()]
     extras += [f"reports/{p.name}" for p in sorted((ctx.workdir / "reports").glob("bug_*.json"))]
     guarded(ctx, "Theo", lambda: _author_loop(
-        ctx, "Theo", goal="Revise the testbench as described. Never delete a test, assertion or check, never reduce "
-        "iterations, never add skip/expect_fail: the anti-cheating guard rejects weakening.",
+        ctx, "Theo", goal="Revise the testbench as described. Return ONLY the files you change (full content). Never "
+        "delete a test, assertion or check, never reduce iterations, never add skip/expect_fail: the anti-cheating "
+        "guard rejects weakening.",
         inputs=["spec/spec.yaml", "arch/arch.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "tb/ref_model.py",
                 *protos, *tbs, *extras], validate=validate_tb, kind="testbench", previous=previous,
         constraints=TB_CONTRACT), previous[:300])

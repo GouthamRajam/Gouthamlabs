@@ -179,3 +179,22 @@ def test_tautological_property_goes_back_to_euclid(platform):
     assert any("ap_reset" in i and "tautology" in i for i in h[0][3]["issues"])
     assert dict(checks_of(run_id))["formal_3_meaningful"] is True
     assert report(run_id)["formal"]["tautologies"] == []
+
+
+def test_large_plan_is_written_as_env_plus_test_batches(platform, monkeypatch):
+    from s2s.agents import m06
+    monkeypatch.setattr(m06, "THEO_SINGLE_ANSWER_MAX_TESTS", 2)
+    monkeypatch.setattr(m06, "THEO_BATCH", 2)
+    head, *tests = TB.split("@cocotb.test(")
+    env = head  # imports + helpers (cycle, start), no tests
+    imp = "import random\nimport cocotb\nfrom tb_counter8 import cycle, start\n\n"
+    b1 = imp + "".join("@cocotb.test(" + t for t in tests[:2])
+    b2 = imp + "".join("@cocotb.test(" + t for t in tests[2:])
+    replies = [*TEST_BUILD[:3], files(("tb/tb_counter8.py", env)), files(("tb/test_counter8_1.py", b1)),
+               files(("tb/test_counter8_2.py", b2)), *TEST_BUILD[4:]]
+    run_id, out, provider = run_m06(platform, replies)
+    assert {k: v.status for k, v in out.items()} == {"test_build": "completed", "verification": "completed"}, out
+    got = dict(checks_of(run_id))
+    assert got["testbench_env_static"] and got["testbench_batch_static"] and got["testbench_static"]
+    assert got["regression_100pct"] and got["requirements_traced"]
+    assert "test_reset, test_load" in provider.calls[4]["messages"][0]["content"]
