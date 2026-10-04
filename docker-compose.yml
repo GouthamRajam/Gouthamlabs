@@ -1,15 +1,26 @@
 # Postgres and Redis (M0.1); migrate, api and orchestrator (M0.3); web, the Live Office (M0.4)
-# at http://localhost:3000, whose browser code calls the api at <host>:8000. The s2s-eda image is built and run on its own (see eda/ and docs/milestones/M0.1.md).
+# at http://localhost:3000, whose browser code calls the api at <host>:8000.
+# The orchestrator runs the EDA tools in the s2s-eda image (build it first: docker build -t s2s-eda eda/)
+# as sibling containers through the host's Docker socket. A sibling mounts a run folder by its HOST path,
+# so run data (var/artifacts) and the Claude Code bridge folder (var/bridge) are bind-mounted at the
+# SAME absolute path inside the backend containers (${PWD} = the repo root where you run compose).
+# Optional: S2S_MODEL_PROVIDER=bridge docker compose up (personal dev mode, see docs/DECISIONS.md).
 x-backend: &backend
   build: {context: ., dockerfile: backend/Dockerfile}
   image: s2s-backend
   environment:
     S2S_DATABASE_URL: postgresql+psycopg://s2s:s2s@postgres:5432/s2s
     S2S_REDIS_URL: redis://redis:6379/0
-    S2S_ARTIFACT_DIR: /data/artifacts
+    S2S_ARTIFACT_DIR: ${PWD}/var/artifacts
     S2S_SECRETS_DIR: /data/secrets   # Settings -> Model access (encrypted, Part 28.5)
+    S2S_BRIDGE_DIR: ${PWD}/var/bridge
+    S2S_EDA_IMAGE: s2s-eda
+    S2S_MODEL_PROVIDER: ${S2S_MODEL_PROVIDER:-}
+    S2S_REGRESS_TIMEOUT_S: ${S2S_REGRESS_TIMEOUT_S:-2400}
+    S2S_MUTATION_PARALLEL: ${S2S_MUTATION_PARALLEL:-4}
   volumes:
-    - artifacts:/data/artifacts
+    - ${PWD}/var/artifacts:${PWD}/var/artifacts
+    - ${PWD}/var/bridge:${PWD}/var/bridge
     - secrets:/data/secrets
     # Settings -> Spend controls rewrites config/finance.yaml spend_caps; the orchestrator and
     # the API must see the same file (and changes land in the repo's config, not in a container)
@@ -65,6 +76,12 @@ services:
   orchestrator:
     <<: *backend
     command: ["python", "-m", "s2s.orchestrator"]
+    volumes:  # the shared mounts again (a service-level list replaces the anchor's), plus the Docker socket
+      - ${PWD}/var/artifacts:${PWD}/var/artifacts
+      - ${PWD}/var/bridge:${PWD}/var/bridge
+      - secrets:/data/secrets
+      - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
@@ -84,5 +101,4 @@ services:
 
 volumes:
   pgdata:
-  artifacts:
   secrets:
