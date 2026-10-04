@@ -25,7 +25,7 @@ for pkg in "$EVID"/*/*/tapeout; do
   for rel in spec/spec.yaml arch/arch.yaml signoff/layout3d.json; do
     if [ -f "$src/$rel" ]; then mkdir -p "$dst/$(dirname "$rel")" && cp "$src/$rel" "$dst/$rel"; fi
   done
-  if [ -d "$src/reports" ]; then mkdir -p "$dst/reports" && cp "$src"/reports/* "$dst/reports/"; fi
+  if [ -d "$src/reports" ]; then mkdir -p "$dst/reports" && cp -R "$src/reports/." "$dst/reports/"; fi
   # the API rebuilds layout3d.json (needs KLayout + PDK) when it is older than the GDS: keep the copy newer
   if [ -f "$dst/signoff/layout3d.json" ]; then touch "$dst/signoff/layout3d.json"; fi
   if (cd "$dst/tapeout" && $SHA -c MANIFEST.sha256 >/dev/null 2>&1); then chk=ok; else chk="MISMATCH (run: $SHA -c MANIFEST.sha256 in $dst/tapeout)"; fi
