@@ -1,0 +1,14 @@
+id: "A3.9"
+name: Rex
+role: Regression Operations
+prompt: A3.9_Rex.md
+preamble: design
+stages: [verification]
+model_hint: default
+effort: low
+max_tokens: 4000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 45, max_tool_runs: 60}
+writes_to: ["reports/regression*.json", "reports/verification_report.json"]
+reads_from: ["tb/**", "rtl/**", "reports/**"]
+runtime: rules   # Phase 0: regression scheduling, seeds and flaky detection are deterministic (s2s.agents.m06)

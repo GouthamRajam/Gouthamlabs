@@ -158,3 +158,52 @@ SAGE_ANSWER = answer_schema(
     report_markdown=_STR,
     lessons={"type": "array", "items": _obj({"title": _STR, "symptom": _STR, "root_cause": _STR,
                                               "fix": _STR, "detect_earlier": _STR, "tags": _STRS})})
+
+
+# --- M0.6: test plan (Vera) and the verification answer formats ------------------------------------
+_IDENT = {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"}
+TESTPLAN_SCHEMA = {
+    "type": "object",
+    "required": ["design", "clock", "reset", "transaction", "requirements", "coverage_bins"],
+    "properties": {
+        "design": {"type": "string"},
+        "clock": _IDENT,
+        "reset": {"type": "object", "required": ["name", "active"],
+                  "properties": {"name": _IDENT, "active": {"enum": ["low", "high"]}}},
+        # the reference-model transaction: input fields with bit widths, and the outputs it predicts
+        "transaction": {"type": "object", "required": ["fields", "outputs"],
+                        "properties": {"description": {"type": "string"},
+                                       "fields": {"type": "object", "minProperties": 1,
+                                                  "additionalProperties": {"type": "integer", "minimum": 1, "maximum": 64}},
+                                       "outputs": {"type": "array", "minItems": 1, "items": _IDENT},
+                                       "reset_every": {"type": "integer", "minimum": 0}}},
+        "requirements": {"type": "array", "minItems": 1, "items": {
+            "type": "object", "required": ["id", "tests"],
+            "properties": {"id": {"type": "string", "pattern": "^REQ-[0-9]{3}$"},
+                           "tests": {"type": "array", "minItems": 1, "items": {
+                               "type": "object", "required": ["name", "kind", "description"],
+                               "properties": {"name": {"type": "string", "pattern": "^test_[a-z0-9_]+$"},
+                                              "kind": {"enum": ["directed", "random", "formal"]},
+                                              "description": {"type": "string"}}}}}}},
+        "coverage_bins": {"type": "array", "minItems": 1, "items": {
+            "type": "object", "required": ["name", "expr", "req"],
+            "properties": {"name": _IDENT, "expr": {"type": "string", "minLength": 1},
+                           "req": {"type": "string", "pattern": "^REQ-[0-9]{3}$"}}}},
+    },
+}
+
+DEX_ANSWER = answer_schema(bugs={"type": "array", "items": _obj({
+    "id": _STR,
+    "classification": {"type": "string", "enum": ["DESIGN", "TEST", "SPEC"]},
+    "failures": _STRS,          # failing test names / formal property names this bug explains
+    "requirement": _STR,
+    "root_cause": _STR,          # one sentence
+    "evidence": _STR,            # seed, cycle, expected vs actual, waveform window
+    "expected": _STR,
+    "actual": _STR,
+    "module": _STR,              # DESIGN: the RTL module to fix ("" otherwise)
+    "suggested_fix": _STR,
+})})
+ADJUDICATE_ANSWER = answer_schema(
+    decision={"type": "string", "enum": ["model_a", "model_b", "spec_question"]},
+    reason=_STR, spec_question=_STR)

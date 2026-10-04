@@ -1,0 +1,13 @@
+id: "A3.8"
+name: Proto
+role: Verification IP & Protocol Checkers
+prompt: A3.8_Proto.md
+preamble: design
+stages: [test_build]
+model_hint: default
+effort: medium
+max_tokens: 16000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 45, max_tool_runs: 60}
+writes_to: ["tb/proto_*.py"]
+reads_from: ["spec/**", "tb/dut_ports.json", "tb/testplan.yaml", "reports/standards.md", "tb/proto_*.py"]

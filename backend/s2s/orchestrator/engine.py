@@ -27,6 +27,7 @@ from sqlalchemy import select, text
 from s2s.agents import management as mgmt
 from s2s.agents.dummy import DummyAgent
 from s2s.agents.m05 import DesignAgent
+from s2s.agents import m06  # noqa: F401  (registers test_build/verification)
 from s2s.agents.runtime import Agent, run_task
 from s2s.config import management
 from s2s.db.models import Design, Gate, Run, Task
@@ -209,7 +210,7 @@ def _stage_checks_ok(s, task_id: str) -> bool:
 
 
 def create_run(s, design: Design, from_stage: str | None = None, to_stage: str | None = None,
-               agent_kind: str = "dummy", dummy: dict | None = None) -> Run:
+               agent_kind: str = "dummy", dummy: dict | None = None, inputs: dict | None = None) -> Run:
     """agent_kind "s2s" runs the real M0.5 agents (spec, architecture, rtl only)."""
     """Create a run and its tasks (status pending). The orchestrator picks it up."""
     from s2s.finance.meter import ensure_run_budget, task_budget
@@ -220,7 +221,7 @@ def create_run(s, design: Design, from_stage: str | None = None, to_stage: str |
     if agent_kind == "s2s":
         unbuilt = [st.name for st in stages if st.name not in DesignAgent.STAGES]
         if unbuilt:
-            raise ValueError(f"stages {unbuilt} have no agents yet (M0.5 builds spec, architecture, rtl)")
+            raise ValueError(f"stages {unbuilt} have no agents yet (built: {', '.join(DesignAgent.STAGES)})")
     run = Run(id=new_id("run"), design_id=design.id, status="pending",
               stages=[st.name for st in stages], agent_kind=agent_kind)
     s.add(run)
@@ -239,7 +240,7 @@ def create_run(s, design: Design, from_stage: str | None = None, to_stage: str |
         s.add(Task(id=tid, run_id=run.id, agent_id=lead, stage=st.name, status="pending", title=st.title,
                    seq=i, team_id=st.team_id, depends_on=[ids[d] for d in st.depends_on if d in ids],
                    inputs={"design_id": design.id, "design_name": design.name, "dummy": dummy or {},
-                           "request_text": design.request_text},
+                           "request_text": design.request_text, **(inputs or {})},
                    budget=task_budget(lead), expected_step_seconds=expected))
     ensure_run_budget(s, run.id)
     s.flush()

@@ -1,0 +1,14 @@
+id: "A3.12"
+name: Myra
+role: Verification Quality
+prompt: A3.12_Myra.md
+preamble: design
+stages: [verification]
+model_hint: default
+effort: low
+max_tokens: 4000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 45, max_tool_runs: 60}
+writes_to: ["reports/mutation*.json"]
+reads_from: ["tb/**", "rtl/**", "reports/**"]
+runtime: rules   # Phase 0: deterministic mutation engine + Yosys equivalence screen (s2s.verify)

@@ -19,6 +19,9 @@ import pytest
 import yaml
 from sqlalchemy import create_engine, text
 
+# m06_fixtures holds cocotb testbench fixtures (run inside s2s-eda), not pytest tests
+collect_ignore = ["m06_fixtures"]
+
 BACKEND = Path(__file__).resolve().parents[2]
 REPO = BACKEND.parent
 ADMIN_URL = os.environ.get("S2S_TEST_ADMIN_URL", "postgresql+psycopg://s2s:s2s@localhost:5432/postgres")

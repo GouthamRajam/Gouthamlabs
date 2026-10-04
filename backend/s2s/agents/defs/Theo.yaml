@@ -1,0 +1,13 @@
+id: "A3.6"
+name: Theo
+role: Testbench Engineering
+prompt: A3.6_Theo.md
+preamble: design
+stages: [test_build, verification]
+model_hint: default
+effort: medium
+max_tokens: 32000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 45, max_tool_runs: 60}
+writes_to: ["tb/test_*.py", "tb/tb_*.py"]
+reads_from: ["spec/**", "arch/**", "tb/dut_ports.json", "tb/testplan.yaml", "tb/ref_model.py", "tb/proto_*.py", "tb/test_*.py", "tb/tb_*.py", "reports/sentinel_tests*.json", "reports/bug_*.json", "reports/mutation_missed.json"]

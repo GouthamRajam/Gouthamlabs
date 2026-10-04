@@ -1,0 +1,11 @@
+id: A3.2
+name: Nadia
+role: Manager of Verification Build
+prompt: A3.2_manager_template.md
+preamble: none           # management: rule-driven loop in Phase 0 (s2s.agents.management)
+stages: []
+model_hint: default
+runtime: manager
+budget: {max_tokens: 100000, max_minutes: 600, max_tool_runs: 0}
+writes_to: []
+reads_from: []
