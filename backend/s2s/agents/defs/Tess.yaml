@@ -1,0 +1,13 @@
+id: A08
+name: Tess
+role: DFT Agent
+prompt: A08_Tess.md
+preamble: design
+stages: [dft]
+model_hint: default
+effort: low
+max_tokens: 8000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 100000, max_minutes: 20, max_tool_runs: 10}
+writes_to: ["dft/dft_plan.md"]
+reads_from: ["spec/**", "arch/**", "reports/synth_tool.json"]

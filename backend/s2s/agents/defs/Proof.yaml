@@ -1,0 +1,11 @@
+id: A3.16
+name: Proof
+role: Trust & Audit
+prompt: A3.16_Proof.md
+preamble: none
+stages: [gdsii]
+model_hint: default
+runtime: rules           # independent re-execution and diff guards are deterministic (no model call)
+budget: {max_tokens: 0, max_minutes: 120, max_tool_runs: 20}
+writes_to: ["reports/proof_*.json"]
+reads_from: []

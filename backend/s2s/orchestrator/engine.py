@@ -28,6 +28,7 @@ from s2s.agents import management as mgmt
 from s2s.agents.dummy import DummyAgent
 from s2s.agents.m05 import DesignAgent
 from s2s.agents import m06  # noqa: F401  (registers test_build/verification)
+from s2s.agents import m07  # noqa: F401  (registers synthesis..gdsii)
 from s2s.agents.runtime import Agent, run_task
 from s2s.config import management
 from s2s.db.models import Design, Gate, Run, Task

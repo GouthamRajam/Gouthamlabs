@@ -51,6 +51,7 @@ class AgentDef:
     reads_from: tuple = ()
     team_focus: str | None = None
     runtime: str | None = None
+    prompt_vars: dict = field(default_factory=dict)  # fills a template prompt (director/manager templates)
 
     @property
     def team(self) -> str | None:
@@ -76,7 +77,10 @@ def system_prompt(a: AgentDef) -> str:
     if a.preamble == "design":
         parts.append(_prompt("A.0_preamble.md").replace("{name}", a.name).replace("{role}", a.role))
         parts.append("ADDITIONAL RULES (Appendix A3)\n" + _prompt("A3_preamble_additions.md"))
-    parts.append(_prompt(a.prompt))
+    text = _prompt(a.prompt)
+    for k, v in a.prompt_vars.items():
+        text = text.replace("{" + k + "}", v)
+    parts.append(text)
     return "\n\n".join(parts)
 
 

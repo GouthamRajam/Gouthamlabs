@@ -1,0 +1,14 @@
+id: A3.1
+name: Mason
+role: Director of Physical Implementation (Zone 3)
+prompt: A3.1_director_template.md
+prompt_vars: {name: Mason, division: "Physical Implementation (Division 3, Zone 3)", "human VP": "the VP Physical Design & Signoff"}
+preamble: none           # directors: assignment and escalation are rule-driven; one model call writes the division report
+stages: [synthesis, dft, floorplan, place_route]
+model_hint: default
+effort: low
+max_tokens: 6000
+tools: [fs_read, emit_note]
+budget: {max_tokens: 100000, max_minutes: 600, max_tool_runs: 0}
+writes_to: ["reports/division3_report.md"]
+reads_from: ["reports/synth_report.json", "reports/sta_pre.json", "reports/floorplan_report.json", "reports/cts_report.json", "reports/pnr_report.json", "reports/division_cost.json", "dft/dft_plan.md"]

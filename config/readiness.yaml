@@ -17,3 +17,4 @@ weights:
   foundry_signoff: 3
   gds_integrity_repro: 6
 require_assumptions_block: true   # a score without the assumptions block is invalid
+partial_credit: 0.5   # Part 22.3 "partial" earns half the weight (M0.7)

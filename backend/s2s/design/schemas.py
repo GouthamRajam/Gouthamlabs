@@ -214,3 +214,19 @@ DEX_ANSWER = answer_schema(bugs={"type": "array", "items": _obj({
 ADJUDICATE_ANSWER = answer_schema(
     decision={"type": "string", "enum": ["model_a", "model_b", "spec_question"]},
     reason=_STR, spec_question=_STR)
+
+
+# --- M0.7: physical implementation answer formats ----------------------------------------------------
+ORION_ANSWER = answer_schema(
+    # at most two parameter changes per iteration, each inside config/pnr_ranges.yaml, with a reason
+    changes={"type": "array", "items": _obj({"param": {"type": "string", "enum": [
+        "FP_CORE_UTIL", "PL_TARGET_DENSITY_PCT", "MAX_FANOUT_CONSTRAINT"]}, "value": {"type": "number"},
+        "reason": _STR})},
+    escalate=_obj({"needed": {"type": "boolean"}, "why": _STR}),
+    report_markdown=_STR)
+FABIAN_ANSWER = answer_schema(
+    # ranking and explanation of the tool-found items; severities are fixed by the tool rules
+    ranked={"type": "array", "items": _obj({"id": _STR, "rank": {"type": "integer"},
+                                                          "why_it_matters": _STR, "suggested_fix": _STR,
+                                                          "owner": {"type": "string", "enum": ["Orion", "Grid"]}})},
+    scorecard_markdown=_STR)

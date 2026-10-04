@@ -95,7 +95,8 @@ for sim in a["simulators"]:
         if a["waves"]:
             args += ["--trace", "--trace-depth", "1"]
     r.build(verilog_sources=a["sources"], hdl_toplevel=a["toplevel"], build_dir=str(bdir),
-            timescale=("1ns", "1ps"), build_args=args, always=True, waves=a["waves"] and sim == "verilator")
+            timescale=("1ns", "1ps"), build_args=args, always=True, waves=a["waves"] and sim == "verilator",
+            defines=a.get("defines", {}))
     seeds = a["seeds"] if sim == "verilator" else a["seeds"][:1]
     for seed in seeds:
         tdir = base / f"{sim}_seed{seed}"
@@ -157,7 +158,7 @@ print("S2S_REGRESS_DONE")
 def run_cocotb_regress(sources: list[Path], toplevel: str, test_module: str, tb_dir: Path, workdir: Path,
                        out_name: str, seeds: list[int], simulators: tuple[str, ...] = ("verilator", "icarus"),
                        coverage: bool = True, waves: bool = True, timeout_s: float = 3600,
-                       extra_build_args: list[str] | None = None) -> ToolResult:
+                       extra_build_args: list[str] | None = None, defines: dict | None = None) -> ToolResult:
     """Build once per simulator and run `test_module` (importable from `tb_dir`) for each seed.
     Results land in <workdir>/<out_name>/."""
     workdir = workdir.resolve()
@@ -166,7 +167,7 @@ def run_cocotb_regress(sources: list[Path], toplevel: str, test_module: str, tb_
     args = {"simulators": list(simulators), "sources": [str(Path(s).resolve()) for s in sources],
             "toplevel": toplevel, "test_module": test_module, "out_dir": str(out_dir), "seeds": seeds,
             "coverage": coverage, "waves": waves, "pythonpath": str(Path(tb_dir).resolve()),
-            "extra_build_args": extra_build_args or []}
+            "extra_build_args": extra_build_args or [], "defines": defines or {}}
     (out_dir / "regress_args.json").write_text(json.dumps(args, indent=2))
     (out_dir / "run_regress.py").write_text(_RUNNER)
     cmd = [COCOTB_PYTHON, str(out_dir / "run_regress.py"), str(out_dir / "regress_args.json")]

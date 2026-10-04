@@ -19,6 +19,7 @@ _TCL = r"""
 read_verilog {netlist}
 link_design {top}
 read_sdc {sdc}
+{post_route}
 {read_spef}
 puts "S2S_STA_CORNER {corner}"
 report_checks -path_delay max -group_count {paths} -digits 4
@@ -109,18 +110,21 @@ SPEC = ToolSpec(
 def run_opensta(
     netlist: Path, sdc: Path, top: str, workdir: Path, corner: str = "tt_025C_1v80",
     liberty: list[Path] | None = None, spef: Path | None = None, paths: int = 5,
-    timeout_s: float = 1800,
+    timeout_s: float = 1800, post_route: bool = False, tag: str | None = None,
 ) -> ToolResult:
+    """post_route: the clock tree exists, so clock latencies are propagated through it."""
     libs = [str(Path(p).resolve()) for p in liberty] if liberty else [SKY130_HD_LIB.format(corner=corner)]
-    script = workdir.resolve() / ".s2s" / f"sta_{top}_{corner}.tcl"
+    name = f"sta_{top}_{tag or corner}"
+    script = workdir.resolve() / ".s2s" / f"{name}.tcl"
     script.parent.mkdir(parents=True, exist_ok=True)
     script.write_text(_TCL.format(
         read_libs="\n".join(f"read_liberty {lib}" for lib in libs),
         netlist=Path(netlist).resolve(), top=top, sdc=Path(sdc).resolve(),
-        read_spef=f"read_spef {Path(spef).resolve()}" if spef else "", corner=corner, paths=paths))
+        read_spef=f"read_spef {Path(spef).resolve()}" if spef else "", corner=tag or corner, paths=paths,
+        post_route="set_propagated_clock [all_clocks]" if post_route else ""))
     cmd = ["sta", "-no_init", "-exit", str(script)]
     try:
-        rec = runner.run(cmd, workdir, workdir / "logs" / f"sta_{top}_{corner}.log", SPEC.version_key,
+        rec = runner.run(cmd, workdir, workdir / "logs" / f"{name}.log", SPEC.version_key,
                          timeout_s)
     except runner.EdaUnavailable as e:
         return unavailable(SPEC, str(e), cmd)

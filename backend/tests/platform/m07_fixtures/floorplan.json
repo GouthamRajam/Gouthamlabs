@@ -1,0 +1,3 @@
+{"core_utilization_pct": 45,
+ "reasons": {"utilization": "fixture: the pnr_ranges default", "pins": "fixture: inputs west, outputs east",
+             "power_grid": "fixture: PDK default PDN", "clock_reset": "fixture: clk and rst_n first on the west side"}}

@@ -1,0 +1,18 @@
+# M0.7 signoff and DFM policy (Phase 0). These are S2S screening policies, NOT foundry rules:
+# every PDK limit (layer numbers, min width/space, density limits, antenna ratios) is read by the
+# tools from the PDK's own decks inside s2s-eda (PDK rules stay tool-resident, PHASE_GATES rule 2).
+cts:
+  max_skew_pct_of_period: 10      # Tick's skew target: measured skew (excluding SDC uncertainty) <= 10% of the clock period
+power:
+  default_toggle_rate: 0.2        # A.13: 20% switching activity unless simulation activity is used
+ir:
+  max_drop_pct_of_supply: 5       # A.13: Phase 0 IR-drop limit, 5% of supply
+dfm:                              # A.15 Fabian (KLayout scripts)
+  near_limit_pct: 5               # edges within 5% of the PDK minimum width/spacing count as near-limit
+  density_window_um: 20           # local density screening windows (block level; the PDK deck checks the whole area)
+  density_step_um: 10
+  density_near_max_pct: 90        # a window at >= 90% of the PDK max density is flagged medium; over the max is high
+  long_parallel_run_um: 10        # parallel run at near-minimum spacing at least this long = bridging risk
+  isolated_clearance_x_min_space: 3   # a near-minimum-width line with nothing within 3x min spacing = isolated
+  antenna_margin_flag_pct: 80     # a net at >= 80% of its antenna limit is flagged (>= 100% is a violation)
+  hotspots_per_item: 20           # locations listed per item in the scorecard

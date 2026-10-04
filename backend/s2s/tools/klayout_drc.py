@@ -52,20 +52,21 @@ SPEC = ToolSpec(
 
 def run_klayout_drc(
     gds: Path, top: str, workdir: Path, threads: int = 4, timeout_s: float = 3600,
-    options: dict[str, str] | None = None,
+    options: dict[str, str] | None = None, deck: str = DECK, name: str = "klayout_drc",
 ) -> ToolResult:
     gds = Path(gds).resolve()
-    report = workdir.resolve() / "reports" / f"klayout_drc_{top}.lyrdb"
+    report = workdir.resolve() / "reports" / f"{name}_{top}.lyrdb"
     report.parent.mkdir(parents=True, exist_ok=True)
     if report.exists():
         report.unlink()  # never read a stale report
-    opts = {**DEFAULT_OPTIONS, **(options or {}), "input": str(gds), "topcell": top,
+    base = DEFAULT_OPTIONS if deck == DECK else {}
+    opts = {**base, **(options or {}), "input": str(gds), "topcell": top, "top_cell": top,
             "report": str(report), "threads": str(threads)}
-    cmd = ["klayout", "-b", "-zz", "-r", DECK]
+    cmd = ["klayout", "-b", "-zz", "-r", deck]
     for key, value in opts.items():
         cmd += ["-rd", f"{key}={value}"]
     try:
-        rec = runner.run(cmd, workdir, workdir / "logs" / f"klayout_drc_{top}.log", SPEC.version_key,
+        rec = runner.run(cmd, workdir, workdir / "logs" / f"{name}_{top}.log", SPEC.version_key,
                          timeout_s)
     except runner.EdaUnavailable as e:
         return unavailable(SPEC, str(e), cmd)
