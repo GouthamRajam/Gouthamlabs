@@ -466,6 +466,7 @@ def test_build_steps() -> list[Step]:
             prev = "Sentinel filed these blocking findings:\n" + json.dumps(blocking, indent=2)
             by_file = {"Euclid": [f for f in blocking if ".sv" in f["target"]],
                        "Theo": [f for f in blocking if ".sv" not in f["target"]]}
+            rejected_before = len(ctx.state.get("guard_rejections", []))
             if by_file["Theo"]:
                 theo_revise(ctx, prev)
             if by_file["Euclid"]:
@@ -473,7 +474,11 @@ def test_build_steps() -> list[Step]:
                              inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv",
                                      "reports/sentinel_tests.json"], validate=validate_props, kind="formal", previous=prev,
                              constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"])))
-        _record(ctx, "sentinel_tests_review", [], "sentinel", "Sentinel")  # blocking ones were sent back once
+            open_ = ([f"{f['target']}: {f['what'][:160]} (fix rejected by the anti-cheating guard)" for f in by_file["Theo"]]
+                     if len(ctx.state.get("guard_rejections", [])) > rejected_before else [])
+            _record(ctx, "sentinel_tests_review", open_, "sentinel", "Sentinel")
+            return
+        _record(ctx, "sentinel_tests_review", [], "sentinel", "Sentinel")
 
     def baseline(ctx: StepContext) -> None:
         """The accepted verification set: the anti-cheating guard's reference from now on."""
@@ -527,10 +532,14 @@ def guarded(ctx: StepContext, author: str, change, reason: str) -> list[str]:
     ctx.check("anti_cheat_guard", "s2s.verify.guard", approved, {"flags": len(flags), "detail": flags,
               "sentinel": "approved" if approved else "rejected"}, **_who("Sentinel"))
     if not approved:
+        outputs = ctx.state.setdefault("outputs", {})
         for path, text in before.items():
-            (ctx.workdir / path).write_text(text)
+            if after.get(path) != text:
+                (ctx.workdir / path).write_text(text)
+                outputs[path] = ctx.artifact("reverted", path, text.encode(), agent_id="Sentinel")
         for path in set(after) - set(before):
             (ctx.workdir / path).unlink()
+            outputs.pop(path, None)
         ctx.emit("escalation", f"Sentinel rejected {author}'s weakened change; reverted", **_who("Sentinel"),
                  to_agent_id="human", detail={"flags": flags, "findings": blocking})
         ctx.state.setdefault("guard_rejections", []).append({"author": author, "flags": flags})
