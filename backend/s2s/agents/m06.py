@@ -818,6 +818,22 @@ def _coverage(ctx: StepContext, r) -> dict:
     return cov
 
 
+# What kind of test exposes each injected-bug type (generic test guidance; no RTL content).
+MUTANT_TEST_HINTS = {
+    "missing_reset": "assert reset in the MIDDLE of activity (not only at power-up), after registers hold non-reset "
+                     "values, then check every output and every observable state returns to its spec reset value "
+                     "and the first operation after reset behaves exactly as from power-up",
+    "off_by_one": "exercise exact boundaries: counts/lengths/indices at 0, 1, max-1, max and wrap-around, and check "
+                  "cycle-exact timing of every boundary event",
+    "wrong_operator": "use operand values where the intended and a neighbouring operator differ (carry, borrow, "
+                      "all-ones, alternating bits) and check exact results, not just validity",
+    "stuck_bit": "drive and check every bit of every bus independently (walking ones and zeros)",
+    "swapped_condition": "cover both branches of every control decision, including simultaneous/conflicting requests",
+    "dropped_handshake": "check every valid/ready/busy/done signal cycle-exactly, including back-to-back transfers "
+                         "and requests made while busy",
+}
+
+
 def verification_steps() -> list[Step]:
     def setup(ctx: StepContext) -> None:
         src = ctx.task.inputs.get("source_run")
@@ -961,9 +977,13 @@ def verification_steps() -> list[Step]:
                                                          "total": res["total"], "rate": res["rate"], "by_type": res["by_type"]})
             if res["rate"] >= targets()["mutation_detection"] or attempt == 2:
                 break
-            missed = [{"bug_type": m["type"], "requirements": m["reqs"],
+            # Theo never sees the RTL: only the module name (public in arch.yaml), the requirements and what
+            # kind of test exposes that bug type.
+            missed = [{"bug_type": m["type"], "module": Path(m["file"]).stem, "requirements": m["reqs"],
                        "what": "a realistic bug of this type in the logic implementing these requirements was not "
-                               "detected by any test"} for m in res["mutants"] if not m["detected"]]
+                               "detected by any test",
+                       "how_tests_catch_it": MUTANT_TEST_HINTS.get(m["type"], "")}
+                      for m in res["mutants"] if not m["detected"]]
             _json_report(ctx, "Myra", "reports/mutation_missed.json", missed)
             ctx.emit("handoff", f"Myra -> Nadia: {len(missed)} missed injected bug(s) -> test-improvement task for Theo",
                      **who, to_agent_id="Nadia", detail={"missed": missed})

@@ -7,9 +7,16 @@ Two modes (env S2S_EDA_MODE):
   local             already running inside s2s-eda: run the command directly.
 
 Every input file must live inside the working directory (it is the only thing mounted).
+
+Concurrency: every run first takes slots from one machine-wide pool (S2S_TOOL_SLOTS, default the CPU
+count; OpenLane takes 2 because it runs steps on several threads). Slots are flock'ed files in
+S2S_LOCK_DIR, so they are shared by every process and thread of every design run. A job waits for its
+slots BEFORE its timeout starts: queueing never makes a tool run time out.
 """
 from __future__ import annotations
 
+import contextlib
+import fcntl
 import hashlib
 import os
 import shlex
@@ -40,6 +47,52 @@ class RunRecord:
     tool_version: str | None
     env_hash: str
     mode: str
+
+
+HEAVY_WEIGHT = {"openlane": 2}  # slots per run; every other tool takes 1
+
+
+def tool_slots() -> int:
+    return max(1, int(os.environ.get("S2S_TOOL_SLOTS", str(os.cpu_count() or 4))))
+
+
+def lock_dir() -> Path:
+    return Path(os.environ.get("S2S_LOCK_DIR", REPO_ROOT / "var" / "locks"))
+
+
+@contextlib.contextmanager
+def tool_slots_held(version_key: str):
+    """Hold `HEAVY_WEIGHT[version_key]` (default 1) of the machine-wide slots for one tool run.
+    Slots are taken under one acquisition lock, so two multi-slot jobs never each hold a part and wait
+    for each other. flock (not fcntl record locks) so threads of one process also exclude each other."""
+    total = tool_slots()
+    need = min(HEAVY_WEIGHT.get(version_key, 1), total)
+    d = lock_dir()
+    d.mkdir(parents=True, exist_ok=True)
+    held: list = []
+    try:
+        with open(d / "acquire.lock", "a") as acq:
+            fcntl.flock(acq, fcntl.LOCK_EX)
+            try:
+                while len(held) < need:
+                    for i in range(total):
+                        if len(held) == need:
+                            break
+                        f = open(d / f"slot_{i}.lock", "a")
+                        try:
+                            fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                            held.append(f)
+                        except BlockingIOError:
+                            f.close()
+                    if len(held) < need:
+                        time.sleep(0.5)
+            finally:
+                fcntl.flock(acq, fcntl.LOCK_UN)
+        yield len(held)
+    finally:
+        for f in held:
+            fcntl.flock(f, fcntl.LOCK_UN)
+            f.close()
 
 
 def mode() -> str:
@@ -123,24 +176,25 @@ def run(
         full += [IMAGE, *command]
         proc_env = None
 
-    start = time.monotonic()
-    timed_out = False
-    with open(log_path, "wb") as log:
-        proc = subprocess.Popen(full, stdout=log, stderr=subprocess.STDOUT, cwd=cwd, env=proc_env,
-                                start_new_session=True)
-        try:
-            exit_code: int | None = proc.wait(timeout=timeout_s)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            if mode() == "local":
-                os.killpg(proc.pid, 9)
-            else:
-                subprocess.run(["docker", "kill", container], capture_output=True)
-            proc.wait()
-            exit_code = None
-    with open(log_path, "a") as log:
-        if timed_out:
-            log.write(f"\n[s2s] TIMEOUT after {timeout_s}s; process killed\n")
+    with tool_slots_held(version_key):  # waits for a free slot; the timeout starts after this
+        start = time.monotonic()
+        timed_out = False
+        with open(log_path, "wb") as log:
+            proc = subprocess.Popen(full, stdout=log, stderr=subprocess.STDOUT, cwd=cwd, env=proc_env,
+                                    start_new_session=True)
+            try:
+                exit_code: int | None = proc.wait(timeout=timeout_s)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                if mode() == "local":
+                    os.killpg(proc.pid, 9)
+                else:
+                    subprocess.run(["docker", "kill", container], capture_output=True)
+                proc.wait()
+                exit_code = None
+        with open(log_path, "a") as log:
+            if timed_out:
+                log.write(f"\n[s2s] TIMEOUT after {timeout_s}s; process killed\n")
 
     return RunRecord(
         command=command,

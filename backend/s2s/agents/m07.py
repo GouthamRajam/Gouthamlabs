@@ -264,10 +264,23 @@ def synthesis_steps() -> list[Step]:
                 return
             ctx.emit("plan", f"Mason: plan - {_override_note(ctx)} The SDC guard and the config guard check "
                      f"against {mhz} MHz.", agent_id="Mason")
+        params = olf.default_params()
+        strategy = (ctx.task.inputs or {}).get("synth_strategy")  # operator decision (recorded); absent = default
+        if strategy is not None:
+            ok = strategy in olf.SYNTH_STRATEGIES
+            _check(ctx, "Mason", "synth_strategy_recorded", "s2s task input synth_strategy", ok,
+                   {"synth_strategy": strategy, "allowed": olf.SYNTH_STRATEGIES,
+                    "reason": (ctx.task.inputs or {}).get("synth_strategy_reason", "")})
+            if not ok:
+                ctx.state["blocked"] = f"synth_strategy {strategy!r} is not one of {olf.SYNTH_STRATEGIES}"
+                return
+            params["SYNTH_STRATEGY"] = strategy
+            ctx.emit("plan", f"Mason: plan - synthesis strategy {strategy} (operator decision, an allowed "
+                     "flow setting; no constraint changes)", agent_id="Mason")
         clk = _clocks(ctx)[0]
         _save_phys(ctx, source_run=src, lineage=lineage, frozen_rtl=frozen, top=_top(ctx),
                    clock_port=clk["name"], period_ns=round(1000.0 / float(clk["freq_mhz"]), 6),
-                   params=olf.default_params(), tag="it1", iteration=1)
+                   params=params, tag="it1", iteration=1)
         ctx.emit("plan", f"Mason: plan - Zone 3 for {spec['design']}: constraints (Sienna, Sentinel review), synthesis + "
                  "equivalence, DFT plan (Tess), floorplan (Grid), placement/CTS/routing (Orion, Tick) within "
                  "pnr_ranges.yaml; every result from the tools", agent_id="Mason")

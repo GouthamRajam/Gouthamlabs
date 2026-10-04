@@ -9,7 +9,8 @@ Screening, with real tools, before a mutant counts:
      explored). A proven-equivalent mutant (e.g. a change in an unreachable `default:`) cannot be
      detected by any test; it is reported and replaced. A mutant the solver cannot decide within
      the step bound is KEPT and counted.
-Detection: the regression (seed 1, Verilator) has any failing test, crashes, or times out.
+Detection: the regression (seed 1, Verilator) has any failing test or crashes. A run that times out is
+retried once at twice the limit; if it times out again it counts as NOT detected (never as a catch).
 """
 from __future__ import annotations
 
@@ -73,8 +74,8 @@ class MutationHarnessError(RuntimeError):
 def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: Path, test_module: str,
                  n: int = 20, timeout_s: float = 900, parallel: int | None = None, log=print) -> dict:
     """Returns {"mutants": [...], "detected": k, "total": n, "rate": k/n, "screened_out": [...]}."""
-    # Concurrent design runs share the cores: S2S_MUTATION_PARALLEL keeps mutants from timing out
-    # for lack of CPU (a timeout counts as a catch, so oversubscription would inflate the rate).
+    # Concurrent design runs share the cores: every simulation also takes a machine-wide tool slot
+    # (s2s.tools.runner), so oversubscription only queues runs. A timeout never counts as a catch.
     parallel = parallel or int(os.environ.get("S2S_MUTATION_PARALLEL", "4"))
     base = (workdir / "mutation").resolve()
     shutil.rmtree(base, ignore_errors=True)
@@ -132,7 +133,7 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
 
     # The unmutated original must pass through the identical path, or the measurement is void. Its own
     # limit is the regression capacity; each mutant then gets max(timeout_s, 3 x the original's run
-    # time), so a long but normal test run is never mistaken for a hang (a timeout counts as a catch).
+    # time), retried once at twice that; a mutant that still times out counts as NOT caught.
     ref = regress(orig_dir / "rtl", "orig", float(os.environ.get("S2S_REGRESS_TIMEOUT_S", str(max(timeout_s, 2400)))))
     if not ref.passed:
         raise MutationHarnessError("the unmutated RTL does not pass the regression in the mutation harness: "
@@ -142,10 +143,16 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
 
     def run_one(m: Mutant) -> dict:
         r = regress(base / m.id / "rtl", m.id, mutant_timeout)
+        timeouts = 0
+        if r.timed_out:  # retried once with twice the limit before any verdict
+            timeouts = 1
+            r = regress(base / m.id / "rtl", f"{m.id}_retry", 2 * mutant_timeout)
         failed = r.metrics.get("failed_runs", 0)
         ran = bool(r.metrics.get("test_runs"))
         if r.timed_out:
-            detected, how = True, "regression timed out (hang)"
+            # CEO rule: a timed-out simulation is never counted as a caught bug (it may only be slow).
+            timeouts = 2
+            detected, how = False, f"regression timed out twice ({mutant_timeout:.0f} s, then {2 * mutant_timeout:.0f} s): NOT counted as caught"
         elif failed:
             detected = True
             how = f"{failed} failing test run(s): " + ", ".join(
@@ -157,7 +164,7 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         log(f"mutant {m.id}: {'caught' if detected else ('missed' if detected is False else 'harness error')}")
         return {"id": m.id, "type": m.type, "file": m.file, "line": m.line, "description": m.description,
                 "reqs": list(m.reqs), "before": m.before.strip(), "after": m.after.strip(), "detected": detected,
-                "how": how, "duration_s": r.duration_s, "equivalence_screen": screen.get(m.id)}
+                "how": how, "duration_s": r.duration_s, "timeouts": timeouts, "equivalence_screen": screen.get(m.id)}
 
     with ThreadPoolExecutor(max_workers=parallel) as pool:
         results = list(pool.map(run_one, kept))
@@ -174,4 +181,5 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         by_type[r["type"]][1] += 1
     return {"mutants": results, "detected": k, "total": len(results), "rate": round(k / len(results), 4) if results else 0.0,
             "by_type": {t: f"{a}/{b}" for t, (a, b) in by_type.items()}, "screened_out": screened_out,
+            "timed_out_not_counted": sum(1 for r in results if r["timeouts"] == 2),
             "equivalence_screen": {m.id: screen.get(m.id) for m in kept}}
