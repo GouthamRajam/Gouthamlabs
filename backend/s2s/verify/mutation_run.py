@@ -41,17 +41,23 @@ for m in a["mutants"]:
             f"rename {a['top']} gate; design -stash m; "
             "design -copy-from g -as gold gold; design -copy-from m -as gate gate; ")
     # equivalence proof with registers matched by name (equiv_induct)
-    e = subprocess.run(["yosys", "-p", load + "equiv_make gold gate equiv; hierarchy -top equiv; "
-                        "equiv_simple -seq 5; equiv_induct -seq 5; equiv_status -assert"],
-                       capture_output=True, text=True, timeout=300)
-    if e.returncode == 0 and "Equivalence successfully proven" in e.stdout:
+    try:
+        e = subprocess.run(["yosys", "-p", load + "equiv_make gold gate equiv; hierarchy -top equiv; "
+                            "equiv_simple -seq 5; equiv_induct -seq 5; equiv_status -assert"],
+                           capture_output=True, text=True, timeout=a["equiv_timeout"])
+    except subprocess.TimeoutExpired:
+        e = None  # not proven equivalent in time: the mutant stays in (conservative)
+    if e is not None and e.returncode == 0 and "Equivalence successfully proven" in e.stdout:
         eq, log = "equivalent", "equiv_induct: equivalence proven"
     else:
         # bounded search for a difference from the all-zero state (every input free, incl. reset)
-        y = subprocess.run(["yosys", "-p", load + "miter -equiv -flatten -make_assert -ignore_gold_x gold gate miter; "
-                            f"hierarchy -top miter; sat -tempinduct -prove-asserts -set-init-zero -maxsteps {a['steps']} miter"],
-                           capture_output=True, text=True, timeout=300)
-        log = y.stdout + y.stderr
+        try:
+            y = subprocess.run(["yosys", "-p", load + "miter -equiv -flatten -make_assert -ignore_gold_x gold gate miter; "
+                                f"hierarchy -top miter; sat -tempinduct -prove-asserts -set-init-zero -maxsteps {a['steps']} miter"],
+                               capture_output=True, text=True, timeout=a["miter_timeout"])
+            log = y.stdout + y.stderr
+        except subprocess.TimeoutExpired:
+            log = f"miter search timed out after {a['miter_timeout']} s"
         eq = "different" if "FAIL!" in log else "unknown"
         log = next((ln for ln in log.splitlines() if "FAIL!" in ln or "Reached maximum" in ln), log[-200:])
     out.append({"id": m["id"], "compiles": True, "equiv": eq, "detail": log[-300:]})
@@ -90,7 +96,8 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
             for path, text in rtl_files.items():
                 (d / Path(path).name).write_text(m.apply(text) if path == m.file else text)
             specs.append({"id": m.id, "files": [str(d / Path(p).name) for p in rtl_files]})
-        args = {"top": top, "orig": [str(orig_dir / p) for p in rtl_files], "mutants": specs, "steps": 25}
+        args = {"top": top, "orig": [str(orig_dir / p) for p in rtl_files], "mutants": specs, "steps": 25,
+                "equiv_timeout": 120, "miter_timeout": 90}
         (base / "screen_args.json").write_text(json.dumps(args))
         (base / "screen.py").write_text(_SCREEN)
         rec = runner.run(["/opt/cocotb/bin/python3", str(base / "screen.py"), str(base / "screen_args.json")],
@@ -98,14 +105,18 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         text = Path(rec.log_path).read_text()
         res = {r["id"]: r for line in text.splitlines() if line.startswith("S2S_SCREEN ")
                for r in json.loads(line[len("S2S_SCREEN "):])}
+        missing = [m.id for m in batch if m.id not in res]
+        if missing:  # the screen itself failed: never read as "does not compile"
+            raise MutationHarnessError(f"equivalence screen gave no result for {len(missing)} mutant(s) "
+                                       f"(e.g. {missing[0]}); see {base}/screen_{i}.log")
         for m in batch:
-            r = res.get(m.id, {"compiles": False, "equiv": None, "detail": "screen did not report"})
+            r = res[m.id]
             screen[m.id] = r.get("equiv")
             if not r["compiles"]:
                 screened_out.append({"id": m.id, "type": m.type, "description": m.description, "reason": "does not compile"})
             elif r["equiv"] == "equivalent":
                 screened_out.append({"id": m.id, "type": m.type, "description": m.description,
-                                     "reason": "proven equivalent to the original (yosys miter + SAT induction)"})
+                                     "reason": "proven equivalent to the original (yosys equiv_induct)"})
             elif len(kept) < n:
                 kept.append(m)
         log(f"mutation screening: {len(kept)}/{n} kept, {len(screened_out)} screened out so far")
