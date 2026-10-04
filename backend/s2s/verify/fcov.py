@@ -100,7 +100,8 @@ def vcd_samples(path: Path, clock: str) -> Iterator[dict[str, int | None]]:
     ids: dict[str, str] = {}
     depth, top_seen = 0, False
     values: dict[str, int | None] = {}
-    lines = iter(Path(path).read_text(errors="replace").splitlines())
+    f = open(path, errors="replace")  # streamed: regression waveforms can be hundreds of MB
+    lines = (ln.rstrip("\n") for ln in f)
     for line in lines:
         t = line.split()
         if not t:
@@ -115,6 +116,7 @@ def vcd_samples(path: Path, clock: str) -> Iterator[dict[str, int | None]]:
         elif t[0] == "$enddefinitions":
             break
     if not top_seen or clock not in ids.values():
+        f.close()
         return
     clk_id = next(k for k, n in ids.items() if n == clock)
     pending: dict[str, int | None] = {}
@@ -136,15 +138,23 @@ def vcd_samples(path: Path, clock: str) -> Iterator[dict[str, int | None]]:
                 pending[ident] = None if any(c in "xXzZ" for c in bits) else int(bits, 2)
     if pending and pending.get(clk_id) == 1 and values.get(clk_id) == 0:
         yield {ids[k]: x for k, x in values.items()}
+    f.close()
 
 
 def bin_hits(vcds: list[Path], clock: str, bins: list[dict], ports: set[str]) -> dict[str, int]:
     """Hits per bin name over all waveforms. Bins with invalid expressions raise BadExpression."""
     trees = {b["name"]: compile_expr(b["expr"], ports) for b in bins}
     hits = {name: 0 for name in trees}
+    # a bin's value depends only on the sampled port values, so evaluate each distinct sample once and
+    # count how often it occurs (same hit counts, much faster on long regressions)
+    seen: dict[tuple, int] = {}
     for vcd in vcds:
         for sample in vcd_samples(vcd, clock):
-            for name, tree in trees.items():
-                if evaluate(tree, sample):
-                    hits[name] += 1
+            key = tuple(sorted(sample.items()))
+            seen[key] = seen.get(key, 0) + 1
+    for key, n in seen.items():
+        sample = dict(key)
+        for name, tree in trees.items():
+            if evaluate(tree, sample):
+                hits[name] += n
     return hits
