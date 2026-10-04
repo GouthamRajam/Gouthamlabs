@@ -1,0 +1,17 @@
+{
+  "DESIGN_NAME": "alu8_top",
+  "VERILOG_FILES": [
+    "dir::src/alu8_core.v",
+    "dir::src/alu8_regs.v",
+    "dir::src/alu8_top.v"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 13.333333,
+  "PNR_SDC_FILE": "dir::src/constraints.sdc",
+  "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc",
+  "ERRORS_ON_UNMATCHED_IO": "both",
+  "FP_CORE_UTIL": 40,
+  "PL_TARGET_DENSITY_PCT": 55.0,
+  "MAX_FANOUT_CONSTRAINT": 10,
+  "FP_PIN_ORDER_CFG": "dir::src/pin_order.cfg"
+}

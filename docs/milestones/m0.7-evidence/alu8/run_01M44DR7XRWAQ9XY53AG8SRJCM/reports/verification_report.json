@@ -1,0 +1,129 @@
+{
+  "design": "alu8",
+  "coverage": {
+    "met": true,
+    "line": 0.963,
+    "toggle": 1.0,
+    "functional": 1.0,
+    "unhit_bins": []
+  },
+  "formal": {
+    "error": null,
+    "failed": [],
+    "vacuous": [],
+    "tautologies": [],
+    "proven_meaningful": 10
+  },
+  "formal_properties": {
+    "add": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "sub": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "logic": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "shift": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "flag_v": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "flag_zn": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "cmp_hold": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "cmp_flags": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "reset_values": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "zn_vs_result": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    }
+  },
+  "mutation": [
+    {
+      "rate": 1.0,
+      "total": 20,
+      "attempt": 1,
+      "by_type": {
+        "stuck_bit": "3/3",
+        "off_by_one": "4/4",
+        "missing_reset": "5/5",
+        "wrong_operator": "6/6",
+        "swapped_condition": "2/2"
+      },
+      "detected": 20
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-TB-SHR-N",
+      "actual": "The DUT gave result=0x80, Z=0, C=0, V=0, N=1, which is spec-correct. The test expected flag_n=0.",
+      "bug_id": "bug_1_1",
+      "module": "tb/test_alu8_2.py::test_shr_exhaustive",
+      "evidence": "Failure message: inputs a=0x80 b=0x00 op=6(SHR); expected result=128 flag_n=0; actual result=0x80 N=1; only flag_n differs. Spec REQ-007: 'flag_n <= bit 7 of the 8-bit operation result, for every op'. 0x80>>0 = 0x80 has bit 7 = 1. tb/ref_model.py sets flag_n=(opres>>7)&1 (gives 1). formal_top.sv sets ref_n=ref_opres[7] (gives 1). The same test's directed corner (0xFF, n=0) expects flag_n=1, which contradicts the sweep's hard-coded 0. The failure is identical across both simulators and all seeds, so it is deterministic and does not depend on the simulator.",
+      "expected": "For op=SHR, a=0x80, b=0x00 (n=0): result=0x80, flag_z=0, flag_c=0, flag_v=0, flag_n=1 (bit 7 of result).",
+      "failures": [
+        "verilator seed 1: test_shr_exhaustive cycle 32771 (a=0x80 b=0x00 op=SHR) differing flag_n",
+        "verilator seed 2: test_shr_exhaustive cycle 32771 (a=0x80 b=0x00 op=SHR) differing flag_n",
+        "verilator seed 3: test_shr_exhaustive cycle 32771 (a=0x80 b=0x00 op=SHR) differing flag_n",
+        "icarus seed 1: test_shr_exhaustive cycle 32771 (a=0x80 b=0x00 op=SHR) differing flag_n"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Theo",
+      "root_cause": "test_shr_exhaustive's sweep loop hard-codes the expected flag_n to 0 for every SHR vector. That holds only for n>=1. For n=0 the result equals a, so flag_n must equal a[7] (REQ-007).",
+      "requirement": "REQ-007 (flag_n = bit 7 of the 8-bit operation result for every op), with REQ-005 (SHR by n=b[2:0], n=0 is identity)",
+      "suggested_fix": "In the per-vector check of test_shr_exhaustive, set the expected flag_n from the spec instead of the constant 0: flag_n = bit 7 of the expected result ((a >> n) >> 7) & 1. This gives a[7] for n=0 and 0 for n>=1 (REQ-007). Leave every other expected field and the full 65,536-vector sweep unchanged; this makes the check stricter, not weaker. Then re-run test_shr_exhaustive on verilator and icarus to confirm.",
+      "classification": "TEST"
+    }
+  ],
+  "real_rtl_bugs": [],
+  "guard": [
+    {
+      "flags": [],
+      "author": "Theo",
+      "reason": "Bug report from Dex (Appendix B.7):\n{\n  \"id\": \"BUG-TB-SHR-N\",\n  \"classification\": \"TEST\",\n  \"failures\": [\n    \"verilator seed 1: test_shr_exhaustive cycle 32771 (a=0x80 b=0x00 op=SHR) differing flag_n\",\n    \"verilator seed 2: test_shr_exhaustive cycle 32771 (a=0x80 b=0x00 op=SHR) differing flag_n\",\n"
+    }
+  ],
+  "anticheat_final": {
+    "flags": [],
+    "unreviewed": [],
+    "approved_by_sentinel": []
+  }
+}

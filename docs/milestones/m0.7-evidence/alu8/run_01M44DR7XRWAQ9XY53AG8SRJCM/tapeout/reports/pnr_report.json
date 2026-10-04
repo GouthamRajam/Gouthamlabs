@@ -1,0 +1,63 @@
+{
+  "iterations": [
+    {
+      "iteration": 1,
+      "tag": "it1",
+      "params": {
+        "FP_CORE_UTIL": 40,
+        "PL_TARGET_DENSITY_PCT": 55.0,
+        "MAX_FANOUT_CONSTRAINT": 10
+      },
+      "problems": [],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 6.229007264078433,
+          "nom_ss_100C_1v60": 3.355372963337437,
+          "nom_ff_n40C_1v95": 7.3135326531588785,
+          "min_tt_025C_1v80": 6.261385365195107,
+          "min_ss_100C_1v60": 3.4176218378210583,
+          "min_ff_n40C_1v95": 7.338188486787069,
+          "max_tt_025C_1v80": 6.191840104787293,
+          "max_ss_100C_1v60": 3.2760435291814916,
+          "max_ff_n40C_1v95": 7.282238573834108
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.7754375139263605,
+          "nom_ss_100C_1v60": 1.832508308076684,
+          "nom_ff_n40C_1v95": 0.4211170698016109,
+          "min_tt_025C_1v80": 0.7737877224651082,
+          "min_ss_100C_1v60": 1.8302440081539222,
+          "min_ff_n40C_1v95": 0.4195979793496291,
+          "max_tt_025C_1v80": 0.7787062881590603,
+          "max_ss_100C_1v60": 1.8379696063115736,
+          "max_ff_n40C_1v95": 0.4233489789667132
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 0,
+        "wirelength_um": 5485,
+        "utilization": 0.460397,
+        "cts_worst_tree_skew_ns": 0.0,
+        "cts_target_ns": 1.3333
+      },
+      "changes": []
+    }
+  ],
+  "explained_by": "Orion",
+  "explanation": "# Place and route summary - alu8\n\nAll numbers are quoted from `reports/pnr_iterations.json`, `reports/cts_report.json` and `reports/floorplan_report.json`. Nothing here is a new measurement; the S2S runtime runs the real checks.\n\n## Plan\nRead the single recorded P&R iteration, tabulate its parameters and results, cross-check with the floorplan and CTS reports, and list what the data does not cover.\n\n## Iteration table\nOnly one iteration was run. It reported no problems, so no parameters were changed.\n\n| Iteration | Tag | FP_CORE_UTIL | PL_TARGET_DENSITY_PCT | MAX_FANOUT_CONSTRAINT | Problems | Changes |\n|---|---|---|---|---|---|---|\n| 1 | it1 | 40 | 55.0 | 10 | none (`problems: []`) | none (`changes: []`) |\n\nIteration budget used: 1 of 8 (default).\n\n## Final state (iteration 1)\n\n### Routing, DRC, antenna, connectivity\n| Item | Value |\n|---|---|\n| Route DRC errors | 0 |\n| Antenna violating nets | 0 |\n| Antenna violating pins | 0 |\n| Disconnected pins | 0 |\n| Max slew violations | 0 |\n| Max cap violations | 0 |\n| Max fanout violations | 0 |\n| Wirelength | 5485 um |\n| Utilization (post-P&R) | 0.460397 |\n\n### Congestion\nThe input data contains no congestion or routing-overflow figure (no GRT overflow or congestion map numbers). Congestion is therefore **not reported** here. Indirect signals only: 0 route DRC errors and 0 disconnected pins after routing.\n\n### Floorplan context\n- Die area 7368.13 um^2, core area 4723.28 um^2.\n- Floorplan utilization 0.428079 (chosen core utilization 40%); post-P&R utilization 0.460397 (rises after CTS, hold and repair buffers are added).\n- Power grid violations: 0.\n- Pins: 33. Inputs a[7:0], b[7:0], op[2:0] on West; outputs result[7:0], flag_z/c/v/n on East; clk on North; rst_n on South.\n\n### Clock tree\n- Worst tree skew 0.0 ns against a 1.3333 ns target (`cts_worst_tree_skew_ns`, `cts_target_ns`); 9 corners with skew data.\n- Clock buffers 3, hold buffers 8, timing-repair buffers 53.\n- Clock source latency ranges from 0.159133 ns (min_ff_n40C_1v95) to 0.411331 ns (max_ss_100C_1v60).\n\n### Timing (worst slack per corner, ns, from iteration 1 facts)\nPositive slack means the check is met at that corner. Clock period 13.333 ns (75 MHz, REQ-014).\n\n| Corner | Setup worst slack | Hold worst slack |\n|---|---|---|\n| nom_tt_025C_1v80 | 6.229007264078433 | 0.7754375139263605 |\n| nom_ss_100C_1v60 | 3.355372963337437 | 1.832508308076684 |\n| nom_ff_n40C_1v95 | 7.3135326531588785 | 0.4211170698016109 |\n| min_tt_025C_1v80 | 6.261385365195107 | 0.7737877224651082 |\n| min_ss_100C_1v60 | 3.4176218378210583 | 1.8302440081539222 |\n| min_ff_n40C_1v95 | 7.338188486787069 | 0.4195979793496291 |\n| max_tt_025C_1v80 | 6.191840104787293 | 0.7787062881590603 |\n| max_ss_100C_1v60 | 3.2760435291814916 | 1.8379696063115736 |\n| max_ff_n40C_1v95 | 7.282238573834108 | 0.4233489789667132 |\n\n- Tightest setup: max_ss_100C_1v60 at 3.2760435291814916 ns.\n- Tightest hold: min_ff_n40C_1v95 at 0.4195979793496291 ns.\n- Typical corner (REQ-014 sign-off corner): nom_tt_025C_1v80 setup 6.229007264078433 ns, hold 0.7754375139263605 ns.\n- All 18 setup/hold values in the data are positive. Sign-off still depends on the runtime's post-route STA run (Chronos), not on this summary.\n\n## Limits of this data\n- No congestion/overflow numbers are given.\n- Only one iteration exists, so there is no before/after comparison of parameter changes.\n- The 53 timing-repair buffers are large for a 12-flop design (REQ-016); the cause is not identified in the data.\n",
+  "assumptions": [
+    "setup_ws_by_corner / hold_ws_by_corner in pnr_iterations.json are post-route worst slacks in ns (positive = met); the file does not label the stage explicitly.",
+    "Iteration 1 is the final state, since pnr_iterations.json holds only one entry.",
+    "Default iteration budget of 8 applies; only 1 was used.",
+    "The rise in utilization from 0.428079 (floorplan) to 0.460397 (P&R facts) is attributed to buffers added by CTS, hold fixing and repair; the data does not break this down."
+  ],
+  "open_issues": [
+    "No congestion or global-routing overflow numbers are present in the input data; congestion cannot be reported. The runtime should supply the GRT overflow/congestion report if it is required.",
+    "53 timing-repair buffers is large for a 12-flop design; the driver (e.g. 0 ns I/O delay assumption, slew/cap repair) is not identified in the data. Chronos/Orion should confirm.",
+    "Tightest hold slack is 0.4195979793496291 ns at min_ff_n40C_1v95; sign-off post-route STA (REQ-014) must be confirmed by the real STA run."
+  ]
+}

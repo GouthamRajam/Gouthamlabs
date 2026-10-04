@@ -1,0 +1,173 @@
+{
+  "die_area_um2": 7368.13,
+  "core_area_um2": 4723.28,
+  "utilization": 0.428079,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "a[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "flag_c",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "flag_n",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "flag_v",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "flag_z",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "op[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "op[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "op[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "result[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    }
+  ]
+}

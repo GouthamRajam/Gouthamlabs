@@ -1,0 +1,182 @@
+{
+  "die_area_um2": 7368.13,
+  "core_area_um2": 4723.28,
+  "utilization": 0.428079,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "a[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "a[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "b[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "flag_c",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "flag_n",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "flag_v",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "flag_z",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "op[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "op[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "op[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "result[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "result[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    }
+  ],
+  "choices": {
+    "core_utilization_pct": 40,
+    "reasons": {
+      "utilization": "Synthesized area is 1938.1 um^2 (182 cells, reports/synth_tool.json). 40% core utilization gives about 4845 um^2 of core (~70 x 70 um), inside the allowed 30-65% range. Chosen slightly below the 45% default because the block is tiny: a little extra core keeps the 33 I/O pins at a comfortable pitch on the perimeter, leaves room for the default SKY130 PDN straps and for resizer/hold buffers, and timing slack (2.92 ns pre-layout at ss) does not need a tighter, shorter-wire layout.",
+      "pins": "Follows arch.yaml data flow: operands and opcode (a[7:0], b[7:0], op[2:0]) enter on the West edge feeding alu8_core; registered outputs (result[7:0], flag_z/c/v/n) leave on the East edge from alu8_regs, so data flows left to right with no crossing. 33 pins total, each matched by exactly one pattern.",
+      "power_grid": "Default SKY130 PDN from the PDK/OpenLane configuration (pnr_ranges.yaml defines no strap pitch/width ranges, so straps stay at default). Connectivity and powered-row checks are left to the real PDN step.",
+      "clock_reset": "clk is placed alone on the North edge so the single clock net enters away from the data buses; rst_n (synchronous, only drives the 12-flop register bank) is placed alone on the South edge. Neither shares an edge with the data buses, keeping the ordered bus pins contiguous."
+    }
+  }
+}

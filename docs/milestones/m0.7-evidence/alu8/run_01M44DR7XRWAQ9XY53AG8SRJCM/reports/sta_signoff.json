@@ -1,0 +1,91 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 6.229,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7754,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 3.3554,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.8325,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 7.3135,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4211,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 6.2614,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7738,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 3.4176,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.8302,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 7.3382,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4196,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 6.1918,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7787,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 3.276,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.838,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 7.2822,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4233,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    }
+  },
+  "explained_by": "Chronos",
+  "explanation": "# alu8 signoff timing report (sta_signoff)\n\nSource of every number: `reports/sta_tool.json` (OpenSTA results supplied by the S2S runtime). Constraints: `constraints/constraints.sdc` (clock clk, period 13.333333 ns, uncertainty 0.25 ns, input/output delay 4.0 ns, max fanout 10). No numbers in this report were computed by Chronos; Chronos ran no tool in this task.\n\n## Verdict\n\nThe tool data reports `passed: true` for all 9 corners, setup TNS 0.0 ns and hold TNS 0.0 ns in every corner, and an empty DRV violator list in every corner. The worst setup slack is 3.276 ns (max_ss_100C_1v60) and the worst hold slack is 0.4196 ns (min_ff_n40C_1v95). Neither margin is thin, so no timing fix is required. Final pass/fail remains the runtime's real check.\n\nREQ-014 (typical corner, 13.333 ns): nom_tt_025C_1v80 shows setup WNS 6.229 ns and hold WNS 0.7754 ns in the tool data, both >= 0.0 ns. Whether this run is on the post-route netlist is not stated inside sta_tool.json (see assumptions).\n\n## Per-corner summary\n\n| Corner | Setup WS (ns) | Setup TNS (ns) | Hold WS (ns) | Hold TNS (ns) | DRV violators | Tool passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 6.229 | 0.0 | 0.7754 | 0.0 | none | true |\n| nom_ss_100C_1v60 | 3.3554 | 0.0 | 1.8325 | 0.0 | none | true |\n| nom_ff_n40C_1v95 | 7.3135 | 0.0 | 0.4211 | 0.0 | none | true |\n| min_tt_025C_1v80 | 6.2614 | 0.0 | 0.7738 | 0.0 | none | true |\n| min_ss_100C_1v60 | 3.4176 | 0.0 | 1.8302 | 0.0 | none | true |\n| min_ff_n40C_1v95 | 7.3382 | 0.0 | 0.4196 | 0.0 | none | true |\n| max_tt_025C_1v80 | 6.1918 | 0.0 | 0.7787 | 0.0 | none | true |\n| max_ss_100C_1v60 | 3.276 | 0.0 | 1.838 | 0.0 | none | true |\n| max_ff_n40C_1v95 | 7.2822 | 0.0 | 0.4233 | 0.0 | none | true |\n\nMax transition, max capacitance and max fanout: the tool's `drv_violators` list is empty in all 9 corners. The tool data gives only this list, not per-check counts or worst values.\n\n## Worst setup paths (from the tool's top-2 list per corner)\n\n| Corner | #1 start -> end | #1 slack (ns) | #2 start -> end | #2 slack (ns) |\n|---|---|---|---|---|\n| nom_tt_025C_1v80 | op[0] -> _342_ | 6.229 | op[0] -> _350_ | 6.2893 |\n| nom_ss_100C_1v60 | op[1] -> _342_ | 3.3554 | op[1] -> _351_ | 3.5267 |\n| nom_ff_n40C_1v95 | op[1] -> _350_ | 7.3135 | op[1] -> _342_ | 7.3301 |\n| min_tt_025C_1v80 | op[0] -> _342_ | 6.2614 | op[0] -> _350_ | 6.322 |\n| min_ss_100C_1v60 | op[1] -> _342_ | 3.4176 | op[1] -> _351_ | 3.579 |\n| min_ff_n40C_1v95 | op[0] -> _350_ | 7.3382 | op[0] -> _342_ | 7.3556 |\n| max_tt_025C_1v80 | op[0] -> _342_ | 6.1918 | op[0] -> _350_ | 6.2551 |\n| max_ss_100C_1v60 | op[1] -> _342_ | 3.276 | op[1] -> _350_ | 3.4647 |\n| max_ff_n40C_1v95 | op[0] -> _350_ | 7.2822 | op[0] -> _342_ | 7.2982 |\n\nAll listed paths are of type `max` (setup) and state `MET`.\n\n### In plain words\n\n- Every worst setup path in every corner starts at the opcode input port, `op[0]` or `op[1]`, and ends at an internal register (`_342_`, `_350_` or `_351_`, synthesized instance names). This is the expected critical path for this ALU: the opcode selects which of the eight operations' results is captured, so it fans out into the result/flag multiplexing logic and reaches the result and flag flops.\n\n- These are input-to-register paths. Their budget includes the 4.0 ns input delay set in the SDC (a DEFAULT assumption of 30% of the period, since the spec gives no I/O budget). Register-to-register and register-to-output paths are not in the tool's worst list, so they have more slack than the listed paths.\n\n- The slow corners (ss, 100C, 1.60 V) are the limiting corners for setup: 3.276 ns (max), 3.3554 ns (nom), 3.4176 ns (min). The fast corners (ff, -40C, 1.95 V) have the smallest hold slack: 0.4196 ns (min), 0.4211 ns (nom), 0.4233 ns (max).\n\n- Dominant cells: the tool data supplied (`sta_tool.json`) contains only start point, end point, type, slack and state for each path. It does not contain the cell-by-cell delay breakdown, so Chronos cannot name the dominant cells without inventing data. This is listed as an open issue; a full `report_checks -path_delay max -fields {slew cap input_pins} -digits 4` on the worst corner would supply it.\n\n- Mapping `_342_`, `_350_`, `_351_` to specific result bits or flags is not possible from the given data.\n\n## Fixes (ranked)\n\nNo fix is needed: all corners meet setup and hold with zero TNS and no DRV violations in the tool data, and the smallest margins (3.276 ns setup, 0.4196 ns hold) are not thin. For the record, if the input delay budget is later tightened by the customer or the clock target is raised, the ranked options would be:\n\n1. Rebudget I/O: confirm the real input delay for `op`/`a`/`b` with the customer (a human decision; Chronos will not change constraints).\n2. Upsize/buffer the `op` fan-out network (op decode drives the whole result mux) during resizer repair.\n3. Re-place the op-decode logic closer to the input pins and result flops.\n4. Register `op` (and operands) at the input: this adds a cycle of latency and conflicts with REQ-009 (1-cycle latency) and the out-of-scope list (no pipelining deeper than 1 stage), so it would need a spec change.\n\nHold: smallest hold slack is 0.4196 ns (min_ff_n40C_1v95), positive; no hold buffering is needed.\n\n## Raw data\n\n- `reports/sta_tool.json` (sha256:8d866d6f5f3a) - per-corner numbers and worst-path lists.\n- `constraints/constraints.sdc` (sha256:1f9558d180fd) - constraints used.",
+  "assumptions": [
+    "reports/sta_tool.json is the real OpenSTA output for the signoff (post-route) netlist of alu8 with constraints/constraints.sdc; the file itself does not state the netlist stage or whether parasitics (SPEF) were used.",
+    "The 9 corners in the tool data (nom/min/max x tt/ss/ff) are the full corner set from the PDK configuration; min/max are taken to be RC extraction variants.",
+    "An empty drv_violators list means zero max transition, max capacitance and max fanout violations.",
+    "Endpoints _342_, _350_, _351_ are register instances (result or flag flops); their exact bit mapping is not in the given data.",
+    "The 4.0 ns input/output delays and 0.25 ns uncertainty in the SDC are DEFAULT values pending customer confirmation (spec open_questions)."
+  ],
+  "open_issues": [
+    "Dominant cells on the worst paths cannot be reported: sta_tool.json gives only start, end, type, slack and state per path. A full report_checks with per-cell detail at max_ss_100C_1v60 is needed to satisfy the 'dominant cells' part of A.12.",
+    "Worst hold paths (type min) are not listed in sta_tool.json; only hold WS/TNS per corner are available.",
+    "sta_tool.json does not record the netlist stage or parasitics source; REQ-014 requires post-route STA, so the runtime should confirm the run used the routed netlist with extracted parasitics.",
+    "I/O delay budget (4.0 ns in/out) is a DEFAULT; if the customer gives a tighter budget the op -> register paths are the first to lose slack."
+  ]
+}

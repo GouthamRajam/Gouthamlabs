@@ -1,0 +1,58 @@
+{
+  "task_id": "task_01M44DR7YK94KW1W2SKV5XB3T7",
+  "status": "success",
+  "summary": "Synthesis gives 182 cells and 1938.1088 um^2. Pre-layout worst setup slack is 6.0098 ns (tt), 2.9170 ns (ss, worst corner) and 7.2175 ns (ff); worst hold slack is 0.3813 ns (tt), 1.0365 ns (ss) and 0.1389 ns (ff). All of these are positive, so the tool reports no violations. The two worst setup paths at ss both start at input op[0], which arrives at 4.0 ns because of the DEFAULT input delay. Each passes through opcode-decode cell _178_ (or3b_2, 1.179 ns) and then a chain of about 11 AND-OR cells into result/flag flops _351_ and _342_. The flop count, eqy and a full worst-10 list are not in the data.",
+  "outputs": [
+    {
+      "path": "constraints/constraints.sdc",
+      "sha256": "1f9558d180fd74897ed5596ebe5a8e34b7a1a76c095381b83dba6a59f62bb0fb"
+    },
+    {
+      "path": "reports/sentinel_constraints.json",
+      "sha256": "9de0815c076663ac52f9d3d9c04bde395afb4beda3e6e156a33d1c97803be0fd"
+    },
+    {
+      "path": "reports/sta_pre.json",
+      "sha256": "34f9f50d38bc857b2f9f014e59194728e39fb991f55a8a723e2c543329976203"
+    },
+    {
+      "path": "reports/synth_report.json",
+      "sha256": "f456b27b7115c793675a3f455726b4d1c6c0ee503596ef95951364c77a2a45e6"
+    },
+    {
+      "path": "reports/synth_tool.json",
+      "sha256": "788b0f435ab41f781f21f3c6f86666234c9372f5d06f3df8e31150efb576184e"
+    }
+  ],
+  "checks_run": [
+    "chk_01M44DR80XZM6KJ0GZPA5T9BYP",
+    "chk_01M44DSA46V85VCBRDZPRYF5SY",
+    "chk_01M44DTBX0HZ99S9Y4NG77JMBT",
+    "chk_01M44DVX9JXDMK3QFEFGG33J98",
+    "chk_01M44DVXABX1XK04ZYQYHQCYSJ",
+    "chk_01M44DWBWRJZ9Q74TY7N9NB1C2",
+    "chk_01M44DWBWZ2YQGYRSMKD1CBVSW",
+    "chk_01M44DWFKWVAH1PZ7KJF4V5SMW",
+    "chk_01M44DXZ1SF7APYMKPMRAPPHM3"
+  ],
+  "assumptions": [
+    "All numbers are taken verbatim from reports/synth_tool.json; this is pre-layout STA with an ideal clock and no layout parasitics.",
+    "Interpretation of _178_ as an opcode-decode term is inferred from its connection to op[0] and its fanout; netlist instance names are not mapped to RTL names in the data.",
+    "Only three nominal corners (nom_tt_025C_1v80, nom_ss_100C_1v60, nom_ff_n40C_1v95) were analysed; min/max RC corners are not in the data.",
+    "Setup WNS/TNS per corner are taken as 0 because every reported worst slack is positive; TNS is not explicitly reported by the tool.",
+    "The 4.0 ns input/output delays in constraints.sdc are DEFAULT (30% of period) values, unchanged in this task."
+  ],
+  "open_issues": [
+    "Equivalence check (eqy) RTL vs netlist has no result in the inputs; not proven = blocking for sign-off of synthesis.",
+    "Fast-corner hold margin is the smallest (0.1389 ns at nom_ff_n40C_1v95) with an ideal clock; re-check after CTS.",
+    "I/O delay conflict for human (G1) decision: spec open_questions says assume 0 ns external I/O delay, while constraints.sdc uses a DEFAULT 4.0 ns (30% of period). The current SDC is the more conservative choice; I did not change it.",
+    "Mapping of flops _351_, _342_, _348_ to RTL registers (result bits vs flags) is not in the data.",
+    "REQ-016 flop count (must be exactly 12) cannot be confirmed: cell_classes in synth_tool.json is empty. Need a cell-class or flop count from the synthesis stat report.",
+    "Worst-path report is truncated: only 2 complete paths (plus 1 partial, endpoint _348_, slack not shown) are available instead of the worst 10."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Every quoted number is copied from the tool output and the path descriptions follow the report_checks text directly. The missing items (flop count, eqy, full worst-10 list) are listed as open issues instead of being filled in.",
+    "confidence": "high"
+  }
+}

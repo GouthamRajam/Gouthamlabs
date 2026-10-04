@@ -1,0 +1,17 @@
+{
+  "worst_drop_v": 0.000207,
+  "avg_drop_v": 4.54e-05,
+  "limit_v": 0.09,
+  "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)",
+  "assumptions": [
+    "Switching activity is the vectorless 0.2 input activity reported by the tool (20% default); no simulation activity (VCD/SAIF) was provided.",
+    "Clock frequency for power is the spec's 75 MHz (period 13.333 ns).",
+    "Power corners are those reported by the tool: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95, using sky130A / sky130_fd_sc_hd libraries.",
+    "The IR limit of 0.09 V is the Phase 0 default (5% of 1.8 V nominal supply) as stated in the tool data; the spec gives no power or IR target (power targets are out of scope).",
+    "The IR result is assumed to be static (average-current) analysis at nominal 1.8 V; its corner and the net(s) analyzed (VPWR/VGND) are not stated in the input.",
+    "Voltage source locations are not given; assumed to be the open flow's default PDN source placement at the macro power pins.",
+    "Power numbers are assumed to use post-route parasitics from run run_01M44DR7XRWAQ9XY53AG8SRJCM; the parasitic source is not stated in the input.",
+    "Electromigration, dynamic IR, ground bounce, inrush and glitch power are not analyzed by the open flow and are not reported here."
+  ],
+  "explained_by": "Volta"
+}
