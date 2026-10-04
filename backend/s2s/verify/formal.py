@@ -25,8 +25,24 @@ from s2s.tools.sby_formal import run_sby_formal
 
 _LABEL = re.compile(r"\b(ap|cp|am)_(\w+)\s*:\s*(assert|cover|assume)\b")
 _HIER = re.compile(r"\bdut\s*\.\s*\w+")
-_FAILED = re.compile(r"failed assertion formal_top\.ap_(\w+)")
-_REACHED = re.compile(r"(?<!un)reached cover statement formal_top\.cp_(\w+)", re.I)
+# Per-property results come from the engine's own lines ("Assert failed in formal_top: ap_x",
+# "Reached cover statement in step N at formal_top: cp_x"); sby's end summary lists only a few
+# traces and then "and N further traces", so it must not be the source.
+_FAILED_RE = re.compile(r"Assert failed in formal_top: ap_(\w+)|failed assertion formal_top\.ap_(\w+)")
+_REACHED_RE = re.compile(r"(?<![Uu]n)[Rr]eached cover statement in step \d+ at formal_top: cp_(\w+)|"
+                         r"(?<![Uu]n)reached cover statement formal_top\.cp_(\w+)")
+
+
+class _Names:
+    def __init__(self, rx: re.Pattern):
+        self.rx = rx
+
+    def findall(self, text: str) -> list[str]:
+        return [a or b for a, b in self.rx.findall(text)]
+
+
+_FAILED = _Names(_FAILED_RE)
+_REACHED = _Names(_REACHED_RE)
 _DONE = re.compile(r"DONE \((\w+), rc=\d+\)")
 
 
