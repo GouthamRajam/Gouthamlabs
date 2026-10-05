@@ -601,9 +601,16 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
                        "PL_TARGET_DENSITY_PCT (percent = placement_density x 100), MAX_FANOUT_CONSTRAINT (the resizer's "
                        "fanout target; the SDC set_max_fanout that STA checks is NOT changed by it), "
                        "CTS_SINK_CLUSTERING_SIZE (max flip-flops per clock-tree leaf buffer), GRT_ANTENNA_ITERS (antenna "
-                       "repair iterations), GRT_ANTENNA_MARGIN (percent of over-fix in antenna repair). Antenna repair "
-                       "inserts diode cells, and each diode is a load that counts toward a net's fanout. The clock, "
-                       "constraints and rule decks are not yours to change.",
+                       "repair iterations), GRT_ANTENNA_MARGIN (percent of over-fix in antenna repair), "
+                       "CTS_SINK_CLUSTERING_MAX_DIAMETER (um; max diameter of a leaf cluster), "
+                       "CTS_DISTANCE_BETWEEN_BUFFERS (um between clock buffers on tree wires; 0 = automatic) and "
+                       "CTS_CLK_MAX_WIRE_LENGTH (um; 0 = no limit) - these two add buffers along the upper tree. "
+                       "Antenna repair inserts diode cells, and each diode is a load that counts toward a net's "
+                       "fanout. Before changing a clock-tree setting, name the tree LEVEL of each violating clock "
+                       "buffer (clkbuf_<level>_* = an upper/trunk level driving leaf buffers; leaf buffers drive "
+                       "flip-flops) and pick a setting that controls that level: smaller leaf clusters create MORE "
+                       "leaf buffers and RAISE upper-level fanout (sync_fifo iteration 9). The clock, constraints "
+                       "and rule decks are not yours to change.",
                        extra_note="Put the changes in `changes` and set `escalate`. ")
         _answer_fields(ctx, "Orion", data)
         ch = data["changes"]

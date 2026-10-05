@@ -47,6 +47,9 @@ TUNABLE = {  # config key -> (pnr_ranges key, scale from range units to config u
     "CTS_SINK_CLUSTERING_SIZE": ("cts_cluster_size", 1, "cts"),
     "GRT_ANTENNA_ITERS": ("antenna_repair_iters", 1, "routing"),
     "GRT_ANTENNA_MARGIN": ("antenna_repair_margin_pct", 1, "routing"),
+    "CTS_SINK_CLUSTERING_MAX_DIAMETER": ("cts_cluster_diameter_um", 1, "cts"),
+    "CTS_DISTANCE_BETWEEN_BUFFERS": ("cts_buffer_distance_um", 1, "cts"),
+    "CTS_CLK_MAX_WIRE_LENGTH": ("cts_max_wire_length_um", 1, "cts"),
 }
 INT_PARAMS = {"MAX_FANOUT_CONSTRAINT", "CTS_SINK_CLUSTERING_SIZE", "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN"}
 SYNTH_STRATEGIES = ["AREA 0", "AREA 1", "AREA 2", "AREA 3", "DELAY 0", "DELAY 1", "DELAY 2", "DELAY 3", "DELAY 4"]

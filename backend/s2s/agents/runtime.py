@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import dataclasses
 import datetime as dt
+import fcntl
 import hashlib
 import logging
 import os
@@ -153,7 +154,27 @@ class Outcome:
 
 
 def run_task(task_id: str, agent: Agent, gateway: ModelGateway | None = None) -> Outcome:
-    """Execute (or resume) a task to completion. Returns the final task status."""
+    """Execute (or resume) a task to completion. Returns the final task status.
+
+    Only one process may run a task at a time: an exclusive file lock per task (released by the OS
+    if the process dies). A second runner is refused and the refusal is recorded; it never runs the
+    task's steps (two runs of one task on the same run folder gave an invalid result once)."""
+    from s2s.tools.runner import lock_dir
+    lock_dir().mkdir(parents=True, exist_ok=True)
+    with open(lock_dir() / f"task_{task_id}.lock", "a") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            with db_session() as s:
+                task = s.get(Task, task_id)
+                emit(s, "escalation", f"Refused a second concurrent run of task {task_id}: it is already running "
+                     "in another process", run_id=task.run_id, agent_id="Atlas", task_id=task_id, stage=task.stage,
+                     detail={"rule": "one runner per task", "pid": os.getpid()})
+            return Outcome("refused", {"rule": "one runner per task"})
+        return _run_task(task_id, agent, gateway)
+
+
+def _run_task(task_id: str, agent: Agent, gateway: ModelGateway | None = None) -> Outcome:
     gateway = gateway or ModelGateway()
     with db_session() as s:
         task = s.get(Task, task_id)

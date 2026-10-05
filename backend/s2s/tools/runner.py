@@ -56,6 +56,17 @@ def tool_slots() -> int:
     return max(1, int(os.environ.get("S2S_TOOL_SLOTS", str(os.cpu_count() or 4))))
 
 
+def check_disk_headroom(path: Path) -> None:
+    """Refuse to start a tool when the disk holding `path` has less than S2S_MIN_FREE_GB (default 2)
+    free: a tool that dies of 'No space left on device' mid-run gives a broken result and loses
+    the work. Raises EdaUnavailable (never read as a tool verdict)."""
+    need = float(os.environ.get("S2S_MIN_FREE_GB", "2"))
+    free = shutil.disk_usage(path).free / 1e9
+    if free < need:
+        raise EdaUnavailable(f"only {free:.1f} GB free on the run disk (minimum {need:g} GB): free space "
+                             "before running tools")
+
+
 def lock_dir() -> Path:
     return Path(os.environ.get("S2S_LOCK_DIR", REPO_ROOT / "var" / "locks"))
 
@@ -162,6 +173,7 @@ def run(
     log_path = log_path.resolve()
     log_path.parent.mkdir(parents=True, exist_ok=True)
     env = env or {}
+    check_disk_headroom(workdir)
 
     container = f"s2s-{uuid.uuid4().hex[:12]}"
     if mode() == "local":

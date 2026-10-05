@@ -53,7 +53,13 @@ def test_params_must_stay_inside_pnr_ranges():
     assert olf.check_params(olf.default_params()) == []
     assert olf.default_params() == {"FP_CORE_UTIL": 45, "PL_TARGET_DENSITY_PCT": 55, "MAX_FANOUT_CONSTRAINT": 10,
                                     # repair-effort settings default to OpenLane's own defaults
-                                    "CTS_SINK_CLUSTERING_SIZE": 25, "GRT_ANTENNA_ITERS": 3, "GRT_ANTENNA_MARGIN": 10}
+                                    "CTS_SINK_CLUSTERING_SIZE": 25, "GRT_ANTENNA_ITERS": 3, "GRT_ANTENNA_MARGIN": 10,
+                                    # clock-tree shape settings (D1) default to OpenLane 2.3.10's defaults
+                                    "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50, "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
+                                    "CTS_CLK_MAX_WIRE_LENGTH": 0}
+    assert olf.check_params({"CTS_SINK_CLUSTERING_MAX_DIAMETER": 80})  # wider clusters than the default: refused
+    assert olf.check_params({"CTS_DISTANCE_BETWEEN_BUFFERS": -5})
+    assert olf.check_params({"CTS_CLK_MAX_WIRE_LENGTH": 900})
     assert olf.check_params({"CTS_SINK_CLUSTERING_SIZE": 30})  # larger clusters than OpenLane's default: refused
     assert olf.check_params({"GRT_ANTENNA_ITERS": 2})          # less repair effort than the default: refused
     assert olf.check_params({"GRT_ANTENNA_MARGIN": 5})

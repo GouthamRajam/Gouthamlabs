@@ -221,7 +221,8 @@ ORION_ANSWER = answer_schema(
     # at most two parameter changes per iteration, each inside config/pnr_ranges.yaml, with a reason
     changes={"type": "array", "items": _obj({"param": {"type": "string", "enum": [
         "FP_CORE_UTIL", "PL_TARGET_DENSITY_PCT", "MAX_FANOUT_CONSTRAINT", "CTS_SINK_CLUSTERING_SIZE",
-        "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN"]}, "value": {"type": "number"},
+        "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN", "CTS_SINK_CLUSTERING_MAX_DIAMETER", "CTS_DISTANCE_BETWEEN_BUFFERS",
+        "CTS_CLK_MAX_WIRE_LENGTH"]}, "value": {"type": "number"},
         "reason": _STR})},
     escalate=_obj({"needed": {"type": "boolean"}, "why": _STR}),
     report_markdown=_STR)
