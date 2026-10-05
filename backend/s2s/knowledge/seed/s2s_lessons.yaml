@@ -67,7 +67,7 @@ entries:
     symptom: "The same mutants survive every test-improvement round (uart: 14/20 seven times)"
     root_cause: "Mutants such as removed resets of registers that are reloaded before use may be unobservable at the outputs; a 25-step bounded screen cannot decide them for a UART frame (~160 cycles), so they stay 'unknown' and count as missed."
     wrong_assumption: "Every surviving mutant is a test weakness that more tests can fix."
-    lesson: "When the same survivors repeat, stop writing tests for them and decide equivalence with an unbounded proof (prove-then-exclude, D2). Never suppress a mutant class. Bounded 'no difference found' is not a proof (GateTruth 2026). Plain PDR from all-zero timed out on all 6 uart survivors (16-bit baud counter)."
+    lesson: "When the same survivors repeat, stop writing tests for them and decide equivalence with an unbounded proof (prove-then-exclude, D2). Use ABC dprove (latch correspondence + induction) on the SymbiYosys miter: it proved 5 of 6 uart survivors equivalent in < 1 s where plain PDR timed out. Validate with caught mutants (none may come out equivalent) and never trust a hand-built AIGER that lost its latches. Never suppress a mutant class; bounded 'no difference found' is not a proof (GateTruth 2026)."
     evidence: "uart mutation rounds 2026-10-04 15:16 .. 2026-10-05 16:08; scratch_uart_equiv results"
     regression_test: "tests/test_mutation_timeouts.py"
     tags: [mutation, equivalent_mutant, missing_reset, mutation_score, theo, myra, uart, verification]
