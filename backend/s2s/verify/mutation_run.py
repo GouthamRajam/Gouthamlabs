@@ -14,6 +14,7 @@ retried once at twice the limit; if it times out again it counts as NOT detected
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -67,6 +68,18 @@ print("S2S_SCREEN " + json.dumps(out))
 '''
 
 
+def _tree_hash(root: Path) -> str:
+    """Content hash of every file under `root` (paths and bytes), ignoring Python caches."""
+    h = hashlib.sha256()
+    for f in sorted(p for p in root.rglob("*") if p.is_file() and "__pycache__" not in p.parts):
+        h.update(str(f.relative_to(root)).encode() + b"\0" + f.read_bytes() + b"\0")
+    return h.hexdigest()
+
+
+def _verdict_key(rtl_dir: Path, tb_hash: str, top: str, test_module: str) -> str:
+    return hashlib.sha256("\0".join([_tree_hash(rtl_dir), tb_hash, top, test_module]).encode()).hexdigest()
+
+
 class MutationHarnessError(RuntimeError):
     """The measurement itself failed (never reported as a detection rate)."""
 
@@ -78,6 +91,8 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
     # (s2s.tools.runner), so oversubscription only queues runs. A timeout never counts as a catch.
     parallel = parallel or int(os.environ.get("S2S_MUTATION_PARALLEL", "4"))
     base = (workdir / "mutation").resolve()
+    cache = (workdir / "mutation_verdicts").resolve()
+    cache.mkdir(parents=True, exist_ok=True)
     shutil.rmtree(base, ignore_errors=True)
     base.mkdir(parents=True)
     orig_dir = base / "orig"
@@ -141,7 +156,18 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
     mutant_timeout = max(timeout_s, 3 * (ref.duration_s or 0))
     log(f"mutation: unmutated regression passed in {ref.duration_s:.0f} s; mutant limit {mutant_timeout:.0f} s")
 
+    tb_hash = _tree_hash(tb_copy)
+
     def run_one(m: Mutant) -> dict:
+        # A verdict reached without any timeout depends only on the mutant RTL, the testbench and the
+        # top/test module, so it is cached outside mutation/ (which each run wipes): a run cut off by a
+        # restart redoes only the mutants that had not finished. Timeouts are never cached.
+        key = _verdict_key(base / m.id / "rtl", tb_hash, top, test_module)
+        hit = cache / f"{key}.json"
+        if hit.exists():
+            res = {**json.loads(hit.read_text()), "cached": True}
+            log(f"mutant {m.id}: {'caught' if res['detected'] else 'missed'} (cached verdict, same RTL and tests)")
+            return res
         r = regress(base / m.id / "rtl", m.id, mutant_timeout)
         timeouts = 0
         if r.timed_out:  # retried once with twice the limit before any verdict
@@ -162,9 +188,12 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         else:  # build or harness error: never counted as a detection
             detected, how = None, "harness error: " + "; ".join(r.reasons[:2])
         log(f"mutant {m.id}: {'caught' if detected else ('missed' if detected is False else 'harness error')}")
-        return {"id": m.id, "type": m.type, "file": m.file, "line": m.line, "description": m.description,
-                "reqs": list(m.reqs), "before": m.before.strip(), "after": m.after.strip(), "detected": detected,
-                "how": how, "duration_s": r.duration_s, "timeouts": timeouts, "equivalence_screen": screen.get(m.id)}
+        res = {"id": m.id, "type": m.type, "file": m.file, "line": m.line, "description": m.description,
+               "reqs": list(m.reqs), "before": m.before.strip(), "after": m.after.strip(), "detected": detected,
+               "how": how, "duration_s": r.duration_s, "timeouts": timeouts, "equivalence_screen": screen.get(m.id)}
+        if detected is not None and timeouts == 0:
+            hit.write_text(json.dumps(res))
+        return res
 
     with ThreadPoolExecutor(max_workers=parallel) as pool:
         results = list(pool.map(run_one, kept))
@@ -182,4 +211,5 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
     return {"mutants": results, "detected": k, "total": len(results), "rate": round(k / len(results), 4) if results else 0.0,
             "by_type": {t: f"{a}/{b}" for t, (a, b) in by_type.items()}, "screened_out": screened_out,
             "timed_out_not_counted": sum(1 for r in results if r["timeouts"] == 2),
+            "cached_verdicts": sum(1 for r in results if r.get("cached")),
             "equivalence_screen": {m.id: screen.get(m.id) for m in kept}}
