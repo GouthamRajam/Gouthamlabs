@@ -171,12 +171,31 @@ def fork(pnr: Path, src_tag: str, dst_tag: str, before_stage: str) -> None:
         os.utime(state, ns=(st.st_atime_ns, st.st_mtime_ns))
 
 
+def clear_from(run_dir: Path, stage: str) -> list[str]:
+    """Remove the step directories of `stage` and everything after it. OpenLane resumes from the most
+    recently modified state_out.json, so a re-run of a stage on a tag that already went further (a task
+    resumed after a restart) would otherwise start from the later, e.g. routed, state."""
+    if not run_dir.exists():
+        return []
+    slug = STAGES[stage][0].lower().replace(".", "-")
+    hits = [d for d in _step_dirs(run_dir) if d.name.split("-", 1)[1] == slug]
+    if not hits:
+        return []
+    limit = int(hits[0].name.split("-", 1)[0])
+    gone = [d for d in _step_dirs(run_dir) if int(d.name.split("-", 1)[0]) >= limit]
+    for d in gone:
+        shutil.rmtree(d)
+    return [d.name for d in gone]
+
+
 def run_stage(pnr: Path, tag: str, stage: str, timeout_s: float = 3600, jobs: int = 4) -> dict:
     """One OpenLane invocation for a stage; returns status, step list, errors and the metrics of the
     last state written (the run's cumulative metrics)."""
     frm, to = STAGES[stage]
     run_dir = pnr / "runs" / tag
     first_stage = stage == ORDER[0]
+    if not first_stage:
+        clear_from(run_dir, stage)
     cmd = ["openlane", "--manual-pdk", "--pdk-root", PDK_ROOT, "--pdk", "sky130A", "--scl", "sky130_fd_sc_hd",
            "--run-tag", tag, "--log-level", "VERBOSE", "-j", str(jobs), "--from", frm]
     if to:
