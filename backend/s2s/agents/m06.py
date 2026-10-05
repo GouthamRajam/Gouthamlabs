@@ -701,7 +701,8 @@ def _dex(ctx: StepContext, failures: list[dict], rnd: int) -> list[dict]:
                    "one-sentence root cause and evidence. For DESIGN name the RTL module to fix. For TEST describe "
                    "the fix in terms of ports and spec requirements only (the test side may not see RTL internals).",
                    inputs=_inputs(ctx, files), exit_criteria=["every failure explained by exactly one bug"],
-                   schema=DEX_ANSWER)
+                   schema=DEX_ANSWER, relevant_knowledge=_sage_search(
+                       ctx, "Dex", "debug " + " ".join(f.get("kind", "") + " " + f.get("message", "")[:80] for f in failures)))
     _answer_fields(ctx, "Dex", data)
     bugs = data["bugs"]
     for i, b in enumerate(bugs, 1):

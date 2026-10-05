@@ -1,0 +1,127 @@
+# S2S's own engineering lessons (CEO decision D5, 2026-10-05): every closed failure becomes a permanent,
+# searchable record so no future run rediscovers it. Same fields as the other seed files, plus:
+#   wrong_assumption - what an agent believed that was false
+#   evidence         - runs, experiments, commits that show it
+#   regression_test  - the test that fails if the mistake comes back (path in backend/tests)
+# Agents receive matching entries in `relevant_knowledge` (keyword search, s2s.knowledge.kb). owner: Sage.
+entries:
+  - id: s2s-cts-001
+    kind: s2s_lesson
+    title: "Clock-tree fanout: find the violating tree LEVEL before choosing a knob"
+    symptom: "max fanout violations on clkbuf_<level>_* clock buffers after CTS"
+    root_cause: "OpenROAD CTS clusters flip-flops into leaf clusters (CTS_SINK_CLUSTERING_SIZE) and spreads the clusters over an H-tree; the H-tree stops splitting at up to 15 clusters per branch, so with 531 sinks in clusters of 8 (68 clusters) the 8 level-3 buffers drove up to 12 leaf buffers each."
+    wrong_assumption: "Smaller leaf clusters lower all clock fanout (iteration 9: cluster 6 raised level-3 fanout to 16)."
+    lesson: "Name the level of each violating clock buffer first. Upper-level fanout = clusters / branches: LARGER clusters (fewer clusters) lower it, as long as leaf fanout stays within the limit. Choose cluster size between sinks/(branches x limit) and the limit (sync_fifo: 9 or 10). Cluster diameter and buffer distance do not change branching."
+    evidence: "sync_fifo experiments PNR-SYNCFIFO-0010..0013 (cluster 10: 0 violators, 9: 0, buffer distance 50: 1, diameter 25: 8 up to 19); 0011 routed clean"
+    regression_test: "tests/test_m07_guards.py::test_params_must_stay_inside_pnr_ranges"
+    tags: [cts, clock_tree, fanout, max_fanout, clkbuf, h_tree, cluster, sink_clustering, orion, place_route]
+    source: {title: "S2S sync_fifo M0.7 run_01M43MDNVKWCHEQ0GGHPJFT602", url: "run:run_01M43MDNVKWCHEQ0GGHPJFT602"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-cts-002
+    kind: s2s_lesson
+    title: "MAX_FANOUT_CONSTRAINT does not repair clock nets; OpenROAD CTS has no fanout limit"
+    symptom: "Lowering the resizer fanout target does not change clock-buffer fanout violations"
+    root_cause: "repair_design skips clock nets; TritonCTS has no max-fanout option (installed OpenROAD 'help clock_tree_synthesis'). OpenLane 2.3.10 reports max fanout in STA but has no checker that fails on it."
+    wrong_assumption: "The resizer's fanout target governs every net."
+    lesson: "Fix clock-tree fanout with CTS clustering/branching settings, not MAX_FANOUT_CONSTRAINT. Commercial CTS enforces clock fanout as a CTS rule (Innovus CCOpt max_fanout, typical 8-20)."
+    evidence: "sync_fifo iterations 2-3 (target 10 -> 8: violations 34 -> 35)"
+    regression_test: "tests/test_m07_guards.py"
+    tags: [cts, max_fanout, resizer, repair_design, clock_net, openroad, openlane, orion]
+    source: {title: "OpenROAD CTS documentation", url: "https://openroad.readthedocs.io/en/latest/main/src/cts/README.html"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-pnr-001
+    kind: s2s_lesson
+    title: "OpenLane resumes from the most recently modified state_out.json"
+    symptom: "Re-running placement on a run tag that already went further fails with GPL-0302 or uses a routed state"
+    root_cause: "OpenLane picks the newest state_out.json in the run folder; later stages' folders from an earlier attempt win."
+    wrong_assumption: "Re-running a stage on an existing tag starts from the previous stage."
+    lesson: "Before re-running a stage on a tag, remove that stage's and later step folders (flow.clear_from); forks keep state-file timestamps (flow.fork)."
+    evidence: "sync_fifo it5 (GlobalPlacement steps 38 and 66); commits c4ad50f, aea81be"
+    regression_test: "tests/test_clear_from.py"
+    tags: [openlane, resume, state_out, gpl_0302, placement, fork, place_route]
+    source: {title: "S2S commit c4ad50f", url: "commit:c4ad50f"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-001
+    kind: s2s_lesson
+    title: "One runner per task; outside runners keep the task 'paused'"
+    symptom: "Two runs of the same place-and-route iteration on one run folder; results interleaved and invalid"
+    root_cause: "An operator marked a task 'running' under an outside runner; the stall watchdog saw no orchestrator worker and reassigned it."
+    wrong_assumption: "The dashboard status of a task can be edited without consequences."
+    lesson: "run_task holds an exclusive per-task lock and refuses a second runner. Never mark an outside-run task 'running'. Invalid experiments are recorded as invalid and never used as evidence."
+    evidence: "sync_fifo iteration 8 first attempt (reports/pnr_iteration_8_invalid.json); commit d07aa94"
+    regression_test: "tests/test_run_lock_disk.py::test_second_runner_is_refused"
+    tags: [orchestrator, watchdog, concurrency, run_lock, invalid_experiment, operations]
+    source: {title: "S2S DECISIONS 2026-10-05", url: "docs/DECISIONS.md"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-mut-001
+    kind: s2s_lesson
+    title: "A mutation score stuck at the same value across test rounds points to equivalent mutants"
+    symptom: "The same mutants survive every test-improvement round (uart: 14/20 seven times)"
+    root_cause: "Mutants such as removed resets of registers that are reloaded before use may be unobservable at the outputs; a 25-step bounded screen cannot decide them for a UART frame (~160 cycles), so they stay 'unknown' and count as missed."
+    wrong_assumption: "Every surviving mutant is a test weakness that more tests can fix."
+    lesson: "When the same survivors repeat, stop writing tests for them and decide equivalence with an unbounded proof (prove-then-exclude, D2). Never suppress a mutant class. Bounded 'no difference found' is not a proof (GateTruth 2026). Plain PDR from all-zero timed out on all 6 uart survivors (16-bit baud counter)."
+    evidence: "uart mutation rounds 2026-10-04 15:16 .. 2026-10-05 16:08; scratch_uart_equiv results"
+    regression_test: "tests/test_mutation_timeouts.py"
+    tags: [mutation, equivalent_mutant, missing_reset, mutation_score, theo, myra, uart, verification]
+    source: {title: "GateTruth: auditing RTL benchmarks via mutation testing", url: "https://arxiv.org/pdf/2608.12635"}
+    date: "2026-10-05"
+    confidence: medium
+    owner: Sage
+  - id: s2s-mut-002
+    kind: s2s_lesson
+    title: "A timed-out mutant simulation is never a caught bug; verdicts survive restarts"
+    symptom: "Mutation runs lost to container restarts; timeouts counted as catches"
+    root_cause: "Verdicts were held in memory only; a timeout used to count as detected."
+    lesson: "Timeouts are retried at 2x and then count as NOT caught; each non-timeout verdict is cached by RTL+testbench hash so a restart re-runs only unfinished mutants."
+    evidence: "commits 4ad31d0, 10b2f67"
+    regression_test: "tests/test_mutation_cache.py"
+    tags: [mutation, timeout, cache, restart, myra, verification]
+    source: {title: "S2S commit 10b2f67", url: "commit:10b2f67"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-fv-001
+    kind: s2s_lesson
+    title: "Deep clock dividers: k-induction will not close; prove each property alone with PDR"
+    symptom: "k-induction fails from an unreachable state; deeper depth only makes the base case slower (spi_master depth 160: ~1 min/step)"
+    root_cause: "Port-level properties cannot tie the state to a hidden 16-bit divider counter, so they are not k-inductive; the joint PDR run gets stuck on the hardest properties."
+    wrong_assumption: "A larger depth or a longer timeout will close the proof."
+    lesson: "Prove each property alone with ABC PDR (other assertions removed, assumptions kept); check with RTL broken on purpose that the assumptions are not vacuous. Properties that still do not close stay bounded and are not counted (D3). Induction-STEP counterexamples are not design failures."
+    evidence: "spi_master: 9/12 proven alone, real flow 9 meaningful proven (2026-10-05 16:49); negative controls fail at frames 2 and 88; commits 26ded26, b18ad24"
+    regression_test: "tests/test_formal_pdr.py"
+    tags: [formal, pdr, ic3, k_induction, induction, counter, divider, euclid, sby, spi_master]
+    source: {title: "S2S commit 26ded26", url: "commit:26ded26"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-eq-001
+    kind: s2s_lesson
+    title: "eqy can fail on a partition where Yosys LEC proves every point"
+    symptom: "eqy reports an error/FAIL without a counterexample on a counter partition"
+    root_cause: "eqy's partitioning with abc pdr could not prove one partition (sync_fifo count logic)."
+    lesson: "Fall back to Yosys sequential equivalence with register correspondence (equiv_make/simple/induct, bit-level names); pass only if every $equiv point is proven; keep a negative test that a real RTL change fails."
+    evidence: "sync_fifo 562/562 points; commit fe35a64"
+    regression_test: "tests/platform/test_lec_fallback.py"
+    tags: [equivalence, eqy, lec, yosys, synthesis, netlist, sienna]
+    source: {title: "S2S commit fe35a64", url: "commit:fe35a64"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-forbid-001
+    kind: forbidden_method
+    title: "Forbidden shortcuts (never use to reach PASS)"
+    symptom: "Pressure to make a blocked design pass"
+    lesson: "Never: suppress a mutant class or exclude a mutant on suspicion; shrink a counter or add an assumption without a written soundness argument; waive a violation or change set_max_fanout/SDC silently; count a timeout as a catch; count a bounded result as a proof; claim production readiness from SKY130 results."
+    tags: [forbidden, waiver, mutation, formal, sdc, policy, verification, place_route]
+    source: {title: "S2S action plan 2026-10-05", url: "docs/reports/S2S_action_plan_2026-10-05.pdf"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage

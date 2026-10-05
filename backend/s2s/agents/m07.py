@@ -36,7 +36,7 @@ import yaml
 from sqlalchemy import select
 
 from s2s.agents import llm
-from s2s.agents.m05 import (DesignAgent, _answer_fields, _author_loop, _inputs, _record, _task_result, _write,
+from s2s.agents.m05 import (DesignAgent, _answer_fields, _author_loop, _inputs, _record, _sage_search, _task_result, _write,
                             stop_if_blocked)
 from s2s.agents.m06 import _assign
 from s2s.agents.runtime import Step, StepContext, artifact_dir
@@ -587,6 +587,7 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
     ph = _phys(ctx)
     previous = ""
     guidance = (ctx.task.inputs or {}).get("operator_guidance")  # recorded operator decision, if any
+    knowledge = _sage_search(ctx, "Orion", "place route " + " ".join(problems))  # S2S's own lessons first
     for attempt in range(1, MAX_ORION_ATTEMPTS + 1):
         data = llm.ask(ctx, "Orion", goal=f"Iteration {k} has problems: {problems}. Change at most two parameters, "
                        "only inside config/pnr_ranges.yaml, with a one-line reason each (A.10 step 3); or escalate "
@@ -595,7 +596,7 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
                        inputs=_inputs(ctx, ["spec/spec.yaml", "reports/pnr_ranges.json", "reports/pnr_iterations.json",
                                             f"reports/pnr_iteration_{k}.json"]),
                        exit_criteria=["<= 2 changes", "each inside pnr_ranges.yaml", "a reason per change"],
-                       schema=ORION_ANSWER, previous_attempts=previous,
+                       schema=ORION_ANSWER, previous_attempts=previous, relevant_knowledge=knowledge,
                        constraints=f"Current parameters: {json.dumps(ph['params'])} (a missing key is at its "
                        "pnr_ranges.yaml default). Tunable: FP_CORE_UTIL (percent; reruns from floorplan), "
                        "PL_TARGET_DENSITY_PCT (percent = placement_density x 100), MAX_FANOUT_CONSTRAINT (the resizer's "
