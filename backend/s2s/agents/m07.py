@@ -586,10 +586,12 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
     """Orion proposes at most two changes within pnr_ranges.yaml; invalid proposals go back verbatim."""
     ph = _phys(ctx)
     previous = ""
+    guidance = (ctx.task.inputs or {}).get("operator_guidance")  # recorded operator decision, if any
     for attempt in range(1, MAX_ORION_ATTEMPTS + 1):
         data = llm.ask(ctx, "Orion", goal=f"Iteration {k} has problems: {problems}. Change at most two parameters, "
                        "only inside config/pnr_ranges.yaml, with a one-line reason each (A.10 step 3); or escalate "
-                       "if no allowed change can fix it.",
+                       "if no allowed change can fix it."
+                       + (f" OPERATOR GUIDANCE (CEO decision): {guidance}" if guidance else ""),
                        inputs=_inputs(ctx, ["spec/spec.yaml", "reports/pnr_ranges.json", "reports/pnr_iterations.json",
                                             f"reports/pnr_iteration_{k}.json"]),
                        exit_criteria=["<= 2 changes", "each inside pnr_ranges.yaml", "a reason per change"],
