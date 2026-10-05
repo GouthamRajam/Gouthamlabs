@@ -62,6 +62,13 @@ def targets() -> dict:
     return _load("coverage_targets.yaml", "S2S_COVERAGE_TARGETS")
 
 
+def formal_depth(ctx) -> int:
+    """k-induction / BMC depth: the global minimum, raised (never lowered) by a per-design minimum."""
+    t = targets()
+    by = t.get("formal_min_depth_by_design") or {}
+    return max(int(t["formal_min_depth"]), int(by.get(_spec(ctx)["design"], 0)))
+
+
 def _spec(ctx: StepContext) -> dict:
     return yaml.safe_load(_read(ctx, "spec/spec.yaml"))
 
@@ -446,7 +453,7 @@ def test_build_steps() -> list[Step]:
                      "its cover, and justified assumptions.",
                      inputs=["spec/spec.yaml", "arch/arch.yaml", "tb/dut_ports.json", "tb/testplan.yaml"],
                      validate=validate_props, kind="formal",
-                     constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"])))
+                     constraints=FORMAL_CONTRACT.replace("{depth}", str(formal_depth(ctx))))
 
     def sentinel(ctx: StepContext) -> None:
         files = ["spec/spec.yaml", "tb/testplan.yaml", "tb/ref_model.py", "formal/formal_top.sv",
@@ -474,7 +481,7 @@ def test_build_steps() -> list[Step]:
                 _author_loop(ctx, "Euclid", goal="Revise formal/formal_top.sv to resolve the blocking findings.",
                              inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv",
                                      "reports/sentinel_tests.json"], validate=validate_props, kind="formal", previous=prev,
-                             constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"])))
+                             constraints=FORMAL_CONTRACT.replace("{depth}", str(formal_depth(ctx))))
             open_ = ([f"{f['target']}: {f['what'][:160]} (fix rejected by the anti-cheating guard)" for f in by_file["Theo"]]
                      if len(ctx.state.get("guard_rejections", [])) > rejected_before else [])
             _record(ctx, "sentinel_tests_review", open_, "sentinel", "Sentinel")
@@ -617,7 +624,7 @@ def reclassify_bin(ctx: StepContext, bin_name: str, reason: str) -> None:
                      "existing property, cover and assumption unchanged.",
                      inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv"],
                      validate=v_props, kind="formal",
-                     constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"])))
+                     constraints=FORMAL_CONTRACT.replace("{depth}", str(formal_depth(ctx))))
     guarded(ctx, "Vera", change, f"operator decision: reclassify coverage bin {bin_name} as an illegal-state "
             f"assertion ap_{assertion} (not a waiver: it is now proven never to happen). {reason}")
     rejected = [g for g in ctx.state.get("guard_rejections", []) if g["author"] == "Vera"]
@@ -667,8 +674,9 @@ def _formal(ctx: StepContext) -> dict:
     ctx.emit("tool_call", "Euclid: SymbiYosys prove + cover + free-stub check", status="working",
              detail={"tool": "sby"}, **who)
     try:
+        depth = formal_depth(ctx)
         f = run_formal(ctx.workdir, _rtl_files(ctx), ctx.workdir / "formal/formal_top.sv",
-                       int(targets()["formal_min_depth"]), top=ctx.state["top"], ports=_ports(ctx))
+                       depth, top=ctx.state["top"], ports=_ports(ctx), timeout_s=max(600, 15 * depth))
     except FormalHarnessError as e:
         f = {"error": str(e), "properties": {}, "proven_meaningful": 0, "failed": [], "vacuous": [], "tautologies": []}
     ctx.emit("tool_result", f"Euclid: {f.get('proven_meaningful', 0)} meaningful properties proven; failed "
@@ -746,7 +754,7 @@ def _fix(ctx: StepContext, bug: dict) -> None:
             "vs the spec). Do not remove properties or add assumptions without a spec reason.",
             inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv",
                     f"reports/{bug['bug_id']}.json"], validate=validate_props, kind="formal", previous=prev,
-            constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"]))), bug["root_cause"])
+            constraints=FORMAL_CONTRACT.replace("{depth}", str(formal_depth(ctx)))), bug["root_cause"])
     elif bug["classification"] == "TEST":
         theo_revise(ctx, prev)
     else:
@@ -796,7 +804,7 @@ def _debug_loop(ctx: StepContext, label: str) -> tuple[object, dict]:
                 ctx, "Euclid", goal="Fix the vacuous/tautological properties in formal/formal_top.sv.",
                 inputs=["spec/spec.yaml", "tb/dut_ports.json", "tb/testplan.yaml", "formal/formal_top.sv",
                         "reports/formal_report.json"], validate=validate_props, kind="formal", previous=prev,
-                constraints=FORMAL_CONTRACT.replace("{depth}", str(targets()["formal_min_depth"]))), "formal quality")
+                constraints=FORMAL_CONTRACT.replace("{depth}", str(formal_depth(ctx)))), "formal quality")
     ctx.state["blocked"] = f"{label}: failures remain after {DEBUG_ROUNDS} debug rounds"
     return r, f
 
