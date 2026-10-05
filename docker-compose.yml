@@ -19,6 +19,7 @@ x-backend: &backend
     S2S_MODEL_PROVIDER: ${S2S_MODEL_PROVIDER:-}
     S2S_REGRESS_TIMEOUT_S: ${S2S_REGRESS_TIMEOUT_S:-2400}
     S2S_MUTATION_PARALLEL: ${S2S_MUTATION_PARALLEL:-4}
+    S2S_MIRROR_TOKEN: ${S2S_MIRROR_TOKEN:-}   # set to accept a live mirror (POST /mirror); empty = off
   volumes:
     - ${PWD}/var/artifacts:${PWD}/var/artifacts
     - ${PWD}/var/bridge:${PWD}/var/bridge

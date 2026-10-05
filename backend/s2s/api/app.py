@@ -444,3 +444,8 @@ def put_spend_caps(body: SpendCapsIn, s: Session = Depends(db)) -> dict:
 from s2s.api.projects import router as projects_router  # noqa: E402
 
 app.include_router(projects_router)
+
+# --- live mirror of a remote run (personal use; disabled unless S2S_MIRROR_TOKEN is set) -----------
+from s2s.api.mirror import router as mirror_router  # noqa: E402
+
+app.include_router(mirror_router)
