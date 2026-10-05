@@ -280,7 +280,7 @@ def synthesis_steps() -> list[Step]:
         clk = _clocks(ctx)[0]
         _save_phys(ctx, source_run=src, lineage=lineage, frozen_rtl=frozen, top=_top(ctx),
                    clock_port=clk["name"], period_ns=round(1000.0 / float(clk["freq_mhz"]), 6),
-                   params=params, tag="it1", iteration=1)
+                   params=params, tag="it1", iteration=1, start_stage="placement")
         ctx.emit("plan", f"Mason: plan - Zone 3 for {spec['design']}: constraints (Sienna, Sentinel review), synthesis + "
                  "equivalence, DFT plan (Tess), floorplan (Grid), placement/CTS/routing (Orion, Tick) within "
                  "pnr_ranges.yaml; every result from the tools", agent_id="Mason")
@@ -631,7 +631,7 @@ def place_route_steps() -> list[Step]:
         budget = int(olf.ranges()["iteration_budget"])
         table: list[dict] = json.loads((ctx.workdir / "reports/pnr_iterations.json").read_text()) \
             if (ctx.workdir / "reports/pnr_iterations.json").exists() else []
-        start_stage = "placement"
+        start_stage = _phys(ctx).get("start_stage", "placement")  # a resumed iteration starts where it was set to
         while True:
             ph = _phys(ctx)
             k, tag = ph["iteration"], ph["tag"]
@@ -678,7 +678,8 @@ def place_route_steps() -> list[Step]:
                 (pnr / "runs" / new_tag).mkdir(parents=True, exist_ok=True)
             else:
                 olf.fork(pnr, tag, new_tag, start_stage)
-            ph = _save_phys(ctx, params=new, tag=new_tag, iteration=k + 1, last_changes=data["changes"])
+            ph = _save_phys(ctx, params=new, tag=new_tag, iteration=k + 1, last_changes=data["changes"],
+                            start_stage=start_stage)
             olf.write_config(pnr, ph["top"], sorted((ctx.workdir / "rtl").glob("*.v")), ph["clock_port"],
                              ph["period_ns"], ctx.workdir / "constraints/constraints.sdc", new, pnr / "pin_order.cfg")
             guard = olf.config_guard(pnr, period_ns=ph["period_ns"], reviewed_sdc_sha=ph["reviewed_sdc_sha"],
