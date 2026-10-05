@@ -149,6 +149,8 @@ def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_
             results[f"pdr_{n}"] = r = run_sby_formal(f, workdir, min(timeout_s, 1800))
             log = Path(r.log_path).read_text() if r.log_path else ""
             pdr[n] = (_DONE.findall(log) or ["TIMEOUT" if r.timed_out else "ERROR"])[-1]
+            if pdr[n] == "PASS" and not re.search(r"Proved output \d+ in frame", log):
+                pdr[n] = "NO_PROOF"  # sby passed but ABC never proved an output: nothing was checked
             if pdr[n] == "FAIL":
                 failed.add(n)
     cover_log = Path(results["cover"].log_path).read_text() if results["cover"].log_path else ""
