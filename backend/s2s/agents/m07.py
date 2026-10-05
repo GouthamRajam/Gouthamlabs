@@ -594,8 +594,13 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
                                             f"reports/pnr_iteration_{k}.json"]),
                        exit_criteria=["<= 2 changes", "each inside pnr_ranges.yaml", "a reason per change"],
                        schema=ORION_ANSWER, previous_attempts=previous,
-                       constraints=f"Current parameters: {json.dumps(ph['params'])}. Tunable: FP_CORE_UTIL (percent), "
-                       "PL_TARGET_DENSITY_PCT (percent = placement_density x 100), MAX_FANOUT_CONSTRAINT. The clock, "
+                       constraints=f"Current parameters: {json.dumps(ph['params'])} (a missing key is at its "
+                       "pnr_ranges.yaml default). Tunable: FP_CORE_UTIL (percent; reruns from floorplan), "
+                       "PL_TARGET_DENSITY_PCT (percent = placement_density x 100), MAX_FANOUT_CONSTRAINT (the resizer's "
+                       "fanout target; the SDC set_max_fanout that STA checks is NOT changed by it), "
+                       "CTS_SINK_CLUSTERING_SIZE (max flip-flops per clock-tree leaf buffer), GRT_ANTENNA_ITERS (antenna "
+                       "repair iterations), GRT_ANTENNA_MARGIN (percent of over-fix in antenna repair). Antenna repair "
+                       "inserts diode cells, and each diode is a load that counts toward a net's fanout. The clock, "
                        "constraints and rule decks are not yours to change.",
                        extra_note="Put the changes in `changes` and set `escalate`. ")
         _answer_fields(ctx, "Orion", data)

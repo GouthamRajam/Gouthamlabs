@@ -44,7 +44,11 @@ TUNABLE = {  # config key -> (pnr_ranges key, scale from range units to config u
     "FP_CORE_UTIL": ("core_utilization_pct", 1, "floorplan"),
     "PL_TARGET_DENSITY_PCT": ("placement_density", 100, "placement"),
     "MAX_FANOUT_CONSTRAINT": ("max_fanout", 1, "synthesis"),
+    "CTS_SINK_CLUSTERING_SIZE": ("cts_cluster_size", 1, "cts"),
+    "GRT_ANTENNA_ITERS": ("antenna_repair_iters", 1, "routing"),
+    "GRT_ANTENNA_MARGIN": ("antenna_repair_margin_pct", 1, "routing"),
 }
+INT_PARAMS = {"MAX_FANOUT_CONSTRAINT", "CTS_SINK_CLUSTERING_SIZE", "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN"}
 SYNTH_STRATEGIES = ["AREA 0", "AREA 1", "AREA 2", "AREA 3", "DELAY 0", "DELAY 1", "DELAY 2", "DELAY 3", "DELAY 4"]
 
 
@@ -76,6 +80,8 @@ def check_params(params: dict) -> list[str]:
         lo, hi = r[rk]["min"] * scale, r[rk]["max"] * scale
         if not isinstance(value, (int, float)) or not lo - 1e-9 <= value <= hi + 1e-9:
             problems.append(f"{key} = {value} is outside config/pnr_ranges.yaml {rk} [{lo:g}, {hi:g}]")
+        elif key in INT_PARAMS and float(value) != int(value):
+            problems.append(f"{key} = {value} must be a whole number")
     return problems
 
 
@@ -91,7 +97,8 @@ def write_config(pnr: Path, design: str, rtl: list[Path], clock_port: str, perio
     shutil.copy2(sdc, src / "constraints.sdc")
     cfg = {"DESIGN_NAME": design, "VERILOG_FILES": [f"dir::src/{Path(f).name}" for f in rtl],
            "CLOCK_PORT": clock_port, "CLOCK_PERIOD": period_ns, "PNR_SDC_FILE": "dir::src/constraints.sdc",
-           "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc", "ERRORS_ON_UNMATCHED_IO": "both", **params}
+           "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc", "ERRORS_ON_UNMATCHED_IO": "both",
+           **{k: int(v) if k in INT_PARAMS else v for k, v in params.items()}}
     if pin_cfg:
         shutil.copy2(pin_cfg, src / "pin_order.cfg")
         cfg["FP_PIN_ORDER_CFG"] = "dir::src/pin_order.cfg"

@@ -51,7 +51,13 @@ def test_sdc_exception_needs_written_justification():
 
 def test_params_must_stay_inside_pnr_ranges():
     assert olf.check_params(olf.default_params()) == []
-    assert olf.default_params() == {"FP_CORE_UTIL": 45, "PL_TARGET_DENSITY_PCT": 55, "MAX_FANOUT_CONSTRAINT": 10}
+    assert olf.default_params() == {"FP_CORE_UTIL": 45, "PL_TARGET_DENSITY_PCT": 55, "MAX_FANOUT_CONSTRAINT": 10,
+                                    # repair-effort settings default to OpenLane's own defaults
+                                    "CTS_SINK_CLUSTERING_SIZE": 25, "GRT_ANTENNA_ITERS": 3, "GRT_ANTENNA_MARGIN": 10}
+    assert olf.check_params({"CTS_SINK_CLUSTERING_SIZE": 30})  # larger clusters than OpenLane's default: refused
+    assert olf.check_params({"GRT_ANTENNA_ITERS": 2})          # less repair effort than the default: refused
+    assert olf.check_params({"GRT_ANTENNA_MARGIN": 5})
+    assert olf.check_params({"GRT_ANTENNA_ITERS": 10.5})       # whole numbers only
     assert olf.check_params({"FP_CORE_UTIL": 70})          # above 65
     assert olf.check_params({"PL_TARGET_DENSITY_PCT": 30})  # below 0.40 x 100
     assert olf.check_params({"MAX_FANOUT_CONSTRAINT": 5})

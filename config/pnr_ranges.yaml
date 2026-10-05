@@ -2,4 +2,9 @@ core_utilization_pct: {min: 30, max: 65, default: 45}
 placement_density: {min: 0.40, max: 0.80, default: 0.55}
 clock_uncertainty_ns: {min: 0.1, max: 0.5, default: 0.25}
 max_fanout: {min: 6, max: 20, default: 10}
+# Repair-effort settings (OpenLane defaults are the S2S defaults; the ranges only allow MORE effort / smaller
+# clock-tree clusters, never a looser check). CEO decision 2026-10-05 (sync_fifo antenna + fanout).
+cts_cluster_size: {min: 6, max: 25, default: 25}          # CTS_SINK_CLUSTERING_SIZE: max sinks per clock buffer
+antenna_repair_iters: {min: 3, max: 15, default: 3}       # GRT_ANTENNA_ITERS
+antenna_repair_margin_pct: {min: 10, max: 30, default: 10} # GRT_ANTENNA_MARGIN (% over-fix)
 iteration_budget: 8
