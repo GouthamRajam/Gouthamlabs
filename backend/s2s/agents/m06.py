@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -632,6 +633,46 @@ def reclassify_bin(ctx: StepContext, bin_name: str, reason: str) -> None:
         ctx.state["blocked"] = f"Sentinel rejected the reclassification of {bin_name}"
 
 
+def fix_testplan_refs(ctx: StepContext, problems: list[str], reason: str) -> None:
+    """Operator decision: a failed check names wrong assertion references in tb/testplan.yaml (illegal_states).
+    Vera (the plan's owner) corrects ONLY those `assertion` fields, each to a property that exists in
+    formal/formal_top.sv; one guarded change Sentinel must approve. The check itself re-runs unchanged."""
+    before = _plan(ctx)
+
+    def masked(p: dict) -> dict:
+        q = json.loads(json.dumps(p))
+        for st in q.get("illegal_states") or []:
+            st.pop("assertion", None)
+        return q
+
+    def v_plan(c: StepContext) -> list[str]:
+        probs = validate_testplan(c)
+        if probs:
+            return probs
+        p = _plan(c)
+        if masked(p) != masked(before):
+            probs.append("only the `assertion` fields of illegal_states may change; everything else must stay as it was")
+        props = _read(c, "formal/formal_top.sv")
+        for st in p.get("illegal_states") or []:
+            if not re.search(rf"\bap_{re.escape(st['assertion'])}\s*:\s*assert\b", props):
+                probs.append(f"illegal state {st['name']}: formal/formal_top.sv has no assertion ap_{st['assertion']} "
+                             "(name the property without its ap_ prefix)")
+        return probs
+
+    _assign(ctx, "Nadia", "Vera", "Fix the illegal-state assertion references in tb/testplan.yaml (operator decision)",
+            ["every illegal_states assertion names an existing ap_ property", "nothing else changed"], "files passing checks")
+    guarded(ctx, "Vera", lambda: _author_loop(
+        ctx, "Vera", goal="The check illegal_states_never_happen failed with: " + "; ".join(problems)
+        + ". Correct ONLY the `assertion` field of each illegal state in tb/testplan.yaml so it names the existing "
+        "property in formal/formal_top.sv (the label without its `ap_` prefix: label ap_x -> assertion x). Change "
+        "NOTHING else in the plan.",
+        inputs=["tb/testplan.yaml", "formal/formal_top.sv"], validate=v_plan, kind="testplan", previous=reason,
+        constraints="tb/testplan.yaml JSON Schema:\n" + json.dumps(TESTPLAN_SCHEMA, indent=1)),
+        f"operator decision: correct illegal-state assertion references (no check, property or test removed). {reason}")
+    if any(g["author"] == "Vera" for g in ctx.state.get("guard_rejections", [])):
+        ctx.state["blocked"] = "Sentinel rejected the test-plan reference fix"
+
+
 # --- Zone 2C: verification ---------------------------------------------------------------------
 def regress_timeout_s() -> float:
     """Harness capacity for one regression (all seeds + Icarus): S2S_REGRESS_TIMEOUT_S, default 2400 s.
@@ -870,9 +911,14 @@ def verification_steps() -> list[Step]:
     def change_requests(ctx: StepContext) -> None:
         """Operator change requests (task.inputs.change_requests), each a guarded change Sentinel must approve."""
         for cr in ctx.task.inputs.get("change_requests") or []:
-            if cr["kind"] != "reclassify_bin_to_illegal_state":
+            if cr.get("done"):
+                continue
+            if cr["kind"] == "reclassify_bin_to_illegal_state":
+                reclassify_bin(ctx, cr["bin"], cr["reason"])
+            elif cr["kind"] == "fix_testplan_assertion_refs":
+                fix_testplan_refs(ctx, cr["problems"], cr["reason"])
+            else:
                 raise ValueError(f"unknown change request {cr['kind']!r}")
-            reclassify_bin(ctx, cr["bin"], cr["reason"])
             if ctx.state.get("blocked"):
                 return
 
