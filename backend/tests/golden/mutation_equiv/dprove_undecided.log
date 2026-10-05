@@ -1,0 +1,6 @@
+Containment =     3.41 sec (  5.68 %)
+CNF compute =     2.37 sec (  3.95 %)
+Refinement  =     0.00 sec (  0.00 %)
+TOTAL       =    60.00 sec (100.00 %)
+Networks are UNDECIDED.   Time =    75.18 sec
+The unsolved reduced miter is written into file "sm01.aig".

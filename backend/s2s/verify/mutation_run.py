@@ -8,7 +8,10 @@ Screening, with real tools, before a mutant counts:
      the all-zero state, every input free; reset is an input, so "reset during operation" is
      explored). A proven-equivalent mutant (e.g. a change in an unreachable `default:`) cannot be
      detected by any test; it is reported and replaced. A mutant the solver cannot decide within
-     the step bound is KEPT and counted.
+     the step bound goes to step 3.
+  3. Unbounded sequential equivalence (CEO decision D2, prove-then-exclude): SymbiYosys builds the miter, then
+     its PDR or ABC dprove (latch correspondence + induction). A mutant PROVEN equivalent is screened out with its
+     proof log and replaced; one proven different or still undecided is KEPT and counted (never dropped on a guess).
 Detection: the regression (seed 1, Verilator) has any failing test or crashes. A run that times out is
 retried once at twice the limit; if it times out again it counts as NOT detected (never as a catch).
 """
@@ -80,6 +83,56 @@ def _verdict_key(rtl_dir: Path, tb_hash: str, top: str, test_module: str) -> str
     return hashlib.sha256("\0".join([_tree_hash(rtl_dir), tb_hash, top, test_module]).encode()).hexdigest()
 
 
+def classify_dprove(log: str) -> str:
+    """ABC dprove's own verdict line; anything else is undecided (never read as a proof)."""
+    if "Networks are equivalent" in log:
+        return "equivalent"
+    if "Networks are NOT EQUIVALENT" in log or "was asserted in frame" in log:
+        return "different"
+    return "undecided"
+
+
+def _unbounded_equivalence(base: Path, m: Mutant, orig_dir: Path, rtl_files: dict[str, str], top: str,
+                           cache: Path) -> dict:
+    """Unbounded sequential equivalence of a mutant vs the original (CEO decision D2, prove-then-exclude).
+    SymbiYosys builds the miter (both designs from the all-zero state; reset is a free input, so every run from
+    reset is covered); its PDR may finish first, else ABC dprove (latch correspondence + induction + fraiging).
+    Only 'equivalent' from a completed engine screens a mutant out; 'different' and 'undecided' keep it."""
+    names = [Path(p).name for p in rtl_files]
+    gate = base / m.id / "rtl"
+    key = hashlib.sha256("\0".join([_tree_hash(orig_dir / "rtl"), _tree_hash(gate), top, "equiv-v1"]).encode()).hexdigest()
+    hit = cache / f"equiv_{key}.json"
+    if hit.exists():
+        return {**json.loads(hit.read_text()), "cached": True}
+    d = base / m.id / "eq"
+    shutil.rmtree(d, ignore_errors=True)
+    d.mkdir(parents=True)
+    load = lambda tag: (f"read_verilog -sv {' '.join(f'{tag}/{n}' for n in names)}\nhierarchy -check -top {top}\n"
+                                f"proc\nmemory\nflatten\nopt_clean\nrename {top} {tag}\ndesign -stash {tag}\n")
+    (d / "eq.sby").write_text(
+        "[options]\nmode prove\n\n[engines]\nabc pdr\n\n[script]\n" + load("gold") + load("gate")
+        + "design -copy-from gold -as gold gold\ndesign -copy-from gate -as gate gate\n"
+        "miter -equiv -flatten -make_assert -ignore_gold_x gold gate miter\nhierarchy -top miter\nzinit -all\n\n[files]\n"
+        + "".join(f"gold/{n} {orig_dir / 'rtl' / n}\ngate/{n} {gate / n}\n" for n in names))
+    runner.run(["sby", "-f", "eq.sby"], d, d / "sby.log", "sby", 120, cwd=d)
+    sby_log = (d / "sby.log").read_text(errors="replace")
+    if "DONE (PASS" in sby_log:
+        out = {"status": "equivalent", "method": "SymbiYosys abc pdr", "log": str(d / "sby.log")}
+    elif "DONE (FAIL" in sby_log:
+        out = {"status": "different", "method": "SymbiYosys abc pdr", "log": str(d / "sby.log")}
+    elif not (d / "eq" / "model" / "design_aiger.aig").exists():
+        return {"status": "undecided", "method": "miter model not built", "log": str(d / "sby.log")}
+    else:
+        rec = runner.run(["yosys-abc", "-c", "read_aiger eq/model/design_aiger.aig; fold; strash; dprove -v"],
+                         d, d / "dprove.log", "yosys", float(os.environ.get("S2S_EQUIV_TIMEOUT_S", "300")), cwd=d)
+        st = classify_dprove((d / "dprove.log").read_text(errors="replace"))
+        out = {"status": st, "method": "ABC dprove", "log": str(d / "dprove.log"),
+               "timed_out": bool(rec.timed_out)}
+    if out["status"] != "undecided":  # a decided verdict depends only on the two RTL versions
+        hit.write_text(json.dumps(out))
+    return out
+
+
 class MutationHarnessError(RuntimeError):
     """The measurement itself failed (never reported as a detection rate)."""
 
@@ -129,10 +182,22 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         if missing:  # the screen itself failed: never read as "does not compile"
             raise MutationHarnessError(f"equivalence screen gave no result for {len(missing)} mutant(s) "
                                        f"(e.g. {missing[0]}); see {base}/screen_{i}.log")
+        undecided = [m for m in batch if res[m.id]["compiles"] and res[m.id]["equiv"] == "unknown"]
+        with ThreadPoolExecutor(max_workers=parallel) as pool:  # CEO decision D2: unbounded proof, never a guess
+            proofs = dict(zip([m.id for m in undecided],
+                              pool.map(lambda m: _unbounded_equivalence(base, m, orig_dir, rtl_files, top, cache),
+                                       undecided)))
         for m in batch:
             r = res[m.id]
             screen[m.id] = r.get("equiv")
-            if not r["compiles"]:
+            pr = proofs.get(m.id)
+            if pr:
+                screen[m.id] = f"{r.get('equiv')}; unbounded: {pr['status']} ({pr['method']})"
+            if r["compiles"] and pr and pr["status"] == "equivalent":
+                screened_out.append({"id": m.id, "type": m.type, "description": m.description,
+                                     "reason": f"proven equivalent to the original ({pr['method']}; proof log "
+                                               f"{pr['log']})", "proof": pr})
+            elif not r["compiles"]:
                 screened_out.append({"id": m.id, "type": m.type, "description": m.description, "reason": "does not compile"})
             elif r["equiv"] == "equivalent":
                 screened_out.append({"id": m.id, "type": m.type, "description": m.description,
