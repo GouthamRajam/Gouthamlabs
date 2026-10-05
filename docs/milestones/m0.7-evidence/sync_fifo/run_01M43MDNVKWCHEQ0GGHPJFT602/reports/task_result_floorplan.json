@@ -1,0 +1,51 @@
+{
+  "task_id": "task_01M43MDNWHYJG17FZPHC7WVYYB",
+  "status": "success",
+  "summary": "Wrote pnr/floorplan.json (core_utilization_pct=45 with reasons for utilization, pins, power grid and clock/reset) and pnr/pin_order.cfg (W: wr_en, wr_data.*, rd_en; E: rd_data.*; N: full, almost_full, empty, overflow, underflow, count.*; S: clk, rst_n). No tool was run by me; floorplan, PDN and pin-order parsing checks are pending the runtime.",
+  "outputs": [
+    {
+      "path": "pnr/floorplan.json",
+      "sha256": "3ac65ec8bb85d9ba5fd79490061a8b9e0364a400d9a7ecdfece558721ef915b0"
+    },
+    {
+      "path": "pnr/pin_order.cfg",
+      "sha256": "d85030a6df925d440b59baf94af546d87e2e11d1d8fe5a9a9a1c674383e62652"
+    },
+    {
+      "path": "reports/floorplan_report.json",
+      "sha256": "a427cf65ba8e9c7fcf6b40d0e77914636c1c3b5939afb4e96003f64c1f2024b6"
+    },
+    {
+      "path": "reports/floorplan_tool.json",
+      "sha256": "6e2e254d5f67fad12c0ef13d79860030875de48dd1175f53f54498c95e0fda0c"
+    },
+    {
+      "path": "reports/pnr_ranges.json",
+      "sha256": "b170cbf7c8b84928918f9ba5db474b4ecc19f9783a9d60a9bd09be4b2e694072"
+    }
+  ],
+  "checks_run": [
+    "chk_01M4467HDABSJKZ35FJ3RR569V",
+    "chk_01M4467HE69CKWF7Q4YZ0V90EX",
+    "chk_01M4467XR2J9PD45AGVQGZP3GC",
+    "chk_01M4467XR4RCZ0TVWAGE55RBRR",
+    "chk_01M4467XR4STRWKJERXBZYD227",
+    "chk_01M4467XRK9DJEB5MEBE49B49W",
+    "chk_01M4467XXVVZ5KP9GXRHH6MS33"
+  ],
+  "assumptions": [
+    "Cell area 26,049.984 um2 from reports/synth_tool.json is the basis for utilization.",
+    "Default SKY130 PDN parameters are used unchanged since pnr_ranges.yaml has no strap ranges.",
+    "OpenLane matches pin patterns from the start of the name (re.match), so 'full' does not also match 'almost_full', 'wr_en' does not match 'wr_data', and 'rd_en' does not match 'rd_data'. If the parser uses unanchored search, 'full' would also match almost_full and must be revisited.",
+    "rd_en is grouped with the other inputs on West to keep all inputs on one side, per the task instruction."
+  ],
+  "open_issues": [
+    "Pre-layout setup slack at ss_100C_1v60 is only 0.306 ns on rd_data paths, driven by a fanout-128 rd_addr select flop (3.65 ns Q delay); placement/CTS buffering must fix this net or the worst-corner slack may go negative after layout. Flagged for the PnR/timing agent.",
+    "Utilization 45% is the default; final core area is to be reported for G1 review (REQ-020)."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Utilization and pin grouping follow the inputs directly; the main uncertainty is the exact pattern-matching semantics of the OpenLane pin-order parser for 'full' vs 'almost_full', which the runtime check will confirm.",
+    "confidence": "medium"
+  }
+}

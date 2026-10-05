@@ -1,0 +1,123 @@
+design: sync_fifo
+version: 1
+summary: "Single-clock synchronous FIFO, 16 entries x 32 bits, with full, empty and almost-full flags and overflow/underflow protection."
+pdk: sky130A
+std_cell_library: sky130_fd_sc_hd
+target_clock_mhz: 100
+target_clock_note: "Given by request (100 MHz, 10 ns period) on SKY130; PDK and library choice DEFAULT - needs G1 review"
+clocks:
+  - {name: clk, freq_mhz: 100}
+resets:
+  - {name: rst_n, active: low, type: synchronous}
+interfaces:
+  - {name: clk, dir: in, width: 1, description: "Single system clock, rising edge"}
+  - {name: rst_n, dir: in, width: 1, clock_domain: clk, description: "Synchronous active-low reset. DEFAULT - needs G1 review"}
+  - {name: wr_en, dir: in, width: 1, clock_domain: clk, description: "Push request"}
+  - {name: wr_data, dir: in, width: 32, clock_domain: clk, description: "Data to push, sampled when wr_en is 1 and the FIFO is not full"}
+  - {name: rd_en, dir: in, width: 1, clock_domain: clk, description: "Pop request"}
+  - {name: rd_data, dir: out, width: 32, clock_domain: clk, reset_value: 0, description: "Head entry (first-word-fall-through) when not empty; 0 when empty"}
+  - {name: full, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "1 when count == 16"}
+  - {name: empty, dir: out, width: 1, clock_domain: clk, reset_value: 1, description: "1 when count == 0"}
+  - {name: almost_full, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "1 when count >= 12. DEFAULT - needs G1 review"}
+  - {name: overflow, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "Sticky; set when a push is rejected because the FIFO is full. RECOMMENDED - default on"}
+  - {name: underflow, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "Sticky; set when a pop is rejected because the FIFO is empty. RECOMMENDED - default on"}
+  - {name: count, dir: out, width: 5, clock_domain: clk, reset_value: 0, description: "Number of stored entries, 0..16. RECOMMENDED - default on"}
+requirements:
+  - id: REQ-001
+    type: functional
+    text: "A push (wr_en=1 while full=0) stores wr_data at the tail and increments count by 1 at the next rising clk edge."
+    acceptance: "Scoreboard against a reference queue model matches for 100,000 random operations with 0 mismatches."
+  - id: REQ-002
+    type: functional
+    text: "A pop (rd_en=1 while empty=0) removes the oldest entry and decrements count by 1 at the next rising clk edge; data is returned in FIFO order."
+    acceptance: "Scoreboard against a reference queue model matches for 100,000 random operations with 0 mismatches."
+  - id: REQ-003
+    type: functional
+    text: "While empty=0, rd_data presents the oldest entry (first-word-fall-through) without needing rd_en; rd_en acts as acknowledge, and rd_data shows the next entry after the pop edge."
+    acceptance: "Directed test: after pushing words A,B,C, rd_data == A before any pop, B after 1 pop, C after 2 pops."
+  - id: REQ-004
+    type: functional
+    text: "full is 1 if and only if count == 16, and is registered/derived so it is valid in the same cycle as count."
+    acceptance: "After exactly 16 pushes from empty full==1 and after the 16th pop full==0; assertion full == (count==16) holds in 100% of cycles of random simulation."
+  - id: REQ-005
+    type: functional
+    text: "empty is 1 if and only if count == 0."
+    acceptance: "After exactly 16 pops from full empty==1; assertion empty == (count==0) holds in 100% of cycles of random simulation."
+  - id: REQ-006
+    type: reset
+    text: "Synchronous active-low rst_n resets every control state element (read pointer, write pointer, count, sticky flags). Storage array contents are exempt from reset; they are unobservable because rd_data is forced to 0 while empty and entries are overwritten before being read."
+    acceptance: "Directed test and formal property: 1 clk edge with rst_n=0 gives the reset values; no read of a location precedes its write in 100,000 random cycles."
+  - id: REQ-007
+    type: reset
+    text: "After reset: empty=1, full=0, almost_full=0, overflow=0, underflow=0, count=0, rd_data=0."
+    acceptance: "Checked by directed test after the first rising edge with rst_n=0 and by a formal property; all 7 outputs equal the listed values."
+  - id: REQ-008
+    type: reset
+    text: "Reset takes priority over wr_en and rd_en when rst_n=0 in the same cycle; reset applied mid-traffic returns the FIFO to the empty state and discards all stored entries."
+    acceptance: "Random reset injection in 1,000 traffic runs: after each reset count==0 and empty==1 and no stale data is read afterwards."
+  - id: REQ-009
+    type: functional
+    text: "almost_full is 1 if and only if count >= 12 (threshold 12). DEFAULT - needs G1 review."
+    acceptance: "almost_full==0 at count 11, ==1 at counts 12..16, checked in a directed ramp up and down; assertion almost_full == (count>=12) holds in 100% of random cycles."
+  - id: REQ-010
+    type: functional
+    text: "Overflow protection: a push while full=1 (and not simultaneously accepted by a pop, see REQ-014) is ignored: no change to count, pointers or stored data, and the sticky overflow flag is set at the next clk edge."
+    acceptance: "Fill 16 entries, push 1 more, then pop all: the 16 original words are returned unchanged, count stays 16 after the rejected push, overflow==1."
+  - id: REQ-011
+    type: functional
+    text: "Underflow protection: a pop while empty=1 is ignored: no change to count or pointers, rd_data stays 0, and the sticky underflow flag is set at the next clk edge."
+    acceptance: "Pop from empty: count stays 0, empty stays 1, underflow==1; a subsequent push/pop returns the pushed word correctly."
+  - id: REQ-012
+    type: functional
+    text: "overflow and underflow remain set until rst_n is asserted. RECOMMENDED - default on."
+    acceptance: "After a flag is set, it stays 1 for 1,000 further cycles of mixed traffic and returns to 0 only after a reset."
+  - id: REQ-013
+    type: functional
+    text: "Simultaneous push and pop at mid-level (1 <= count <= 15): both are accepted, count is unchanged, and the entry order is preserved."
+    acceptance: "Directed test at counts 1, 8 and 15 with wr_en=rd_en=1 for 100 cycles: count constant, scoreboard 0 mismatches."
+  - id: REQ-014
+    type: functional
+    text: "Simultaneous push and pop when full: the pop is accepted and the push is rejected as overflow (full is evaluated before the operation); count becomes 15. DEFAULT - needs G1 review."
+    acceptance: "At count 16 with wr_en=rd_en=1: next cycle count==15, overflow==1, oldest entry removed, no data lost other than the rejected push."
+  - id: REQ-015
+    type: functional
+    text: "Simultaneous push and pop when empty: the push is accepted and the pop is rejected as underflow; count becomes 1. DEFAULT - needs G1 review."
+    acceptance: "At count 0 with wr_en=rd_en=1: next cycle count==1, underflow==1, rd_data equals the pushed word."
+  - id: REQ-016
+    type: functional
+    text: "Pointers wrap correctly: 5-bit read and write pointers (4-bit address plus 1 wrap bit) are used; count = wr_ptr - rd_ptr modulo 32 and never exceeds 16."
+    acceptance: "Random traffic of at least 1,000 operations (more than 32 pointer increments, over 10 full wraps) with 0 scoreboard mismatches; assertion count <= 16 holds in 100% of cycles."
+  - id: REQ-017
+    type: functional
+    text: "full and empty are never both 1 in the same cycle, outside of no reset condition; count is consistent with the flags at all times."
+    acceptance: "Assertion !(full && empty) holds in 100% of cycles of random simulation and in a formal proof."
+  - id: REQ-018
+    type: interface
+    text: "All inputs are sampled on the rising edge of clk and all outputs change only after the rising edge of clk, except rd_data, which is a combinational function of registered state only (read pointer, storage, empty)."
+    acceptance: "Lint reports 0 combinational paths from wr_en, rd_en and wr_data to any output; static timing reports no unconstrained paths."
+  - id: REQ-019
+    type: clock
+    text: "The design uses a single clock clk at 100 MHz (period 10 ns) with no other clock domain and no clock-domain crossings."
+    acceptance: "Synthesised netlist has exactly 1 clock net; STA at 10 ns period reports setup WNS >= 0 and hold WNS >= 0 on sky130A typical corner."
+  - id: REQ-020
+    type: area
+    text: "Storage is flop-based, 16 x 32 = 512 bits, with no SRAM macro."
+    acceptance: "Synthesis report shows no macro instances; core utilisation target and final area are reported for G1 review (no numeric limit requested)."
+  - id: REQ-021
+    type: test
+    text: "The verification suite covers: full after 16 pushes, empty after 16 pops, almost-full threshold, overflow, underflow, simultaneous push/pop at empty, mid-level and full, pointer wrap, reset mid-traffic."
+    acceptance: "Functional coverage reports 100% of the 9 listed scenarios hit, and 0 scoreboard mismatches over at least 100,000 randomized cycles."
+out_of_scope:
+  - "Multiple clock domains or asynchronous FIFO operation"
+  - "Almost-empty flag"
+  - "Programmable almost-full threshold"
+  - "ECC, parity or any data protection"
+  - "Streaming bus wrappers (AXI4-Stream or similar)"
+  - "SRAM macro based storage"
+  - "Power-down or clock gating"
+  - "Flush or clear other than reset"
+open_questions:
+  - "Confirm almost-full threshold of 12 entries (DEFAULT - needs G1 review)."
+  - "Confirm sticky (cleared only by reset) versus pulsed overflow/underflow flags."
+  - "Confirm first-word-fall-through read versus registered-read latency."
+  - "Confirm push-rejected-at-full and pop-rejected-at-empty priority for simultaneous push and pop."

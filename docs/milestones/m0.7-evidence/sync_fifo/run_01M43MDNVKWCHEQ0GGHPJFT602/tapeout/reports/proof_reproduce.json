@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "items": {
+    "manifest": true,
+    "magic_drc_zero": true,
+    "klayout_drc_zero": true,
+    "lvs_match": true,
+    "sta_all_corners_met": true,
+    "sta_matches_recorded": true,
+    "flow_completed": true,
+    "flow_signoff_clean": true,
+    "flow_matches_recorded": true
+  },
+  "magic_drc": "0",
+  "klayout_drc": "0",
+  "lvs": "Circuits match uniquely.",
+  "sta": {
+    "nom_tt_025C_1v80": {
+      "setup": 3.447,
+      "hold": 0.3736
+    },
+    "nom_ss_100C_1v60": {
+      "setup": 0.3751,
+      "hold": 1.0024
+    },
+    "nom_ff_n40C_1v95": {
+      "setup": 4.6039,
+      "hold": 0.1411
+    },
+    "min_tt_025C_1v80": {
+      "setup": 3.5461,
+      "hold": 0.3697
+    },
+    "min_ss_100C_1v60": {
+      "setup": 0.552,
+      "hold": 0.9973
+    },
+    "min_ff_n40C_1v95": {
+      "setup": 4.6716,
+      "hold": 0.1384
+    },
+    "max_tt_025C_1v80": {
+      "setup": 3.3694,
+      "hold": 0.3772
+    },
+    "max_ss_100C_1v60": {
+      "setup": 0.2429,
+      "hold": 1.0087
+    },
+    "max_ff_n40C_1v95": {
+      "setup": 4.5486,
+      "hold": 0.1438
+    }
+  },
+  "flow_metrics": {
+    "design__instance__count": 4048,
+    "route__wirelength": 65447,
+    "magic__drc_error__count": 0,
+    "klayout__drc_error__count": 0,
+    "design__lvs_error__count": 0,
+    "antenna__violating__nets": 0,
+    "timing__setup_vio__count": 0,
+    "timing__hold_vio__count": 0
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 3.447,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3736,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 0.3751,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.0024,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 4.6039,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1411,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 3.5461,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3697,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 0.552,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9973,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 4.6716,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1384,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 3.3694,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3772,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 0.2429,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.0087,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 4.5486,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1438,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    }
+  },
+  "explained_by": "Chronos",
+  "explanation": "# sync_fifo signoff timing (sky130A, sky130_fd_sc_hd), clk 10.0 ns (100 MHz)\n\n## Verdict\nAll 9 corners reported by the STA tool show setup and hold WNS >= 0, TNS = 0.0 and no max transition/capacitance/fanout (DRV) violators. Setup is comfortable at tt and ff but thin at the slow (ss, 100C, 1.60 V) corners. The tightest number is **0.2429 ns** setup slack at max_ss_100C_1v60 (2.4% of the period). Hold is tightest at fast corners (smallest: **0.1384 ns** at min_ff_n40C_1v95); it is met, not violated.\n\n## Per-corner table (ns, from reports/sta_tool.json)\n| Corner | Setup WNS | Setup TNS | Hold WNS | Hold TNS | DRV violators | Result |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 3.447 | 0.0 | 0.3736 | 0.0 | none | pass |\n| nom_ss_100C_1v60 | 0.3751 | 0.0 | 1.0024 | 0.0 | none | pass |\n| nom_ff_n40C_1v95 | 4.6039 | 0.0 | 0.1411 | 0.0 | none | pass |\n| min_tt_025C_1v80 | 3.5461 | 0.0 | 0.3697 | 0.0 | none | pass |\n| min_ss_100C_1v60 | 0.552 | 0.0 | 0.9973 | 0.0 | none | pass |\n| min_ff_n40C_1v95 | 4.6716 | 0.0 | 0.1384 | 0.0 | none | pass |\n| max_tt_025C_1v80 | 3.3694 | 0.0 | 0.3772 | 0.0 | none | pass |\n| max_ss_100C_1v60 | 0.2429 | 0.0 | 1.0087 | 0.0 | none | pass |\n| max_ff_n40C_1v95 | 4.5486 | 0.0 | 0.1438 | 0.0 | none | pass |\n\nREQ-019 acceptance (setup and hold WNS >= 0 on typical corner): nom_tt_025C_1v80 setup 3.447 ns, hold 0.3736 ns, consistent with it.\n\n## Worst paths in plain words\nAcross all 9 corners the two worst setup paths are the same: start point `_3261_` (an internal netlist instance; the tool data does not give its cell type) to output ports `rd_data[5]` (worst) and `rd_data[4]` (second). Both are register-to-output paths: the input data to the SDC is a 3.000 ns output delay plus 0.25 ns clock uncertainty on a 10 ns period, so the path has about 6.75 ns minus path delay to spend. rd_data is a combinational function of registered state (REQ-018), so the path runs through the read-select logic and output buffering to the port.\n- Slowest corner, max_ss_100C_1v60: rd_data[5] 0.2429 ns, rd_data[4] 0.2897 ns (MET).\n- nom_ss_100C_1v60: rd_data[5] 0.3751 ns, rd_data[4] 0.4191 ns. min_ss_100C_1v60: 0.552 ns and 0.5887 ns.\n- Typical: nom_tt rd_data[5] 3.447 ns, rd_data[4] 3.4692 ns. Fast: nom_ff rd_data[5] 4.6039 ns.\n- The tool data supplied per-path detail only for setup (type max). No hold path list and no per-cell delay breakdown were provided, so I cannot name the dominating cells or the hold start/end points. This is a gap, not a pass or fail claim.\n\n## Ranked fixes (margin is thin only at ss corners; none is required for a pass)\n1. Do nothing for now and have a human decide whether 0.2429 ns (max_ss) is adequate signoff margin. The I/O budget (3.000 ns in and out) and 0.25 ns uncertainty are DEFAULT values flagged for G1 review; they drive this margin, and I do not change them.\n2. If more margin is wanted: register rd_data (output flop, removing the combinational read mux from the output path). Largest expected effect, but it changes behavior (REQ-003 first-word-fall-through, REQ-018), so it is an architecture decision for a human and the RTL owner, not a timing-side change.\n3. Upsize or buffer the drivers on the `_3261_` -> rd_data[5]/[4] paths and re-run placement/resize (repair_timing) targeting the ss corners. Moderate effect; the exact cells to change need a per-cell path report, which I was not given.\n4. Check placement of the read-select logic relative to the rd_data output pins (re-placement). Small effect.\nDo not trade this for hold: hold slack is only 0.1384 to 0.1438 ns at ff corners, so any added delay or sizing change must be re-checked at all corners.\n\n## Caveats\n- Numbers are copied from the tool output; nothing was re-run by me. The S2S runtime performs the real checks.\n- The SDC keeps clocks ideal (\"the flow propagates clocks after CTS\"). The input data does not state whether the reported figures use propagated clocks; if they are pre-CTS ideal-clock figures, hold in particular must be re-confirmed after CTS.\n- Driving cell and output load are left to flow defaults (DEFAULT, G1 review).\n",
+  "assumptions": [
+    "Reported figures are taken verbatim from reports/sta_tool.json; no tool was run by me.",
+    "I/O delays (3.000 ns), clock uncertainty (0.25 ns) and max fanout 10 are DEFAULT values from constraints.sdc pending G1 review and were not changed.",
+    "It is not stated whether clocks were ideal or propagated in the reported run; assumed to be the final flow output."
+  ],
+  "open_issues": [
+    "Slow-corner setup margin is 0.2429 ns (max_ss_100C_1v60); a human should decide if this is adequate.",
+    "No hold path list or per-cell delay breakdown was provided, so dominant cells and hold start/end points are not identified.",
+    "Confirm hold figures are post-CTS with propagated clocks (min hold slack 0.1384 ns at min_ff_n40C_1v95).",
+    "The cell type of start point _3261_ is not given in the input."
+  ]
+}

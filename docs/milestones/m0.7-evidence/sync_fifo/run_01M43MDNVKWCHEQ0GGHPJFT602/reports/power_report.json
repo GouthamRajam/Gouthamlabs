@@ -1,0 +1,56 @@
+{
+  "power_w_by_corner": {
+    "tt_025C_1v80": {
+      "internal_w": 0.004255347,
+      "switching_w": 0.001496411,
+      "leakage_w": 2.138445e-08,
+      "total_w": 0.005751779,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_tt_025C_1v80.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_tt_025C_1v80.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ss_100C_1v60": {
+      "internal_w": 0.003367674,
+      "switching_w": 0.001149357,
+      "leakage_w": 2.201441e-05,
+      "total_w": 0.004539046,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_ss_100C_1v60.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_ss_100C_1v60.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ff_n40C_1v95": {
+      "internal_w": 0.004893246,
+      "switching_w": 0.001790117,
+      "leakage_w": 3.99838e-08,
+      "total_w": 0.006683403,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_ff_n40C_1v95.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_ff_n40C_1v95.tcl",
+      "tool_version": "2.6.0"
+    }
+  },
+  "input_activity": 0.2,
+  "openlane_power_total_w": 0.005682576913386583,
+  "ir": {
+    "worst_drop_v": 0.00137,
+    "avg_drop_v": 0.000224,
+    "limit_v": 0.09,
+    "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)"
+  },
+  "explained_by": "Volta",
+  "explanation": "# Power and IR report: sync_fifo (stage: signoff)\n\n## Power (OpenSTA 2.6.0, input activity 0.2)\n\n| Corner | Internal (W) | Switching (W) | Leakage (W) | Total (W) |\n|---|---|---|---|---|\n| tt_025C_1v80 | 0.004255347 | 0.001496411 | 2.138445e-08 | 0.005751779 |\n| ss_100C_1v60 | 0.003367674 | 0.001149357 | 2.201441e-05 | 0.004539046 |\n| ff_n40C_1v95 | 0.004893246 | 0.001790117 | 3.99838e-08 | 0.006683403 |\n\n- Highest total power: ff_n40C_1v95 at 0.006683403 W. Typical corner: 0.005751779 W.\n- Cross-check: the OpenLane power total is 0.005682576913386583 W, close to the typical-corner OpenSTA total. The two numbers come from different runs and are not identical.\n- Leakage is highest at the slow, hot corner (ss_100C_1v60): 2.201441e-05 W, as expected for high temperature.\n- Dynamic power is the dominant component at all three corners.\n\n## IR drop\n\n- Worst drop: 0.00137 V. Average drop: 0.000224 V.\n- Limit: 0.09 V (5% of 1.8 V, A.13 Phase 0 default).\n- The worst drop is well below the limit, so no PDN change is proposed to Grid.\n- The IR check passes only if the runtime's own check confirms it. This report quotes the tool data and does not claim a pass.\n\n## Assumptions and what is not analyzed\n\n- Switching activity is the 0.2 (20%) default toggle rate on inputs. No simulation activity (VCD/SAIF) was supplied, so the power figures are estimates.\n- Power was analyzed at three PVT corners: tt 25C 1.80 V, ss 100C 1.60 V, ff -40C 1.95 V.\n- The IR drop corner, voltage-source (pad/strap) locations and the current-map source are not stated in the data given. They are assumed to be the tool's defaults for the typical 1.8 V supply.\n- Electromigration (EM) is not analyzed by the open flow.\n- Dynamic (switching-induced) IR drop and decap effects are not covered by the data given.\n- The spec has no power budget, so no power pass/fail limit is applied. The numbers are for G1 review.\n- Clock gating and power-down are out of scope per the spec.\n",
+  "assumptions": [
+    "Input activity 0.2 (20% toggle rate) default; no simulation activity was provided.",
+    "Corners: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95, as given in the tool data.",
+    "IR analysis corner, voltage-source locations and current-map source are not stated in the tool data; assumed to be the tool defaults at 1.8 V.",
+    "IR limit is 5% of 1.8 V = 0.09 V (A.13 Phase 0 default).",
+    "Electromigration is not analyzed by the open flow.",
+    "Dynamic IR drop and decap effects are not covered by the data provided.",
+    "No power budget in the spec, so no power pass/fail limit applied."
+  ],
+  "open_issues": [
+    "Voltage-source locations and IR analysis corner are not documented in the tool output; a human should confirm them.",
+    "No simulation-based activity; power could differ from the 20% estimate.",
+    "EM is not checked in the open flow.",
+    "OpenLane total (0.005682576913386583 W) and OpenSTA typical-corner total (0.005751779 W) differ slightly; the cause is not stated in the data."
+  ]
+}

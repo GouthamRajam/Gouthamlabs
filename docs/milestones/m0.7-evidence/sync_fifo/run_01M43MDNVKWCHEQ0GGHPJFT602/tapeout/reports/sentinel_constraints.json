@@ -1,0 +1,9 @@
+[
+  {
+    "severity": "minor",
+    "target": "constraints/constraints.sdc, trailing comment block ('Driving cell and output load: ... left to the OpenLane 2 flow defaults' and 'Clocks stay ideal here; the flow propagates clocks after CTS')",
+    "what": "The SDC has no set_driving_cell or set_input_transition on inputs, no set_load on outputs, and no set_propagated_clock. It assumes the flow adds them. In OpenLane 2, the defaults for driving cell, output load and clock propagation are applied by the flow's own base SDC. If this file is passed as the custom PNR or signoff SDC, it replaces that base SDC. The inputs would then have ideal (zero) transitions and the outputs zero load, which makes I/O path timing optimistic. Signoff STA could also run with ideal clocks unless the flow scripts propagate them separately.",
+    "evidence": "The file has no set_driving_cell, set_input_transition, set_load or set_propagated_clock commands. Its comments rely on 'OpenLane 2 flow defaults' and 'the flow propagates clocks after CTS'. The task inputs do not show how the flow consumes this SDC.",
+    "suggested_action": "Synthesis agent (Sienna): either add these constraints explicitly, marked DEFAULT for G1 review, or show from the real flow config and STA report that the flow applies them. The explicit option is set_driving_cell -lib_cell sky130_fd_sc_hd__inv_2 (or a buffer) on all inputs except clk, set_load on all outputs using the flow's OUTPUT_CAP_LOAD value, and set_propagated_clock [all_clocks] in the post-CTS/signoff SDC. The STA report should show non-zero input slew, non-zero output load and propagated clocks after CTS. Do not change the clock period, uncertainty or I/O delays."
+  }
+]

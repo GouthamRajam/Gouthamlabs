@@ -1,0 +1,74 @@
+{
+  "task_id": "task_01M43MDNWHYXH7R7VYFNE6PW48",
+  "status": "success",
+  "summary": "Release notes written for sync_fifo: checklist 16/16 marked done with evidence, readiness baseline A 95.3% and baseline B 64.1%, DFM 0 high / 3 medium / 6 low, known limits and open items.",
+  "outputs": [
+    {
+      "path": "reports/division4_report.md",
+      "sha256": "3678e4889517e6f6168fa6e2ed5f9efb2e80f32917f6fab35aeb5fcae6e98d61"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "b2e31a163e40c43f98f7f83670a8bf17a07e57b3b1eb415a6422d1369ac15c63"
+    },
+    {
+      "path": "reports/proof_manifest.json",
+      "sha256": "ec91fb68525d1461b264cea960cca0d7db69d1025763f63c55a41fb3814e7f72"
+    },
+    {
+      "path": "reports/proof_reproduce.json",
+      "sha256": "c67f1423da61427d430c7b2bd747ed5db3ede81941e79e1573a4fce3c32ddc84"
+    },
+    {
+      "path": "reports/tapeout_checklist.json",
+      "sha256": "cbee0ce3dbe997e4fe02b466b6f0fecf120d787b6763310651ba22d7e9c8321a"
+    },
+    {
+      "path": "reports/tapeout_readiness.json",
+      "sha256": "a3b37279b183ffc4b69b0904126759487dc6fd04d3cbb9e3dbcf07108c12f375"
+    },
+    {
+      "path": "tapeout/release_notes.md",
+      "sha256": "bfd6e7d1a074920d790a0831a2ebf5e652e1d335c6f32903166468af4b744c40"
+    }
+  ],
+  "checks_run": [
+    "chk_01M46WTS7VY8CTA7S1BXH3V0QP",
+    "chk_01M46WX0KFHX24TWS9A4ZA45TM",
+    "chk_01M46WX0KGG4MGP1ARN1PA2AZ9",
+    "chk_01M46WX0KGZYFY5Y76QCJPS090",
+    "chk_01M46WX0M0WA9RTHSP3EP1HQ8F",
+    "chk_01M46X4SSRYD8GD4YRDN3CK8RE",
+    "chk_01M46X4ST1K0K4EWTK9A37K1SG",
+    "chk_01M46X4SV7H9BHFR2DM0KY1GC7",
+    "chk_01M46X4SVH5C6Y9AA4D78CY14E",
+    "chk_01M46X4SWFS7WNSK24R4TQKPYE",
+    "chk_01M46X5XNPV7N2AS04YZN27GJB",
+    "chk_01M46X798ADDJGDW7FR1H2FQTF"
+  ],
+  "assumptions": [
+    "All figures are copied from the eight input reports; the division cost total is the sum of the per-agent spend.",
+    "All statuses and numbers are taken from the provided checklist, readiness and DFM reports; no check was re-run.",
+    "Checks passing is as recorded in the reports; the S2S runtime performs the real checks.",
+    "The two baselines are as defined in the readiness assumptions: A is open SKY130 shuttle requirements, B is commercial production tape-out."
+  ],
+  "open_issues": [
+    "3 medium and 6 low DFM items remain open.",
+    "DFT is a plan only; no ATPG coverage.",
+    "Escaped defects and rework counts are not in the inputs.",
+    "No budget figure was provided, so spend vs budget and weekly forecast are not reported.",
+    "Signal integrity, reliability and foundry-certified signoff were not run.",
+    "Spec DEFAULT items needing G1 review remain listed in the spec open questions.",
+    "Whether STA figures are post-CTS with propagated clocks is not stated."
+  ],
+  "messages": [
+    {
+      "from": "Sloane",
+      "summary": "Division 4 report written for sync_fifo: signoff clean per tool data (9-corner STA, DRC/LVS/antenna zero, IR within limit), checklist 16/16 with G3 approved, readiness 95.3% (A) vs 64.1% (B), main risk thin 0.2429 ns slow-corner setup; G4 left to the human."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Content is a direct transcription of the supplied data; the runtime checks have not yet run on it.",
+    "confidence": "high"
+  }
+}

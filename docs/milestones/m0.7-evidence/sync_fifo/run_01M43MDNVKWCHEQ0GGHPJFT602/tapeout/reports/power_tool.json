@@ -1,0 +1,39 @@
+{
+  "power_w_by_corner": {
+    "tt_025C_1v80": {
+      "internal_w": 0.004255347,
+      "switching_w": 0.001496411,
+      "leakage_w": 2.138445e-08,
+      "total_w": 0.005751779,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_tt_025C_1v80.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_tt_025C_1v80.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ss_100C_1v60": {
+      "internal_w": 0.003367674,
+      "switching_w": 0.001149357,
+      "leakage_w": 2.201441e-05,
+      "total_w": 0.004539046,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_ss_100C_1v60.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_ss_100C_1v60.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ff_n40C_1v95": {
+      "internal_w": 0.004893246,
+      "switching_w": 0.001790117,
+      "leakage_w": 3.99838e-08,
+      "total_w": 0.006683403,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_ff_n40C_1v95.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_ff_n40C_1v95.tcl",
+      "tool_version": "2.6.0"
+    }
+  },
+  "input_activity": 0.2,
+  "openlane_power_total_w": 0.005682576913386583,
+  "ir": {
+    "worst_drop_v": 0.00137,
+    "avg_drop_v": 0.000224,
+    "limit_v": 0.09,
+    "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)"
+  }
+}

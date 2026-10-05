@@ -1,0 +1,165 @@
+{
+  "iteration": 10,
+  "per_corner": {
+    "max_ff_n40C_1v95": {
+      "setup": {
+        "reported_skew_ns": 0.280437,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.030437,
+        "source_latency_ns": 0.423824,
+        "target_latency_ns": -0.393387
+      },
+      "hold": {
+        "reported_skew_ns": -0.259745,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.009745,
+        "source_latency_ns": 0.414349,
+        "target_latency_ns": -0.424094
+      }
+    },
+    "max_ss_100C_1v60": {
+      "setup": {
+        "reported_skew_ns": 0.312196,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.062196,
+        "source_latency_ns": 1.026942,
+        "target_latency_ns": -0.964746
+      },
+      "hold": {
+        "reported_skew_ns": -0.273734,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.023734,
+        "source_latency_ns": 1.003455,
+        "target_latency_ns": -1.027189
+      }
+    },
+    "max_tt_025C_1v80": {
+      "setup": {
+        "reported_skew_ns": 0.289412,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.039412,
+        "source_latency_ns": 0.602383,
+        "target_latency_ns": -0.562971
+      },
+      "hold": {
+        "reported_skew_ns": -0.26327,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.01327,
+        "source_latency_ns": 0.589377,
+        "target_latency_ns": -0.602647
+      }
+    },
+    "min_ff_n40C_1v95": {
+      "setup": {
+        "reported_skew_ns": 0.272593,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.022593,
+        "source_latency_ns": 0.393869,
+        "target_latency_ns": -0.371276
+      },
+      "hold": {
+        "reported_skew_ns": -0.257849,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.007849,
+        "source_latency_ns": 0.386103,
+        "target_latency_ns": -0.393953
+      }
+    },
+    "min_ss_100C_1v60": {
+      "setup": {
+        "reported_skew_ns": 0.299153,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.049153,
+        "source_latency_ns": 0.969513,
+        "target_latency_ns": -0.92036
+      },
+      "hold": {
+        "reported_skew_ns": -0.26967,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.01967,
+        "source_latency_ns": 0.949921,
+        "target_latency_ns": -0.969591
+      }
+    },
+    "min_tt_025C_1v80": {
+      "setup": {
+        "reported_skew_ns": 0.28003,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.03003,
+        "source_latency_ns": 0.564259,
+        "target_latency_ns": -0.534229
+      },
+      "hold": {
+        "reported_skew_ns": -0.260793,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.010793,
+        "source_latency_ns": 0.553548,
+        "target_latency_ns": -0.564341
+      }
+    },
+    "nom_ff_n40C_1v95": {
+      "setup": {
+        "reported_skew_ns": 0.276031,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.026031,
+        "source_latency_ns": 0.407191,
+        "target_latency_ns": -0.38116
+      },
+      "hold": {
+        "reported_skew_ns": -0.258652,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.008652,
+        "source_latency_ns": 0.398659,
+        "target_latency_ns": -0.407311
+      }
+    },
+    "nom_ss_100C_1v60": {
+      "setup": {
+        "reported_skew_ns": 0.305134,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.055134,
+        "source_latency_ns": 0.995647,
+        "target_latency_ns": -0.940513
+      },
+      "hold": {
+        "reported_skew_ns": -0.271637,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.021637,
+        "source_latency_ns": 0.974122,
+        "target_latency_ns": -0.995759
+      }
+    },
+    "nom_tt_025C_1v80": {
+      "setup": {
+        "reported_skew_ns": 0.284261,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.034261,
+        "source_latency_ns": 0.58125,
+        "target_latency_ns": -0.546989
+      },
+      "hold": {
+        "reported_skew_ns": -0.262079,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.012079,
+        "source_latency_ns": 0.56929,
+        "target_latency_ns": -0.581368
+      }
+    }
+  },
+  "corners_with_skew": 9,
+  "worst_tree_skew_ns": 0.062196,
+  "target_ns": 1.0,
+  "clock_buffers": 74,
+  "hold_ws_after_cts_by_corner": {
+    "nom_tt_025C_1v80": 0.353561,
+    "nom_ss_100C_1v60": 0.774587860221585,
+    "nom_ff_n40C_1v95": 0.05926791170040764
+  },
+  "setup_ws_after_cts_by_corner": {
+    "nom_tt_025C_1v80": 3.95926,
+    "nom_ss_100C_1v60": 0.3057905126776926,
+    "nom_ff_n40C_1v95": 4.486132925452186
+  },
+  "hold_buffers": 512,
+  "timing_repair_buffers": 697
+}

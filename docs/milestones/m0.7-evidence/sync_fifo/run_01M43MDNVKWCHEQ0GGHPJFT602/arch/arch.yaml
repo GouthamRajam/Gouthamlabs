@@ -1,0 +1,82 @@
+design: sync_fifo
+top: sync_fifo
+modules:
+  - name: sync_fifo
+    kind: interface
+    ports_from_spec: true
+    instances: [fifo_ctrl, fifo_mem]
+    implements: [REQ-018, REQ-019, REQ-021]
+    description: Top wrapper. Wires control and storage; no logic other than connections. Single clock, no CDC.
+  - name: fifo_ctrl
+    kind: control
+    params: {ADDR_W: 4, CNT_W: 5, ALMOST_FULL_TH: 12}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: wr_en, dir: in, width: 1}
+      - {name: rd_en, dir: in, width: 1}
+      - {name: wr_accept, dir: out, width: 1}
+      - {name: wr_addr, dir: out, width: ADDR_W}
+      - {name: rd_addr, dir: out, width: ADDR_W}
+      - {name: full, dir: out, width: 1}
+      - {name: empty, dir: out, width: 1}
+      - {name: almost_full, dir: out, width: 1}
+      - {name: overflow, dir: out, width: 1}
+      - {name: underflow, dir: out, width: 1}
+      - {name: count, dir: out, width: CNT_W}
+    implements: [REQ-001, REQ-002, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008, REQ-009, REQ-010, REQ-011, REQ-012, REQ-013, REQ-014, REQ-015, REQ-016, REQ-017]
+    max_logic_depth: 12
+    description: 5-bit wr_ptr and rd_ptr (4 address bits plus wrap bit), 5-bit count register, sticky overflow and underflow flops. wr_accept = wr_en and not full. rd_accept = rd_en and not empty. count_next = count + wr_accept - rd_accept. overflow set by wr_en and full; underflow set by rd_en and empty. Synchronous active-low reset has priority over everything. Flags are decoded from registered count.
+  - name: fifo_mem
+    kind: datapath
+    params: {DATA_W: 32, ADDR_W: 4, DEPTH: 16}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: wr_en, dir: in, width: 1}
+      - {name: wr_addr, dir: in, width: ADDR_W}
+      - {name: wr_data, dir: in, width: DATA_W}
+      - {name: rd_addr, dir: in, width: ADDR_W}
+      - {name: empty, dir: in, width: 1}
+      - {name: rd_data, dir: out, width: DATA_W}
+    implements: [REQ-003, REQ-006, REQ-020]
+    max_logic_depth: 8
+    description: 16 x 32 flop array with no reset and a write enable. Combinational read mux selected by rd_addr (first-word-fall-through), forced to 0 when empty is 1. No SRAM macro.
+connections:
+  - {from: sync_fifo.clk, to: [fifo_ctrl.clk, fifo_mem.clk]}
+  - {from: sync_fifo.rst_n, to: [fifo_ctrl.rst_n]}
+  - {from: sync_fifo.wr_en, to: [fifo_ctrl.wr_en]}
+  - {from: sync_fifo.rd_en, to: [fifo_ctrl.rd_en]}
+  - {from: sync_fifo.wr_data, to: [fifo_mem.wr_data]}
+  - {from: fifo_ctrl.wr_accept, to: [fifo_mem.wr_en]}
+  - {from: fifo_ctrl.wr_addr, to: [fifo_mem.wr_addr]}
+  - {from: fifo_ctrl.rd_addr, to: [fifo_mem.rd_addr]}
+  - {from: fifo_ctrl.empty, to: [fifo_mem.empty, sync_fifo.empty]}
+  - {from: fifo_ctrl.full, to: [sync_fifo.full]}
+  - {from: fifo_ctrl.almost_full, to: [sync_fifo.almost_full]}
+  - {from: fifo_ctrl.overflow, to: [sync_fifo.overflow]}
+  - {from: fifo_ctrl.underflow, to: [sync_fifo.underflow]}
+  - {from: fifo_ctrl.count, to: [sync_fifo.count]}
+  - {from: fifo_mem.rd_data, to: [sync_fifo.rd_data]}
+cdc: []
+state_machines: []
+ppa_estimate:
+  cells: 1400
+  critical_path_levels: 12
+  slack_margin_pct: 40
+rationale:
+  - 'Flop-based 16x32 storage with enable (REQ-020); 512 enable flops dominate area, about 1000 cells including hold muxes.'
+  - 'The control block is separated from storage so the pointer, count and flag logic can be verified formally and the storage is a plain datapath block.'
+  - 'count is a separate register instead of being computed as wr_ptr - rd_ptr. This keeps full, empty and almost_full to 1-3 gate levels from a flop. The invariant count == wr_ptr - rd_ptr mod 32 is checked by an assertion.'
+  - 'Flags are decoded from registered count, so no combinational path exists from wr_en, rd_en or wr_data to any output (REQ-018).'
+  - 'rd_data is a 16:1 read mux (about 2 mux4 levels) plus an empty gate. It gives first-word-fall-through and forces 0 at reset and when empty (REQ-003, REQ-007), without resetting the storage.'
+  - 'Write acceptance uses full before the operation, so a push at full is always rejected, even with a simultaneous pop (REQ-014). A pop at empty is always rejected, even with a simultaneous push (REQ-015).'
+  - 'Critical path estimate: count register through accept logic and a 5-bit add/subtract to count_next, about 12 levels, about 5 ns of the 10 ns period at 0.4 ns per level. This is a hand estimate, not a tool result.'
+verification_hooks:
+  - 'Assertion: full == (count == 16), empty == (count == 0), almost_full == (count >= 12) every cycle.'
+  - 'Assertion: !(full && empty); count <= 16.'
+  - 'Assertion: count == (wr_ptr - rd_ptr) mod 32 (fifo_ctrl internal, bound for formal).'
+  - 'Assertion: overflow and underflow never fall except on rst_n low.'
+  - 'Assertion: after reset edge, empty=1, full=0, almost_full=0, overflow=0, underflow=0, count=0, rd_data=0.'
+  - 'Assertion: no read of a storage location precedes its write since reset.'
+  - 'Observable: count, full, empty, almost_full, overflow, underflow are all top-level outputs, usable by the scoreboard.'
+  - 'Functional coverage points for the 9 REQ-021 scenarios: full after 16 pushes, empty after 16 pops, almost-full threshold, overflow, underflow, simultaneous push/pop at empty, mid-level and full, pointer wrap, reset mid-traffic.'

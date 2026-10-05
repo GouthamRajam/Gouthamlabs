@@ -1,0 +1,66 @@
+{
+  "task_id": "task_01M43MDNWFD7NHWYMGVBW2HH2D",
+  "status": "success",
+  "summary": "Synthesis gives 1960 cells and 26049.984 um^2. Pre-layout (ideal clock) setup worst slack is +3.322 ns (tt), +0.306 ns (ss, worst corner) and +4.486 ns (ff); hold worst slack is +0.269 ns (tt), +0.821 ns (ss) and +0.073 ns (ff), so no violations in this data. The worst setup paths run from one register bit (_3259_, likely a read-pointer bit) through the 16:1 read mux (mux4_2 + mux2_2) and an a21o_4 gate to rd_data outputs; 3.65 ns of the 6.44 ns arrival is the clock-to-Q of a dfxtp_2 driving fanout 128 (max_fanout is 10), so the path is limited by fanout, not by logic depth.",
+  "outputs": [
+    {
+      "path": "constraints/constraints.sdc",
+      "sha256": "257234ebaedc95fbb155ac1c987c383ad805d8bcc7309c6ecca16e1e91e6e20b"
+    },
+    {
+      "path": "reports/sentinel_constraints.json",
+      "sha256": "9b9d3daddb4761e0016906063401d70a5057363429f716695462503742697495"
+    },
+    {
+      "path": "reports/sta_pre.json",
+      "sha256": "f4c23ad9388faa25b719f58c0648f3c207676700753bfd5e55fb3f6bd4185ba1"
+    },
+    {
+      "path": "reports/synth_report.json",
+      "sha256": "b233dd2757b1bd2c885c4257b1658086546abf6e0c42aef37accf0e0948492e1"
+    },
+    {
+      "path": "reports/synth_tool.json",
+      "sha256": "703317854ef49e53b57d1e33357dbab75ec4c4eb5ae9a658dce59c67b8b5c0ae"
+    }
+  ],
+  "checks_run": [
+    "chk_01M43MDP2JS12H7CQH52C0VFYB",
+    "chk_01M43MFDE8AVDG3SH6ZCFYHM0V",
+    "chk_01M43MGN1JHV1SK8RS2K6TRHW0",
+    "chk_01M43MGN29J9YFVZSQNXPJKM4B",
+    "chk_01M43MGT9TSYFQVY62KJW5FN2W",
+    "chk_01M43MGTA0PM8YENVQMWS8960P",
+    "chk_01M443M71RSQ6QWCY1QQTYKWJW",
+    "chk_01M443M7262NPVAH4STWTWBMFG",
+    "chk_01M443PA5XFGYTBE6V5Q754DSA",
+    "chk_01M443QSKXWQDF6W2C5KGGA2NZ",
+    "chk_01M443QSMMA5QF4NACCCW5WSAR",
+    "chk_01M443R5PN1GW21W6Q3SRXK3Z5",
+    "chk_01M443R5PWRC004ZNRWE7JTF4P",
+    "chk_01M443RD4MK9WXM7SQB04NBZYT",
+    "chk_01M445E5QMY1CV9SY9YXK5H383",
+    "chk_01M445FS766SXVFQFHJXPY170C"
+  ],
+  "assumptions": [
+    "All numbers are quoted from reports/synth_tool.json; no tool was run in this task.",
+    "Constraints file left unchanged; its DEFAULT values (0.25 ns uncertainty, 3.000 ns I/O delays, max fanout 10) remain for G1 review.",
+    "Flop _3259_ (net _0001_) is assumed to be a read-pointer address bit and the a21o_4 to be the empty-gating of rd_data; inferred from path structure and the spec, not from a name map.",
+    "STA is pre-layout with ideal clocks and no extracted parasitics, as stated in the tool report.",
+    "TNS is not in the tool output; it is not quoted as a tool value.",
+    "The worst-path report is truncated after 5 paths; only those are described, not 10."
+  ],
+  "open_issues": [
+    "3.000 ns output delay on rd_data (combinational from state) is a DEFAULT and directly sets the worst-path margin; needs G1 review.",
+    "Equivalence (eqy) result not provided in this task; it remains a blocking check.",
+    "Hold margin at nom_ff_n40C_1v95 is only +0.073 ns with ideal clocks; watch after CTS and hold repair.",
+    "Net _0001_ (flop _3259_ Q) has fanout 128 vs. set_max_fanout 10; must be buffered or the flop duplicated by the flow before sign-off.",
+    "Setup margin at nom_ss_100C_1v60 is only +0.306 ns pre-layout; needs confirmation by post-route STA.",
+    "Worst-path report truncated after 5 paths; cell_classes empty; macro count, flop count and TNS missing from tool data (REQ-020 macro check cannot be confirmed from these inputs)."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Numbers are taken directly from the tool output and the path decomposition sums exactly to the reported arrival; confidence is limited by the truncated path report, missing cell-class/TNS data, and the inferred meaning of _3259_.",
+    "confidence": "medium"
+  }
+}

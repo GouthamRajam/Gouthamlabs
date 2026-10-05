@@ -1,0 +1,16 @@
+{
+  "worst_drop_v": 0.00137,
+  "avg_drop_v": 0.000224,
+  "limit_v": 0.09,
+  "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)",
+  "assumptions": [
+    "Input activity 0.2 (20% toggle rate) default; no simulation activity was provided.",
+    "Corners: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95, as given in the tool data.",
+    "IR analysis corner, voltage-source locations and current-map source are not stated in the tool data; assumed to be the tool defaults at 1.8 V.",
+    "IR limit is 5% of 1.8 V = 0.09 V (A.13 Phase 0 default).",
+    "Electromigration is not analyzed by the open flow.",
+    "Dynamic IR drop and decap effects are not covered by the data provided.",
+    "No power budget in the spec, so no power pass/fail limit applied."
+  ],
+  "explained_by": "Volta"
+}

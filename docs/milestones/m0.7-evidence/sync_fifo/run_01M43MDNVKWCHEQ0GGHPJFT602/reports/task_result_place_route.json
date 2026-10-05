@@ -1,0 +1,160 @@
+{
+  "task_id": "task_01M43MDNWHYXH7R7VYFNE6PW46",
+  "status": "success",
+  "summary": "Ten place-and-route iterations (12 records; iterations 1 and 5 each have a GPL-0302 placement-failure record). The final run, iteration 10, lists no problems: route DRC 0, antenna nets/pins 0/0, max fanout/slew/cap violations 0/0/0, worst setup slack 0.24286306986222908 ns (max_ss_100C_1v60), worst hold slack 0.13843709903600443 ns (min_ff_n40C_1v95), worst tree skew 0.062196 ns against a 1.0 ns target. No congestion report was supplied.",
+  "outputs": [
+    {
+      "path": "reports/cts_report.json",
+      "sha256": "157dedf83b298f36139430da1382ac38559c17fb9aae422c3dd921b7db41e6d2"
+    },
+    {
+      "path": "reports/cts_tool.json",
+      "sha256": "4d58908401ca118d99fd746589ab98d3f01ad3448ceefa880ecb3b5bb6f2fd42"
+    },
+    {
+      "path": "reports/division3_report.md",
+      "sha256": "0fc2c3f24fa0f0478975ffd6b0c3cdbbcac7bf32428e1c039c3fdb822f6e5023"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "596282bedbeba02907e40f9644759c6a3743f1504334d548748998e5a56d18ab"
+    },
+    {
+      "path": "reports/pnr_iteration_1.json",
+      "sha256": "08c76d9414919ddf2c55ca93914785a84afae6136b08458bc4a1508a93265e08"
+    },
+    {
+      "path": "reports/pnr_iteration_10.json",
+      "sha256": "0d1c6464ca00634ea40429b6d4ef667c6bad9c26f5ae669da68de2d59cbecf98"
+    },
+    {
+      "path": "reports/pnr_iteration_5.json",
+      "sha256": "e62b7348d600b33c066ef864cac5bcf3a58987533c05b53aea51f2684ac5cacd"
+    },
+    {
+      "path": "reports/pnr_iteration_8.json",
+      "sha256": "9df9c0e40b7ce384435f738da10181b1b4fe7733ad0a06f398a7329164ea6ae4"
+    },
+    {
+      "path": "reports/pnr_iteration_9.json",
+      "sha256": "1090f0444e986d184444aa49e5a4bddeb435a5a513f5a0ced619103b9962864f"
+    },
+    {
+      "path": "reports/pnr_iterations.json",
+      "sha256": "df73dbb8e8892e160994754d974c3cd289a197eb0527c3a3a5420b87f4476abf"
+    },
+    {
+      "path": "reports/pnr_report.json",
+      "sha256": "98d3b39161eb0cd8b7d6f2511700d81fb0e9075060852805b9eb4435b5e3ae9d"
+    }
+  ],
+  "checks_run": [
+    "chk_01M4468CAGNGQ6951AAMM4K8FH",
+    "chk_01M4468WF7VQMZ1F2G6ASAPRWJ",
+    "chk_01M446BGT3WWD40B22KB1GNQYN",
+    "chk_01M446D62YANNNK234G8ZQ1A5Q",
+    "chk_01M446D630NFS3N87MQ90Z591C",
+    "chk_01M446D630NFS3N87MQ90Z591E",
+    "chk_01M446D630NFS3N87MQ90Z591G",
+    "chk_01M446D630NQXHJDJN2DKJ10ZV",
+    "chk_01M446D630Y0BR7B7EY0NMX34D",
+    "chk_01M446D630Y0BR7B7EY0NMX34F",
+    "chk_01M446D630Y0BR7B7EY0NMX34H",
+    "chk_01M44VC95ZAETXDQQ69M98GS7E",
+    "chk_01M44VCVFNWJJWHQB5DYJN77BN",
+    "chk_01M44VFRGC4R7M9JFF3RV1C5DN",
+    "chk_01M44VHNKG7A89GZAAP2S69M40",
+    "chk_01M44VHNKJVWVGKKWQDP219YJA",
+    "chk_01M44VHNKJYYA5RGEEM8XKZ9PY",
+    "chk_01M44VHNKJYYA5RGEEM8XKZ9Q0",
+    "chk_01M44VHNKJYYA5RGEEM8XKZ9Q2",
+    "chk_01M44VHNKJYYA5RGEEM8XKZ9Q4",
+    "chk_01M44VHNKK0X38S9GWJVPD0HKY",
+    "chk_01M44VHNKK1YNRMW8TGNNN4YT2",
+    "chk_01M4506FVR1P0DAY0769WV4QY3",
+    "chk_01M450VP6YFP3CBQRRA5SAKX1Y",
+    "chk_01M4512BWPA85BC9FVSPFY52XX",
+    "chk_01M4512BXQM1MQ2YQJJZNDEVHC",
+    "chk_01M4512BXRSSB28R6WRPNKFAR3",
+    "chk_01M4512BXRW7R564HKX13WVXBF",
+    "chk_01M4512BXRW7R564HKX13WVXBH",
+    "chk_01M4512BXRWZY1HKN3G5SW3HBQ",
+    "chk_01M4512BXRWZY1HKN3G5SW3HBS",
+    "chk_01M4512BXRWZY1HKN3G5SW3HBV",
+    "chk_01M4518Q18QKZFKPJAEBQWKPH2",
+    "chk_01M451969MM5EDMD5X0ZSX5F15",
+    "chk_01M451CENH9JSZ3H0VTK8HQNZ2",
+    "chk_01M451CEPBHXXW2Z95EC6K23C9",
+    "chk_01M451CEPBPG03YF58F1X1TDN3",
+    "chk_01M451CEPBYVRBZ6J731XGNGEJ",
+    "chk_01M451CEPBYVRBZ6J731XGNGEM",
+    "chk_01M451CEPCYW0KMF4CPH6Z7K0R",
+    "chk_01M451CEPCYW0KMF4CPH6Z7K0T",
+    "chk_01M451CEPCYW0KMF4CPH6Z7K0W",
+    "chk_01M451NV8EZ2ZMPZMNZ65SN139",
+    "chk_01M451RTHRRNEV85MB87HHXFFY",
+    "chk_01M451RTJJKPYZDQWBHCWJ869Q",
+    "chk_01M451RTJJNJ0D9DY5AG9CAJZ3",
+    "chk_01M451RTJJSXC19FR8NK55PMZJ",
+    "chk_01M451RTJJSXC19FR8NK55PMZM",
+    "chk_01M451RTJJSXC19FR8NK55PMZP",
+    "chk_01M451RTJJZW9T72N74NQYQA8A",
+    "chk_01M451RTJJZW9T72N74NQYQA8C",
+    "chk_01M46QHE5E5TKD5V07VHEVVA72",
+    "chk_01M46QN7TRT36EMC3ASC3STTCQ",
+    "chk_01M46QN8DXWWENBDNT3Q1CQE1R",
+    "chk_01M46QN8DXWWENBDNT3Q1CQE1T",
+    "chk_01M46QN8DXWWENBDNT3Q1CQE1W",
+    "chk_01M46QN8DXZS00CF0AGHCFWM7P",
+    "chk_01M46QN8DXZS00CF0AGHCFWM7R",
+    "chk_01M46QN8DXZS00CF0AGHCFWM7T",
+    "chk_01M46QN8DXZS00CF0AGHCFWM7W",
+    "chk_01M46R8FNYY1025QNJNH0Z993Q"
+  ],
+  "assumptions": [
+    "Actions listed under 'What I am doing' are intended follow-ups, not completed work.",
+    "Every number quoted comes from reports/pnr_iterations.json, reports/cts_report.json and reports/floorplan_report.json; none were recomputed except taking minimum slacks across the per-corner values.",
+    "Iteration 10 is the final state, as stated in the P&R report.",
+    "Iteration 10 is treated as the final state because it is the last record and lists no problems.",
+    "Iterations 9 and 10 exceed the default 8-iteration budget and are described by the input as CEO decisions.",
+    "No budget, dates or weekly forecast were in the inputs, so none are stated.",
+    "Post-CTS hold and setup slack are only available for the three nominal corners in the tool data.",
+    "Source latency is quoted as given; the sign convention of target_latency_ns is not stated and is not interpreted.",
+    "The 1.0 ns target is target_ns from the tool data; the spec itself gives no skew target.",
+    "The duplicate iteration 1 and 5 records are reported as separate rows in file order; their relative timing is not stated in the data.",
+    "Total spend 0.105552 USD is the sum of the per-agent figures in division_cost.json.",
+    "tree_skew_ns is the physical skew; reported_skew_ns includes 0.25 ns clock uncertainty.",
+    "tree_skew_ns is treated as the physical clock skew; reported_skew_ns includes the 0.25 ns clock uncertainty."
+  ],
+  "open_issues": [
+    "512 hold and 697 repair buffers unexplained.",
+    "512 hold buffers and 697 timing repair buffers were inserted; the tool data does not say why, and the count is large compared with 74 clock buffers. Chronos and Orion should confirm whether this is expected.",
+    "Antenna results were non-monotonic across iterations 6 to 9 and the clean result may be sensitive to parameters; the runtime's real checks decide pass or fail.",
+    "Hold slack after CTS is not reported for the min_ and max_ corners, so hold there is unverified from this data.",
+    "No congestion, eqy result, TNS, macro or flop count in the inputs.",
+    "No global-routing congestion or overflow figure was in the inputs, so final congestion is not reported.",
+    "No spend-vs-budget or forecast data available.",
+    "Output delay 3.000 ns is an unreviewed default.",
+    "The CTS report counts 512 hold buffers and 697 timing repair buffers against 74 clock buffers; the data gives no cause, and Chronos and Orion should confirm this is expected.",
+    "The spec (REQ-019) asks for setup and hold WNS >= 0 at the typical corner; this report relies on the tool data, and the runtime checks decide pass or fail.",
+    "The two GPL-0302 placement-failure records (iterations 1 and 5) are not explained further in the data.",
+    "Worst setup slack fell to 0.24286306986222908 ns at max_ss_100C_1v60 in the final run; hold slack is thin at the ff corners (0.13843709903600443 ns at min_ff_n40C_1v95).",
+    "floorplan_report.json describes the first floorplan, not the final run.",
+    "floorplan_report.json records FP_CORE_UTIL 45 and utilization 0.469972, which does not match the final run (FP_CORE_UTIL 30, placed utilization 0.380144); a floorplan report for the final run is needed.",
+    "nom_ff hold worst slack is only 0.05926791170040764 ns, a thin margin."
+  ],
+  "messages": [
+    {
+      "from": "Tick",
+      "summary": "Worst tree skew is 0.062196 ns (max_ss_100C_1v60 setup) against a 1.0 ns target, across 9 corners, with 74 clock buffers. Hold worst slack after CTS is positive at the three nominal corners (0.059 to 0.775 ns), tightest at nom_ff. 512 hold buffers and 697 timing repair buffers were inserted, which is worth a human look."
+    },
+    {
+      "from": "Mason",
+      "summary": "Division 3 report for sync_fifo place_route: iteration 10 lists no problems (DRC 0, antenna 0, fanout 0); worst setup slack 0.24286306986222908 ns and worst hold slack 0.13843709903600443 ns are positive but thin; risks, cost (0.105552 USD total) and three decisions are listed."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Numbers are taken directly from the tool data and the iteration table is complete, but congestion data is missing, the floorplan report does not match the final run, and no real check has been run by me.",
+    "confidence": "medium"
+  }
+}
