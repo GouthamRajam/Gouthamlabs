@@ -659,14 +659,15 @@ def fix_testplan_refs(ctx: StepContext, problems: list[str], reason: str) -> Non
                              "(name the property without its ap_ prefix)")
         return probs
 
+    labels = sorted(set(re.findall(r"\bap_(\w+)\s*:\s*assert\b", _read(ctx, "formal/formal_top.sv"))))
     _assign(ctx, "Nadia", "Vera", "Fix the illegal-state assertion references in tb/testplan.yaml (operator decision)",
             ["every illegal_states assertion names an existing ap_ property", "nothing else changed"], "files passing checks")
     guarded(ctx, "Vera", lambda: _author_loop(
         ctx, "Vera", goal="The check illegal_states_never_happen failed with: " + "; ".join(problems)
-        + ". Correct ONLY the `assertion` field of each illegal state in tb/testplan.yaml so it names the existing "
-        "property in formal/formal_top.sv (the label without its `ap_` prefix: label ap_x -> assertion x). Change "
-        "NOTHING else in the plan.",
-        inputs=["tb/testplan.yaml", "formal/formal_top.sv"], validate=v_plan, kind="testplan", previous=reason,
+        + ". Correct ONLY the `assertion` field of each illegal state in tb/testplan.yaml so it names one of the "
+        "assertion labels that exist in the formal property file (given without their `ap_` prefix): "
+        + ", ".join(labels) + ". Change NOTHING else in the plan.",
+        inputs=["tb/testplan.yaml"], validate=v_plan, kind="testplan", previous=reason,
         constraints="tb/testplan.yaml JSON Schema:\n" + json.dumps(TESTPLAN_SCHEMA, indent=1)),
         f"operator decision: correct illegal-state assertion references (no check, property or test removed). {reason}")
     if any(g["author"] == "Vera" for g in ctx.state.get("guard_rejections", [])):
