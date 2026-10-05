@@ -107,13 +107,18 @@ def _unbounded_equivalence(base: Path, m: Mutant, orig_dir: Path, rtl_files: dic
     d = base / m.id / "eq"
     shutil.rmtree(d, ignore_errors=True)
     d.mkdir(parents=True)
+    # the tool container mounts only `d`: both RTL versions are copied inside it
+    for tag, src in (("gold", orig_dir / "rtl"), ("gate", gate)):
+        (d / tag).mkdir()
+        for n in names:
+            shutil.copy2(src / n, d / tag / n)
     load = lambda tag: (f"read_verilog -sv {' '.join(f'{tag}/{n}' for n in names)}\nhierarchy -check -top {top}\n"
                                 f"proc\nmemory\nflatten\nopt_clean\nrename {top} {tag}\ndesign -stash {tag}\n")
     (d / "eq.sby").write_text(
         "[options]\nmode prove\n\n[engines]\nabc pdr\n\n[script]\n" + load("gold") + load("gate")
         + "design -copy-from gold -as gold gold\ndesign -copy-from gate -as gate gate\n"
         "miter -equiv -flatten -make_assert -ignore_gold_x gold gate miter\nhierarchy -top miter\nzinit -all\n\n[files]\n"
-        + "".join(f"gold/{n} {orig_dir / 'rtl' / n}\ngate/{n} {gate / n}\n" for n in names))
+        + "".join(f"gold/{n} {d / 'gold' / n}\ngate/{n} {d / 'gate' / n}\n" for n in names))
     runner.run(["sby", "-f", "eq.sby"], d, d / "sby.log", "sby", 120, cwd=d)
     sby_log = (d / "sby.log").read_text(errors="replace")
     if "DONE (PASS" in sby_log:

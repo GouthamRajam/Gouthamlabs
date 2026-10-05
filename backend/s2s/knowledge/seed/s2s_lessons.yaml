@@ -125,3 +125,17 @@ entries:
     date: "2026-10-05"
     confidence: high
     owner: Sage
+  - id: s2s-ops-002
+    kind: s2s_lesson
+    title: "EDA tools run in a container that mounts only the runner's work folder"
+    symptom: "A tool fails with FileNotFoundError for a file that exists on the host (sby copy_src)"
+    root_cause: "runner.run mounts only `workdir` into the s2s-eda container; the D2 equivalence proof referenced the original RTL outside its eq/ folder, so every proof failed (safely: counted as undecided)."
+    wrong_assumption: "A unit test with a fake runner proves the tool sees the same files as the host."
+    lesson: "Copy every input into the folder passed to runner.run (or pass a parent folder as workdir). Unit tests that fake the runner must assert that every file the tool reads is inside workdir, and a new tool integration needs one real-tool run before use."
+    evidence: "uart mutation run 2026-10-05 20:49 (22 proofs, all sby FileNotFoundError); fixed and re-checked with the real tools"
+    regression_test: "tests/test_mutation_equiv.py::test_only_proven_equivalent_mutants_are_screened_out"
+    tags: [runner, docker, container, mount, workdir, sby, mutation, tooling, operations]
+    source: {title: "S2S mutation_run fix 2026-10-05", url: "docs/DECISIONS.md"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage

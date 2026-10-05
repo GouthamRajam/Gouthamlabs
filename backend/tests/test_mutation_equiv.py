@@ -26,6 +26,10 @@ def test_only_proven_equivalent_mutants_are_screened_out(tmp_path, monkeypatch):
             out = [{"id": m["id"], "compiles": True, "equiv": "unknown"} for m in args["mutants"]]
             Path(log_path).write_text("S2S_SCREEN " + json.dumps(out) + "\n")
         elif cmd[0] == "sby":  # builds the miter model; PDR does not finish
+            # the real runner mounts only `workdir` in the tool container: every file sby reads must be inside it
+            files = (Path(workdir) / cmd[-1]).read_text().split("[files]\n")[1].split()
+            srcs = [Path(f) for f in files[1::2]]
+            assert srcs and all(p.is_file() and Path(workdir) in p.parents for p in srcs), srcs
             mid = Path(workdir).parent.name
             v = verdict.setdefault(mid, ["equivalent", "undecided"][len(verdict) % 2])
             (Path(workdir) / "eq" / "model").mkdir(parents=True, exist_ok=True)
