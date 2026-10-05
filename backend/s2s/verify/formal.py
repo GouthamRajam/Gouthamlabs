@@ -96,6 +96,26 @@ def _free_sby(stub: Path, props: Path, depth: int) -> str:
             + "\n".join(str(f.resolve()) for f in files) + "\n")
 
 
+def _real_failures(log: str) -> set[str]:
+    """Assertions with a real counterexample. A k-induction STEP failure ('engine_N.induction:' lines)
+    starts from an arbitrary, possibly unreachable state: it means the proof did not close, not that the
+    design is wrong, so it is not a failure (the base case and bmc lines are). The end summary repeats
+    induction-step failures as 'failed assertion ... in step 0', so only engine lines are read."""
+    return set(_FAILED.findall("\n".join(ln for ln in log.splitlines()
+                                         if ".induction:" not in ln and "summary:" not in ln)))
+
+
+def _pdr_sby(name: str, rtl: list[Path], props: Path) -> str:
+    """Unbounded proof of ONE property with ABC's PDR (IC3): every other assertion and every cover is
+    removed (not assumed), the assumptions stay. PASS is a full proof from the initial state; FAIL is a
+    reachable counterexample."""
+    files = [*rtl, props]
+    return (f"[options]\nmode prove\n\n[engines]\nabc pdr\n\n[script]\n"
+            f"read -formal {' '.join(f.name for f in files)}\nprep -top formal_top\n"
+            f"chformal -cover -remove\nchformal -assert -remove c:ap_* c:ap_{name} %d\n"
+            "\n[files]\n" + "\n".join(str(f.resolve()) for f in files) + "\n")
+
+
 def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_s: float = 600,
                top: str | None = None, ports: list[dict] | None = None) -> dict:
     fdir = workdir / "formal"
@@ -110,15 +130,27 @@ def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_
         results[mode] = run_sby_formal(f, workdir, timeout_s)
     prove_log = Path(results["prove"].log_path).read_text() if results["prove"].log_path else ""
     prove_status = (_DONE.findall(prove_log) or ["ERROR"])[-1]
-    failed = set(_FAILED.findall(prove_log))
+    failed = _real_failures(prove_log)
     bounded_ok = None
     if prove_status not in ("PASS", "FAIL"):  # induction did not close: bounded check instead
         f = fdir / "props_bmc.sby"
         f.write_text(_sby(f.stem, "bmc", depth, rtl, props))
         results["bmc"] = run_sby_formal(f, workdir, timeout_s)
         bmc_log = Path(results["bmc"].log_path).read_text() if results["bmc"].log_path else ""
-        failed |= set(_FAILED.findall(bmc_log))
+        failed |= _real_failures(bmc_log)
         bounded_ok = (_DONE.findall(bmc_log) or ["ERROR"])[-1] == "PASS"
+    pdr: dict[str, str] = {}
+    if prove_status != "PASS":  # the joint induction did not close: prove each property alone with PDR
+        for n in names:
+            if n in failed:
+                continue
+            f = fdir / f"pdr_{n}.sby"
+            f.write_text(_pdr_sby(n, rtl, props))
+            results[f"pdr_{n}"] = r = run_sby_formal(f, workdir, min(timeout_s, 1800))
+            log = Path(r.log_path).read_text() if r.log_path else ""
+            pdr[n] = (_DONE.findall(log) or ["TIMEOUT" if r.timed_out else "ERROR"])[-1]
+            if pdr[n] == "FAIL":
+                failed.add(n)
     cover_log = Path(results["cover"].log_path).read_text() if results["cover"].log_path else ""
     reached = set(_REACHED.findall(cover_log))
     depends: set[str] | None = None
@@ -139,13 +171,17 @@ def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_
             status = "failed"
         elif prove_status == "PASS":
             status = "proven"
+        elif pdr.get(n) == "PASS":
+            status = "proven"
         elif bounded_ok:
             status = f"bounded (no violation in {depth} steps; induction did not close)"
         else:
             status = "unknown"
         meaningful = True if depends is None else n in depends
         out["properties"][n] = {"status": status, "cover_reached": n in reached,
-                                "depends_on_design": meaningful,
+                                "method": ("k-induction" if prove_status == "PASS" else
+                                           "pdr (alone)" if pdr.get(n) == "PASS" else None),
+                                "pdr": pdr.get(n), "depends_on_design": meaningful,
                                 "counts": status == "proven" and n in reached and meaningful}
     out["runs"] = {m: {"status": r.status, "passed": r.passed, "log": r.log_path, "reasons": r.reasons[:3],
                        "tool_version": r.tool_version, "counterexample_vcd": r.metrics.get("counterexample_vcd")}
@@ -155,6 +191,8 @@ def run_formal(workdir: Path, rtl: list[Path], props: Path, depth: int, timeout_
     out["vacuous"] = [n for n, p in out["properties"].items() if not p["cover_reached"]]
     out["tautologies"] = [n for n, p in out["properties"].items() if not p["depends_on_design"]]
     # a proof the solver cannot finish within the time limit is a property problem (too expensive)
-    out["timed_out"] = [m for m, r in results.items() if r.timed_out]
+    # (a per-property PDR run that does not finish only leaves that property bounded: reported, not a defect)
+    out["timed_out"] = [m for m, r in results.items() if r.timed_out and not m.startswith("pdr_")]
+    out["pdr_not_closed"] = sorted(n for n, s in pdr.items() if s != "PASS" and n not in failed)
     out["failed"] = sorted(failed & set(names))
     return out

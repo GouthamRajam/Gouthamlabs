@@ -1,0 +1,37 @@
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:04  Trying induction in step 6..
+SBY  3:56:04 [props_prove] engine_0.basecase: ##   0:00:04  Checking assertions in step 33..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:04  Trying induction in step 5..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:04  Trying induction in step 4..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:04  Trying induction in step 3..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:05  Trying induction in step 2..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:05  Trying induction in step 1..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:05  Trying induction in step 0..
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:05  Temporal induction failed!
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:05  Assert failed in formal_top: ap_sck_edges_max
+SBY  3:56:04 [props_prove] engine_0.induction: ##   0:00:05  Writing trace to VCD file: engine_0/trace_induct.vcd
+SBY  3:56:04 [props_prove] engine_0.basecase: ##   0:00:05  Checking assumptions in step 34..
+SBY  3:56:05 [props_prove] engine_0.basecase: ##   0:00:05  Checking assertions in step 34..
+SBY  3:56:05 [props_prove] engine_0.basecase: ##   0:00:05  Checking assumptions in step 35..
+SBY  3:56:05 [props_prove] engine_0.basecase: ##   0:00:05  Checking assertions in step 35..
+SBY  3:56:06 [props_prove] engine_0.induction: ##   0:00:06  Writing trace to Verilog testbench: engine_0/trace_induct_tb.v
+SBY  3:56:06 [props_prove] engine_0.induction: ##   0:00:06  Writing trace to constraints file: engine_0/trace_induct.smtc
+SBY  3:56:06 [props_prove] engine_0.induction: ##   0:00:06  Writing trace to Yosys witness file: engine_0/trace_induct.yw
+SBY  3:56:06 [props_prove] engine_0.basecase: ##   0:00:06  Checking assumptions in step 36..
+SBY  3:56:06 [props_prove] engine_0.basecase: ##   0:00:06  Checking assertions in step 36..
+SBY  3:56:06 [props_prove] engine_0.induction: ##   0:00:06  Status: failed
+SBY  3:56:06 [props_prove] engine_0.induction: finished (returncode=1)
+SBY  3:56:06 [props_prove] engine_0.induction: Status returned by engine for induction: FAIL
+SBY  4:26:57 [props_prove] engine_0.basecase: ##   0:30:57  Checking assumptions in step 158..
+SBY  4:26:57 [props_prove] engine_0.basecase: ##   0:30:57  Checking assertions in step 158..
+SBY  4:27:42 [props_prove] engine_0.basecase: ##   0:31:42  Checking assumptions in step 159..
+SBY  4:27:42 [props_prove] engine_0.basecase: ##   0:31:43  Checking assertions in step 159..
+SBY  4:28:32 [props_prove] engine_0.basecase: ##   0:32:32  Status: passed
+SBY  4:28:32 [props_prove] engine_0.basecase: finished (returncode=0)
+SBY  4:28:32 [props_prove] engine_0.basecase: Status returned by engine for basecase: pass
+SBY  4:28:32 [props_prove] summary: Elapsed clock time [H:MM:SS (secs)]: 0:32:33 (1953)
+SBY  4:28:32 [props_prove] summary: Elapsed process time [H:MM:SS (secs)]: 0:31:55 (1915)
+SBY  4:28:32 [props_prove] summary: engine_0 (smtbmc yices) returned pass for basecase
+SBY  4:28:32 [props_prove] summary: engine_0 (smtbmc yices) returned FAIL for induction
+SBY  4:28:32 [props_prove] summary: counterexample trace [induction]: props_prove/engine_0/trace_induct.vcd
+SBY  4:28:32 [props_prove] summary:   failed assertion formal_top.ap_sck_edges_max at formal_top.sv:198.13-198.75 in step 0
+SBY  4:28:32 [props_prove] DONE (UNKNOWN, rc=4)
