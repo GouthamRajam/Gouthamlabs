@@ -20,6 +20,7 @@ human (runtime.NeedsHuman).
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -190,6 +191,16 @@ def _task_result(ctx: StepContext, name: str) -> None:
     """Assemble and validate task.result (Appendix B.6) from the agents' answers and the checks."""
     answers = ctx.state.get("answers", {})
     lead = answers.get(ctx.task.agent_id) or next(iter(answers.values()), {})
+    # The result attests the outputs as they are now. A step that was interrupted (budget stop, restart) may
+    # have rewritten an output after the last saved checkpoint; such a difference is reported, not hidden.
+    rewritten = []
+    for p, sha in list(ctx.state.get("outputs", {}).items()):
+        f = ctx.workdir / p
+        if f.exists():
+            now = hashlib.sha256(f.read_bytes()).hexdigest()
+            if now != sha:
+                rewritten.append(p)
+                ctx.state["outputs"][p] = now
     result = {
         "task_id": ctx.task.id,
         "status": "success",
@@ -197,7 +208,9 @@ def _task_result(ctx: StepContext, name: str) -> None:
         "outputs": [{"path": p, "sha256": s} for p, s in sorted(ctx.state.get("outputs", {}).items())],
         "checks_run": ctx.state.get("checks_run", []),
         "assumptions": sorted({a for x in answers.values() for a in x.get("assumptions", [])}),
-        "open_issues": sorted({a for x in answers.values() for a in x.get("open_issues", [])}),
+        "open_issues": sorted({a for x in answers.values() for a in x.get("open_issues", [])}
+                              | {f"{p} was rewritten by an interrupted step attempt after its last recorded hash; "
+                                 "the result records the file as it is now" for p in rewritten}),
         "messages": [{"from": who, "summary": x.get("summary", "")} for who, x in answers.items()
                      if who != ctx.task.agent_id],
         "self_assessment": lead.get("self_assessment", {"confidence": "low", "reason": "no answer recorded"}),
