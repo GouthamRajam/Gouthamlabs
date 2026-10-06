@@ -1,0 +1,747 @@
+{
+ "counter8": {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "iteration": "it1",
+  "gds_sha256": "fb37109e105b00c8d4afa1d807be790cb8a3b89f36fdab5aa3ad1fbb7dff98cb",
+  "gds_bytes": 409622,
+  "period_ns": 10.0,
+  "synth_cells": 71,
+  "synth_area_um2": 709.4304,
+  "die_area_um2": 3119.04,
+  "core_area_um2": 1506.44,
+  "instances": 112,
+  "instance_area_um2": 764.483,
+  "utilization": 0.507475,
+  "hold_buffers": 0,
+  "wirelength_um": 1563,
+  "vias": 606,
+  "nets": 109,
+  "max_wire_um": 72.84,
+  "power": {
+   "tt_025C_1v80": {
+    "internal_w": 0.0001083215,
+    "switching_w": 3.831469e-05,
+    "leakage_w": 5.328549e-10,
+    "total_w": 0.0001466368,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_tt_025C_1v80.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/power_counter8_tt_025C_1v80.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ss_100C_1v60": {
+    "internal_w": 8.727403e-05,
+    "switching_w": 2.977397e-05,
+    "leakage_w": 4.81806e-07,
+    "total_w": 0.0001175298,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_ss_100C_1v60.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/power_counter8_ss_100C_1v60.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ff_n40C_1v95": {
+    "internal_w": 0.0001237902,
+    "switching_w": 4.54878e-05,
+    "leakage_w": 9.40391e-10,
+    "total_w": 0.000169279,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_ff_n40C_1v95.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/power_counter8_ff_n40C_1v95.tcl",
+    "tool_version": "2.6.0"
+   }
+  },
+  "activity": 0.2,
+  "ol_power_w": 0.00014227691281121224,
+  "ir_worst_v": 5e-05,
+  "ir_avg_v": 2.48e-05,
+  "ir_limit_v": 0.09,
+  "vgnd_bounce_v": 8.92274e-05,
+  "pdn_violations": 0,
+  "setup_ws": [
+   2.0134,
+   "max_ss_100C_1v60"
+  ],
+  "hold_ws": [
+   0.114,
+   "min_ff_n40C_1v95"
+  ],
+  "tt_setup": 4.3394,
+  "corners_passed": 9,
+  "corners": 9,
+  "clock_rule_allowed": 0,
+  "tree_skew_ns_max": 0.003713,
+  "slew_viol": 0,
+  "cap_viol": 0,
+  "drc_magic": 0,
+  "drc_klayout": 0,
+  "lvs": "Circuits match uniquely",
+  "lvs_devices": 101,
+  "antenna_nets": 0,
+  "xor": 0,
+  "dfm": {
+   "high": 0,
+   "medium": 2,
+   "low": 5
+  },
+  "dfm_items": [
+   [
+    "DFM-003",
+    "medium",
+    "met1: 15 line end(s) at near-minimum spacing"
+   ],
+   [
+    "DFM-001",
+    "medium",
+    "li: 2 window(s) within 10% of the PDK max density 0.6"
+   ],
+   [
+    "DFM-004",
+    "low",
+    "met1: 52.7% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-005",
+    "low",
+    "met2: 74.9% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-002",
+    "low",
+    "li: 100.0% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-006",
+    "low",
+    "met3: 26.1% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-007",
+    "low",
+    "met4: 0.0% of routing edge length within 5% of min width/spacing"
+   ]
+  ],
+  "spef": {
+   "nom": {
+    "total_wire_res_ohm": 5594.717133000008,
+    "total_net_cap_f": 2.3552982269999993e-13,
+    "res_segments": 331,
+    "nets": 109,
+    "max_net_res_ohm": 231.925,
+    "max_net_res_net": "net21"
+   },
+   "min": {
+    "total_wire_res_ohm": 2242.025469999997,
+    "total_net_cap_f": 2.121794367e-13,
+    "res_segments": 331,
+    "nets": 109,
+    "max_net_res_ohm": 99.78500000000001,
+    "max_net_res_net": "net21"
+   },
+   "max": {
+    "total_wire_res_ohm": 13034.049256000008,
+    "total_net_cap_f": 2.5629979519999996e-13,
+    "res_segments": 432,
+    "nets": 109,
+    "max_net_res_ohm": 550.06495,
+    "max_net_res_net": "net21"
+   }
+  },
+  "hard": "PASS",
+  "A": 92.7,
+  "B": 64.1
+ },
+ "alu8": {
+  "run": "run_01M44DR7XRWAQ9XY53AG8SRJCM",
+  "iteration": "it1",
+  "gds_sha256": "1ca961c967d9d3e01dbc9c6043c2db848d238930de5b4d37ae25aaa900a75768",
+  "gds_bytes": 970092,
+  "period_ns": 13.333333,
+  "synth_cells": 182,
+  "synth_area_um2": 1938.1088,
+  "die_area_um2": 7368.13,
+  "core_area_um2": 4723.28,
+  "instances": 305,
+  "instance_area_um2": 2174.59,
+  "utilization": 0.460397,
+  "hold_buffers": 8,
+  "wirelength_um": 5485,
+  "vias": 1814,
+  "nets": 259,
+  "max_wire_um": 110.57,
+  "power": {
+   "tt_025C_1v80": {
+    "internal_w": 0.0001549827,
+    "switching_w": 0.0001043285,
+    "leakage_w": 1.669712e-09,
+    "total_w": 0.0002593128,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_tt_025C_1v80.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/power_alu8_top_tt_025C_1v80.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ss_100C_1v60": {
+    "internal_w": 0.0001246476,
+    "switching_w": 8.138097e-05,
+    "leakage_w": 1.474694e-06,
+    "total_w": 0.0002075033,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_ss_100C_1v60.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/power_alu8_top_ss_100C_1v60.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ff_n40C_1v95": {
+    "internal_w": 0.0001744706,
+    "switching_w": 0.0001240441,
+    "leakage_w": 2.484409e-09,
+    "total_w": 0.0002985172,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_ff_n40C_1v95.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/power_alu8_top_ff_n40C_1v95.tcl",
+    "tool_version": "2.6.0"
+   }
+  },
+  "activity": 0.2,
+  "ol_power_w": 0.00020245423365850002,
+  "ir_worst_v": 0.000207,
+  "ir_avg_v": 4.54e-05,
+  "ir_limit_v": 0.09,
+  "vgnd_bounce_v": 0.000195835,
+  "pdn_violations": 0,
+  "setup_ws": [
+   3.276,
+   "max_ss_100C_1v60"
+  ],
+  "hold_ws": [
+   0.4196,
+   "min_ff_n40C_1v95"
+  ],
+  "tt_setup": 6.229,
+  "corners_passed": 9,
+  "corners": 9,
+  "clock_rule_allowed": 0,
+  "tree_skew_ns_max": 0.0,
+  "slew_viol": 0,
+  "cap_viol": 0,
+  "drc_magic": 0,
+  "drc_klayout": 0,
+  "lvs": "Circuits match uniquely",
+  "lvs_devices": 243,
+  "antenna_nets": 0,
+  "xor": 0,
+  "dfm": {
+   "high": 0,
+   "medium": 2,
+   "low": 5
+  },
+  "dfm_items": [
+   [
+    "DFM-003",
+    "medium",
+    "met1: 35 line end(s) at near-minimum spacing"
+   ],
+   [
+    "DFM-001",
+    "medium",
+    "li: 7 window(s) within 10% of the PDK max density 0.6"
+   ],
+   [
+    "DFM-004",
+    "low",
+    "met1: 51.6% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-005",
+    "low",
+    "met2: 81.1% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-002",
+    "low",
+    "li: 100.0% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-006",
+    "low",
+    "met3: 62.2% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-007",
+    "low",
+    "met4: 36.7% of routing edge length within 5% of min width/spacing"
+   ]
+  ],
+  "spef": {
+   "nom": {
+    "total_wire_res_ohm": 16890.66860199993,
+    "total_net_cap_f": 8.871257300000001e-13,
+    "res_segments": 999,
+    "nets": 259,
+    "max_net_res_ohm": 280.26427600000005,
+    "max_net_res_net": "net44"
+   },
+   "min": {
+    "total_wire_res_ohm": 7129.745980000031,
+    "total_net_cap_f": 7.957096809999997e-13,
+    "res_segments": 993,
+    "nets": 259,
+    "max_net_res_ohm": 133.26999999999998,
+    "max_net_res_net": "net44"
+   },
+   "max": {
+    "total_wire_res_ohm": 38909.754001000016,
+    "total_net_cap_f": 9.79151952e-13,
+    "res_segments": 1267,
+    "nets": 259,
+    "max_net_res_ohm": 645.2586500000001,
+    "max_net_res_net": "net44"
+   }
+  },
+  "hard": "PASS",
+  "A": 92.7,
+  "B": 64.1
+ },
+ "sync_fifo": {
+  "run": "run_01M43MDNVKWCHEQ0GGHPJFT602",
+  "iteration": "it10",
+  "gds_sha256": "60a9bff2e9ba88eed16c1db7b86b59da7f4ece142db670055e8f4304d3e60f3f",
+  "gds_bytes": 6156132,
+  "period_ns": 10.0,
+  "synth_cells": 1960,
+  "synth_area_um2": 26049.984,
+  "die_area_um2": 98115.6,
+  "core_area_um2": 87965.6,
+  "instances": 4048,
+  "instance_area_um2": 33439.6,
+  "utilization": 0.380144,
+  "hold_buffers": 512,
+  "wirelength_um": 65447,
+  "vias": 16542,
+  "nets": 2819,
+  "max_wire_um": 463.62,
+  "power": {
+   "tt_025C_1v80": {
+    "internal_w": 0.004255347,
+    "switching_w": 0.001496411,
+    "leakage_w": 2.138445e-08,
+    "total_w": 0.005751779,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_tt_025C_1v80.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_tt_025C_1v80.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ss_100C_1v60": {
+    "internal_w": 0.003367674,
+    "switching_w": 0.001149357,
+    "leakage_w": 2.201441e-05,
+    "total_w": 0.004539046,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_ss_100C_1v60.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_ss_100C_1v60.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ff_n40C_1v95": {
+    "internal_w": 0.004893246,
+    "switching_w": 0.001790117,
+    "leakage_w": 3.99838e-08,
+    "total_w": 0.006683403,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/logs/power_sync_fifo_ff_n40C_1v95.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/power_sync_fifo_ff_n40C_1v95.tcl",
+    "tool_version": "2.6.0"
+   }
+  },
+  "activity": 0.2,
+  "ol_power_w": 0.005682576913386583,
+  "ir_worst_v": 0.00137,
+  "ir_avg_v": 0.000224,
+  "ir_limit_v": 0.09,
+  "vgnd_bounce_v": 0.00128513,
+  "pdn_violations": 0,
+  "setup_ws": [
+   0.2429,
+   "max_ss_100C_1v60"
+  ],
+  "hold_ws": [
+   0.1384,
+   "min_ff_n40C_1v95"
+  ],
+  "tt_setup": 3.447,
+  "corners_passed": 9,
+  "corners": 9,
+  "clock_rule_allowed": 0,
+  "tree_skew_ns_max": 0.062196,
+  "slew_viol": 0,
+  "cap_viol": 0,
+  "drc_magic": 0,
+  "drc_klayout": 0,
+  "lvs": "Circuits match uniquely",
+  "lvs_devices": 2828,
+  "antenna_nets": 0,
+  "xor": 0,
+  "dfm": {
+   "high": 0,
+   "medium": 3,
+   "low": 6
+  },
+  "dfm_items": [
+   [
+    "DFM-003",
+    "medium",
+    "met1: 304 line end(s) at near-minimum spacing"
+   ],
+   [
+    "DFM-001",
+    "medium",
+    "li: 20 window(s) within 10% of the PDK max density 0.6"
+   ],
+   [
+    "DFM-005",
+    "medium",
+    "met2: 1 line end(s) at near-minimum spacing"
+   ],
+   [
+    "DFM-004",
+    "low",
+    "met1: 47.3% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-002",
+    "low",
+    "li: 100.0% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-006",
+    "low",
+    "met2: 84.7% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-007",
+    "low",
+    "met3: 81.0% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-009",
+    "low",
+    "met5: 99.5% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-008",
+    "low",
+    "met4: 18.0% of routing edge length within 5% of min width/spacing"
+   ]
+  ],
+  "spef": {
+   "nom": {
+    "total_wire_res_ohm": 170978.21140899957,
+    "total_net_cap_f": 1.0115457327599995e-11,
+    "res_segments": 8458,
+    "nets": 2819,
+    "max_net_res_ohm": 561.0711799999999,
+    "max_net_res_net": "net35"
+   },
+   "min": {
+    "total_wire_res_ohm": 77622.90838000008,
+    "total_net_cap_f": 9.10215136680001e-12,
+    "res_segments": 8278,
+    "nets": 2819,
+    "max_net_res_ohm": 389.60000000000014,
+    "max_net_res_net": "net35"
+   },
+   "max": {
+    "total_wire_res_ohm": 378656.8807700032,
+    "total_net_cap_f": 1.1047876223799996e-11,
+    "res_segments": 11287,
+    "nets": 2819,
+    "max_net_res_ohm": 880.5423,
+    "max_net_res_net": "net35"
+   }
+  },
+  "hard": "PASS",
+  "A": 92.7,
+  "B": 64.1
+ },
+ "uart": {
+  "run": "run_01M47BE6QKCPAEAE7RVYYJ9TEY",
+  "iteration": "it3",
+  "gds_sha256": "9a263f8b35cc9df16c171fa6317eba31caa18906494cdfaf991b5b572e69c039",
+  "gds_bytes": 2985122,
+  "period_ns": 20.0,
+  "synth_cells": 736,
+  "synth_area_um2": 8363.0208,
+  "die_area_um2": 23296.2,
+  "core_area_um2": 18517.8,
+  "instances": 1207,
+  "instance_area_um2": 9318.94,
+  "utilization": 0.503243,
+  "hold_buffers": 80,
+  "wirelength_um": 20101,
+  "vias": 6954,
+  "nets": 969,
+  "max_wire_um": 221.08,
+  "power": {
+   "tt_025C_1v80": {
+    "internal_w": 0.0005378256,
+    "switching_w": 0.0002504456,
+    "leakage_w": 6.027401e-09,
+    "total_w": 0.0007882774,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/power_uart_top_tt_025C_1v80.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/power_uart_top_tt_025C_1v80.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ss_100C_1v60": {
+    "internal_w": 0.000427865,
+    "switching_w": 0.0001944777,
+    "leakage_w": 5.42591e-06,
+    "total_w": 0.0006277686,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/power_uart_top_ss_100C_1v60.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/power_uart_top_ss_100C_1v60.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ff_n40C_1v95": {
+    "internal_w": 0.0006140556,
+    "switching_w": 0.0002976594,
+    "leakage_w": 1.150402e-08,
+    "total_w": 0.0009117265,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/power_uart_top_ff_n40C_1v95.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/power_uart_top_ff_n40C_1v95.tcl",
+    "tool_version": "2.6.0"
+   }
+  },
+  "activity": 0.2,
+  "ol_power_w": 0.0008120654383674264,
+  "ir_worst_v": 0.00087,
+  "ir_avg_v": 0.000153,
+  "ir_limit_v": 0.09,
+  "vgnd_bounce_v": 0.000909637,
+  "pdn_violations": 0,
+  "setup_ws": [
+   5.6705,
+   "max_ss_100C_1v60"
+  ],
+  "hold_ws": [
+   0.1082,
+   "min_ff_n40C_1v95"
+  ],
+  "tt_setup": 9.7478,
+  "corners_passed": 9,
+  "corners": 9,
+  "clock_rule_allowed": 0,
+  "tree_skew_ns_max": 0.039857,
+  "slew_viol": 0,
+  "cap_viol": 0,
+  "drc_magic": 0,
+  "drc_klayout": 0,
+  "lvs": "Circuits match uniquely",
+  "lvs_devices": 952,
+  "antenna_nets": 0,
+  "xor": 0,
+  "dfm": {
+   "high": 0,
+   "medium": 2,
+   "low": 5
+  },
+  "dfm_items": [
+   [
+    "DFM-003",
+    "medium",
+    "met1: 164 line end(s) at near-minimum spacing"
+   ],
+   [
+    "DFM-001",
+    "medium",
+    "li: 20 window(s) within 10% of the PDK max density 0.6"
+   ],
+   [
+    "DFM-004",
+    "low",
+    "met1: 52.9% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-002",
+    "low",
+    "li: 100.0% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-005",
+    "low",
+    "met2: 81.4% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-006",
+    "low",
+    "met3: 66.7% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-007",
+    "low",
+    "met4: 21.8% of routing edge length within 5% of min width/spacing"
+   ]
+  ],
+  "spef": {
+   "nom": {
+    "total_wire_res_ohm": 65753.51436300219,
+    "total_net_cap_f": 3.2141993546000005e-12,
+    "res_segments": 4011,
+    "nets": 969,
+    "max_net_res_ohm": 387.42038,
+    "max_net_res_net": "net49"
+   },
+   "min": {
+    "total_wire_res_ohm": 27732.962389999597,
+    "total_net_cap_f": 2.8838233045999982e-12,
+    "res_segments": 3982,
+    "nets": 969,
+    "max_net_res_ohm": 223.295,
+    "max_net_res_net": "net79"
+   },
+   "max": {
+    "total_wire_res_ohm": 151838.71414399974,
+    "total_net_cap_f": 3.5271411254000025e-12,
+    "res_segments": 4970,
+    "nets": 969,
+    "max_net_res_ohm": 789.1199899999999,
+    "max_net_res_net": "net49"
+   }
+  },
+  "hard": "PASS",
+  "A": 92.7,
+  "B": 64.1
+ },
+ "spi_master": {
+  "run": "run_01M484JWYZ7ADCE8N97SZV80QG",
+  "iteration": "it1",
+  "gds_sha256": "fc4eecba71494124a0c36c7ab32b7e820a3d2ab26ef5fe1140dddf2490b000d3",
+  "gds_bytes": 1879302,
+  "period_ns": 20.0,
+  "synth_cells": 486,
+  "synth_area_um2": 5574.096,
+  "die_area_um2": 16277.3,
+  "core_area_um2": 12061.6,
+  "instances": 847,
+  "instance_area_um2": 6752.73,
+  "utilization": 0.559855,
+  "hold_buffers": 79,
+  "wirelength_um": 13351,
+  "vias": 4412,
+  "nets": 715,
+  "max_wire_um": 216.94,
+  "power": {
+   "tt_025C_1v80": {
+    "internal_w": 0.0004153471,
+    "switching_w": 0.000165638,
+    "leakage_w": 4.652623e-09,
+    "total_w": 0.0005809897,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/power_spi_master_tt_025C_1v80.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/.s2s/power_spi_master_tt_025C_1v80.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ss_100C_1v60": {
+    "internal_w": 0.0003301332,
+    "switching_w": 0.0001280001,
+    "leakage_w": 4.433962e-06,
+    "total_w": 0.0004625672,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/power_spi_master_ss_100C_1v60.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/.s2s/power_spi_master_ss_100C_1v60.tcl",
+    "tool_version": "2.6.0"
+   },
+   "ff_n40C_1v95": {
+    "internal_w": 0.0004754616,
+    "switching_w": 0.0001973493,
+    "leakage_w": 8.609129e-09,
+    "total_w": 0.0006728195,
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/power_spi_master_ff_n40C_1v95.log",
+    "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/.s2s/power_spi_master_ff_n40C_1v95.tcl",
+    "tool_version": "2.6.0"
+   }
+  },
+  "activity": 0.2,
+  "ol_power_w": 0.0005702339112758636,
+  "ir_worst_v": 0.000411,
+  "ir_avg_v": 0.00011,
+  "ir_limit_v": 0.09,
+  "vgnd_bounce_v": 0.000294918,
+  "pdn_violations": 0,
+  "setup_ws": [
+   8.9381,
+   "max_ss_100C_1v60"
+  ],
+  "hold_ws": [
+   0.104,
+   "min_ff_n40C_1v95"
+  ],
+  "tt_setup": 9.7879,
+  "corners_passed": 9,
+  "corners": 9,
+  "clock_rule_allowed": 8,
+  "tree_skew_ns_max": 0.006342,
+  "slew_viol": 0,
+  "cap_viol": 0,
+  "drc_magic": 0,
+  "drc_klayout": 0,
+  "lvs": "Circuits match uniquely",
+  "lvs_devices": 684,
+  "antenna_nets": 0,
+  "xor": 0,
+  "dfm": {
+   "high": 0,
+   "medium": 2,
+   "low": 5
+  },
+  "dfm_items": [
+   [
+    "DFM-003",
+    "medium",
+    "met1: 103 line end(s) at near-minimum spacing"
+   ],
+   [
+    "DFM-001",
+    "medium",
+    "li: 20 window(s) within 10% of the PDK max density 0.6"
+   ],
+   [
+    "DFM-004",
+    "low",
+    "met1: 53.6% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-002",
+    "low",
+    "li: 100.0% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-005",
+    "low",
+    "met2: 81.2% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-006",
+    "low",
+    "met3: 59.7% of routing edge length within 5% of min width/spacing"
+   ],
+   [
+    "DFM-007",
+    "low",
+    "met4: 24.6% of routing edge length within 5% of min width/spacing"
+   ]
+  ],
+  "spef": {
+   "nom": {
+    "total_wire_res_ohm": 42341.52238600041,
+    "total_net_cap_f": 2.090791686699998e-12,
+    "res_segments": 2434,
+    "nets": 715,
+    "max_net_res_ohm": 387.7168800000001,
+    "max_net_res_net": "clknet_3_5__leaf_clk"
+   },
+   "min": {
+    "total_wire_res_ohm": 17857.99278999995,
+    "total_net_cap_f": 1.8791173195000004e-12,
+    "res_segments": 2415,
+    "nets": 715,
+    "max_net_res_ohm": 207.31,
+    "max_net_res_net": "clknet_0_clk"
+   },
+   "max": {
+    "total_wire_res_ohm": 97123.93310000039,
+    "total_net_cap_f": 2.2818480607e-12,
+    "res_segments": 3081,
+    "nets": 715,
+    "max_net_res_ohm": 865.1676500000002,
+    "max_net_res_net": "clknet_3_5__leaf_clk"
+   }
+  },
+  "hard": "CONDITIONAL PASS",
+  "A": 92.7,
+  "B": 64.1
+ }
+}
