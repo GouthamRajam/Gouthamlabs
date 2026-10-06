@@ -77,3 +77,21 @@ def test_a_run_that_did_not_finish_is_a_problem_not_a_pass(tmp_path, monkeypatch
 def test_missing_netlist_is_a_problem(tmp_path):
     p, _ = m07._independent_drv(_ctx(tmp_path), {"views": {}}, 1, "x")
     assert p == ["independent DRV check: routed netlist not found"]
+
+
+def _corner(hits, kinds=("max fanout",), failures=("design rule violators: max fanout",), errors=()):
+    return SimpleNamespace(status="FAIL", errors=list(errors), metrics={"drv_violators": list(kinds)},
+                           stage_failures=list(failures), safety_net_hits=list(hits))
+
+
+def test_signoff_corner_passes_only_on_allowed_clock_lines():
+    from s2s.physical import signoff as so
+    allowed = [{"kind": "max fanout", "pin": "clkbuf_3_5__f_clk/X", "limit": 10.0, "value": 17.0}]
+    line = "clkbuf_3_5__f_clk/X                      10     17     -7 (VIOLATED)"
+    assert so.only_clock_rule_failures(_corner([line]), [], allowed)
+    # any other VIOLATED line (a slack, a data-net fanout) still fails the corner
+    assert not so.only_clock_rule_failures(_corner([line, "  -0.0123   slack (VIOLATED)"]), [], allowed)
+    assert not so.only_clock_rule_failures(_corner([line]), [{"kind": "max fanout", "pin": "fanout77/X"}], allowed)
+    assert not so.only_clock_rule_failures(_corner([line], kinds=("max fanout", "max slew")), [], allowed)
+    assert not so.only_clock_rule_failures(_corner([line], failures=("setup worst slack -0.1 ns (negative)",)), [], allowed)
+    assert not so.only_clock_rule_failures(_corner([line], errors=("x",)), [], allowed)

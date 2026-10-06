@@ -235,6 +235,17 @@ def apply_clock_fanout_rule(pins: list[dict], netlist_text: str, clock_limit: fl
     return keep, allowed
 
 
+def only_clock_rule_failures(r, keep: list[dict], allowed: list[dict]) -> bool:
+    """True if an STA corner failed ONLY because of clock-tree fanout allowed by the clock rule: no other DRV
+    violator, no tool error, no other stage failure, and every safety-net hit is the report line of an allowed pin
+    (the Trust Layer flags every '(VIOLATED)' line; any other one - a slack or a data-net fanout - still fails)."""
+    pins = {v["pin"] for v in allowed}
+    return (bool(allowed) and not keep and r.status == "FAIL" and not r.errors
+            and set(r.metrics.get("drv_violators") or []) == {"max fanout"}
+            and all(f.startswith("design rule violators") for f in r.stage_failures)
+            and all((h.split() or [""])[0] in pins for h in r.safety_net_hits))
+
+
 def find_synth_log(netlist: Path) -> Path | None:
     """The Yosys log of the synthesis that produced `netlist` (OpenLane: <tag>/NN-yosys-synthesis/; the final
     netlist sits in <tag>/final/nl/)."""

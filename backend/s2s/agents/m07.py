@@ -982,9 +982,7 @@ def signoff_steps() -> list[Step]:
             s_, h_ = r.metrics["setup_worst_slack"], r.metrics["hold_worst_slack"]
             keep, allowed = so.apply_clock_fanout_rule(r.metrics.get("drv_violator_pins") or [], nl_text, clk_lim)
             r.metrics["clock_rule_allowed"] = allowed
-            if not r.passed and allowed and not keep and r.status == "FAIL" and not r.errors \
-                    and not r.safety_net_hits and all(f.startswith("design rule violators") for f in r.stage_failures) \
-                    and set(r.metrics["drv_violators"]) == {"max fanout"}:
+            if not r.passed and so.only_clock_rule_failures(r, keep, allowed):
                 r.passed, r.reasons = True, []  # only clock-tree fanout within the clock rule
             table[c] = {"setup_ws_ns": s_, "setup_tns_ns": r.metrics["tns"], "hold_ws_ns": h_, "hold_tns_ns": r.metrics["hold_tns"],
                         "drv_violators": r.metrics["drv_violators"], "clock_rule_allowed": r.metrics["clock_rule_allowed"],
