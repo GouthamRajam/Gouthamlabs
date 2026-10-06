@@ -180,3 +180,17 @@ entries:
     date: "2026-10-06"
     confidence: high
     owner: Sage
+  - id: s2s-cts-003
+    kind: s2s_lesson
+    title: "Small clock trees (~100-200 sinks): clustering knobs do nothing; the H-tree stop rule and placement set leaf fanout"
+    symptom: "Leaf clock buffers stay 1-2 over the fanout limit whatever CTS_SINK_CLUSTERING_SIZE / MAX_DIAMETER / buffer distance / max wire length is set to"
+    root_cause: "On uart (125 sinks) TritonCTS prints the clustering settings but never reports 'sinks after clustering'; the H-tree stops splitting at <= 15 sinks per branch (CTS-0032), so each leaf buffer drives whatever flops fall in its region. Which leaf gets 11 or 12 depends on where the flops are placed."
+    wrong_assumption: "Lowering the cluster size caps the flops per leaf buffer (iterations 2-3: size 10 and 9 gave bit-identical trees); the extra load is an antenna diode (it was a flop)."
+    lesson: "Check the CTS log for 'sinks after clustering' before tuning clustering. If clustering is not applied, change the flop spread instead: placement density / core utilization inside pnr_ranges.yaml, screened with recorded CTS-only experiments and scored by the independent STA check, then route the best to confirm."
+    evidence: "uart reports/experiments/PNR-UART-0001..0016: CTS knobs 0001-0006 no change; density 60 % (0013) and 65 % (0014) 0 violators after CTS and after routing; util 30/40 %, density 70/80 % still 11-12; util 55 % and density 45 % failed placement (GPL-0302)"
+    regression_test: "tests/test_pnr_independent_drv.py"
+    tags: [cts, clock_tree, fanout, max_fanout, sink_clustering, h_tree, placement, density, utilization, orion, tick, place_route, uart]
+    source: {title: "S2S uart M0.7 experiments 2026-10-06", url: "run:run_01M47BE6QKCPAEAE7RVYYJ9TEY"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
