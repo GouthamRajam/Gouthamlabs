@@ -28,6 +28,7 @@ from __future__ import annotations
 import datetime as dt
 import hashlib
 import json
+import re
 import shutil
 import time
 from pathlib import Path
@@ -168,7 +169,8 @@ SDC_RULES = """CONSTRAINTS CONTRACT (checked by a deterministic SDC guard, then 
 - No set_false_path, set_multicycle_path, set_disable_timing, set_case_analysis, set_max_delay, set_min_delay or
   set_clock_groups unless the line directly above it is a comment starting `# JUSTIFICATION:` that explains why
   (never to hide timing).
-- Do not set set_propagated_clock (the flow propagates clocks after CTS)."""
+- Clock propagation is the flow's job: never write the text "propagated_clock" anywhere in the file, not even in
+  a comment (OpenLane searches the raw SDC text for it and, if found, never propagates the clock after CTS)."""
 
 
 def _clock_override(ctx: StepContext):
@@ -205,6 +207,11 @@ def _sdc_contract(ctx: StepContext) -> str:
         ("\n- " + note if note else "")
 
 
+def sdc_commands(text: str) -> list[str]:
+    """The SDC's commands without comments and blank lines, whitespace normalized."""
+    return [" ".join(ln.split("#", 1)[0].split()) for ln in text.splitlines() if ln.split("#", 1)[0].strip()]
+
+
 def validate_sdc(ctx: StepContext) -> list[str]:
     p = ctx.workdir / "constraints/constraints.sdc"
     if not p.exists():
@@ -214,6 +221,13 @@ def validate_sdc(ctx: StepContext) -> list[str]:
         spec = _spec(ctx)
         _, ins, outs = olf.port_bits(spec)
         problems, found = olf.sdc_problems(p.read_text(), clocks=_clocks(ctx), inputs=ins, outputs=outs)
+        keep = (ctx.task.inputs or {}).get("sdc_keep_commands_from")  # operator decision: comment-only rewrite
+        if keep:
+            old_cmds, new_cmds = sdc_commands((ctx.workdir / keep).read_text()), sdc_commands(p.read_text())
+            if old_cmds != new_cmds:
+                problems.append(f"only comments may change in this rewrite: every constraint command must stay "
+                                f"exactly as in {keep} ({len(old_cmds)} commands); differences: "
+                                f"{sorted(set(old_cmds) ^ set(new_cmds))[:4]}")
     _check(ctx, "Sienna", "sdc_guard", "s2s.physical.flow.sdc_problems", not problems,
            {"problems": len(problems), "detail": problems[:20], "found": found})
     return problems
@@ -291,10 +305,17 @@ def synthesis_steps() -> list[Step]:
             _assign(ctx, "Mason", owner, goal, ["every check passes in the Trust Layer"], "checks passed / checks")
 
     def sienna_sdc(ctx: StepContext) -> None:
-        _author_loop(ctx, "Sienna", goal="Write constraints/constraints.sdc for this design from the spec (A.8 step 1).",
-                     inputs=["spec/spec.yaml", "arch/arch.yaml"], validate=validate_sdc, kind="constraints",
-                     constraints=_sdc_contract(ctx),
-                     exit_criteria=["the SDC guard passes", "every assumption is marked DEFAULT"])
+        keep = (ctx.task.inputs or {}).get("sdc_keep_commands_from")  # operator decision: comment-only rewrite
+        goal = "Write constraints/constraints.sdc for this design from the spec (A.8 step 1)."
+        if keep:
+            goal = (f"Rewrite constraints/constraints.sdc as a COMMENT-ONLY edit of the reviewed SDC {keep}: keep every "
+                    "constraint command exactly as it is (same commands, values and order) and reword or remove any "
+                    "comment that breaks the contract below.")
+        _author_loop(ctx, "Sienna", goal=goal,
+                     inputs=["spec/spec.yaml", "arch/arch.yaml", *([keep] if keep else [])], validate=validate_sdc,
+                     kind="constraints", constraints=_sdc_contract(ctx),
+                     exit_criteria=["the SDC guard passes", "every assumption is marked DEFAULT"]
+                     + (["every constraint command identical to the reviewed SDC"] if keep else []))
 
     def sentinel_constraints(ctx: StepContext) -> None:
         """Constraints are always reviewed (management.yaml always_review); the reviewed hash is fixed."""
@@ -602,6 +623,71 @@ def _independent_drv(ctx: StepContext, r: dict, k: int, top: str) -> tuple[list[
     return p, {"independent_drv_pins": pins, "independent_drv_log": res.log_path}
 
 
+def unpropagated_clocks(run_dir: Path) -> dict[str, list[str]]:
+    """Clocks OpenLane's post-route STA left ideal, per corner (its unpropagated.rpt). After CTS every clock must be
+    propagated; an ideal clock hides clock latency and skips the clock nets' slew/cap/fanout checks."""
+    d = olf.step_dir(run_dir, "OpenROAD.STAPostPNR")
+    out: dict[str, list[str]] = {}
+    for rpt in sorted(d.glob("*/unpropagated.rpt")) if d else []:
+        for clk in rpt.read_text(errors="replace").split():
+            out.setdefault(clk, []).append(rpt.parent.name)
+    return out
+
+
+CLUSTER_KNOBS = ("CTS_SINK_CLUSTERING_SIZE", "CTS_SINK_CLUSTERING_MAX_DIAMETER")
+
+
+def pnr_diagnosis(run_dir: Path, nl: str | None, violators: list[dict] | None) -> dict:
+    """Tool facts Orion must diagnose from BEFORE proposing a change (CEO 2026-10-06: analyze the problem before
+    iterating). CTS log: sinks, whether sink clustering was applied, the H-tree stop rule, levels. Netlist: for each
+    violating pin, its clock-tree level and what it drives (cell kinds and counts)."""
+    out: dict = {"cts": None, "violators": []}
+    logs = sorted(Path(run_dir).glob("*-openroad-cts/openroad-cts.log"))
+    if logs:
+        log = logs[-1].read_text(errors="replace")
+        g = lambda rx: (lambda m: int(m.group(1)) if m else None)(re.search(rx, log))
+        after = g(r"sinks after clustering:\s*(\d+)")
+        out["cts"] = {"sinks": g(r"Total number of sinks:\s*(\d+)"), "clustering_applied": after is not None,
+                      "sinks_after_clustering": after, "htree_stop_max_sinks": g(r"Max number of sinks is (\d+)"),
+                      "levels": g(r"Max level of the clock tree:\s*(\d+)"),
+                      "buffers": g(r"Total number of Buffers Inserted:\s*(\d+)")}
+    text = Path(nl).read_text(errors="replace") if nl and Path(nl).exists() else ""
+    for v in violators or []:
+        inst = v["pin"].rsplit("/", 1)[0]
+        lvl = re.match(r"clkbuf_(\d+)_", inst)
+        row = {**v, "clock_tree_level": int(lvl.group(1)) if lvl else None, "loads_by_cell": None}
+        m = re.search(rf"^\s*\S+\s+{re.escape(inst)}\s*\(([^;]*?)\);", text, re.M)
+        x = re.search(r"\.X\(\s*(\S+?)\s*\)", m.group(1)) if m else None
+        if x:
+            kinds: dict[str, int] = {}
+            for cell, _i, body in re.findall(r"^\s*(\S+)\s+(\S+)\s*\(([^;]*?)\);", text, re.M):
+                if re.search(rf"\.(?!X\b)\w+\(\s*{re.escape(x.group(1))}\s*\)", body):
+                    kinds[cell.split("__")[-1]] = kinds.get(cell.split("__")[-1], 0) + 1
+            row["loads_by_cell"] = kinds
+        out["violators"].append(row)
+    return out
+
+
+def diagnosis_refusals(changes: list[dict], diagnosis: dict | None, facts: dict, table: list[dict]) -> list[str]:
+    """Changes refused because the tool facts show they cannot act on the problem."""
+    bad = []
+    d = diagnosis or {}
+    if changes and (not str(d.get("root_cause", "")).strip() or not d.get("evidence")):
+        bad.append("diagnose first: give root_cause and the tool facts (evidence) before proposing a change")
+    cts = (facts or {}).get("cts") or {}
+    if cts.get("clustering_applied") is False:
+        for c in changes:
+            if c["param"] in CLUSTER_KNOBS:
+                bad.append(f"{c['param']}: the CTS log shows sink clustering was NOT applied "
+                           f"({cts.get('sinks')} sinks, no 'sinks after clustering'), so it cannot change the tree")
+    if len(table) >= 2 and table[-1]["problems"] == table[-2]["problems"]:
+        last = {c["param"] for c in table[-1].get("changes") or []}
+        for c in changes:
+            if c["param"] in last:
+                bad.append(f"{c['param']}: the last change to it left the problems identical; it does not act here")
+    return bad
+
+
 def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
     """Orion proposes at most two changes within pnr_ranges.yaml; invalid proposals go back verbatim."""
     ph = _phys(ctx)
@@ -609,9 +695,11 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
     guidance = (ctx.task.inputs or {}).get("operator_guidance")  # recorded operator decision, if any
     knowledge = _sage_search(ctx, "Orion", "place route " + " ".join(problems))  # S2S's own lessons first
     for attempt in range(1, MAX_ORION_ATTEMPTS + 1):
-        data = llm.ask(ctx, "Orion", goal=f"Iteration {k} has problems: {problems}. Change at most two parameters, "
-                       "only inside config/pnr_ranges.yaml, with a one-line reason each (A.10 step 3); or escalate "
-                       "if no allowed change can fix it."
+        data = llm.ask(ctx, "Orion", goal=f"Iteration {k} has problems: {problems}. FIRST diagnose: from the tool "
+                       f"facts in reports/pnr_iteration_{k}.json (`diagnosis`: CTS log facts, each violator's tree level "
+                       "and what it drives) state the root cause, the facts it rests on, and why a parameter acts on "
+                       "that cause. THEN change at most two parameters, only inside config/pnr_ranges.yaml, with a "
+                       "one-line reason each (A.10 step 3); or escalate if no allowed change can act on the cause."
                        + (f" OPERATOR GUIDANCE (CEO decision): {guidance}" if guidance else ""),
                        inputs=_inputs(ctx, ["spec/spec.yaml", "reports/pnr_ranges.json", "reports/pnr_iterations.json",
                                             f"reports/pnr_iteration_{k}.json"]),
@@ -645,6 +733,11 @@ def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
             bad.append("a 'change' that keeps the current value")
         if any(not c["reason"].strip() for c in ch):
             bad.append("every change needs a one-line reason")
+        it = json.loads((ctx.workdir / f"reports/pnr_iteration_{k}.json").read_text()) \
+            if (ctx.workdir / f"reports/pnr_iteration_{k}.json").exists() else {}
+        table = json.loads((ctx.workdir / "reports/pnr_iterations.json").read_text()) \
+            if (ctx.workdir / "reports/pnr_iterations.json").exists() else []
+        bad += diagnosis_refusals(ch, data.get("diagnosis"), it.get("diagnosis") or {}, table)
         _check(ctx, "Orion", "orion_change_in_range", "s2s.physical.flow.check_params", not bad,
                {"iteration": k, "changes": ch, "problems": bad})
         if not bad or data["escalate"]["needed"]:
@@ -680,8 +773,15 @@ def place_route_steps() -> list[Step]:
                 p2, f2 = _independent_drv(ctx, r, k, ph["top"])
                 problems += p2
                 facts.update(f2)
+                unprop = unpropagated_clocks(Path(r["run_dir"]))
+                facts["openlane_unpropagated_clocks"] = unprop
+                problems += [f"OpenLane post-route STA ran with clock '{c}' unpropagated (ideal) at {', '.join(cs)}"
+                             for c, cs in unprop.items()]
             row = {"iteration": k, "tag": tag, "params": ph["params"], "problems": problems, "facts": facts,
                    "changes": ph.get("last_changes", [])}
+            if problems and r["ok"]:
+                row["diagnosis"] = pnr_diagnosis(Path(r["run_dir"]), (r.get("views") or {}).get("nl"),
+                                                 facts.get("independent_drv_pins"))
             table.append(row)
             _tool_json(ctx, "Orion", f"reports/pnr_iteration_{k}.json", {**row, "cts": cts})
             _tool_json(ctx, "Orion", "reports/pnr_iterations.json", table)

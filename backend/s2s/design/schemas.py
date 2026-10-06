@@ -224,6 +224,9 @@ ORION_ANSWER = answer_schema(
         "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN", "CTS_SINK_CLUSTERING_MAX_DIAMETER", "CTS_DISTANCE_BETWEEN_BUFFERS",
         "CTS_CLK_MAX_WIRE_LENGTH"]}, "value": {"type": "number"},
         "reason": _STR})},
+    # diagnosis BEFORE any change (CEO 2026-10-06): root cause from the tool facts, the facts it rests on, and why the
+    # chosen parameter acts on that cause
+    diagnosis=_obj({"root_cause": _STR, "evidence": _STRS, "why_this_parameter": _STR}),
     escalate=_obj({"needed": {"type": "boolean"}, "why": _STR}),
     report_markdown=_STR)
 FABIAN_ANSWER = answer_schema(

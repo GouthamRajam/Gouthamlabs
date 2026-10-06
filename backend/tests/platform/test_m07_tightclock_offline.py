@@ -54,8 +54,12 @@ ORION_CHANGE = ans(changes=[
      "reason": "fixture: a smaller core shortens the I/O-to-register wires on the failing setup paths"},
     {"param": "PL_TARGET_DENSITY_PCT", "value": 75,
      "reason": "fixture: denser placement shortens the nets of the worst paths (kept 20 points above the core utilization)"}],
+    diagnosis={"root_cause": "fixture: setup fails at the ss corners on I/O-to-register paths (wire delay)",
+               "evidence": ["iteration 1 setup slack < 0 at the ss corners"],
+               "why_this_parameter": "fixture: core size and density set the wire lengths on those paths"},
     escalate={"needed": False, "why": ""}, report_markdown="# Orion (fixture)")
-ORION_STOP = ans(changes=[], escalate={"needed": True, "why": "fixture: one change set per experiment; results "
+ORION_STOP = ans(changes=[], diagnosis={"root_cause": "fixture", "evidence": [], "why_this_parameter": ""},
+                 escalate={"needed": True, "why": "fixture: one change set per experiment; results "
                                        "reported as the tools give them"}, report_markdown="# Orion (fixture)")
 
 
@@ -79,7 +83,7 @@ class Replies:
         text = system + "".join(str(m.get("content", "")) for m in messages)
         if self.fixed:
             return self.fixed.popleft()
-        if "has problems:" in text and "Change at most two parameters" in text:
+        if "has problems:" in text and "change at most two parameters" in text.lower():
             self.orion_calls += 1
             return self.orion.popleft() if self.orion else ORION_STOP
         return REPORT                                                   # Tick, Orion, Mason reports

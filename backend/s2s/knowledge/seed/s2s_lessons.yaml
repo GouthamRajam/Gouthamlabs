@@ -157,7 +157,7 @@ entries:
     kind: s2s_lesson
     title: "OpenLane's post-route DRV count can miss clock-buffer fanout; check with an independent STA run"
     symptom: "Place and route reports max_fanout_violations = 0, but signoff STA on the same routed netlist and SDC fails max fanout on clock buffers (clkbuf_0_clk 16 vs 10, three leaf buffers 11)"
-    root_cause: "OpenLane 2.3.10 OpenROAD.STAPostPNR (checks.rpt, design__max_fanout_violation__count) listed no violators for a clock tree whose root drives 16 level-4 buffers; standalone OpenSTA 2.6.0 with the same netlist and SDC (set_max_fanout 10 [current_design]) reports them. The netlist in both is identical (17 references to clknet_0_clk)."
+    root_cause: "Root cause found later (lesson s2s-sdc-001): an SDC comment containing 'set_propagated_clock' made OpenLane leave the clock ideal after CTS, and OpenSTA skips fanout/slew/cap checks on ideal clock nets. OpenLane's post-route STA therefore listed no violators while S2S's propagated-clock OpenSTA on the same netlist and SDC reported clkbuf_0_clk 16 vs 10."
     wrong_assumption: "The OpenLane metric is the same as running report_check_types ourselves."
     lesson: "Every place-and-route iteration also runs S2S's own OpenSTA report_check_types on the routed netlist with the reviewed SDC; a violator from EITHER tool is a problem for Orion. Fix clock-tree fanout with the tree-shape knobs (lesson s2s-cts-001); count each violating buffer's level first."
     evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY it1 (CTS_SINK_CLUSTERING_SIZE 25): pnr_iteration_1 max_fanout_violations 0; signoff sta_all_corners FAILED; logs/sta_uart_top_*.log"
@@ -186,11 +186,25 @@ entries:
     symptom: "Leaf clock buffers stay 1-2 over the fanout limit whatever CTS_SINK_CLUSTERING_SIZE / MAX_DIAMETER / buffer distance / max wire length is set to"
     root_cause: "On uart (125 sinks) TritonCTS prints the clustering settings but never reports 'sinks after clustering'; the H-tree stops splitting at <= 15 sinks per branch (CTS-0032), so each leaf buffer drives whatever flops fall in its region. Which leaf gets 11 or 12 depends on where the flops are placed."
     wrong_assumption: "Lowering the cluster size caps the flops per leaf buffer (iterations 2-3: size 10 and 9 gave bit-identical trees); the extra load is an antenna diode (it was a flop)."
-    lesson: "Check the CTS log for 'sinks after clustering' before tuning clustering. If clustering is not applied, change the flop spread instead: placement density / core utilization inside pnr_ranges.yaml, screened with recorded CTS-only experiments and scored by the independent STA check, then route the best to confirm."
+    lesson: "Diagnose before iterating: the P&R loop now gives Orion the CTS log facts and each violator's level and loads, requires a diagnosis, and refuses clustering knobs when clustering was not applied and any knob that left the problems identical. Check the CTS log for 'sinks after clustering' before tuning clustering. If clustering is not applied, change the flop spread instead: placement density / core utilization inside pnr_ranges.yaml, screened with recorded CTS-only experiments and scored by the independent STA check, then route the best to confirm."
     evidence: "uart reports/experiments/PNR-UART-0001..0016: CTS knobs 0001-0006 no change; density 60 % (0013) and 65 % (0014) 0 violators after CTS and after routing; util 30/40 %, density 70/80 % still 11-12; util 55 % and density 45 % failed placement (GPL-0302)"
-    regression_test: "tests/test_pnr_independent_drv.py"
+    regression_test: "tests/test_pnr_diagnosis.py"
     tags: [cts, clock_tree, fanout, max_fanout, sink_clustering, h_tree, placement, density, utilization, orion, tick, place_route, uart]
     source: {title: "S2S uart M0.7 experiments 2026-10-06", url: "run:run_01M47BE6QKCPAEAE7RVYYJ9TEY"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-sdc-001
+    kind: s2s_lesson
+    title: "Never write 'propagated_clock' in an SDC, not even in a comment: OpenLane then leaves the clock ideal after CTS"
+    symptom: "OpenLane's post-route STA shows 'clock network delay (ideal)' and lists the clock in unpropagated.rpt; its timing differs from an independent propagated-clock STA by the clock latency (uart: ~1 ns setup at ss); clock-buffer fanout violators are not reported"
+    root_cause: "OpenLane 2.3.10 io.tcl propagates clocks only if the raw SDC text does not contain 'set_propagated_clock' or 'unset_propagated_clock'. uart's SDC had the comment '# set_propagated_clock is intentionally not set ...' - copied from S2S's own SDC contract line 'Do not set set_propagated_clock'. So every OpenLane timing step and repair after CTS (resizer, hold repair, post-route STA) used an ideal clock, and OpenSTA skips slew/cap/fanout checks on ideal clock nets."
+    wrong_assumption: "A comment cannot change what a tool does; OpenLane's max-fanout count of 0 was a real measurement; the instruction text given to an agent is harmless."
+    lesson: "The SDC guard refuses the text 'propagated_clock' anywhere; the P&R loop fails an iteration whose post-route STA left a clock unpropagated (unpropagated.rpt); signoff compares OpenLane STA with S2S's own STA (sta_matches_openlane). Write agent instructions so that echoing them into a file is harmless."
+    evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY: constraints.sdc line 36; it4/54-openroad-stapostpnr/*/unpropagated.rpt = clk at 9 corners vs sync_fifo it10 empty; worst path data arrival identical (14.7561 ns), capture clock 0 (ideal) vs 0.9366 ns (propagated)"
+    regression_test: "tests/test_propagated_clock_guards.py"
+    tags: [sdc, constraints, propagated_clock, ideal_clock, openlane, sta, cts, fanout, signoff, sienna, chronos, orion, uart]
+    source: {title: "OpenLane 2.3.10 scripts/openroad/common/io.tcl", url: "https://github.com/efabless/openlane2/blob/main/openlane/scripts/openroad/common/io.tcl"}
     date: "2026-10-06"
     confidence: high
     owner: Sage

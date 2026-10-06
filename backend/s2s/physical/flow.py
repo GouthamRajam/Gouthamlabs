@@ -301,6 +301,13 @@ def sdc_problems(text: str, *, clocks: list[dict], inputs: list[str], outputs: l
     lines = _sdc_lines(text)
     found = {"clocks": {}, "uncertainty": None, "max_fanout": None, "input_delay": {}, "output_delay": {},
              "exceptions": []}
+    # OpenLane 2.3.10 (scripts/openroad/common/io.tcl) propagates clocks after CTS only if the raw SDC text does
+    # NOT contain 'set_propagated_clock' / 'unset_propagated_clock' anywhere - a comment counts (uart 2026-10-06:
+    # every OpenLane timing step and repair ran on an ideal clock). The flow propagates clocks itself.
+    for n, raw in enumerate(text.splitlines(), 1):
+        if "propagated_clock" in raw:
+            problems.append(f"line {n} contains 'propagated_clock' (even in a comment OpenLane then never propagates "
+                            f"the clock after CTS); the flow propagates clocks itself - remove that word: {raw.strip()[:120]}")
     for line, comment in lines:
         cmd = line.split()[0]
         if cmd == "create_clock":
