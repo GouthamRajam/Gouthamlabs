@@ -15,11 +15,13 @@ heartbeat watchdog.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import logging
 import os
 import signal
 import threading
 import time
+from pathlib import Path
 from concurrent.futures import Future, ThreadPoolExecutor
 
 from sqlalchemy import select, text
@@ -48,6 +50,20 @@ AGENTS: dict[str, type[Agent]] = {"dummy": DummyAgent, "s2s": DesignAgent}
 GATEWAYS = {"dummy": ModelGateway, "s2s": ModelGateway.from_settings}
 
 
+SRC = Path(__file__).resolve().parents[1]  # backend/s2s
+STALE_CHECK_S = 60
+
+
+def code_fingerprint(root: Path = SRC) -> str:
+    """Hash of every .py file under `root` (path + content). The orchestrator imports the agents and tool
+    adapters once at start, so a fix committed later is not used until it restarts (uart signoff 2026-10-06
+    ran the old LEC; lesson s2s-ops-003)."""
+    h = hashlib.sha256()
+    for f in sorted(root.rglob("*.py")):
+        h.update(str(f.relative_to(root)).encode() + b"\0" + f.read_bytes() + b"\0")
+    return h.hexdigest()[:16]
+
+
 class AlreadyRunning(RuntimeError):
     pass
 
@@ -63,6 +79,9 @@ class Orchestrator:
         self.stop = threading.Event()
         self._lock_conn = None
         self._last_watchdog = 0.0
+        self.code_fp = code_fingerprint()
+        self._last_stale_check = time.monotonic()
+        self.stale_code = False
 
     # --- lifecycle -----------------------------------------------------------------------
     def start(self) -> int:
@@ -73,8 +92,8 @@ class Orchestrator:
         with db_session() as s:
             n_units = sync_org(s)
         recovered = self.recover()
-        log.info("orchestrator %s started (pid %d): %d org units, recovered %d in-flight task(s)",
-                 self.instance, os.getpid(), n_units, len(recovered))
+        log.info("orchestrator %s started (pid %d, code %s): %d org units, recovered %d in-flight task(s)",
+                 self.instance, os.getpid(), self.code_fp, n_units, len(recovered))
         return len(recovered)
 
     def recover(self) -> list[str]:
@@ -105,6 +124,12 @@ class Orchestrator:
             for run in s.scalars(select(Run).where(Run.status.in_(("pending", "running")))).all():
                 self._advance_run(s, run)
         self._assign()
+        if not self.stale_code and time.monotonic() - self._last_stale_check >= STALE_CHECK_S:
+            self._last_stale_check = time.monotonic()
+            if code_fingerprint() != self.code_fp:
+                self.stale_code = True
+                log.warning("code changed since this orchestrator started (code %s): restart it before the next "
+                            "stage that needs the change", self.code_fp)
         if time.monotonic() - self._last_watchdog >= self.watchdog_s:
             self._last_watchdog = time.monotonic()
             watchdog.tick()

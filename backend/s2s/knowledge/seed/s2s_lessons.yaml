@@ -172,9 +172,9 @@ entries:
     title: "A long-running orchestrator keeps the code it started with"
     symptom: "A fix is committed and tested, but the next stage run by the orchestrator behaves as before"
     root_cause: "The orchestrator imports the agents and tool adapters once at start; uart's signoff (03:32) ran the LEC without the FSM map committed at 02:15 because the orchestrator had started at 01:25."
-    lesson: "After changing agent or tool code, restart the orchestrator (or run the task in a fresh runner) before the stage that needs the change, at a point where no worker is mid-step; check the process start time against the commit time."
+    lesson: "The orchestrator logs its code fingerprint at start and warns once when the source changes. After changing agent or tool code, restart the orchestrator (or run the task in a fresh runner) before the stage that needs the change, at a point where no worker is mid-step; check the process start time against the commit time."
     evidence: "uart eqy_rtl_vs_final 03:32: 105/19 again; orchestrator pid 1130 started 01:25:54"
-    regression_test: "none (operations)"
+    regression_test: "tests/test_orchestrator_code_fingerprint.py"
     tags: [orchestrator, restart, stale_code, deployment, operations]
     source: {title: "S2S DECISIONS 2026-10-06", url: "docs/DECISIONS.md"}
     date: "2026-10-06"
