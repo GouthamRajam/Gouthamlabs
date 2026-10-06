@@ -1284,28 +1284,40 @@ def gdsii_steps() -> list[Step]:
                       "evidence": "power_estimated", "note": "20% input activity; no power budget in spec"},
             "ir_em_static": {"result": res(here.get("ir_drop_within_limit", False)), "tool": "OpenROAD PSM",
                              "evidence": "ir_drop_within_limit", "note": "static IR only; EM not analyzed"},
-            "dft_atpg": {"result": "partial" if _latest_checks(s, [ctx.task.run_id], "dft").get("dft_plan_complete") else "not run",
-                         "tool": "plan only (dft_plan.md)", "evidence": "dft_plan_complete", "note": "plan only in Phase 0"},
+            # a plan is not a measurement: no fault_coverage_pct, so readiness scores DFT as deferred (0)
+            "dft_atpg": {"result": "not run", "tool": "plan only (dft_plan.md)",
+                         "evidence": "dft_plan_complete" if _latest_checks(s, [ctx.task.run_id], "dft").get("dft_plan_complete")
+                         else "", "note": "plan only in Phase 0"},
             "signal_integrity": {"result": "not run", "tool": "-", "evidence": "", "note": "out of open-flow scope"},
             "reliability": {"result": "not run", "tool": "-", "evidence": "", "note": "out of open-flow scope"},
             "foundry_signoff": {"result": "not run", "tool": "-", "evidence": "", "note": "no foundry-certified decks"},
             "gds_integrity_repro": {"result": res(here.get("gds_readback", False) and here.get("reproduce_clean_container", False)),
                                     "tool": "KLayout read-back + reproduce.sh", "evidence": "gds_readback, reproduce_clean_container"},
         }
-        rep = readiness.score(r)
+        # the Phase 0 gate: hard checks pass/fail (the percentages are derived)
+        hard = readiness.hard_checks({"drc": status[6][0], "lvs": status[7][0], "antenna": status[8][0],
+                                      "timing": status[5][0], "equivalence": status[4][0]},
+                                     {"drc": status[6][1], "lvs": status[7][1], "antenna": status[8][1],
+                                      "timing": status[5][1], "equivalence": status[4][1]}, ctx.workdir / "reports")
+        rep = readiness.score(r, hard)
         _tool_json(ctx, "Gideon", "reports/tapeout_readiness.json", rep)
         (ctx.workdir / "reports/tapeout_readiness.md").write_text(readiness.markdown(_spec(ctx)["design"], rep, {
             "evidence packet": "tapeout/evidence/index.json", "reproduce": "tapeout/reproduce.sh",
             "checklist": "tapeout/reports/tapeout_checklist.md", "manifest": "tapeout/MANIFEST.sha256"}))
-        _result(ctx, "Gideon", f"B.9 checklist {len(items) - len(undone)}/16; readiness: Baseline A {rep['baseline_A_pct']}%, "
+        _result(ctx, "Gideon", f"B.9 checklist {len(items) - len(undone)}/16; hard checks: {hard['verdict']} "
+                f"({hard['passed']}/{hard['of']}); derived readiness (dft={rep['partial_credit']['dft']:g}, "
+                f"ir_em={rep['partial_credit']['ir_em']:g}): Baseline A {rep['baseline_A_pct']}%, "
                 f"Baseline B {rep['baseline_B_pct']}%")
 
     def release_notes(ctx: StepContext) -> None:
         data = llm.ask(ctx, "Gideon", goal="Write tapeout/release_notes.md: what this package is, its signoff status "
-                       "with the checklist, the readiness numbers with their baselines, known limits and open items.",
+                       "with the checklist, the hard checks (pass/fail, with any condition stated prominently) as the "
+                       "headline, the readiness percentages only as derived figures with their baselines and "
+                       "partial-credit values, the scope labels (DFT deferred, not measured), known limits and open items.",
                        inputs=_inputs(ctx, ["spec/spec.yaml", "reports/tapeout_checklist.json",
                                             "reports/tapeout_readiness.json", "reports/dfm_scorecard.json"]),
-                       exit_criteria=["no claim beyond the checklist and readiness data", "both baselines shown"],
+                       exit_criteria=["no claim beyond the checklist and readiness data", "both baselines shown",
+                                      "hard checks lead; no percentage is presented as the pass criterion"],
                        schema=REPORT_ANSWER, extra_note="Put the release notes in `report_markdown`. ")
         _answer_fields(ctx, "Gideon", data)
         _write(ctx, "Gideon", [{"path": "tapeout/release_notes.md", "content": data["report_markdown"]}], "release_notes")

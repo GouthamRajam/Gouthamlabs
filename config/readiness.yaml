@@ -17,4 +17,11 @@ weights:
   foundry_signoff: 3
   gds_integrity_repro: 6
 require_assumptions_block: true   # a score without the assumptions block is invalid
-partial_credit: 0.5   # Part 22.3 "partial" earns half the weight (M0.7)
+# Part 22.3 "Partial" in Baseline A, per check (decision 2026-10-06; replaces the single shared 0.5 of M0.7).
+partial_credit:
+  ir_em: 0.5   # IR drop / EM: measured, passed, tool-limited (open flow) -> half the weight
+  dft: 0       # DFT: deferred, nothing measured -> 0; never earns credit without a measured fault coverage
+# Not part of the 2026-10-06 decision; unchanged from M0.7 so Baseline B does not move: what Baseline B's
+# "Partial" earns (DRC, LVS, STA, power: open decks/tools, not the foundry's), and what a check earns when
+# only part of its own evidence passed (e.g. RTL sim passed but gate-level sim did not).
+partial_other: 0.5

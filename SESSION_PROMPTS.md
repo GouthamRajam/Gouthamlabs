@@ -53,6 +53,7 @@ suites. Run the stall-injection, finance-reconciliation and research-brief tests
 output. Write M0.9.md + the first weekly CEO review pack.
 
 ## After Phase 0 passes -> Phase 1 (Part 23)
-When all five blocks hit Baseline A ~100% clean, start P1: a small RISC-V (RV32I/IM) core
+When all five blocks pass the hard checks with scope labels (PHASE_GATES.md; the Baseline A %
+is derived, not the bar) and a human marks the gate PASSED, start P1: a small RISC-V (RV32I/IM) core
 to clean GDS on SKY130, passing the official RISC-V compliance tests. Then human sign-off,
 then an open SKY130 shuttle.

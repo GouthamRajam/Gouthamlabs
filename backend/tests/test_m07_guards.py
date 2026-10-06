@@ -131,14 +131,18 @@ def test_readiness_scores_follow_part22():
     clean = {k: {"result": "clean", "tool": "t", "evidence": "e"} for k in readiness.CAPS}
     for k in ("signal_integrity", "reliability", "foundry_signoff"):
         clean[k] = {"result": "not run", "tool": "-", "evidence": ""}
-    clean["dft_atpg"] = {"result": "partial", "tool": "plan", "evidence": "e"}
+    clean["dft_atpg"] = {"result": "not run", "tool": "plan", "evidence": "dft_plan_complete"}
     r = readiness.score(clean)
-    # weights sum to 106; A excludes the three n/a checks (9) -> 97; ir (4) and dft (5) are at most
-    # partial in A -> (97 - 2 - 2.5) / 97 = 95.36 -> 95.3 (floored, never rounded up)
-    assert r["weights_A_total"] == 97 and r["baseline_A_pct"] == 95.3
+    # weights sum to 106; A excludes the three n/a checks (9) -> 97; ir (4) earns ir_em 0.5 = 2, dft (5) is
+    # deferred and earns 0 -> (97 - 2 - 5) / 97 = 92.78 -> 92.7 (floored, never rounded up)
+    assert r["weights_total"] == 106 and r["weights_A_total"] == 97 and r["earned_A_total"] == 90
+    assert r["baseline_A_pct"] == 92.7 and r["partial_credit"] == {"dft": 0.0, "ir_em": 0.5, "other": 0.5}
     # B over 106: full 44 (sim, cov, formal, antenna, density, gds) + partial drc 7 + lvs 7 + sta 6 + power 2 + ir 2
     # = 68 -> 64.15 -> 64.1
     assert r["weights_B_total"] == 106 and r["baseline_B_pct"] == 64.1
+    scope = {x["check"]: x["scope"] for x in r["rows"]}
+    assert scope["dft_atpg"] == readiness.DFT_DEFERRED and scope["ir_em_static"] == "measured: passed, tool-limited"
+    assert scope["signal_integrity"].startswith("excluded from Baseline A") and scope["drc"] == "measured: passed"
     worse = dict(clean, drc={"result": "failed", "tool": "t", "evidence": "e"})
     assert readiness.score(worse)["baseline_A_pct"] < r["baseline_A_pct"]
     assert "ASSUMPTIONS" in readiness.markdown("x", r, {})
