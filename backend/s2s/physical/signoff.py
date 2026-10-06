@@ -192,6 +192,58 @@ engine abc pdr -rfi
 
 
 _LEC_PROVEN = re.compile(r"Of those cells (?P<p>\d+) are proven and (?P<u>\d+) are unproven")
+_RECODE = re.compile(r"Recoding FSM `\$fsm\$\\(?P<sig>\S+?)\$\d+' from module `\\(?P<mod>\S+)'[^\n]*\n"
+                     r"(?:[^\n]*mapping[^\n]*\n)?(?P<body>(?:[ \t]+[01]+ -> [-01]+\n)+)")
+_FSM_OUTPUTS = re.compile(r"Information on FSM \$fsm\$\\(?P<sig>\S+?)\$\d+ .*?Output signals:\n(?P<body>(?:[ \t]+\d+: \S+\n)+)",
+                          re.S)
+
+
+def find_synth_log(netlist: Path) -> Path | None:
+    """The Yosys log of the synthesis that produced `netlist` (OpenLane: <tag>/NN-yosys-synthesis/; the final
+    netlist sits in <tag>/final/nl/)."""
+    netlist = Path(netlist).resolve()
+    for d in (netlist.parent, *list(netlist.parents)[:3]):
+        hits = sorted([*d.glob("yosys-synthesis.log"), *d.glob("*-yosys-synthesis/yosys-synthesis.log")])
+        if hits:
+            return hits[-1]
+    return None
+
+
+def fsm_recodings(log: str) -> list[dict]:
+    """Every FSM whose state encoding Yosys fsm_recode changed, from the synthesis log: the state signal, the
+    old -> new code map (MSB first; new codes written exactly, '-' as 0, i.e. one-hot) and the FSM's public
+    output signals (fsm_opt can merge a one-hot state bit with an identical output such as `ready`)."""
+    outs = {m["sig"]: [ln.split(": ", 1)[1].strip()[1:] for ln in m["body"].splitlines()
+                       if ln.split(": ", 1)[1].strip().startswith("\\")] for m in _FSM_OUTPUTS.finditer(log)}
+    recs = []
+    for m in _RECODE.finditer(log):
+        pairs = re.findall(r"([01]+) -> ([-01]+)", m["body"])
+        recs.append({"signal": m["sig"], "module": m["mod"], "width": len(pairs[0][1]),
+                     "map": [(old, new.replace("-", "0")) for old, new in pairs], "outputs": outs.get(m["sig"], [])})
+    return recs
+
+
+def fsm_state_aliases(netlist_text: str, recs: list[dict]) -> tuple[str, list[str]]:
+    """Verilog lines that give each recoded state register one named wire in the CHECKER's copy of the netlist
+    (an alias, no logic), so equiv_make -encfile can pair it with the RTL register. Bit i is the net
+    `\\<signal>[i]`; a bit with no such net was merged into an FSM output, taken only if a flip-flop drives that
+    output directly. A wrong or missing pick cannot pass anything: the mapping is a hypothesis that equiv_induct
+    must prove. Returns (lines, problems)."""
+    lines, problems = [], []
+    for r in recs:
+        sig, bits = r["signal"], []
+        for i in range(r["width"]):
+            if f"\\{sig}[{i}] ;" in netlist_text:
+                bits.append(f"\\{sig}[{i}] ")
+                continue
+            cands = [o for o in r["outputs"] if re.search(rf"\.Q\({re.escape(o)}\)", netlist_text)]
+            if len(cands) != 1:
+                problems.append(f"{sig}[{i}]: no netlist net (flip-flop-driven FSM outputs: {cands})")
+                break
+            bits.append(cands[0])
+        else:
+            lines.append(f"  wire [{r['width'] - 1}:0] \\{sig} ;\n  assign \\{sig}  = {{ {' , '.join(reversed(bits))} }};")
+    return "\n".join(lines), problems
 
 
 def _lec_fallback(eqy_res, rtl: list[Path], pdk: Path, netlist: Path, top: str, workdir: Path, name: str, d: Path):
@@ -199,22 +251,45 @@ def _lec_fallback(eqy_res, rtl: list[Path], pdk: Path, netlist: Path, top: str, 
     error without a counterexample). Second, independent proof: Yosys sequential equivalence with register
     correspondence (equiv_make on bit-level names, equiv_simple + equiv_induct; matched registers are
     assumed to start equal, as in standard LEC). Passes only if EVERY $equiv point is proven; any unproven
-    point keeps the check failed. The eqy result stays in the metrics."""
+    point keeps the check failed. The eqy result stays in the metrics.
+
+    Re-encoded FSMs (Yosys fsm_recode, e.g. binary -> one-hot) have no name correspondence. Their old -> new
+    state mapping is read from the synthesis log and given to equiv_make -encfile (Yosys' own mechanism; the
+    open-source counterpart of the FSM-encoding guidance commercial LEC reads from synthesis, e.g. Formality SVF).
+    The mapping is a correspondence hypothesis that equiv_induct must prove like every other point."""
     import dataclasses
     ys = d / f"{name}_lec.ys"
+    slog = find_synth_log(netlist)
+    recs = fsm_recodings(slog.read_text(errors="replace")) if slog else []
+    gate_nl, encopt, keep, fsm_problems = Path(netlist).resolve(), "", "", []
+    if recs:
+        nl_text = gate_nl.read_text()
+        alias, fsm_problems = fsm_state_aliases(nl_text, recs)
+        if alias and nl_text.count("endmodule") == 1:
+            # the checker reads its own copy with the alias wires; the signed-off netlist is not touched
+            gate_nl = d / f"{name}_gate.nl.v"
+            gate_nl.write_text(nl_text.replace("endmodule", alias + "\nendmodule"))
+            enc = d / f"{name}_fsm.enc"
+            enc.write_text("".join(f".fsm {r['module']} {r['signal']}\n" + "".join(f".map {o} {n}\n" for o, n in r["map"])
+                                   for r in recs))
+            encopt = f"-encfile {enc} "
+            keep = "".join(f" w:{r['signal']} %d" for r in recs)
+        elif alias:
+            fsm_problems.append("netlist has more than one module; FSM alias wires not added")
     prep = "hierarchy -top {t}\nproc\nflatten\nopt_clean\nmemory -nomap\nmemory_map\nopt_clean\nsplitnets -format []"
+    prep = prep + (f" w:*{keep}" if keep else "")
     ys.write_text(f"""read_verilog -sv {' '.join(str(Path(p).resolve()) for p in rtl)}
 {prep.format(t=top)}
 rename {top} gold
 design -stash gold
-read_verilog -sv {pdk} {Path(netlist).resolve()}
+read_verilog -sv {pdk} {gate_nl}
 {prep.format(t=top)}
 rename {top} gate
 design -stash gate
 design -copy-from gold -as gold gold
 design -copy-from gate -as gate gate
 async2sync
-equiv_make gold gate equiv
+equiv_make {encopt}gold gate equiv
 hierarchy -top equiv
 equiv_simple -seq 5
 equiv_induct -seq 5
@@ -232,7 +307,11 @@ equiv_status -assert
     metrics = {**eqy_res.metrics, "method": "yosys LEC (equiv_make/equiv_simple/equiv_induct, register correspondence)"
                if ok else "eqy failed; yosys LEC fallback did not prove", "eqy_status": eqy_res.metrics.get("status"),
                "eqy_reasons": eqy_res.reasons[:3], "lec_points_proven": proven, "lec_points_unproven": unproven,
-               "lec_log": str(log)}
+               "lec_log": str(log), "fsm_recoded": [r["signal"] for r in recs],
+               "fsm_encfile": encopt.split()[1] if encopt else None, "fsm_problems": fsm_problems,
+               "synth_log": str(slog) if slog else None}
+    if ok and recs:
+        metrics["method"] += " + FSM encoding map from the synthesis log (equiv_make -encfile)"
     if ok:
         metrics["status"] = "PASS"
     reasons = [] if ok else [*eqy_res.reasons[:3], f"yosys LEC: {proven} proven, {unproven} unproven"
