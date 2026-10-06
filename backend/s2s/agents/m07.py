@@ -587,8 +587,10 @@ def _route_problems(m: dict, cts: dict) -> tuple[list[str], dict]:
              "wirelength_um": m.get("route__wirelength"), "utilization": m.get("design__instance__utilization"),
              "cts_worst_tree_skew_ns": cts["worst_tree_skew_ns"], "cts_target_ns": cts["target_ns"]}
     p = []
+    # max fanout: judged by the independent check, which applies the clock-tree rule (config/signoff.yaml
+    # cts.clock_max_fanout); OpenLane's count must agree with its raw count (_independent_drv)
     for k in ("route_drc_errors", "antenna_violating_nets", "antenna_violating_pins", "disconnected_pins",
-              "max_slew_violations", "max_cap_violations", "max_fanout_violations"):
+              "max_slew_violations", "max_cap_violations"):
         if facts[k] is None:
             p.append(f"{k} not reported")
         elif facts[k] != 0:
@@ -619,8 +621,14 @@ def _independent_drv(ctx: StepContext, r: dict, k: int, top: str) -> tuple[list[
     pins = res.metrics.get("drv_violator_pins")
     if res.status in ("ERROR", "TIMEOUT") or pins is None:
         return [f"independent DRV check did not run cleanly ({res.status})"], {"independent_drv_pins": None}
-    p = [f"independent STA: {v['kind']} {v['pin']} {v['value']:g} (limit {v['limit']:g})" for v in pins]
-    return p, {"independent_drv_pins": pins, "independent_drv_log": res.log_path}
+    keep, allowed = so.apply_clock_fanout_rule(pins, Path(nl).read_text(errors="replace"),
+                                               float(policy()["cts"]["clock_max_fanout"]))
+    p = [f"independent STA: {v['kind']} {v['pin']} {v['value']:g} (limit {v['limit']:g})" for v in keep]
+    ol = (r.get("metrics") or {}).get("design__max_fanout_violation__count")
+    raw = sum(1 for v in pins if v["kind"] == "max fanout")
+    if ol is None or int(ol) != raw:
+        p.append(f"max fanout counts disagree: OpenLane {ol} vs S2S OpenSTA {raw} (same netlist and SDC)")
+    return p, {"independent_drv_pins": keep, "clock_rule_allowed": allowed, "independent_drv_log": res.log_path}
 
 
 def unpropagated_clocks(run_dir: Path) -> dict[str, list[str]]:
@@ -841,10 +849,10 @@ def place_route_steps() -> list[Step]:
             p for p in last["problems"] if "slack" in p or "corners" in p],
                {"setup": f.get("setup_ws_by_corner"), "hold": f.get("hold_ws_by_corner")})
         _check(ctx, "Orion", "drv_clean", "opensta report_check_types (OpenLane post-route + S2S on the routed netlist)",
-               all(f.get(k) == 0 for k in ("max_slew_violations", "max_cap_violations", "max_fanout_violations"))
+               all(f.get(k) == 0 for k in ("max_slew_violations", "max_cap_violations"))
                and f.get("independent_drv_pins") == [],
                {**{k: f.get(k) for k in ("max_slew_violations", "max_cap_violations", "max_fanout_violations")},
-                "independent_drv_pins": f.get("independent_drv_pins")})
+                "independent_drv_pins": f.get("independent_drv_pins"), "clock_rule_allowed": f.get("clock_rule_allowed")})
         ctx.evidence = f"{len(table)} iteration(s); {'clean' if clean else 'not clean'}"
 
     def tick(ctx: StepContext) -> None:
@@ -968,10 +976,19 @@ def signoff_steps() -> list[Step]:
                    F["nl"], ctx.workdir / "pnr/src/constraints.sdc", ph["top"], ctx.workdir, spef)
         olm = json.loads(F["metrics"].read_text())
         table, worst_paths, bad, mism = {}, {}, [], []
+        nl_text = Path(F["nl"]).read_text(errors="replace")
+        clk_lim = float(policy()["cts"]["clock_max_fanout"])
         for c, r in res.items():
             s_, h_ = r.metrics["setup_worst_slack"], r.metrics["hold_worst_slack"]
+            keep, allowed = so.apply_clock_fanout_rule(r.metrics.get("drv_violator_pins") or [], nl_text, clk_lim)
+            r.metrics["clock_rule_allowed"] = allowed
+            if not r.passed and allowed and not keep and r.status == "FAIL" and not r.errors \
+                    and not r.safety_net_hits and all(f.startswith("design rule violators") for f in r.stage_failures) \
+                    and set(r.metrics["drv_violators"]) == {"max fanout"}:
+                r.passed, r.reasons = True, []  # only clock-tree fanout within the clock rule
             table[c] = {"setup_ws_ns": s_, "setup_tns_ns": r.metrics["tns"], "hold_ws_ns": h_, "hold_tns_ns": r.metrics["hold_tns"],
-                        "drv_violators": r.metrics["drv_violators"], "passed": r.passed}
+                        "drv_violators": r.metrics["drv_violators"], "clock_rule_allowed": r.metrics["clock_rule_allowed"],
+                        "passed": r.passed}
             worst_paths[c] = r.metrics["worst_paths"][:2]
             if not r.passed:
                 bad.append(f"{c}: {r.reasons[:2]}")

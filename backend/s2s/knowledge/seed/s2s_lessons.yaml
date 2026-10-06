@@ -222,3 +222,17 @@ entries:
     date: "2026-10-06"
     confidence: high
     owner: Sage
+  - id: s2s-cts-004
+    kind: s2s_lesson
+    title: "OpenLane 2.3.10 CTS cannot meet a clock fanout of 10 on small designs: the clock-tree rule (limit 20) applies to clock nets"
+    symptom: "Every leaf clock buffer of a small design (~100 sinks) drives 11-18 flops; no parameter in pnr_ranges.yaml changes it"
+    root_cause: "The installed TritonCTS stops the H-tree when a region has <= 15 sinks (fixed numMaxLeafSinks; newer OpenROAD derives this from max fanout) and skips sink clustering below a minimum sink count, so 104 sinks split 52 -> 26 -> 13 into 8 leaves (average 13 > 10). Placement spread cannot change the count per leaf."
+    wrong_assumption: "A larger core or lower density lets the H-tree split deeper (spi_master iteration 2: still 3 levels, 8 leaves, up to 18)."
+    lesson: "Read the CTS log's 'Sinks per sub-region' and stop criterion: if sinks/leaves on average exceed the limit, no placement or CTS knob in range can fix it - escalate. CEO decision 2026-10-06: clock-tree nets (every load a flop clock pin or a CTS clock buffer/load) use config/signoff.yaml cts.clock_max_fanout = 20; data nets keep the SDC 10; clock slew/cap/skew stay enforced; OpenLane's and S2S's raw fanout counts must agree."
+    evidence: "spi_master run_01M484JWYZ7ADCE8N97SZV80QG iterations 1-2 (CTS log: sinks per sub-region 52/26/13, stop at 15); OpenROAD master HTreeBuilder/TritonCTS (getMaxFanout vs numMaxLeafSinks_)"
+    regression_test: "tests/test_pnr_independent_drv.py::test_clock_tree_fanout_above_the_clock_rule_and_data_fanout_are_problems"
+    tags: [cts, clock_tree, fanout, max_fanout, h_tree, clock_rule, openroad, openlane, orion, chronos, place_route, spi_master]
+    source: {title: "OpenROAD cts/src/HTreeBuilder.cpp (master)", url: "https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/cts/src/HTreeBuilder.cpp"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage

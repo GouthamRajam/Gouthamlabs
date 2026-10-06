@@ -198,6 +198,43 @@ _FSM_OUTPUTS = re.compile(r"Information on FSM \$fsm\$\\(?P<sig>\S+?)\$\d+ .*?Ou
                           re.S)
 
 
+_CLOCK_INSTANCE = re.compile(r"^(clkbuf_|clkload|clkbuf\d|cts_)")
+
+
+def clock_tree_drivers(netlist_text: str) -> set[str]:
+    """Output pins (inst/X|Y) that drive a clock-tree net: every load is a flip-flop clock pin (.CLK) or an input of
+    a CTS-inserted clock buffer/load (clkbuf_*, clkload*). Structural, from the tool's netlist."""
+    cells = re.findall(r"^\s*(\S+)\s+(\S+)\s*\(([^;]*?)\);", netlist_text, re.M)
+    drivers: dict[str, str] = {}
+    loads: dict[str, list[tuple[str, str]]] = {}
+    for _cell, inst, body in cells:
+        for pin, net in re.findall(r"\.(\w+)\(\s*([^()\s]+(?:\s*\[\d+\])?)\s*\)", body):
+            net = net.replace(" ", "")
+            if pin in ("X", "Y", "Q", "Q_N"):
+                drivers[net] = f"{inst}/{pin}"
+            else:
+                loads.setdefault(net, []).append((inst, pin))
+    out = set()
+    for net, drv in drivers.items():
+        ld = loads.get(net, [])
+        if ld and all(pin == "CLK" or _CLOCK_INSTANCE.match(inst) for inst, pin in ld):
+            out.add(drv)
+    return out
+
+
+def apply_clock_fanout_rule(pins: list[dict], netlist_text: str, clock_limit: float) -> tuple[list[dict], list[dict]]:
+    """Split DRV violators: max-fanout violators on clock-tree nets within `clock_limit` are allowed by the clock
+    rule (returned second); everything else stays a violator (returned first)."""
+    clock = clock_tree_drivers(netlist_text)
+    keep, allowed = [], []
+    for v in pins:
+        if v["kind"] == "max fanout" and v["pin"] in clock and v["value"] <= clock_limit:
+            allowed.append({**v, "rule": f"clock-tree net, limit {clock_limit:g}"})
+        else:
+            keep.append(v)
+    return keep, allowed
+
+
 def find_synth_log(netlist: Path) -> Path | None:
     """The Yosys log of the synthesis that produced `netlist` (OpenLane: <tag>/NN-yosys-synthesis/; the final
     netlist sits in <tag>/final/nl/)."""
