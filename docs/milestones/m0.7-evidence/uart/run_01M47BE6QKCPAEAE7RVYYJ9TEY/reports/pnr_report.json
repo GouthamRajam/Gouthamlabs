@@ -1,0 +1,306 @@
+{
+  "iterations": [
+    {
+      "iteration": 1,
+      "tag": "it1",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 55.0,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "CTS_SINK_CLUSTERING_SIZE": 25,
+        "GRT_ANTENNA_ITERS": 3,
+        "GRT_ANTENNA_MARGIN": 10,
+        "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50,
+        "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
+        "CTS_CLK_MAX_WIRE_LENGTH": 0,
+        "SYNTH_STRATEGY": "DELAY 0"
+      },
+      "problems": [
+        "max_fanout_violations = 3",
+        "independent STA: max fanout clkbuf_0_clk/X 16 (limit 10)",
+        "independent STA: max fanout clkbuf_4_15_0_clk/X 12 (limit 10)",
+        "independent STA: max fanout clkbuf_4_5_0_clk/X 12 (limit 10)"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 9.3298145183647,
+          "nom_ss_100C_1v60": 5.101359479234333,
+          "nom_ff_n40C_1v95": 10.976891706289603,
+          "min_tt_025C_1v80": 9.436704129663395,
+          "min_ss_100C_1v60": 5.306212508461288,
+          "min_ff_n40C_1v95": 11.045971561192331,
+          "max_tt_025C_1v80": 9.245030780379118,
+          "max_ss_100C_1v60": 4.9432086489928775,
+          "max_ff_n40C_1v95": 10.92072774233144
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3319222213254087,
+          "nom_ss_100C_1v60": 0.8683887188458921,
+          "nom_ff_n40C_1v95": 0.11219747670724273,
+          "min_tt_025C_1v80": 0.3280928954717221,
+          "min_ss_100C_1v60": 0.8629791014942603,
+          "min_ff_n40C_1v95": 0.10970194507748747,
+          "max_tt_025C_1v80": 0.3361042095328415,
+          "max_ss_100C_1v60": 0.8759140882753895,
+          "max_ff_n40C_1v95": 0.11467815910362367
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 3,
+        "wirelength_um": 20550,
+        "utilization": 0.494054,
+        "cts_worst_tree_skew_ns": 0.021073,
+        "cts_target_ns": 2.0,
+        "independent_drv_pins": [
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_0_clk/X",
+            "limit": 10.0,
+            "value": 16.0
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_4_15_0_clk/X",
+            "limit": 10.0,
+            "value": 12.0
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_4_5_0_clk/X",
+            "limit": 10.0,
+            "value": 12.0
+          }
+        ],
+        "independent_drv_log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/sta_uart_top_pnr_it1_drv.log",
+        "openlane_unpropagated_clocks": {}
+      },
+      "changes": [
+        {
+          "param": "PL_TARGET_DENSITY_PCT",
+          "value": 60,
+          "reason": "Adopted from recorded experiment PNR-UART-0013 (D1, knobs first): the two level-4 clock buffers at fanout 11 come from the H-tree stop rule (<=15 sinks per branch; clustering never applies at 125 sinks: 6 CTS-knob experiments 0001-0006 unchanged), so the flop spread decides leaf loads. Density 60 % gave 0 independent violators after CTS and after routing (DRC 0, antenna 0, setup +4.53 ns, hold +0.104 ns)."
+        }
+      ],
+      "diagnosis": {
+        "cts": {
+          "sinks": 125,
+          "clustering_applied": false,
+          "sinks_after_clustering": null,
+          "htree_stop_max_sinks": 15,
+          "levels": 4,
+          "buffers": 17
+        },
+        "violators": [
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_0_clk/X",
+            "limit": 10.0,
+            "value": 16.0,
+            "clock_tree_level": 0,
+            "loads_by_cell": {
+              "clkbuf_8": 16
+            }
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_4_15_0_clk/X",
+            "limit": 10.0,
+            "value": 12.0,
+            "clock_tree_level": 4,
+            "loads_by_cell": {
+              "dfxtp_1": 12
+            }
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_4_5_0_clk/X",
+            "limit": 10.0,
+            "value": 12.0,
+            "clock_tree_level": 4,
+            "loads_by_cell": {
+              "dfxtp_1": 11,
+              "clkbuf_4": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "tag": "it2",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 60,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "CTS_SINK_CLUSTERING_SIZE": 25,
+        "GRT_ANTENNA_ITERS": 3,
+        "GRT_ANTENNA_MARGIN": 10,
+        "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50,
+        "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
+        "CTS_CLK_MAX_WIRE_LENGTH": 0,
+        "SYNTH_STRATEGY": "DELAY 0"
+      },
+      "problems": [
+        "max_fanout_violations = 1",
+        "independent STA: max fanout clkbuf_0_clk/X 16 (limit 10)"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 9.49571559371565,
+          "nom_ss_100C_1v60": 5.4202439626347765,
+          "nom_ff_n40C_1v95": 11.068880347819562,
+          "min_tt_025C_1v80": 9.574608044076744,
+          "min_ss_100C_1v60": 5.566120166768826,
+          "min_ff_n40C_1v95": 11.118601465339003,
+          "max_tt_025C_1v80": 9.422446201088707,
+          "max_ss_100C_1v60": 5.2670980179298805,
+          "max_ff_n40C_1v95": 11.021930347047956
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3301624622704572,
+          "nom_ss_100C_1v60": 0.8634248560512541,
+          "nom_ff_n40C_1v95": 0.11073353658556895,
+          "min_tt_025C_1v80": 0.3266170759633489,
+          "min_ss_100C_1v60": 0.857536399495559,
+          "min_ff_n40C_1v95": 0.10870854524253322,
+          "max_tt_025C_1v80": 0.3332363923568248,
+          "max_ss_100C_1v60": 0.8686913656509643,
+          "max_ff_n40C_1v95": 0.11331125247704642
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 1,
+        "wirelength_um": 19817,
+        "utilization": 0.495946,
+        "cts_worst_tree_skew_ns": 0.026394,
+        "cts_target_ns": 2.0,
+        "independent_drv_pins": [
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_0_clk/X",
+            "limit": 10.0,
+            "value": 16.0
+          }
+        ],
+        "independent_drv_log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/sta_uart_top_pnr_it2_drv.log",
+        "openlane_unpropagated_clocks": {}
+      },
+      "changes": [
+        {
+          "param": "PL_TARGET_DENSITY_PCT",
+          "value": 60,
+          "reason": "Raise placement density target from 55% to 60% because clustering does not apply at 125 sinks, so the flop spread sets how the H-tree splits sinks (level-4 leaves at 12 loads, root at 16). Recorded experiment PNR-UART-0013 reported 0 independent fanout violators at 60%; this rerun must confirm it."
+        }
+      ],
+      "diagnosis": {
+        "cts": {
+          "sinks": 125,
+          "clustering_applied": false,
+          "sinks_after_clustering": null,
+          "htree_stop_max_sinks": 15,
+          "levels": 4,
+          "buffers": 17
+        },
+        "violators": [
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_0_clk/X",
+            "limit": 10.0,
+            "value": 16.0,
+            "clock_tree_level": 0,
+            "loads_by_cell": {
+              "clkbuf_8": 16
+            }
+          }
+        ]
+      }
+    },
+    {
+      "iteration": 3,
+      "tag": "it3",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 60,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "CTS_SINK_CLUSTERING_SIZE": 25,
+        "GRT_ANTENNA_ITERS": 3,
+        "GRT_ANTENNA_MARGIN": 10,
+        "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50,
+        "CTS_DISTANCE_BETWEEN_BUFFERS": 25,
+        "CTS_CLK_MAX_WIRE_LENGTH": 0,
+        "SYNTH_STRATEGY": "DELAY 0"
+      },
+      "problems": [],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 9.747848137917238,
+          "nom_ss_100C_1v60": 5.828237613047075,
+          "nom_ff_n40C_1v95": 11.236810022738478,
+          "min_tt_025C_1v80": 9.839258575279619,
+          "min_ss_100C_1v60": 5.992277066377683,
+          "min_ff_n40C_1v95": 11.288560628004333,
+          "max_tt_025C_1v80": 9.663914386703347,
+          "max_ss_100C_1v60": 5.670498897604016,
+          "max_ff_n40C_1v95": 11.184794740296068
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3267592955368256,
+          "nom_ss_100C_1v60": 0.8566018137269977,
+          "nom_ff_n40C_1v95": 0.11045037419512992,
+          "min_tt_025C_1v80": 0.32348319383195595,
+          "min_ss_100C_1v60": 0.8512545353999618,
+          "min_ff_n40C_1v95": 0.1081844089377841,
+          "max_tt_025C_1v80": 0.32973597008348543,
+          "max_ss_100C_1v60": 0.861824191960231,
+          "max_ff_n40C_1v95": 0.11300877220543257
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 0,
+        "wirelength_um": 20101,
+        "utilization": 0.503243,
+        "cts_worst_tree_skew_ns": 0.039857,
+        "cts_target_ns": 2.0,
+        "independent_drv_pins": [],
+        "independent_drv_log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/sta_uart_top_pnr_it3_drv.log",
+        "openlane_unpropagated_clocks": {}
+      },
+      "changes": [
+        {
+          "param": "CTS_DISTANCE_BETWEEN_BUFFERS",
+          "value": 25,
+          "reason": "Set clock buffer distance from 0 (automatic) to 25 um because the root clkbuf_0_clk (level 0) drives all 16 level-4 leaf buffers directly (17 buffers total, none at levels 1-3); buffers along the upper H-tree wires let the root drive branch buffers instead of 16 leaves."
+        }
+      ]
+    }
+  ],
+  "explained_by": "Orion",
+  "explanation": "# Place and route summary: uart (sky130A, sky130_fd_sc_hd, 50 MHz clk)\n\nAll numbers below come from reports/pnr_iterations.json, reports/cts_report.json and reports/floorplan_report.json. I ran no tools. The S2S runtime runs the real checks after this report.\n\n## Floorplan\n- Die area 23296.2 um^2, core area 18517.8 um^2, utilization 0.469189 (core utilization choice 45%).\n- Power grid violations: 0.\n- 45 pins: clk and rst_n on the south edge, rx and tx_data/tx_valid on the west, all outputs on the east, baud_div and parity_mode on the north.\n\n## Iteration table\n\n| Iter | Parameters that differ | Problems found | What changed next (reason) |\n|---|---|---|---|\n| 1 | PL_TARGET_DENSITY_PCT 55.0, CTS_DISTANCE_BETWEEN_BUFFERS 0 | max_fanout_violations = 3: clkbuf_0_clk/X fanout 16, clkbuf_4_15_0_clk/X fanout 12, clkbuf_4_5_0_clk/X fanout 12 (limit 10) | PL_TARGET_DENSITY_PCT to 60. Clustering does not apply at 125 sinks (htree stop 15 sinks, 4 levels, 17 buffers), so flop spread decides leaf loads. Adopted from recorded experiment PNR-UART-0013. |\n| 2 | PL_TARGET_DENSITY_PCT 60, CTS_DISTANCE_BETWEEN_BUFFERS 0 | max_fanout_violations = 1: clkbuf_0_clk/X fanout 16 (limit 10). The two level-4 leaf violators are gone. | CTS_DISTANCE_BETWEEN_BUFFERS from 0 (automatic) to 25 um. The root clkbuf_0_clk drove all 16 level-4 leaf buffers directly (no buffers at levels 1-3). |\n| 3 | PL_TARGET_DENSITY_PCT 60, CTS_DISTANCE_BETWEEN_BUFFERS 25 | none listed; independent STA DRV pins: none | none |\n\nParameters unchanged across all three iterations: FP_CORE_UTIL 45, MAX_FANOUT_CONSTRAINT 10, CTS_SINK_CLUSTERING_SIZE 25, GRT_ANTENNA_ITERS 3, GRT_ANTENNA_MARGIN 10, CTS_SINK_CLUSTERING_MAX_DIAMETER 50, CTS_CLK_MAX_WIRE_LENGTH 0, SYNTH_STRATEGY \"DELAY 0\".\n\nEach step changed one parameter, within the two-parameter limit.\n\n### Per-iteration facts\n\n| Iter | Fanout viol. | Route DRC | Antenna nets / pins | Slew / cap viol. | Wirelength (um) | Utilization | Worst tree skew (ns) |\n|---|---|---|---|---|---|---|---|\n| 1 | 3 | 0 | 0 / 0 | 0 / 0 | 20550 | 0.494054 | 0.021073 |\n| 2 | 1 | 0 | 0 / 0 | 0 / 0 | 19817 | 0.495946 | 0.026394 |\n| 3 | 0 | 0 | 0 / 0 | 0 / 0 | 20101 | 0.503243 | 0.039857 |\n\nDisconnected pins were 0 in all three iterations.\n\n## Final state (iteration 3, from the reports)\n\n- **Route DRC errors:** 0.\n- **Antenna:** 0 violating nets, 0 violating pins (GRT_ANTENNA_ITERS 3, margin 10).\n- **Max fanout / slew / cap violations:** 0 / 0 / 0. The independent STA found no DRV pins (log: sta_uart_top_pnr_it3_drv.log).\n- **Congestion / overflow:** not present in the input data. Nothing is claimed.\n- **Setup worst slack (ns):** smallest is 5.670498897604016 at max_ss_100C_1v60. At nom_tt_025C_1v80 it is 9.747848137917238; nom_ss 5.828237613047075; nom_ff 11.236810022738478. All 9 corners are positive. REQ-005 asks for setup slack >= 0 at the typical corner at a 20 ns period; the tool value at nom_tt is 9.747848137917238 ns.\n- **Hold worst slack (ns):** smallest is 0.1081844089377841 at min_ff_n40C_1v95. At nom_tt 0.3267592955368256; nom_ss 0.8566018137269977; nom_ff 0.11045037419512992. All 9 corners are positive.\n- **Clock tree:** worst tree skew 0.039857 ns (max_ss_100C_1v60) against a 2.0 ns target, about 2% of the target. The CTS report lists 39 clock buffers, 80 hold buffers and 172 timing-repair buffers. Source latency ranges from 0.410445 ns (min_ff) to 1.110034 ns (max_ss). The tool's reported skew (0.265540 to 0.289857 ns) includes 0.25 ns clock uncertainty.\n\n## Items needing attention\n\n1. **Hold after CTS:** cts_report.json shows setup/hold slack after CTS for the three nom corners: hold 0.312645 (tt), 0.568475 (ss), -0.002920 (ff); setup 10.1683 (tt), 3.720212 (ss), 10.648337 (ff). The nom_ff hold slack is negative by 0.002920 ns (about 3 ps) at that point in the flow. Iteration 3's own figure at nom_ff is +0.11045037419512992 ns. The inputs do not say whether these are the same netlist stage, so I do not claim the violation is fixed. Chronos should re-run STA to confirm.\n2. **No congestion/overflow data** was supplied.\n3. **Buffer count:** 172 timing-repair and 80 hold buffers are large for this design; area impact is unreviewed.\n4. **Bookkeeping:** the 'changes' fields in iterations 1 and 2 do not line up with their 'params' (see assumptions).\n\nNo check is claimed as passed. The numbers above are what the tools reported in the supplied files.",
+  "assumptions": [
+    "The 'changes' field of iterations 1 and 2 is not consistent with each record's 'params'. Iteration 1 params show PL_TARGET_DENSITY_PCT 55.0 but its change lists 60, and iteration 2 params already show 60 with a change that again lists 60. I read iteration 1's change as the one that produced iteration 2's setup, and iteration 2's entry as a restatement of that change. Iteration 3's change (CTS_DISTANCE_BETWEEN_BUFFERS 25) matches iteration 3's params.",
+    "The final state is iteration 3, the last record in pnr_iterations.json, and its 'facts' are post-route values (DRC and antenna are route-stage fields).",
+    "The CTS report (cts_report.json, marked iteration 3) is read as post-CTS data. Its hold slack after CTS (-0.002920 ns at nom_ff) comes from an earlier flow point than the iteration 3 post-route hold slack (+0.11045037419512992 ns at nom_ff); I do not reconcile the two.",
+    "Placement density is quoted in percent as PL_TARGET_DENSITY_PCT; utilization values are the fractions given by the tools (floorplan 0.469189, iteration 3 final 0.503243).",
+    "The reported 'worst' figures below are the minimum over the 9 corners listed in the tool data; I computed no new values."
+  ],
+  "open_issues": [
+    "cts_report.json shows hold slack -0.002920 ns at nom_ff_n40C_1v95 after CTS, with 80 hold buffers already inserted. Iteration 3 facts show hold slack +0.11045037419512992 ns at that corner, but I cannot confirm from the inputs that the two refer to the same netlist stage. Chronos should re-run STA to confirm.",
+    "No congestion or routing-overflow figure appears in any input file, so none is reported and none is claimed to be clean.",
+    "The CTS report notes 172 timing-repair buffers and 80 hold buffers, which is large for a small UART. Area impact has not been reviewed.",
+    "Inconsistent 'changes' vs 'params' bookkeeping in pnr_iterations.json (iterations 1 and 2) should be fixed so the iteration table is unambiguous.",
+    "The recorded experiment PNR-UART-0013 predicted 0 independent fanout violators at 60% density. Iteration 2 reproduced only part of that (1 violator remained), and the zero was reached only after the CTS buffer-distance change in iteration 3. This is for human review.",
+    "Spec target_clock_note says the PDK and library choice is a DEFAULT needing G1 review; that is still pending for a human."
+  ]
+}

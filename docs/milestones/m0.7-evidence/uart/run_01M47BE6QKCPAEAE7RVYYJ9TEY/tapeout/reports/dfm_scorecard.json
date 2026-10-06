@@ -1,0 +1,607 @@
+{
+  "summary": {
+    "high": 0,
+    "medium": 2,
+    "low": 5
+  },
+  "items": [
+    {
+      "id": "DFM-003",
+      "severity": "medium",
+      "check": "line_end",
+      "title": "met1: 164 line end(s) at near-minimum spacing",
+      "count": 164,
+      "locations": [
+        [
+          124.225,
+          80.14,
+          124.36,
+          80.28
+        ],
+        [
+          79.88,
+          80.82,
+          80.015,
+          80.96
+        ],
+        [
+          85.86,
+          84.9,
+          85.995,
+          85.04
+        ],
+        [
+          78.5,
+          85.24,
+          78.635,
+          85.38
+        ],
+        [
+          123.765,
+          85.64,
+          123.9,
+          85.78
+        ],
+        [
+          72.705,
+          87.96,
+          72.84,
+          88.1
+        ],
+        [
+          105.365,
+          87.68,
+          105.5,
+          87.82
+        ],
+        [
+          106.1,
+          87.96,
+          106.235,
+          88.1
+        ],
+        [
+          83.1,
+          88.36,
+          83.235,
+          88.5
+        ],
+        [
+          74.82,
+          88.7,
+          74.955,
+          88.84
+        ],
+        [
+          72.705,
+          90.68,
+          72.84,
+          90.82
+        ],
+        [
+          85.585,
+          91.42,
+          85.72,
+          91.56
+        ],
+        [
+          85.86,
+          91.42,
+          85.995,
+          91.56
+        ],
+        [
+          129.1,
+          91.36,
+          129.235,
+          91.5
+        ],
+        [
+          132.505,
+          91.08,
+          132.64,
+          91.22
+        ],
+        [
+          73.44,
+          93.4,
+          73.575,
+          93.54
+        ],
+        [
+          106.1,
+          94.08,
+          106.235,
+          94.22
+        ],
+        [
+          119.625,
+          96.46,
+          119.76,
+          96.6
+        ],
+        [
+          111.16,
+          96.52,
+          111.295,
+          96.66
+        ],
+        [
+          96.625,
+          97.14,
+          96.76,
+          97.28
+        ]
+      ],
+      "why": "Line ends shorten in lithography; a near-minimum end-to-line gap can open or bridge.",
+      "suggested_fix": "Extend spacing at these line ends or add an end extension.",
+      "owner": "Orion",
+      "detail": {},
+      "rank": 1,
+      "why_it_matters": "Line ends shorten in lithography, so 164 met1 line ends at near-minimum end-to-line spacing are the most direct open/bridge risk in this layout."
+    },
+    {
+      "id": "DFM-001",
+      "severity": "medium",
+      "check": "density",
+      "title": "li: 20 window(s) within 10% of the PDK max density 0.6",
+      "count": 20,
+      "locations": [
+        [
+          90.0,
+          100.0,
+          110.0,
+          120.0
+        ],
+        [
+          60.0,
+          50.0,
+          80.0,
+          70.0
+        ],
+        [
+          80.0,
+          100.0,
+          100.0,
+          120.0
+        ],
+        [
+          60.0,
+          60.0,
+          80.0,
+          80.0
+        ],
+        [
+          110.0,
+          100.0,
+          130.0,
+          120.0
+        ],
+        [
+          70.0,
+          50.0,
+          90.0,
+          70.0
+        ],
+        [
+          100.0,
+          100.0,
+          120.0,
+          120.0
+        ],
+        [
+          80.0,
+          110.0,
+          100.0,
+          130.0
+        ],
+        [
+          120.0,
+          40.0,
+          140.0,
+          60.0
+        ],
+        [
+          70.0,
+          60.0,
+          90.0,
+          80.0
+        ],
+        [
+          80.0,
+          90.0,
+          100.0,
+          110.0
+        ],
+        [
+          90.0,
+          110.0,
+          110.0,
+          130.0
+        ],
+        [
+          60.0,
+          70.0,
+          80.0,
+          90.0
+        ],
+        [
+          110.0,
+          90.0,
+          130.0,
+          110.0
+        ],
+        [
+          50.0,
+          70.0,
+          70.0,
+          90.0
+        ],
+        [
+          50.0,
+          120.0,
+          70.0,
+          140.0
+        ],
+        [
+          50.0,
+          90.0,
+          70.0,
+          110.0
+        ],
+        [
+          50.0,
+          60.0,
+          70.0,
+          80.0
+        ],
+        [
+          20.0,
+          40.0,
+          40.0,
+          60.0
+        ],
+        [
+          50.0,
+          100.0,
+          70.0,
+          120.0
+        ]
+      ],
+      "why": "Windows close to the density limit leave no margin for CMP variation.",
+      "suggested_fix": "Spread routing in these windows.",
+      "owner": "Orion",
+      "detail": {},
+      "rank": 2,
+      "why_it_matters": "20 li windows sit at 0.5999 against the 0.6 max density, leaving no CMP margin, although li global density is only 0.427."
+    },
+    {
+      "id": "DFM-004",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met1: 52.9% of routing edge length within 5% of min width/spacing",
+      "count": 16147,
+      "locations": [
+        [
+          73.625,
+          142.36,
+          74.035,
+          142.5
+        ],
+        [
+          73.736,
+          91.065,
+          73.999,
+          91.21
+        ],
+        [
+          73.625,
+          42.46,
+          74.035,
+          42.6
+        ],
+        [
+          73.625,
+          69.66,
+          74.035,
+          69.8
+        ],
+        [
+          73.625,
+          127.06,
+          74.035,
+          127.2
+        ],
+        [
+          73.625,
+          142.76,
+          74.035,
+          142.9
+        ],
+        [
+          73.625,
+          60.08,
+          74.035,
+          60.22
+        ],
+        [
+          73.625,
+          138.0,
+          74.035,
+          138.14
+        ],
+        [
+          73.625,
+          69.26,
+          74.035,
+          69.4
+        ],
+        [
+          73.625,
+          60.48,
+          74.035,
+          60.62
+        ],
+        [
+          73.625,
+          138.96,
+          74.035,
+          139.1
+        ],
+        [
+          73.625,
+          61.16,
+          74.035,
+          61.3
+        ],
+        [
+          73.625,
+          137.6,
+          74.035,
+          137.74
+        ],
+        [
+          73.625,
+          128.08,
+          74.035,
+          128.22
+        ],
+        [
+          73.625,
+          128.48,
+          74.035,
+          128.62
+        ],
+        [
+          73.625,
+          127.46,
+          74.035,
+          127.6
+        ],
+        [
+          73.625,
+          60.76,
+          74.035,
+          60.9
+        ],
+        [
+          106.745,
+          109.04,
+          107.155,
+          109.18
+        ],
+        [
+          106.745,
+          109.44,
+          107.155,
+          109.58
+        ],
+        [
+          106.745,
+          85.92,
+          107.155,
+          86.06
+        ]
+      ],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.5291,
+        "edges_total": 36214
+      },
+      "rank": 3,
+      "why_it_matters": "met1 has the largest near-limit edge population (8174 width and 7973 spacing edges, 52.9%), so process variation can turn spacing edges into bridges; informational, no hotspot is a confirmed defect."
+    },
+    {
+      "id": "DFM-002",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "li: 100.0% of routing edge length within 5% of min width/spacing",
+      "count": 14630,
+      "locations": [
+        [
+          106.865,
+          109.225,
+          107.035,
+          109.225
+        ],
+        [
+          106.865,
+          120.785,
+          107.035,
+          120.785
+        ],
+        [
+          79.725,
+          112.625,
+          79.725,
+          112.795
+        ],
+        [
+          103.355,
+          112.625,
+          103.355,
+          112.795
+        ],
+        [
+          139.235,
+          112.625,
+          139.235,
+          112.795
+        ],
+        [
+          84.325,
+          112.625,
+          84.325,
+          112.795
+        ],
+        [
+          111.005,
+          112.625,
+          111.005,
+          112.795
+        ],
+        [
+          106.865,
+          124.015,
+          107.035,
+          124.015
+        ],
+        [
+          106.865,
+          120.955,
+          107.035,
+          120.955
+        ],
+        [
+          84.495,
+          112.625,
+          84.495,
+          112.795
+        ],
+        [
+          103.645,
+          112.625,
+          103.645,
+          112.795
+        ],
+        [
+          104.105,
+          112.625,
+          104.105,
+          112.795
+        ],
+        [
+          92.145,
+          112.625,
+          92.145,
+          112.795
+        ],
+        [
+          111.175,
+          112.625,
+          111.175,
+          112.795
+        ],
+        [
+          106.865,
+          123.845,
+          107.035,
+          123.845
+        ],
+        [
+          138.895,
+          112.569,
+          139.065,
+          112.851
+        ],
+        [
+          103.185,
+          112.625,
+          103.185,
+          112.795
+        ],
+        [
+          106.865,
+          109.395,
+          107.035,
+          109.395
+        ],
+        [
+          107.785,
+          112.625,
+          107.785,
+          112.795
+        ],
+        [
+          104.275,
+          112.625,
+          104.275,
+          112.795
+        ]
+      ],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 1.0,
+        "edges_total": 13580
+      },
+      "rank": 4,
+      "why_it_matters": "li near-limit share is 100%, but li is drawn at minimum width by construction (small mcon landing stubs), so this is expected and carries little incremental yield information."
+    },
+    {
+      "id": "DFM-005",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met2: 81.4% of routing edge length within 5% of min width/spacing",
+      "count": 4770,
+      "locations": [],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.8137,
+        "edges_total": 23308
+      },
+      "rank": 5,
+      "why_it_matters": "met2 has 81.4% near-minimum-width edges but zero near-minimum spacing edges and only 6.7% global density, so bridging risk is low."
+    },
+    {
+      "id": "DFM-006",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met3: 66.7% of routing edge length within 5% of min width/spacing",
+      "count": 160,
+      "locations": [],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.6673,
+        "edges_total": 1092
+      },
+      "rank": 6,
+      "why_it_matters": "met3 66.7% near-limit is based on only 1092 edges (123 shapes) with no spacing-limited edges, so absolute exposure is small."
+    },
+    {
+      "id": "DFM-007",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met4: 21.8% of routing edge length within 5% of min width/spacing",
+      "count": 6,
+      "locations": [],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.2181,
+        "edges_total": 44
+      },
+      "rank": 7,
+      "why_it_matters": "met4 21.8% near-limit is based on 44 edges across 5 shapes, so absolute exposure is negligible."
+    }
+  ],
+  "unranked": []
+}

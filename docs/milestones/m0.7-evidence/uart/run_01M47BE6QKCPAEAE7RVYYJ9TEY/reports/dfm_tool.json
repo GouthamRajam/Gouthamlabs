@@ -1,0 +1,823 @@
+{
+  "items": [
+    {
+      "id": "DFM-001",
+      "severity": "medium",
+      "check": "density",
+      "title": "li: 20 window(s) within 10% of the PDK max density 0.6",
+      "count": 20,
+      "locations": [
+        [
+          90.0,
+          100.0,
+          110.0,
+          120.0
+        ],
+        [
+          60.0,
+          50.0,
+          80.0,
+          70.0
+        ],
+        [
+          80.0,
+          100.0,
+          100.0,
+          120.0
+        ],
+        [
+          60.0,
+          60.0,
+          80.0,
+          80.0
+        ],
+        [
+          110.0,
+          100.0,
+          130.0,
+          120.0
+        ],
+        [
+          70.0,
+          50.0,
+          90.0,
+          70.0
+        ],
+        [
+          100.0,
+          100.0,
+          120.0,
+          120.0
+        ],
+        [
+          80.0,
+          110.0,
+          100.0,
+          130.0
+        ],
+        [
+          120.0,
+          40.0,
+          140.0,
+          60.0
+        ],
+        [
+          70.0,
+          60.0,
+          90.0,
+          80.0
+        ],
+        [
+          80.0,
+          90.0,
+          100.0,
+          110.0
+        ],
+        [
+          90.0,
+          110.0,
+          110.0,
+          130.0
+        ],
+        [
+          60.0,
+          70.0,
+          80.0,
+          90.0
+        ],
+        [
+          110.0,
+          90.0,
+          130.0,
+          110.0
+        ],
+        [
+          50.0,
+          70.0,
+          70.0,
+          90.0
+        ],
+        [
+          50.0,
+          120.0,
+          70.0,
+          140.0
+        ],
+        [
+          50.0,
+          90.0,
+          70.0,
+          110.0
+        ],
+        [
+          50.0,
+          60.0,
+          70.0,
+          80.0
+        ],
+        [
+          20.0,
+          40.0,
+          40.0,
+          60.0
+        ],
+        [
+          50.0,
+          100.0,
+          70.0,
+          120.0
+        ]
+      ],
+      "why": "Windows close to the density limit leave no margin for CMP variation.",
+      "suggested_fix": "Spread routing in these windows.",
+      "owner": "Orion",
+      "detail": {}
+    },
+    {
+      "id": "DFM-002",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "li: 100.0% of routing edge length within 5% of min width/spacing",
+      "count": 14630,
+      "locations": [
+        [
+          106.865,
+          109.225,
+          107.035,
+          109.225
+        ],
+        [
+          106.865,
+          120.785,
+          107.035,
+          120.785
+        ],
+        [
+          79.725,
+          112.625,
+          79.725,
+          112.795
+        ],
+        [
+          103.355,
+          112.625,
+          103.355,
+          112.795
+        ],
+        [
+          139.235,
+          112.625,
+          139.235,
+          112.795
+        ],
+        [
+          84.325,
+          112.625,
+          84.325,
+          112.795
+        ],
+        [
+          111.005,
+          112.625,
+          111.005,
+          112.795
+        ],
+        [
+          106.865,
+          124.015,
+          107.035,
+          124.015
+        ],
+        [
+          106.865,
+          120.955,
+          107.035,
+          120.955
+        ],
+        [
+          84.495,
+          112.625,
+          84.495,
+          112.795
+        ],
+        [
+          103.645,
+          112.625,
+          103.645,
+          112.795
+        ],
+        [
+          104.105,
+          112.625,
+          104.105,
+          112.795
+        ],
+        [
+          92.145,
+          112.625,
+          92.145,
+          112.795
+        ],
+        [
+          111.175,
+          112.625,
+          111.175,
+          112.795
+        ],
+        [
+          106.865,
+          123.845,
+          107.035,
+          123.845
+        ],
+        [
+          138.895,
+          112.569,
+          139.065,
+          112.851
+        ],
+        [
+          103.185,
+          112.625,
+          103.185,
+          112.795
+        ],
+        [
+          106.865,
+          109.395,
+          107.035,
+          109.395
+        ],
+        [
+          107.785,
+          112.625,
+          107.785,
+          112.795
+        ],
+        [
+          104.275,
+          112.625,
+          104.275,
+          112.795
+        ]
+      ],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 1.0,
+        "edges_total": 13580
+      }
+    },
+    {
+      "id": "DFM-003",
+      "severity": "medium",
+      "check": "line_end",
+      "title": "met1: 164 line end(s) at near-minimum spacing",
+      "count": 164,
+      "locations": [
+        [
+          124.225,
+          80.14,
+          124.36,
+          80.28
+        ],
+        [
+          79.88,
+          80.82,
+          80.015,
+          80.96
+        ],
+        [
+          85.86,
+          84.9,
+          85.995,
+          85.04
+        ],
+        [
+          78.5,
+          85.24,
+          78.635,
+          85.38
+        ],
+        [
+          123.765,
+          85.64,
+          123.9,
+          85.78
+        ],
+        [
+          72.705,
+          87.96,
+          72.84,
+          88.1
+        ],
+        [
+          105.365,
+          87.68,
+          105.5,
+          87.82
+        ],
+        [
+          106.1,
+          87.96,
+          106.235,
+          88.1
+        ],
+        [
+          83.1,
+          88.36,
+          83.235,
+          88.5
+        ],
+        [
+          74.82,
+          88.7,
+          74.955,
+          88.84
+        ],
+        [
+          72.705,
+          90.68,
+          72.84,
+          90.82
+        ],
+        [
+          85.585,
+          91.42,
+          85.72,
+          91.56
+        ],
+        [
+          85.86,
+          91.42,
+          85.995,
+          91.56
+        ],
+        [
+          129.1,
+          91.36,
+          129.235,
+          91.5
+        ],
+        [
+          132.505,
+          91.08,
+          132.64,
+          91.22
+        ],
+        [
+          73.44,
+          93.4,
+          73.575,
+          93.54
+        ],
+        [
+          106.1,
+          94.08,
+          106.235,
+          94.22
+        ],
+        [
+          119.625,
+          96.46,
+          119.76,
+          96.6
+        ],
+        [
+          111.16,
+          96.52,
+          111.295,
+          96.66
+        ],
+        [
+          96.625,
+          97.14,
+          96.76,
+          97.28
+        ]
+      ],
+      "why": "Line ends shorten in lithography; a near-minimum end-to-line gap can open or bridge.",
+      "suggested_fix": "Extend spacing at these line ends or add an end extension.",
+      "owner": "Orion",
+      "detail": {}
+    },
+    {
+      "id": "DFM-004",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met1: 52.9% of routing edge length within 5% of min width/spacing",
+      "count": 16147,
+      "locations": [
+        [
+          73.625,
+          142.36,
+          74.035,
+          142.5
+        ],
+        [
+          73.736,
+          91.065,
+          73.999,
+          91.21
+        ],
+        [
+          73.625,
+          42.46,
+          74.035,
+          42.6
+        ],
+        [
+          73.625,
+          69.66,
+          74.035,
+          69.8
+        ],
+        [
+          73.625,
+          127.06,
+          74.035,
+          127.2
+        ],
+        [
+          73.625,
+          142.76,
+          74.035,
+          142.9
+        ],
+        [
+          73.625,
+          60.08,
+          74.035,
+          60.22
+        ],
+        [
+          73.625,
+          138.0,
+          74.035,
+          138.14
+        ],
+        [
+          73.625,
+          69.26,
+          74.035,
+          69.4
+        ],
+        [
+          73.625,
+          60.48,
+          74.035,
+          60.62
+        ],
+        [
+          73.625,
+          138.96,
+          74.035,
+          139.1
+        ],
+        [
+          73.625,
+          61.16,
+          74.035,
+          61.3
+        ],
+        [
+          73.625,
+          137.6,
+          74.035,
+          137.74
+        ],
+        [
+          73.625,
+          128.08,
+          74.035,
+          128.22
+        ],
+        [
+          73.625,
+          128.48,
+          74.035,
+          128.62
+        ],
+        [
+          73.625,
+          127.46,
+          74.035,
+          127.6
+        ],
+        [
+          73.625,
+          60.76,
+          74.035,
+          60.9
+        ],
+        [
+          106.745,
+          109.04,
+          107.155,
+          109.18
+        ],
+        [
+          106.745,
+          109.44,
+          107.155,
+          109.58
+        ],
+        [
+          106.745,
+          85.92,
+          107.155,
+          86.06
+        ]
+      ],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.5291,
+        "edges_total": 36214
+      }
+    },
+    {
+      "id": "DFM-005",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met2: 81.4% of routing edge length within 5% of min width/spacing",
+      "count": 4770,
+      "locations": [],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.8137,
+        "edges_total": 23308
+      }
+    },
+    {
+      "id": "DFM-006",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met3: 66.7% of routing edge length within 5% of min width/spacing",
+      "count": 160,
+      "locations": [],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.6673,
+        "edges_total": 1092
+      }
+    },
+    {
+      "id": "DFM-007",
+      "severity": "low",
+      "check": "near_limit_geometry",
+      "title": "met4: 21.8% of routing edge length within 5% of min width/spacing",
+      "count": 6,
+      "locations": [],
+      "why": "The share of geometry at the limit sets how sensitive yield is to process variation.",
+      "suggested_fix": "Use non-default wider/spaced rules on non-critical nets.",
+      "owner": "Orion",
+      "detail": {
+        "fraction": 0.2181,
+        "edges_total": 44
+      }
+    }
+  ],
+  "summary": {
+    "high": 0,
+    "medium": 2,
+    "low": 5
+  },
+  "antenna_worst_pct_of_limit": 72.17,
+  "layers": {
+    "li": {
+      "shapes": 6066,
+      "min_width": 0.17,
+      "min_space": 0.17,
+      "max_density": 0.6,
+      "density_global": 0.4267,
+      "density_windows": 210,
+      "density_window_max": 0.5999,
+      "density_window_min": 0.1484,
+      "routing_shapes": 3395,
+      "edges_total": 13580,
+      "near_min_width_edges": 13580,
+      "near_min_space_edges": 1050,
+      "near_limit_edge_fraction": 1.0,
+      "long_parallel_runs": 0,
+      "isolated_narrow_lines": 0,
+      "line_end_near_limit": 0
+    },
+    "met1": {
+      "shapes": 3292,
+      "min_width": 0.14,
+      "min_space": 0.14,
+      "max_density": 0.6,
+      "density_global": 0.2247,
+      "density_windows": 210,
+      "density_window_max": 0.3712,
+      "density_window_min": 0.0572,
+      "routing_shapes": 3041,
+      "edges_total": 36214,
+      "near_min_width_edges": 8174,
+      "near_min_space_edges": 7973,
+      "near_limit_edge_fraction": 0.5291,
+      "long_parallel_runs": 0,
+      "isolated_narrow_lines": 0,
+      "line_end_near_limit": 164
+    },
+    "met2": {
+      "shapes": 1514,
+      "min_width": 0.14,
+      "min_space": 0.14,
+      "max_density": 0.6,
+      "density_global": 0.0669,
+      "density_windows": 210,
+      "density_window_max": 0.1681,
+      "density_window_min": 0.0,
+      "routing_shapes": 1514,
+      "edges_total": 23308,
+      "near_min_width_edges": 4770,
+      "near_min_space_edges": 0,
+      "near_limit_edge_fraction": 0.8137,
+      "long_parallel_runs": 0,
+      "isolated_narrow_lines": 0,
+      "line_end_near_limit": 0
+    },
+    "met3": {
+      "shapes": 123,
+      "min_width": 0.3,
+      "min_space": 0.3,
+      "max_density": 0.6,
+      "density_global": 0.0112,
+      "density_windows": 210,
+      "density_window_max": 0.0489,
+      "density_window_min": 0.0,
+      "routing_shapes": 123,
+      "edges_total": 1092,
+      "near_min_width_edges": 160,
+      "near_min_space_edges": 0,
+      "near_limit_edge_fraction": 0.6673,
+      "long_parallel_runs": 0,
+      "isolated_narrow_lines": 0,
+      "line_end_near_limit": 0
+    },
+    "met4": {
+      "shapes": 5,
+      "min_width": 0.3,
+      "min_space": 0.3,
+      "max_density": 0.6,
+      "density_global": 0.0198,
+      "density_windows": 210,
+      "density_window_max": 0.16,
+      "density_window_min": 0.0,
+      "routing_shapes": 5,
+      "edges_total": 44,
+      "near_min_width_edges": 6,
+      "near_min_space_edges": 0,
+      "near_limit_edge_fraction": 0.2181,
+      "long_parallel_runs": 0,
+      "isolated_narrow_lines": 0,
+      "line_end_near_limit": 0
+    },
+    "met5": {
+      "shapes": 0,
+      "min_width": 1.6,
+      "min_space": 1.6,
+      "max_density": 0.76,
+      "density_global": 0.0,
+      "density_windows": 210,
+      "density_window_max": 0.0,
+      "density_window_min": 0.0,
+      "routing_shapes": 0
+    }
+  },
+  "vias": {
+    "mcon": {
+      "cuts": 3395,
+      "min_space": 0.19,
+      "single_cut_connections": 3395,
+      "redundant_via_fits": 0
+    },
+    "via": {
+      "cuts": 3691,
+      "min_space": 0.17,
+      "single_cut_connections": 3436,
+      "redundant_via_fits": 0
+    },
+    "via2": {
+      "cuts": 321,
+      "min_space": 0.2,
+      "single_cut_connections": 117,
+      "redundant_via_fits": 0
+    },
+    "via3": {
+      "cuts": 210,
+      "min_space": 0.2,
+      "single_cut_connections": 6,
+      "redundant_via_fits": 0
+    },
+    "via4": {
+      "cuts": 0,
+      "min_space": 0.8
+    }
+  },
+  "pdk_rules": {
+    "li": {
+      "layer": "67/20",
+      "density_layers": "67/0-4,6-9,11-43,45-*",
+      "fill_layers": "56/28",
+      "min_width": 0.17,
+      "min_space": 0.17,
+      "max_density": 0.6
+    },
+    "met1": {
+      "layer": "68/20",
+      "density_layers": "68/0-4,6-9,11-43,45-*",
+      "fill_layers": "36/28",
+      "min_width": 0.14,
+      "min_space": 0.14,
+      "max_density": 0.6
+    },
+    "met2": {
+      "layer": "69/20",
+      "density_layers": "69/0-4,6-9,11-43,45-*",
+      "fill_layers": "41/28",
+      "min_width": 0.14,
+      "min_space": 0.14,
+      "max_density": 0.6
+    },
+    "met3": {
+      "layer": "70/20",
+      "density_layers": "70/0-4,6-9,11-43,45-*",
+      "fill_layers": "34/28",
+      "min_width": 0.3,
+      "min_space": 0.3,
+      "max_density": 0.6
+    },
+    "met4": {
+      "layer": "71/20",
+      "density_layers": "71/0-4,6-9,11-43,45-*",
+      "fill_layers": "51/28",
+      "min_width": 0.3,
+      "min_space": 0.3,
+      "max_density": 0.6
+    },
+    "met5": {
+      "layer": "72/20",
+      "density_layers": "72/0-4,6-9,11-43,45-*",
+      "fill_layers": "59/28",
+      "min_width": 1.6,
+      "min_space": 1.6,
+      "max_density": 0.76
+    },
+    "mcon": {
+      "layer": "67/44",
+      "lower": "li",
+      "upper": "met1",
+      "min_space": 0.19
+    },
+    "via": {
+      "layer": "68/44",
+      "lower": "met1",
+      "upper": "met2",
+      "min_space": 0.17
+    },
+    "via2": {
+      "layer": "69/44",
+      "lower": "met2",
+      "upper": "met3",
+      "min_space": 0.2
+    },
+    "via3": {
+      "layer": "70/44",
+      "lower": "met3",
+      "upper": "met4",
+      "min_space": 0.2
+    },
+    "via4": {
+      "layer": "71/44",
+      "lower": "met4",
+      "upper": "met5",
+      "min_space": 0.8
+    }
+  },
+  "policy": {
+    "near_limit_pct": 5,
+    "density_window_um": 20,
+    "density_step_um": 10,
+    "density_near_max_pct": 90,
+    "long_parallel_run_um": 10,
+    "isolated_clearance_x_min_space": 3,
+    "antenna_margin_flag_pct": 80,
+    "hotspots_per_item": 20
+  },
+  "tool": {
+    "command": "klayout -b -r /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/dfm.py -rd input=/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/pnr/runs/it3/final/gds/uart_top.gds -rd top=uart_top -rd out_json=/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/reports/dfm_layout.json -rd drc_deck=/opt/pdk/sky130A/libs.tech/klayout/drc/sky130A_mr.drc -rd density_deck=/opt/pdk/sky130A/libs.tech/klayout/drc/met_min_ca_density.lydrc -rd 'policy={\"near_limit_pct\": 5, \"density_window_um\": 20, \"density_step_um\": 10, \"density_near_max_pct\": 90, \"long_parallel_run_um\": 10, \"isolated_clearance_x_min_space\": 3, \"antenna_margin_flag_pct\": 80, \"hotspots_per_item\": 20}'",
+    "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/dfm_klayout.log",
+    "tool_version": "0.29.4",
+    "env_hash": "sha256:2942381d714a0c465797d7b6c0405eebf58d639351e0e1042aa5d1d5edd61c70",
+    "duration_s": 7.2
+  }
+}

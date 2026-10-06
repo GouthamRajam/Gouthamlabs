@@ -1,0 +1,16 @@
+[
+  {
+    "severity": "minor",
+    "target": "constraints/constraints.sdc, line 'set_input_delay 6.000 -clock [get_clocks {clk}] [get_ports {rx}]' (Input delays section)",
+    "what": "rx is an asynchronous input (spec interface rx: async: true; REQ-005: 'the only asynchronous crossing is rx, via a 2-flop synchronizer'), but it is constrained as if launched synchronously by clk with 6.0 ns external delay. The resulting rx -> sync2 first-flop path in STA has no physical meaning: it neither guarantees metastability safety (that is provided by the 2-flop synchronizer) nor reflects real arrival time. It is not a loosening (it is if anything over-constraining), but a reported violation or slack on this path would be meaningless and could drive needless optimization or be misread as a real result.",
+    "evidence": "spec.yaml interfaces: '{name: rx, dir: in, width: 1, protocol: \"UART\", async: true, description: \"Serial input, asynchronous; 2-flop synchronizer into clk\"}' and REQ-005. SDC comment itself: 'rx is asynchronous ... It is still constrained with the 30% default (no false path) ... see open issue for a human decision on its treatment.'",
+    "suggested_action": "Keep as-is until a human decides (the author correctly did not add an exception unilaterally). Recommended decision for the human: replace with an exception scoped narrowly to rx -> the first synchronizer flop only (e.g. set_false_path -from [get_ports rx] -to <sync2 stage-1 flop D pin>, or set_max_delay on that path), with a written reason referencing REQ-005, and add a CDC check confirming the rx input reaches exactly one flop (the synchronizer) with no combinational fanout. Do not apply a broad false path on all rx paths."
+  },
+  {
+    "severity": "minor",
+    "target": "constraints/constraints.sdc, final comment block ('set_driving_cell / set_load intentionally not set here (flow defaults apply)')",
+    "what": "Input transition and output load are not constrained in this SDC, and the claim that 'flow defaults apply' is unverified. In OpenLane-style flows the driving cell and output load are set in the flow's base SDC; when a user SDC is supplied it may replace the base SDC entirely, leaving inputs with ideal (zero) transition and outputs with zero load. That would make I/O path timing optimistic and the 6.0 ns I/O budgets less meaningful.",
+    "evidence": "SDC contains no set_driving_cell, set_input_transition or set_load command; only a comment asserting flow defaults apply. No flow config or STA report was provided showing a driving cell or load is applied to the ports.",
+    "suggested_action": "Constraints/flow owner: confirm from the STA report (report_checks -fields {slew cap input_pins} on an input-to-reg and reg-to-output path) that ports see a non-zero input slew and output load. If not, add explicit set_driving_cell (e.g. a sky130_fd_sc_hd buffer/inverter) on all inputs except clk and set_load on all outputs, with values documented as DEFAULT pending G1 review."
+  }
+]

@@ -1,0 +1,237 @@
+{
+  "die_area_um2": 23296.2,
+  "core_area_um2": 18517.8,
+  "utilization": 0.469189,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "baud_div[0]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[10]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[11]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[12]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[13]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[14]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[15]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[1]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[2]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[3]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[4]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[5]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[6]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[7]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[8]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[9]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "frame_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "overrun_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "parity_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "parity_mode[0]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "parity_mode[1]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "rx",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "rx_data[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_valid",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx_data[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_ready",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx_valid",
+      "direction": "INPUT",
+      "side": "W"
+    }
+  ],
+  "choices": {
+    "core_utilization_pct": 45,
+    "reasons": {
+      "utilization": "Synthesized cell area is 8363.02 um^2 (736 cells, reports/synth_tool.json). 45% is the pnr_ranges default and sits mid-range (30-65): core area ~= 8363/0.45 ~= 18,585 um^2 (about 136 x 136 um), leaving room for CTS buffers, resizer/hold buffers, fill/tap cells and routing on a small design, without spreading the ~100-200 clock sinks so far that leaf fanout and wire length grow (lesson s2s-cts-003 names utilization as the flop-spread knob; start from the default and only move it with recorded experiments). 45 pins also fit easily on a ~136 um side.",
+      "pins": "Left-to-right data flow from arch.yaml: transmit-side and serial inputs (rx -> sync2 -> uart_rx; tx_data, tx_valid -> uart_tx) on the West edge; all outputs (tx, tx_ready from uart_tx; rx_data, rx_valid, frame_err, parity_err, overrun_err from uart_rx) on the East edge, so data enters one side and leaves the other. The shared configuration inputs baud_div[15:0] (-> baud_gen, whose tick16 feeds both tx and rx) and parity_mode[1:0] (-> uart_tx and uart_rx) go on the North edge, as they are quasi-static controls feeding the shared logic rather than the streaming path, and putting 18 bits there keeps the West edge from being crowded. Patterns are exact port names or bus prefix + '.*'; each of the 45 pins matches exactly one pattern (exact names tx/rx/tx_valid/etc. do not overlap with the bus prefixes tx_data.*/rx_data.*/baud_div.*/parity_mode.*).",
+      "power_grid": "Default SKY130 PDN from the PDK/OpenLane configuration (met4/met5 straps at default pitch and width, met1 rails on every cell row). pnr_ranges.yaml defines no strap ranges, so no strap parameter is changed; the default grid is sized for far larger designs than this ~8.4k um^2 block, so IR drop and electromigration are not expected to be limiting. PDN connectivity and powered rows are to be confirmed by the runtime's real floorplan/PDN checks.",
+      "clock_reset": "clk and rst_n on the South edge, centred under the core, so the clock tree root enters at a short distance from the middle of the flop spread (all four modules share clk) and the synchronous reset net, which fans out to every register, is not pushed to one corner. rx is asynchronous and is kept on the West edge next to the rest of the input data so the 2-flop synchronizer (sync2) can be placed close to the pad-side port."
+    }
+  }
+}

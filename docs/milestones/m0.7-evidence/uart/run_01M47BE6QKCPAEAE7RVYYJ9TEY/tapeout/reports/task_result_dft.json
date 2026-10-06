@@ -1,0 +1,32 @@
+{
+  "task_id": "task_01M47BE6RDF1NNV15KBHDP3Q38",
+  "status": "success",
+  "summary": "Wrote dft/dft_plan.md (Phase 0, plan only): test strategy, full-scan approach, proposed test pins, expected coverage method, memory test approach (none present), and open-flow limitations. No tools were run and no coverage number is claimed.",
+  "outputs": [
+    {
+      "path": "dft/dft_plan.md",
+      "sha256": "6543f54e27474beda76d17a6ee196cc4972cef8135942da33bfa9023575e36b4"
+    }
+  ],
+  "checks_run": [
+    "chk_01M47V5PV7T5Y579YBW30ESBV8",
+    "chk_01M47V5PVXCT43WAT0S4J7HQ1T"
+  ],
+  "assumptions": [
+    "Design has no memories or macros; derived from arch.yaml module list.",
+    "Flop count is unknown from the inputs, so scan chain length is left to be determined at insertion.",
+    "No latches, gated or generated clocks; taken from arch.yaml and not verified on the netlist.",
+    "Scan pins are proposed only; spec.yaml has none and adding them needs human approval.",
+    "The ATPG coverage targets are not stated in the plan, to avoid any coverage claim."
+  ],
+  "open_issues": [
+    "Adding scan_en/scan_in/scan_out/test_mode (or sharing existing pins) is a spec interface change needing human decision at G1.",
+    "Scan-shift hold timing: fast-corner pre-layout hold slack is already slightly negative in synth_tool.json; scan will need hold fixing in PnR.",
+    "Whether synthesis can map to sky130 scan flops was not checked."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Content follows the inputs and the six required sections; the checks that the runtime runs on section presence and absence of coverage numbers have not been seen by me.",
+    "confidence": "medium"
+  }
+}

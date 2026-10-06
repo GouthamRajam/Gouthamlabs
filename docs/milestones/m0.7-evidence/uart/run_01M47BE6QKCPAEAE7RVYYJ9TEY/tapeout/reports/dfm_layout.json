@@ -1,0 +1,802 @@
+{
+ "pdk_rules": {
+  "li": {
+   "layer": "67/20",
+   "density_layers": "67/0-4,6-9,11-43,45-*",
+   "fill_layers": "56/28",
+   "min_width": 0.17,
+   "min_space": 0.17,
+   "max_density": 0.6
+  },
+  "met1": {
+   "layer": "68/20",
+   "density_layers": "68/0-4,6-9,11-43,45-*",
+   "fill_layers": "36/28",
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6
+  },
+  "met2": {
+   "layer": "69/20",
+   "density_layers": "69/0-4,6-9,11-43,45-*",
+   "fill_layers": "41/28",
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6
+  },
+  "met3": {
+   "layer": "70/20",
+   "density_layers": "70/0-4,6-9,11-43,45-*",
+   "fill_layers": "34/28",
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6
+  },
+  "met4": {
+   "layer": "71/20",
+   "density_layers": "71/0-4,6-9,11-43,45-*",
+   "fill_layers": "51/28",
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6
+  },
+  "met5": {
+   "layer": "72/20",
+   "density_layers": "72/0-4,6-9,11-43,45-*",
+   "fill_layers": "59/28",
+   "min_width": 1.6,
+   "min_space": 1.6,
+   "max_density": 0.76
+  },
+  "mcon": {
+   "layer": "67/44",
+   "lower": "li",
+   "upper": "met1",
+   "min_space": 0.19
+  },
+  "via": {
+   "layer": "68/44",
+   "lower": "met1",
+   "upper": "met2",
+   "min_space": 0.17
+  },
+  "via2": {
+   "layer": "69/44",
+   "lower": "met2",
+   "upper": "met3",
+   "min_space": 0.2
+  },
+  "via3": {
+   "layer": "70/44",
+   "lower": "met3",
+   "upper": "met4",
+   "min_space": 0.2
+  },
+  "via4": {
+   "layer": "71/44",
+   "lower": "met4",
+   "upper": "met5",
+   "min_space": 0.8
+  }
+ },
+ "die_um": [
+  0.0,
+  0.0,
+  147.365,
+  158.085
+ ],
+ "dbu": 0.001,
+ "layers": {
+  "li": {
+   "shapes": 6066,
+   "min_width": 0.17,
+   "min_space": 0.17,
+   "max_density": 0.6,
+   "density_global": 0.4267,
+   "density_windows": 210,
+   "density_window_max": 0.5999,
+   "density_window_min": 0.1484,
+   "density_over_max": [],
+   "density_near_max": [
+    {
+     "density": 0.5999,
+     "at": [
+      90.0,
+      100.0,
+      110.0,
+      120.0
+     ]
+    },
+    {
+     "density": 0.5916,
+     "at": [
+      60.0,
+      50.0,
+      80.0,
+      70.0
+     ]
+    },
+    {
+     "density": 0.5893,
+     "at": [
+      80.0,
+      100.0,
+      100.0,
+      120.0
+     ]
+    },
+    {
+     "density": 0.582,
+     "at": [
+      60.0,
+      60.0,
+      80.0,
+      80.0
+     ]
+    },
+    {
+     "density": 0.5719,
+     "at": [
+      110.0,
+      100.0,
+      130.0,
+      120.0
+     ]
+    },
+    {
+     "density": 0.5699,
+     "at": [
+      70.0,
+      50.0,
+      90.0,
+      70.0
+     ]
+    },
+    {
+     "density": 0.5688,
+     "at": [
+      100.0,
+      100.0,
+      120.0,
+      120.0
+     ]
+    },
+    {
+     "density": 0.5649,
+     "at": [
+      80.0,
+      110.0,
+      100.0,
+      130.0
+     ]
+    },
+    {
+     "density": 0.5649,
+     "at": [
+      120.0,
+      40.0,
+      140.0,
+      60.0
+     ]
+    },
+    {
+     "density": 0.5642,
+     "at": [
+      70.0,
+      60.0,
+      90.0,
+      80.0
+     ]
+    },
+    {
+     "density": 0.5627,
+     "at": [
+      80.0,
+      90.0,
+      100.0,
+      110.0
+     ]
+    },
+    {
+     "density": 0.5593,
+     "at": [
+      90.0,
+      110.0,
+      110.0,
+      130.0
+     ]
+    },
+    {
+     "density": 0.5591,
+     "at": [
+      60.0,
+      70.0,
+      80.0,
+      90.0
+     ]
+    },
+    {
+     "density": 0.5586,
+     "at": [
+      110.0,
+      90.0,
+      130.0,
+      110.0
+     ]
+    },
+    {
+     "density": 0.5537,
+     "at": [
+      50.0,
+      70.0,
+      70.0,
+      90.0
+     ]
+    },
+    {
+     "density": 0.5531,
+     "at": [
+      50.0,
+      120.0,
+      70.0,
+      140.0
+     ]
+    },
+    {
+     "density": 0.553,
+     "at": [
+      50.0,
+      90.0,
+      70.0,
+      110.0
+     ]
+    },
+    {
+     "density": 0.5528,
+     "at": [
+      50.0,
+      60.0,
+      70.0,
+      80.0
+     ]
+    },
+    {
+     "density": 0.5512,
+     "at": [
+      20.0,
+      40.0,
+      40.0,
+      60.0
+     ]
+    },
+    {
+     "density": 0.551,
+     "at": [
+      50.0,
+      100.0,
+      70.0,
+      120.0
+     ]
+    }
+   ],
+   "routing_shapes": 3395,
+   "edges_total": 13580,
+   "near_min_width_edges": 13580,
+   "near_min_space_edges": 1050,
+   "near_limit_edge_fraction": 1.0,
+   "near_min_space_hotspots": [
+    [
+     106.865,
+     109.225,
+     107.035,
+     109.225
+    ],
+    [
+     106.865,
+     120.785,
+     107.035,
+     120.785
+    ],
+    [
+     79.725,
+     112.625,
+     79.725,
+     112.795
+    ],
+    [
+     103.355,
+     112.625,
+     103.355,
+     112.795
+    ],
+    [
+     139.235,
+     112.625,
+     139.235,
+     112.795
+    ],
+    [
+     84.325,
+     112.625,
+     84.325,
+     112.795
+    ],
+    [
+     111.005,
+     112.625,
+     111.005,
+     112.795
+    ],
+    [
+     106.865,
+     124.015,
+     107.035,
+     124.015
+    ],
+    [
+     106.865,
+     120.955,
+     107.035,
+     120.955
+    ],
+    [
+     84.495,
+     112.625,
+     84.495,
+     112.795
+    ],
+    [
+     103.645,
+     112.625,
+     103.645,
+     112.795
+    ],
+    [
+     104.105,
+     112.625,
+     104.105,
+     112.795
+    ],
+    [
+     92.145,
+     112.625,
+     92.145,
+     112.795
+    ],
+    [
+     111.175,
+     112.625,
+     111.175,
+     112.795
+    ],
+    [
+     106.865,
+     123.845,
+     107.035,
+     123.845
+    ],
+    [
+     138.895,
+     112.569,
+     139.065,
+     112.851
+    ],
+    [
+     103.185,
+     112.625,
+     103.185,
+     112.795
+    ],
+    [
+     106.865,
+     109.395,
+     107.035,
+     109.395
+    ],
+    [
+     107.785,
+     112.625,
+     107.785,
+     112.795
+    ],
+    [
+     104.275,
+     112.625,
+     104.275,
+     112.795
+    ]
+   ],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met1": {
+   "shapes": 3292,
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6,
+   "density_global": 0.2247,
+   "density_windows": 210,
+   "density_window_max": 0.3712,
+   "density_window_min": 0.0572,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 3041,
+   "edges_total": 36214,
+   "near_min_width_edges": 8174,
+   "near_min_space_edges": 7973,
+   "near_limit_edge_fraction": 0.5291,
+   "near_min_space_hotspots": [
+    [
+     73.625,
+     142.36,
+     74.035,
+     142.5
+    ],
+    [
+     73.736,
+     91.065,
+     73.999,
+     91.21
+    ],
+    [
+     73.625,
+     42.46,
+     74.035,
+     42.6
+    ],
+    [
+     73.625,
+     69.66,
+     74.035,
+     69.8
+    ],
+    [
+     73.625,
+     127.06,
+     74.035,
+     127.2
+    ],
+    [
+     73.625,
+     142.76,
+     74.035,
+     142.9
+    ],
+    [
+     73.625,
+     60.08,
+     74.035,
+     60.22
+    ],
+    [
+     73.625,
+     138.0,
+     74.035,
+     138.14
+    ],
+    [
+     73.625,
+     69.26,
+     74.035,
+     69.4
+    ],
+    [
+     73.625,
+     60.48,
+     74.035,
+     60.62
+    ],
+    [
+     73.625,
+     138.96,
+     74.035,
+     139.1
+    ],
+    [
+     73.625,
+     61.16,
+     74.035,
+     61.3
+    ],
+    [
+     73.625,
+     137.6,
+     74.035,
+     137.74
+    ],
+    [
+     73.625,
+     128.08,
+     74.035,
+     128.22
+    ],
+    [
+     73.625,
+     128.48,
+     74.035,
+     128.62
+    ],
+    [
+     73.625,
+     127.46,
+     74.035,
+     127.6
+    ],
+    [
+     73.625,
+     60.76,
+     74.035,
+     60.9
+    ],
+    [
+     106.745,
+     109.04,
+     107.155,
+     109.18
+    ],
+    [
+     106.745,
+     109.44,
+     107.155,
+     109.58
+    ],
+    [
+     106.745,
+     85.92,
+     107.155,
+     86.06
+    ]
+   ],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 164,
+   "line_end_hotspots": [
+    [
+     124.225,
+     80.14,
+     124.36,
+     80.28
+    ],
+    [
+     79.88,
+     80.82,
+     80.015,
+     80.96
+    ],
+    [
+     85.86,
+     84.9,
+     85.995,
+     85.04
+    ],
+    [
+     78.5,
+     85.24,
+     78.635,
+     85.38
+    ],
+    [
+     123.765,
+     85.64,
+     123.9,
+     85.78
+    ],
+    [
+     72.705,
+     87.96,
+     72.84,
+     88.1
+    ],
+    [
+     105.365,
+     87.68,
+     105.5,
+     87.82
+    ],
+    [
+     106.1,
+     87.96,
+     106.235,
+     88.1
+    ],
+    [
+     83.1,
+     88.36,
+     83.235,
+     88.5
+    ],
+    [
+     74.82,
+     88.7,
+     74.955,
+     88.84
+    ],
+    [
+     72.705,
+     90.68,
+     72.84,
+     90.82
+    ],
+    [
+     85.585,
+     91.42,
+     85.72,
+     91.56
+    ],
+    [
+     85.86,
+     91.42,
+     85.995,
+     91.56
+    ],
+    [
+     129.1,
+     91.36,
+     129.235,
+     91.5
+    ],
+    [
+     132.505,
+     91.08,
+     132.64,
+     91.22
+    ],
+    [
+     73.44,
+     93.4,
+     73.575,
+     93.54
+    ],
+    [
+     106.1,
+     94.08,
+     106.235,
+     94.22
+    ],
+    [
+     119.625,
+     96.46,
+     119.76,
+     96.6
+    ],
+    [
+     111.16,
+     96.52,
+     111.295,
+     96.66
+    ],
+    [
+     96.625,
+     97.14,
+     96.76,
+     97.28
+    ]
+   ]
+  },
+  "met2": {
+   "shapes": 1514,
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6,
+   "density_global": 0.0669,
+   "density_windows": 210,
+   "density_window_max": 0.1681,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 1514,
+   "edges_total": 23308,
+   "near_min_width_edges": 4770,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.8137,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met3": {
+   "shapes": 123,
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6,
+   "density_global": 0.0112,
+   "density_windows": 210,
+   "density_window_max": 0.0489,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 123,
+   "edges_total": 1092,
+   "near_min_width_edges": 160,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.6673,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met4": {
+   "shapes": 5,
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6,
+   "density_global": 0.0198,
+   "density_windows": 210,
+   "density_window_max": 0.16,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 5,
+   "edges_total": 44,
+   "near_min_width_edges": 6,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.2181,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met5": {
+   "shapes": 0,
+   "min_width": 1.6,
+   "min_space": 1.6,
+   "max_density": 0.76,
+   "density_global": 0.0,
+   "density_windows": 210,
+   "density_window_max": 0.0,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 0
+  }
+ },
+ "vias": {
+  "mcon": {
+   "cuts": 3395,
+   "min_space": 0.19,
+   "single_cut_connections": 3395,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via": {
+   "cuts": 3691,
+   "min_space": 0.17,
+   "single_cut_connections": 3436,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via2": {
+   "cuts": 321,
+   "min_space": 0.2,
+   "single_cut_connections": 117,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via3": {
+   "cuts": 210,
+   "min_space": 0.2,
+   "single_cut_connections": 6,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via4": {
+   "cuts": 0,
+   "min_space": 0.8
+  }
+ }
+}

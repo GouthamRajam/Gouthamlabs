@@ -1,0 +1,14 @@
+{
+  "worst_drop_v": 0.00087,
+  "avg_drop_v": 0.000153,
+  "limit_v": 0.09,
+  "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)",
+  "assumptions": [
+    "Switching activity is the default input activity 0.2 (20%); no simulation activity was supplied.",
+    "Power corners are tt_025C_1v80, ss_100C_1v60 and ff_n40C_1v95 as given in power_tool.json; all numbers are quoted from that file.",
+    "IR limit is 0.09 V, i.e. 5% of 1.8 V (A.13 Phase 0 default), as stated in the tool data.",
+    "Voltage-source locations, IR corner and PDN model are not stated in the input; they are not assumed here.",
+    "The open flow does not analyze electromigration (EM) or transient/dynamic IR drop, so those are not covered."
+  ],
+  "explained_by": "Volta"
+}

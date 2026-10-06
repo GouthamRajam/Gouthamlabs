@@ -1,0 +1,89 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 9.7478,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3268,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 5.8282,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8566,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 11.2368,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1105,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 9.8393,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3235,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 5.9923,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8513,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 11.2886,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1082,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 9.6639,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3297,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 5.6705,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8618,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 11.1848,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.113,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    }
+  },
+  "explained_by": "Chronos",
+  "explanation": "# Signoff timing report: uart (stage: signoff)\n\nSource: reports/sta_tool.json (tool data as provided). Clock clk, period 20.0 ns (50 MHz). All numbers below are copied from that file.\n\n## Result\nAll 9 corners are reported as passed by the tool: setup and hold TNS are 0.0 ns everywhere, and no corner lists a max transition, capacitance or fanout (DRV) violator.\n\n| Corner | Setup WNS (ns) | Setup TNS (ns) | Hold WNS (ns) | Hold TNS (ns) | DRV violators | Passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 9.7478 | 0.0 | 0.3268 | 0.0 | none | true |\n| nom_ss_100C_1v60 | 5.8282 | 0.0 | 0.8566 | 0.0 | none | true |\n| nom_ff_n40C_1v95 | 11.2368 | 0.0 | 0.1105 | 0.0 | none | true |\n| min_tt_025C_1v80 | 9.8393 | 0.0 | 0.3235 | 0.0 | none | true |\n| min_ss_100C_1v60 | 5.9923 | 0.0 | 0.8513 | 0.0 | none | true |\n| min_ff_n40C_1v95 | 11.2886 | 0.0 | 0.1082 | 0.0 | none | true |\n| max_tt_025C_1v80 | 9.6639 | 0.0 | 0.3297 | 0.0 | none | true |\n| max_ss_100C_1v60 | 5.6705 | 0.0 | 0.8618 | 0.0 | none | true |\n| max_ff_n40C_1v95 | 11.1848 | 0.0 | 0.113 | 0.0 | none | true |\n\n- Worst setup slack: 5.6705 ns at max_ss_100C_1v60 (about 28% of the 20 ns period).\n- Setup at the typical corner nom_tt_025C_1v80: 9.7478 ns, so the REQ-005 criterion (setup slack >= 0 at typical) is met according to the tool data.\n- Worst hold slack: 0.1082 ns at min_ff_n40C_1v95. Hold is tightest at the fast corners (0.1082 to 0.1130 ns) and comfortable at slow corners (0.8513 to 0.8618 ns).\n\n## Worst paths in plain words\n- Setup, all corners: the worst paths start at the input port baud_div[0] and end at internal registers _1235_ (worst at most corners), _1272_ (worst at nom_ff and min_ff) or _1232_ (second worst at the ss corners). At max_ss_100C_1v60 the worst is baud_div[0] to _1235_ with 5.6705 ns slack; the second is baud_div[0] to _1232_ with 5.7783 ns.\n- The constraints give baud_div a 6.000 ns input delay (30% of the period), so about 6 ns of the 20 ns budget is spent before the logic starts; the remaining slack is still large.\n- The tool data gives only start point, end point, type and slack for the worst paths. It does not give per-cell delays, so I cannot name the dominant cells without inventing data.\n- Hold: the tool data lists only max (setup) paths in worst_paths; no hold path start or end points were provided. The worst hold slack figure (0.1082 ns, min_ff_n40C_1v95) is therefore not attributed to a specific path.\n\n## Ranked fixes\nNo violation exists, so no fix is required. Margins worth watching, in order:\n1. Hold at fast corners (0.1082 to 0.1130 ns): positive but thin. It is not a failure. If the flow later changes clock skew or the clock is propagated differently, re-check hold first; hold buffers would be the fix if it goes negative.\n2. Setup: no action. Slack of at least 5.6705 ns in every corner leaves room; if the clock were ever raised, the baud_div[0] input paths (to _1235_, _1272_, _1232_) would be the first to look at, with pipelining or upsizing as options.\n",
+  "assumptions": [
+    "All numbers are quoted from reports/sta_tool.json; no tool was run in this task.",
+    "The tool's passed flag and empty drv_violators lists are taken as the DRV result; limits used (max fanout 10 from the SDC) are those the tool applied.",
+    "The 6.000 ns input and output delays and 0.25 ns uncertainty are DEFAULT values from the SDC, not from the spec."
+  ],
+  "open_issues": [
+    "Hold margin at fast corners is only 0.1082 to 0.1130 ns; a human should judge whether it is sufficient for signoff.",
+    "The tool data gives no cell-level path detail and no hold path endpoints, so dominant cells are not named.",
+    "The SDC leaves clock propagation to the flow; the tool data does not say whether the clock was ideal or propagated for this run, which affects hold confidence.",
+    "rx is constrained with a 6 ns input delay rather than a false path (per SDC note); treatment of this asynchronous input needs a human decision."
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "power_w_by_corner": {
+    "tt_025C_1v80": {
+      "internal_w": 0.0005378256,
+      "switching_w": 0.0002504456,
+      "leakage_w": 6.027401e-09,
+      "total_w": 0.0007882774,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/power_uart_top_tt_025C_1v80.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/power_uart_top_tt_025C_1v80.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ss_100C_1v60": {
+      "internal_w": 0.000427865,
+      "switching_w": 0.0001944777,
+      "leakage_w": 5.42591e-06,
+      "total_w": 0.0006277686,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/power_uart_top_ss_100C_1v60.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/power_uart_top_ss_100C_1v60.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ff_n40C_1v95": {
+      "internal_w": 0.0006140556,
+      "switching_w": 0.0002976594,
+      "leakage_w": 1.150402e-08,
+      "total_w": 0.0009117265,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/logs/power_uart_top_ff_n40C_1v95.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/.s2s/power_uart_top_ff_n40C_1v95.tcl",
+      "tool_version": "2.6.0"
+    }
+  },
+  "input_activity": 0.2,
+  "openlane_power_total_w": 0.0008120654383674264,
+  "ir": {
+    "worst_drop_v": 0.00087,
+    "avg_drop_v": 0.000153,
+    "limit_v": 0.09,
+    "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)"
+  },
+  "explained_by": "Volta",
+  "explanation": "# Power and IR report: uart (signoff)\n\nSource: reports/power_tool.json only (OpenSTA `sta` 2.6.0 power runs, one per corner, plus the OpenLane power total and IR figures). No number below was computed or adjusted by me.\n\n## Power by corner (input activity 0.2)\n\n| Corner | Internal (W) | Switching (W) | Leakage (W) | Total (W) |\n|---|---|---|---|---|\n| tt_025C_1v80 | 0.0005378256 | 0.0002504456 | 6.027401e-09 | 0.0007882774 |\n| ss_100C_1v60 | 0.000427865 | 0.0001944777 | 5.42591e-06 | 0.0006277686 |\n| ff_n40C_1v95 | 0.0006140556 | 0.0002976594 | 1.150402e-08 | 0.0009117265 |\n\nOpenLane reports a separate power total of 0.0008120654383674264 W. It differs from the tt STA total (0.0007882774 W). The input data does not say why, so I do not explain it here.\n\n## IR drop\n\n- Worst drop: 0.00087 V\n- Average drop: 0.000153 V\n- Limit: 0.09 V (5% of 1.8 V, the A.13 Phase 0 default)\n- The worst drop is below the limit, so the tool data shows no limit violation and no PDN change is proposed to Grid.\n\n## Assumptions and what is not covered\n\n- Switching activity is the default 0.2 (20%) input activity from the tool data. No simulation activity (VCD/SAIF) was provided, so the numbers are not workload-specific. A real UART workload (idle line, baud_div, parity mode) could give different power.\n- Corners analyzed for power: tt_025C_1v80, ss_100C_1v60 and ff_n40C_1v95, as named in the tool data. Leakage is largest at ss_100C_1v60 (5.42591e-06 W).\n- The IR figures come from one run. The input does not state which corner, the voltage-source (pad/strap) locations, the current-map method or the PDN model used. I cannot confirm these and the data does not give them.\n- The IR limit is measured against the 1.8 V nominal supply. The limit_rule field gives the basis as 5% of 1.8 V.\n- Not analyzed by the open flow and not reported here: electromigration (EM), dynamic or vectorless transient IR drop, package and board parasitics, and on-chip decap effects. EM and IR on other supplies or corners remain unchecked.\n- The tool logs and commands are listed in power_tool.json for each corner, for reviewer audit.\n",
+  "assumptions": [
+    "Switching activity is the default input activity 0.2 (20%); no simulation activity was supplied.",
+    "Power corners are tt_025C_1v80, ss_100C_1v60 and ff_n40C_1v95 as given in power_tool.json; all numbers are quoted from that file.",
+    "IR limit is 0.09 V, i.e. 5% of 1.8 V (A.13 Phase 0 default), as stated in the tool data.",
+    "Voltage-source locations, IR corner and PDN model are not stated in the input; they are not assumed here.",
+    "The open flow does not analyze electromigration (EM) or transient/dynamic IR drop, so those are not covered."
+  ],
+  "open_issues": [
+    "OpenLane power total (0.0008120654383674264 W) differs from the tt STA total (0.0007882774 W); the cause is not given in the input data.",
+    "IR analysis conditions (corner, voltage source locations, current model) are not documented in the input; a human should confirm them.",
+    "No simulation-based activity is available; power at the default 0.2 activity may not represent real UART traffic.",
+    "EM is not checked by the open flow."
+  ]
+}
