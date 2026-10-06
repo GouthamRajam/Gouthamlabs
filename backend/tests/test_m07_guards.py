@@ -141,7 +141,7 @@ def test_readiness_scores_follow_part22():
     # = 68 -> 64.15 -> 64.1
     assert r["weights_B_total"] == 106 and r["baseline_B_pct"] == 64.1
     scope = {x["check"]: x["scope"] for x in r["rows"]}
-    assert scope["dft_atpg"] == readiness.DFT_DEFERRED and scope["ir_em_static"] == "measured: passed, tool-limited"
+    assert scope["dft_atpg"] == readiness.DFT_DEFERRED and scope["ir_em_static"] == readiness.IR_EM_LIMITED
     assert scope["signal_integrity"].startswith("excluded from Baseline A") and scope["drc"] == "measured: passed"
     worse = dict(clean, drc={"result": "failed", "tool": "t", "evidence": "e"})
     assert readiness.score(worse)["baseline_A_pct"] < r["baseline_A_pct"]

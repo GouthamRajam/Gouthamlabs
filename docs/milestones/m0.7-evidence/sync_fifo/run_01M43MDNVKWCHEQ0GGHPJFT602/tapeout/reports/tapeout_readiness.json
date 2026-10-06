@@ -1,213 +1,300 @@
 {
-  "baseline_A_pct": 95.3,
-  "baseline_B_pct": 64.1,
-  "partial_credit": 0.5,
-  "rows": [
-    {
-      "check": "functional_sim",
-      "label": "Functional sim (RTL + gate-level)",
-      "weight": 12,
-      "result": "clean",
-      "tool": "cocotb/Verilator/Icarus",
-      "evidence": "regression_100pct (M0.6), gls_final_netlist",
-      "earned_A": 12.0,
-      "earned_B": 12.0
-    },
-    {
-      "check": "coverage",
-      "label": "Coverage (line, toggle, functional)",
-      "weight": 8,
-      "result": "clean",
-      "tool": "Verilator coverage + waveform bins",
-      "evidence": "coverage_* (M0.6)",
-      "earned_A": 8.0,
-      "earned_B": 8.0
-    },
-    {
-      "check": "formal_equiv",
-      "label": "Formal properties + RTL/netlist equivalence",
-      "weight": 10,
-      "result": "clean",
-      "tool": "SymbiYosys, eqy",
-      "evidence": "formal_3_meaningful, formal_vacuity (M0.6), eqy_rtl_vs_final",
-      "earned_A": 10.0,
-      "earned_B": 10.0
-    },
-    {
-      "check": "drc",
-      "label": "DRC",
-      "weight": 14,
-      "result": "clean",
-      "tool": "Magic + KLayout (SKY130 decks)",
-      "evidence": "checks drc_magic_final_gds, drc_klayout_final_gds, package_drc_*",
-      "earned_A": 14.0,
-      "earned_B": 7.0
-    },
-    {
-      "check": "lvs",
-      "label": "LVS",
-      "weight": 14,
-      "result": "clean",
-      "tool": "Magic extraction + Netgen",
-      "evidence": "checks lvs_final_gds, package_lvs",
-      "earned_A": 14.0,
-      "earned_B": 7.0
-    },
-    {
-      "check": "antenna",
-      "label": "Antenna",
-      "weight": 4,
-      "result": "clean",
-      "tool": "OpenROAD check_antennas",
-      "evidence": "check antenna_final",
-      "earned_A": 4.0,
-      "earned_B": 4.0
-    },
-    {
-      "check": "density",
-      "label": "Density / fill",
-      "weight": 4,
-      "result": "clean",
-      "tool": "KLayout PDK density deck",
-      "evidence": "check density_rules",
-      "earned_A": 4.0,
-      "earned_B": 4.0
-    },
-    {
-      "check": "sta_setup_hold",
-      "label": "Setup + hold STA, all PDK corners",
-      "weight": 12,
-      "result": "clean",
-      "tool": "OpenSTA (9 corners)",
-      "evidence": "check sta_all_corners (9 corners)",
-      "earned_A": 12.0,
-      "earned_B": 6.0
-    },
-    {
-      "check": "power",
-      "label": "Power estimate",
-      "weight": 4,
-      "result": "clean",
-      "tool": "OpenSTA report_power",
-      "evidence": "power_estimated",
-      "note": "20% input activity; no power budget in spec",
-      "earned_A": 4.0,
-      "earned_B": 2.0
-    },
-    {
-      "check": "ir_em_static",
-      "label": "IR drop / EM (static)",
-      "weight": 4,
-      "result": "clean",
-      "tool": "OpenROAD PSM",
-      "evidence": "ir_drop_within_limit",
-      "note": "static IR only; EM not analyzed",
-      "earned_A": 2.0,
-      "earned_B": 2.0
-    },
-    {
-      "check": "dft_atpg",
-      "label": "DFT scan + ATPG fault coverage",
-      "weight": 5,
-      "result": "partial",
-      "tool": "plan only (dft_plan.md)",
-      "evidence": "dft_plan_complete",
-      "note": "plan only in Phase 0",
-      "earned_A": 2.5,
-      "earned_B": 0.0
-    },
-    {
-      "check": "signal_integrity",
-      "label": "Signal integrity / crosstalk",
-      "weight": 3,
-      "result": "not run",
-      "tool": "-",
-      "evidence": "",
-      "note": "out of open-flow scope",
-      "earned_A": null,
-      "earned_B": 0.0
-    },
-    {
-      "check": "reliability",
-      "label": "Reliability (aging, ESD, latch-up)",
-      "weight": 3,
-      "result": "not run",
-      "tool": "-",
-      "evidence": "",
-      "note": "out of open-flow scope",
-      "earned_A": null,
-      "earned_B": 0.0
-    },
-    {
-      "check": "foundry_signoff",
-      "label": "Foundry-certified signoff (Calibre-class)",
-      "weight": 3,
-      "result": "not run",
-      "tool": "-",
-      "evidence": "",
-      "note": "no foundry-certified decks",
-      "earned_A": null,
-      "earned_B": 0.0
-    },
-    {
-      "check": "gds_integrity_repro",
-      "label": "GDS integrity + reproducibility",
-      "weight": 6,
-      "result": "clean",
-      "tool": "KLayout read-back + reproduce.sh",
-      "evidence": "gds_readback, reproduce_clean_container",
-      "earned_A": 6.0,
-      "earned_B": 6.0
-    }
+ "hard_checks": {
+  "verdict": "PASS",
+  "passed": 5,
+  "of": 5,
+  "items": [
+   {
+    "check": "DRC = 0 (Magic + KLayout, final GDS)",
+    "status": "PASS",
+    "passed": true,
+    "detail": "Magic 0, KLayout 0 violations on the final GDS",
+    "evidence": "checks drc_magic_final_gds, drc_klayout_final_gds, package_drc_*"
+   },
+   {
+    "check": "LVS match (Netgen, final GDS)",
+    "status": "PASS",
+    "passed": true,
+    "detail": "Circuits match uniquely (2828 devices, 2835 nets)",
+    "evidence": "checks lvs_final_gds, package_lvs"
+   },
+   {
+    "check": "Antenna clean",
+    "status": "PASS",
+    "passed": true,
+    "detail": "0 net / 0 pin violations (2777 nets checked)",
+    "evidence": "check antenna_final"
+   },
+   {
+    "check": "Timing met, all corners (setup, hold, DRV)",
+    "status": "PASS",
+    "passed": true,
+    "detail": "9/9 corners; worst setup +0.2429 ns (max_ss_100C_1v60), worst hold +0.1384 ns (min_ff_n40C_1v95); TNS 0",
+    "evidence": "check sta_all_corners (9 corners)"
+   },
+   {
+    "check": "Equivalence RTL vs final netlist proven",
+    "status": "PASS",
+    "passed": true,
+    "detail": "",
+    "evidence": "check eqy_rtl_vs_final"
+   },
+   {
+    "check": "No human edits to artifacts",
+    "status": "NOT CHECKED",
+    "passed": null,
+    "detail": "artifacts are machine-generated by the flow; no automated edit-detection check exists yet (hash/provenance check is in the Phase 1 plan)",
+    "evidence": ""
+   }
   ],
-  "gaps": [
-    {
-      "check": "DRC",
-      "result": "clean",
-      "closes_with": "foundry-certified DRC deck (Phase 1, commercial tools)"
-    },
-    {
-      "check": "LVS",
-      "result": "clean",
-      "closes_with": "foundry-certified LVS deck (Phase 1, commercial tools)"
-    },
-    {
-      "check": "Setup + hold STA, all PDK corners",
-      "result": "clean",
-      "closes_with": "OCV/AOCV and SI-aware timing (Phase 1, commercial STA)"
-    },
-    {
-      "check": "Power estimate",
-      "result": "clean",
-      "closes_with": "vector-based power with silicon-correlated models (Phase 1)"
-    },
-    {
-      "check": "IR drop / EM (static)",
-      "result": "clean",
-      "closes_with": "full static/dynamic IR and EM with package model (Phase 1, commercial tools)"
-    },
-    {
-      "check": "DFT scan + ATPG fault coverage",
-      "result": "partial",
-      "closes_with": "scan insertion + ATPG fault coverage (Phase 1, commercial ATPG)"
-    },
-    {
-      "check": "Signal integrity / crosstalk",
-      "result": "not run",
-      "closes_with": "fix and re-run the check (this phase)"
-    },
-    {
-      "check": "Reliability (aging, ESD, latch-up)",
-      "result": "not run",
-      "closes_with": "fix and re-run the check (this phase)"
-    },
-    {
-      "check": "Foundry-certified signoff (Calibre-class)",
-      "result": "not run",
-      "closes_with": "fix and re-run the check (this phase)"
-    }
-  ],
-  "assumptions": "ASSUMPTIONS\n- PDK: SkyWater SKY130 (open), library sky130_fd_sc_hd. Not a commercial foundry PDK.\n- DRC/LVS: open-source Magic, KLayout and Netgen decks. A foundry's own certified\n  decks (e.g. Calibre) were not run and may differ.\n- Timing: OpenSTA at the PDK's typical/slow/fast corners. No on-chip variation\n  (OCV/AOCV), no SI-aware timing. Clock target as stated per design.\n- Power/IR: estimated at 20% switching activity unless simulation activity was used;\n  IR/EM analysis limited to what the open flow supports.\n- DFT: plan only in Phase 0; no ATPG fault coverage number.\n- Not assessed (out of open-flow scope): signal integrity/crosstalk, aging/ESD/\n  latch-up reliability, foundry-certified signoff.\n- No physical silicon was manufactured or tested. All results are pre-silicon,\n  from simulation and layout tools.\n- Baseline A = open SKY130 shuttle requirements. Baseline B = commercial production\n  tape-out on a real foundry PDK.",
-  "weights_A_total": 97.0,
-  "weights_B_total": 106.0
+  "conditions": []
+ },
+ "baseline_A_pct": 92.7,
+ "baseline_B_pct": 64.1,
+ "derived": true,
+ "partial_credit": {
+  "dft": 0.0,
+  "ir_em": 0.5,
+  "other": 0.5
+ },
+ "earned_A_total": 90.0,
+ "earned_B_total": 68.0,
+ "weights_A_total": 97.0,
+ "weights_B_total": 106.0,
+ "weights_total": 106.0,
+ "rows": [
+  {
+   "check": "functional_sim",
+   "label": "Functional sim (RTL + gate-level)",
+   "weight": 12,
+   "result": "clean",
+   "tool": "cocotb/Verilator/Icarus",
+   "evidence": "regression_100pct (M0.6), gls_final_netlist",
+   "scope": "measured: passed",
+   "earned_A": 12.0,
+   "earned_B": 12.0
+  },
+  {
+   "check": "coverage",
+   "label": "Coverage (line, toggle, functional)",
+   "weight": 8,
+   "result": "clean",
+   "tool": "Verilator coverage + waveform bins",
+   "evidence": "coverage_* (M0.6)",
+   "scope": "measured: passed",
+   "earned_A": 8.0,
+   "earned_B": 8.0
+  },
+  {
+   "check": "formal_equiv",
+   "label": "Formal properties + RTL/netlist equivalence",
+   "weight": 10,
+   "result": "clean",
+   "tool": "SymbiYosys, eqy",
+   "evidence": "formal_3_meaningful, formal_vacuity (M0.6), eqy_rtl_vs_final",
+   "scope": "measured: passed",
+   "earned_A": 10.0,
+   "earned_B": 10.0
+  },
+  {
+   "check": "drc",
+   "label": "DRC",
+   "weight": 14,
+   "result": "clean",
+   "tool": "Magic + KLayout (SKY130 decks)",
+   "evidence": "checks drc_magic_final_gds, drc_klayout_final_gds, package_drc_*",
+   "scope": "measured: passed",
+   "earned_A": 14.0,
+   "earned_B": 7.0
+  },
+  {
+   "check": "lvs",
+   "label": "LVS",
+   "weight": 14,
+   "result": "clean",
+   "tool": "Magic extraction + Netgen",
+   "evidence": "checks lvs_final_gds, package_lvs",
+   "scope": "measured: passed",
+   "earned_A": 14.0,
+   "earned_B": 7.0
+  },
+  {
+   "check": "antenna",
+   "label": "Antenna",
+   "weight": 4,
+   "result": "clean",
+   "tool": "OpenROAD check_antennas",
+   "evidence": "check antenna_final",
+   "scope": "measured: passed",
+   "earned_A": 4.0,
+   "earned_B": 4.0
+  },
+  {
+   "check": "density",
+   "label": "Density / fill",
+   "weight": 4,
+   "result": "clean",
+   "tool": "KLayout PDK density deck",
+   "evidence": "check density_rules",
+   "scope": "measured: passed",
+   "earned_A": 4.0,
+   "earned_B": 4.0
+  },
+  {
+   "check": "sta_setup_hold",
+   "label": "Setup + hold STA, all PDK corners",
+   "weight": 12,
+   "result": "clean",
+   "tool": "OpenSTA (9 corners)",
+   "evidence": "check sta_all_corners (9 corners)",
+   "scope": "measured: passed",
+   "earned_A": 12.0,
+   "earned_B": 6.0
+  },
+  {
+   "check": "power",
+   "label": "Power estimate",
+   "weight": 4,
+   "result": "clean",
+   "tool": "OpenSTA report_power",
+   "evidence": "power_estimated",
+   "note": "20% input activity; no power budget in spec",
+   "scope": "measured: passed",
+   "earned_A": 4.0,
+   "earned_B": 2.0
+  },
+  {
+   "check": "ir_em_static",
+   "label": "IR drop / EM (static)",
+   "weight": 4,
+   "result": "clean",
+   "tool": "OpenROAD PSM",
+   "evidence": "ir_drop_within_limit",
+   "note": "static IR only; EM not analyzed",
+   "scope": "static IR: measured, passed; EM: not analysed (Phase 1)",
+   "earned_A": 2.0,
+   "earned_B": 2.0
+  },
+  {
+   "check": "dft_atpg",
+   "label": "DFT scan + ATPG fault coverage",
+   "weight": 5,
+   "result": "deferred",
+   "tool": "plan only (dft_plan.md)",
+   "evidence": "dft_plan_complete",
+   "note": "plan only in Phase 0",
+   "scope": "deferred - not measured, 0 fault coverage; achievable with open tools in Phase 1",
+   "earned_A": 0.0,
+   "earned_B": 0.0
+  },
+  {
+   "check": "signal_integrity",
+   "label": "Signal integrity / crosstalk",
+   "weight": 3,
+   "result": "not run",
+   "tool": "-",
+   "evidence": "",
+   "note": "out of open-flow scope",
+   "scope": "excluded from Baseline A - open tools structurally cannot do this (Phase 1+)",
+   "earned_A": null,
+   "earned_B": 0.0
+  },
+  {
+   "check": "reliability",
+   "label": "Reliability (aging, ESD, latch-up)",
+   "weight": 3,
+   "result": "not run",
+   "tool": "-",
+   "evidence": "",
+   "note": "out of open-flow scope",
+   "scope": "excluded from Baseline A - open tools structurally cannot do this (Phase 1+)",
+   "earned_A": null,
+   "earned_B": 0.0
+  },
+  {
+   "check": "foundry_signoff",
+   "label": "Foundry-certified signoff (Calibre-class)",
+   "weight": 3,
+   "result": "not run",
+   "tool": "-",
+   "evidence": "",
+   "note": "no foundry-certified decks",
+   "scope": "excluded from Baseline A - open tools structurally cannot do this (Phase 1+)",
+   "earned_A": null,
+   "earned_B": 0.0
+  },
+  {
+   "check": "gds_integrity_repro",
+   "label": "GDS integrity + reproducibility",
+   "weight": 6,
+   "result": "clean",
+   "tool": "KLayout read-back + reproduce.sh",
+   "evidence": "gds_readback, reproduce_clean_container",
+   "scope": "measured: passed",
+   "earned_A": 6.0,
+   "earned_B": 6.0
+  }
+ ],
+ "gaps": [
+  {
+   "check": "DRC",
+   "result": "clean",
+   "scope": "measured: passed",
+   "closes_with": "foundry-certified DRC deck (Phase 1, commercial tools)"
+  },
+  {
+   "check": "LVS",
+   "result": "clean",
+   "scope": "measured: passed",
+   "closes_with": "foundry-certified LVS deck (Phase 1, commercial tools)"
+  },
+  {
+   "check": "Setup + hold STA, all PDK corners",
+   "result": "clean",
+   "scope": "measured: passed",
+   "closes_with": "OCV/AOCV and SI-aware timing (Phase 1, commercial STA)"
+  },
+  {
+   "check": "Power estimate",
+   "result": "clean",
+   "scope": "measured: passed",
+   "closes_with": "vector-based power with silicon-correlated models (Phase 1)"
+  },
+  {
+   "check": "IR drop / EM (static)",
+   "result": "clean",
+   "scope": "static IR: measured, passed; EM: not analysed (Phase 1)",
+   "closes_with": "real static IR + EM analysis with OpenROAD (Phase 1); dynamic IR/EM with a package model needs commercial tools"
+  },
+  {
+   "check": "DFT scan + ATPG fault coverage",
+   "result": "deferred",
+   "scope": "deferred - not measured, 0 fault coverage; achievable with open tools in Phase 1",
+   "closes_with": "scan insertion + ATPG fault coverage with open tools: OpenROAD DFT + Fault (Phase 1)"
+  },
+  {
+   "check": "Signal integrity / crosstalk",
+   "result": "not run",
+   "scope": "excluded from Baseline A - open tools structurally cannot do this (Phase 1+)",
+   "closes_with": "crosstalk/SI analysis (Phase 1, commercial tools)"
+  },
+  {
+   "check": "Reliability (aging, ESD, latch-up)",
+   "result": "not run",
+   "scope": "excluded from Baseline A - open tools structurally cannot do this (Phase 1+)",
+   "closes_with": "aging, ESD and latch-up analysis (Phase 1-2)"
+  },
+  {
+   "check": "Foundry-certified signoff (Calibre-class)",
+   "result": "not run",
+   "scope": "excluded from Baseline A - open tools structurally cannot do this (Phase 1+)",
+   "closes_with": "Calibre-class foundry signoff (Phase 1)"
+  }
+ ],
+ "assumptions": "ASSUMPTIONS\n- PDK: SkyWater SKY130 (open), library sky130_fd_sc_hd. Not a commercial foundry PDK.\n- DRC/LVS: open-source Magic, KLayout and Netgen decks. A foundry's own certified\n  decks (e.g. Calibre) were not run and may differ.\n- Timing: OpenSTA at the PDK's typical/slow/fast corners. No on-chip variation\n  (OCV/AOCV), no SI-aware timing. Clock target as stated per design.\n- Power/IR: estimated at 20% switching activity unless simulation activity was used;\n  IR/EM analysis limited to what the open flow supports.\n- DFT: deferred in Phase 0 (plan only). Not measured: 0 fault coverage, earns no\n  credit. Achievable with open tools (OpenROAD DFT + Fault) in Phase 1.\n- Not assessed (out of open-flow scope): signal integrity/crosstalk, aging/ESD/\n  latch-up reliability, foundry-certified signoff.\n- No physical silicon was manufactured or tested. All results are pre-silicon,\n  from simulation and layout tools.\n- Baseline A = open SKY130 shuttle requirements. Baseline B = commercial production\n  tape-out on a real foundry PDK.",
+ "regenerated": {
+  "by": "backend/scripts/regen_readiness.py",
+  "decision": "docs/DECISIONS.md 2026-10-06",
+  "tools_rerun": false
+ }
 }

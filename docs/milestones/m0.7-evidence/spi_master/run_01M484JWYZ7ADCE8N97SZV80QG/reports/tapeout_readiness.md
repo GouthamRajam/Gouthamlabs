@@ -21,7 +21,7 @@ Pre-silicon: no number here proves working silicon, only that the design passes 
 
 Baseline A (open shuttle): 92.7% · Baseline B (commercial production): 64.1% - derived, with partial credit **dft=0 / ir_em=0.5** (Baseline B's other Partial caps: 0.5).
 
-Score = earned / applicable total. A = 90 / 97; B = 68 / 106. The weights total 106 (not 100). A excludes signal integrity, reliability and foundry signoff (open tools structurally cannot do them); DFT stays in A at 0 (open tools can do it; not done yet). Floored to one decimal, never rounded up.
+Score = earned / applicable total. A = 90 / 97; B = 68 / 106. The weights total 106 (not 100). A excludes signal integrity, reliability and foundry signoff (open tools structurally cannot do them); DFT stays in A at 0 (open tools can do it; not done yet). ir_em=0.5 credits static IR only (measured, passed); EM is not analysed (Phase 1). Floored to one decimal, never rounded up.
 
 ## Rubric and scope labels
 
@@ -36,7 +36,7 @@ Score = earned / applicable total. A = 90 / 97; B = 68 / 106. The weights total 
 | Density / fill | 4 | measured: passed | clean | 4 | 4 | KLayout PDK density deck | check density_rules |
 | Setup + hold STA, all PDK corners | 12 | measured: passed | clean | 12 | 6 | OpenSTA (9 corners) | check sta_all_corners (9 corners) |
 | Power estimate | 4 | measured: passed | clean - 20% input activity; no power budget in spec | 4 | 2 | OpenSTA report_power | power_estimated |
-| IR drop / EM (static) | 4 | measured: passed, tool-limited | clean - static IR only; EM not analyzed | 2 | 2 | OpenROAD PSM | ir_drop_within_limit |
+| IR drop / EM (static) | 4 | static IR: measured, passed; EM: not analysed (Phase 1) | clean - static IR only; EM not analyzed | 2 | 2 | OpenROAD PSM | ir_drop_within_limit |
 | DFT scan + ATPG fault coverage | 5 | deferred - not measured, 0 fault coverage; achievable with open tools in Phase 1 | deferred - plan only in Phase 0 | 0 | 0 | plan only (dft_plan.md) | dft_plan_complete |
 | Signal integrity / crosstalk | 3 | excluded from Baseline A - open tools structurally cannot do this (Phase 1+) | not run - out of open-flow scope | n/a | 0 | - |  |
 | Reliability (aging, ESD, latch-up) | 3 | excluded from Baseline A - open tools structurally cannot do this (Phase 1+) | not run - out of open-flow scope | n/a | 0 | - |  |
@@ -49,7 +49,7 @@ Score = earned / applicable total. A = 90 / 97; B = 68 / 106. The weights total 
 - **LVS** (measured: passed): closes with foundry-certified LVS deck (Phase 1, commercial tools)
 - **Setup + hold STA, all PDK corners** (measured: passed): closes with OCV/AOCV and SI-aware timing (Phase 1, commercial STA)
 - **Power estimate** (measured: passed): closes with vector-based power with silicon-correlated models (Phase 1)
-- **IR drop / EM (static)** (measured: passed, tool-limited): closes with real static IR + EM analysis with OpenROAD (Phase 1); dynamic IR/EM with a package model needs commercial tools
+- **IR drop / EM (static)** (static IR: measured, passed; EM: not analysed (Phase 1)): closes with real static IR + EM analysis with OpenROAD (Phase 1); dynamic IR/EM with a package model needs commercial tools
 - **DFT scan + ATPG fault coverage** (deferred - not measured, 0 fault coverage; achievable with open tools in Phase 1): closes with scan insertion + ATPG fault coverage with open tools: OpenROAD DFT + Fault (Phase 1)
 - **Signal integrity / crosstalk** (excluded from Baseline A - open tools structurally cannot do this (Phase 1+)): closes with crosstalk/SI analysis (Phase 1, commercial tools)
 - **Reliability (aging, ESD, latch-up)** (excluded from Baseline A - open tools structurally cannot do this (Phase 1+)): closes with aging, ESD and latch-up analysis (Phase 1-2)
@@ -82,5 +82,4 @@ ASSUMPTIONS
 - reproduce: `tapeout/reproduce.sh`
 - checklist: `tapeout/reports/tapeout_checklist.md`
 - manifest: `tapeout/MANIFEST.sha256`
-- superseded M0.7 copy (signed package, partial=0.5 for DFT; left unchanged so the signature stays valid): `tapeout/reports/tapeout_readiness.md`
 - re-scored by (no tool re-run): `backend/scripts/regen_readiness.py, decision docs/DECISIONS.md 2026-10-06`

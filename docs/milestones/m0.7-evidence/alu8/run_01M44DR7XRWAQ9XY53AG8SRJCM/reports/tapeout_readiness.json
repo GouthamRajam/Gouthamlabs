@@ -171,7 +171,7 @@
    "tool": "OpenROAD PSM",
    "evidence": "ir_drop_within_limit",
    "note": "static IR only; EM not analyzed",
-   "scope": "measured: passed, tool-limited",
+   "scope": "static IR: measured, passed; EM: not analysed (Phase 1)",
    "earned_A": 2.0,
    "earned_B": 2.0
   },
@@ -263,7 +263,7 @@
   {
    "check": "IR drop / EM (static)",
    "result": "clean",
-   "scope": "measured: passed, tool-limited",
+   "scope": "static IR: measured, passed; EM: not analysed (Phase 1)",
    "closes_with": "real static IR + EM analysis with OpenROAD (Phase 1); dynamic IR/EM with a package model needs commercial tools"
   },
   {
@@ -295,7 +295,6 @@
  "regenerated": {
   "by": "backend/scripts/regen_readiness.py",
   "decision": "docs/DECISIONS.md 2026-10-06",
-  "superseded_copy": "tapeout/reports/tapeout_readiness.* (M0.7 scoring, signed; unchanged)",
   "tools_rerun": false
  }
 }

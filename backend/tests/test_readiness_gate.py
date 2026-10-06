@@ -97,4 +97,4 @@ def test_report_leads_with_hard_checks_and_discloses_partial_values(tmp_path):
     assert md.index("Hard checks: CONDITIONAL PASS") < md.index("Baseline A (open shuttle): 92.7%")
     assert "dft=0 / ir_em=0.5" in md and "A = 90 / 97" in md and "weights total 106" in md
     assert md.index("FAILS") < md.index("## Derived score")
-    assert readiness.DFT_DEFERRED in md and "measured: passed, tool-limited" in md
+    assert readiness.DFT_DEFERRED in md and readiness.IR_EM_LIMITED in md and "static IR only" in md

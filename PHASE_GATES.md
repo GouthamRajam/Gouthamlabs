@@ -4,9 +4,20 @@ Phases 0-2 PROVE the AI on small chips and one real RISC-V core. The heavy Phase
 is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED by a HUMAN.
 
 ## Gates
-- [ ] PHASE 0 -> PHASE 1: all 5 blocks reach clean GDS, reproducibly, on the HARD CHECKS
+- [x] PHASE 0 -> PHASE 1: **QUALIFIED PASS** — marked by the human CEO, 2026-10-06. NOT a clean or
+      unconditional pass:
+      - counter8, alu8, sync_fifo, uart: full hard-check pass (5/5).
+      - spi_master: CONDITIONAL pass (5/5) — only under the approved clock-net max-fanout limit
+        of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of
+        10 fails it.
+      - Explicitly deferred to Phase 1 (MASTER_SPEC 13.4): EM analysis and full IR/EM (Phase 0
+        has static IR only), DFT scan insertion + ATPG (no fault coverage measured), and the
+        artifact hash/provenance check ("no human edits" is NOT CHECKED).
+      - Derived readiness for all five: Baseline A 92.7% (90/97, dft=0, ir_em=0.5),
+        Baseline B 64.1% (68/106). Evidence: docs/milestones/m0.7-evidence/*/tapeout (re-signed).
+      Gate criterion: all 5 blocks reach clean GDS, reproducibly, on the HARD CHECKS
       (pass/fail: DRC 0, LVS match, antenna clean, timing met at all corners, equivalence
-      proven) PLUS an explicit scope label on every readiness check (measured / tool-limited /
+      proven) PLUS an explicit scope label on every readiness check (measured / static IR only, EM not analysed /
       deferred / excluded), with any condition a pass depends on stated (e.g. spi_master's
       clock-net fanout limit 20). The Baseline A/B % is a derived figure printed with its
       partial-credit values (dft=0, ir_em=0.5), NOT a pass requirement. "No human edits to

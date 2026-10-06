@@ -4,8 +4,8 @@ results the run already recorded (no tool is re-run; decision 2026-10-06).
 Inputs, per run folder: tapeout/reports/tapeout_readiness.json (each check's recorded result, tool,
 evidence), tapeout/reports/tapeout_checklist.json (B.9 items 4-8: the hard checks the run passed) and
 reports/pv_signoff.json + reports/sta_signoff.json (details). Writes reports/tapeout_readiness.{json,md}.
-The signed package (tapeout/) is left unchanged so its MANIFEST.sha256 signature stays valid; its
-readiness copy keeps the M0.7 scoring and is marked superseded in the new report.
+The signed package (tapeout/) is not touched here; scripts/resign_package.py re-runs the gdsii sign step,
+which copies these reports into it and rewrites and re-hashes MANIFEST.sha256.
 
 Usage: python -m scripts.regen_readiness <run_dir> [<run_dir> ...]
 """
@@ -30,14 +30,11 @@ def regen(run: Path) -> dict:
                                  {k: items[n]["evidence"] for k, n in HARD_ITEMS.items()}, run / "reports")
     rep = readiness.score(results, hard)
     rep["regenerated"] = {"by": "backend/scripts/regen_readiness.py", "decision": "docs/DECISIONS.md 2026-10-06",
-                          "superseded_copy": "tapeout/reports/tapeout_readiness.* (M0.7 scoring, signed; unchanged)",
                           "tools_rerun": False}
     (run / "reports" / "tapeout_readiness.json").write_text(json.dumps(rep, indent=1) + "\n")
     (run / "reports" / "tapeout_readiness.md").write_text(readiness.markdown(design, rep, {
         "evidence packet": "tapeout/evidence/index.json", "reproduce": "tapeout/reproduce.sh",
         "checklist": "tapeout/reports/tapeout_checklist.md", "manifest": "tapeout/MANIFEST.sha256",
-        "superseded M0.7 copy (signed package, partial=0.5 for DFT; left unchanged so the signature stays valid)":
-            "tapeout/reports/tapeout_readiness.md",
         "re-scored by (no tool re-run)": "backend/scripts/regen_readiness.py, decision docs/DECISIONS.md 2026-10-06"}))
     return {"design": design, "hard": hard["verdict"], "A": rep["baseline_A_pct"], "B": rep["baseline_B_pct"],
             "conditions": hard["conditions"]}
