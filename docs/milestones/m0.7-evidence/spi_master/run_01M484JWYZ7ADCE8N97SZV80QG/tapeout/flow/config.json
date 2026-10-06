@@ -1,0 +1,25 @@
+{
+  "DESIGN_NAME": "spi_master",
+  "VERILOG_FILES": [
+    "dir::src/spi_clkgen.v",
+    "dir::src/spi_ctrl.v",
+    "dir::src/spi_master.v",
+    "dir::src/spi_shift.v",
+    "dir::src/sync2.v"
+  ],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 20.0,
+  "PNR_SDC_FILE": "dir::src/constraints.sdc",
+  "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc",
+  "ERRORS_ON_UNMATCHED_IO": "both",
+  "FP_CORE_UTIL": 45,
+  "PL_TARGET_DENSITY_PCT": 55.0,
+  "MAX_FANOUT_CONSTRAINT": 10,
+  "CTS_SINK_CLUSTERING_SIZE": 25,
+  "GRT_ANTENNA_ITERS": 3,
+  "GRT_ANTENNA_MARGIN": 10,
+  "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50,
+  "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
+  "CTS_CLK_MAX_WIRE_LENGTH": 0,
+  "FP_PIN_ORDER_CFG": "dir::src/pin_order.cfg"
+}

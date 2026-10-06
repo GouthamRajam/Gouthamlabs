@@ -1,0 +1,333 @@
+{
+  "die_area_um2": 16277.3,
+  "core_area_um2": 12061.6,
+  "utilization": 0.479564,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "busy",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "clk_div[0]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[10]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[11]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[12]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[13]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[14]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[15]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[1]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[2]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[3]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[4]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[5]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[6]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[7]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[8]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "clk_div[9]",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "cpha",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "cpol",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "cs_force",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "cs_mode",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "cs_n",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "done",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "irq",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "irq_clear",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "miso",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "mosi",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "rx_data[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[10]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[11]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[12]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[13]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[14]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[15]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[8]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[9]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "sck",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "start",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "start_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx_data[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[10]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[11]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[12]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[13]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[14]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[15]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[8]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[9]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "word_len",
+      "direction": "INPUT",
+      "side": "W"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "task_id": "task_01M484JWZVEJ782EZR1X24DSE5",
+  "status": "success",
+  "summary": "Wrote pnr/floorplan.json (core_utilization_pct=45 with reasons for utilization, pins, power grid and clock/reset) and pnr/pin_order.cfg covering all 65 ports with simple patterns (exact port names plus tx_data.*, clk_div.*, rx_data.*). No tool was run by me; the floorplan, PDN and pin-order parser checks are left to the runtime.",
+  "outputs": [
+    {
+      "path": "pnr/floorplan.json",
+      "sha256": "be4d49036004aff9eb74d550a050a31bf06c06026d680e9444222c0b315875fb"
+    },
+    {
+      "path": "pnr/pin_order.cfg",
+      "sha256": "c047b29d19e65fc8402025828fddd6a0c57e95bac35ff72bd4a128658d0cb0af"
+    },
+    {
+      "path": "reports/floorplan_report.json",
+      "sha256": "69c5d3b585767e3ed5ba652310f6dcd7624e2170bfca45ce1cce167a77e00d80"
+    },
+    {
+      "path": "reports/floorplan_tool.json",
+      "sha256": "84a151083615d5aecf27a8ce8eca11d506d67ced1c5c6cd611d772375878e217"
+    },
+    {
+      "path": "reports/pnr_ranges.json",
+      "sha256": "fc92fdddd8bcbfad412d867bd29d7ede519c349c6760255b964d5d8df3dfbbc1"
+    }
+  ],
+  "checks_run": [
+    "chk_01M488V4JKFE7TE6KAD9SA708B",
+    "chk_01M488V4KK6583PZC9ET0M7N0M",
+    "chk_01M488V9V8DAHA2GEBAB1VN045",
+    "chk_01M488V9VB0MA3HY43S676AC0M",
+    "chk_01M488V9VBQAJJZV6NJQ3TDZKJ",
+    "chk_01M488V9Y0KP7W391SGYV9NMM1",
+    "chk_01M488V9ZA6VF8PPAXGG81MXH7"
+  ],
+  "assumptions": [
+    "Approximate core size (~111 x 111 um) is estimated from area/utilization; actual die size is computed by the flow.",
+    "Default SKY130 PDN strap width/pitch is adequate for a ~111 um core; no custom PDN settings.",
+    "Pin-order patterns are matched as full-name matches (OpenLane appends an end anchor), so 'clk' does not match clk_div[*], 'start' does not match start_err, and 'cs_n' does not match cs_mode.",
+    "Port list is exactly the spec interfaces (65 bits): 42 input pins and 23 output pins; arch.yaml adds no top-level ports."
+  ],
+  "open_issues": [
+    "If the runtime's pattern matcher is a prefix match rather than a full match, 'clk', 'start' and 'cs_n'-style names may overlap with clk_div, start_err; the parser feedback will show this."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Utilization is inside range and every port is covered once by construction, but nothing has been checked by the real floorplan/PDN tools yet.",
+    "confidence": "medium"
+  }
+}

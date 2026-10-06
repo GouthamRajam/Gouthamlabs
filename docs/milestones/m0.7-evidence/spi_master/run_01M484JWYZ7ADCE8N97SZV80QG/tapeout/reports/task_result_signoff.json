@@ -1,0 +1,108 @@
+{
+  "task_id": "task_01M484JWZVK4B0K8GPQ9B63HMY",
+  "status": "success",
+  "summary": "All 9 corners report setup TNS 0.0 and hold TNS 0.0. Worst setup slack is 8.9381 ns (max_ss_100C_1v60); worst hold slack is 0.104 ns (min_ff_n40C_1v95). The only DRV entries are max fanout on 8 clock-tree buffers (11 to 17 vs limit 10), allowed by the tool's clock-tree rule (limit 20). Hold is the thinnest margin.",
+  "outputs": [
+    {
+      "path": "reports/dfm_scorecard.json",
+      "sha256": "1a3ec681987c2268c7faba7800fee890622ed766cf9d47d6b8c048ca3f492733"
+    },
+    {
+      "path": "reports/dfm_scorecard.md",
+      "sha256": "023d9c2d4f6032a4032cb99346b47aab3e2e37897fe06400ce50f4309bba33e0"
+    },
+    {
+      "path": "reports/dfm_tool.json",
+      "sha256": "db2a0ef3e971e08d5b8f1b1e40e35b287e5008e6a966374cf923c1620650f931"
+    },
+    {
+      "path": "reports/ir_report.json",
+      "sha256": "72d6a206a246775ead22098369f4e43348a2e3d468ccade968e73214cb2fc76a"
+    },
+    {
+      "path": "reports/power_report.json",
+      "sha256": "b237e2bfeb49631d875233597c29c3dacc0016b13e4cc3c5a08a37506c461b8a"
+    },
+    {
+      "path": "reports/power_tool.json",
+      "sha256": "27f174b447d88888374acbfb3591ea3128ba8fc6502aac473cb44c7af88bde0f"
+    },
+    {
+      "path": "reports/pv_signoff.json",
+      "sha256": "8f035a129da2220a0cfa65704472546973ad1db0edf005d3a7cb5acc1c7ca5ac"
+    },
+    {
+      "path": "reports/pv_tool.json",
+      "sha256": "0a25978d54e0f94b8b91b3eb589c56fa213c2db9521223254ee86aaf49e0fd73"
+    },
+    {
+      "path": "reports/sta_signoff.json",
+      "sha256": "dd738451eb3e2bb16fd2a1aa9a3812a96034a55cf24655f52eb70e8fe5f3c8ec"
+    },
+    {
+      "path": "reports/sta_tool.json",
+      "sha256": "1df45688b4e18b43ec556a6197cdc87b2b992ed8c316510eff00e758647fab4c"
+    }
+  ],
+  "checks_run": [
+    "chk_01M48N7JSA6VCC8P4P61100PTV",
+    "chk_01M48N85SMDP54NDBJ491VQAZ7",
+    "chk_01M48N85SMDP54NDBJ491VQAZ9",
+    "chk_01M48N85SMHMRV9NWN0VSDQPVT",
+    "chk_01M48N85SMP9XS02QDXZ06HWJY",
+    "chk_01M48N85SMP9XS02QDXZ06HWK0",
+    "chk_01M48N85SN40CH80F79WEBNYQM",
+    "chk_01M48NCEDKWRQTW2HCS33PP5VP",
+    "chk_01M48NCEDKWRQTW2HCS33PP5VR",
+    "chk_01M48P0VSEXP5D5G0ASEDKD6J7",
+    "chk_01M48P0VSEXP5D5G0ASEDKD6J9",
+    "chk_01M48PHSGGYZ11WY1H9GVK97ZY",
+    "chk_01M48R93AEBG4WY9JMY50XRGT6",
+    "chk_01M48RVBJRCZ4Y4TYGHTNTPSNG",
+    "chk_01M48RVBKRSH5B6QWVF6J1XGZA"
+  ],
+  "assumptions": [
+    "Absence of max transition/capacitance entries in drv_violators is read as none reported by the tool.",
+    "All items assigned to Orion as in the tool output; no Grid-owned items.",
+    "All numbers are quoted from reports/power_tool.json; no tool was run by me.",
+    "All numbers are taken from reports/sta_tool.json as given; I ran no tool.",
+    "Clock is 50 MHz per spec/spec.yaml.",
+    "Corners evaluated are exactly those in the tool data: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95.",
+    "Electromigration, dynamic/transient IR and package inductance are not analyzed by the open flow.",
+    "IR limit is 5% of the 1.8 V supply = 0.09 V (A.13 Phase 0 default), as given in the tool data.",
+    "Input switching activity is 0.2 (20% toggle rate, the default), not simulation activity.",
+    "Instance names such as _764_ are not resolved to cell types; the synchronizer identification of _764_ is inferred from the spec, not from the data.",
+    "Near-min-width edge share on li is treated as inherent to minimum-width local routing, hence low value.",
+    "Order within the same severity is my judgment: line-end defect risk above CMP density margin; lows ordered by near-min-space exposure and layer density.",
+    "PDK sky130A and library sky130_fd_sc_hd are DEFAULT choices pending G1 review.",
+    "Severities from the tool are fixed and were not changed.",
+    "The tool's classification of the clock buffer fanout entries under 'clock-tree net, limit 20' is accepted as given, without any waiver added by me.",
+    "Voltage source locations and the IR analysis corner/tool are not stated in the input data, so no claim is made about them."
+  ],
+  "open_issues": [
+    "Clock-tree buffers exceed the SDC max fanout of 10 (up to 17); reviewer to confirm the clock-tree limit of 20 is acceptable.",
+    "EM is not checked by the open flow.",
+    "Hold slack is only 0.104 ns at min_ff_n40C_1v95; the data has no hold path list, so limiting hold paths are unknown.",
+    "IO delay values and other SDC numbers are DEFAULT placeholders pending G1 review.",
+    "IR source locations, corner and tool are not documented in the input data; a human should confirm them before signoff.",
+    "OpenLane total power (0.0005702339112758636 W) differs from the sta tt total (0.0005809897 W); the cause (tool, activity or corner) is not stated in the data.",
+    "Simulation-based activity is not available; 20% default activity may over- or under-estimate real power.",
+    "Spec marks power targets out of scope, so there is no power limit to check against.",
+    "Whether Orion should apply non-default rules for the low near-limit items is a human decision at G3; they are not recommended as blockers.",
+    "worst_paths lists only setup (max) paths and no cell-level delay breakdown, so dominant cells cannot be named."
+  ],
+  "messages": [
+    {
+      "from": "Volta",
+      "summary": "Power per corner (sta 2.6.0, 20% input activity, 50 MHz): tt 0.0005809897 W, ss 0.0004625672 W, ff 0.0006728195 W total. Worst IR drop 0.000411 V vs limit 0.09 V (5% of 1.8 V); below limit, no PDN change proposed."
+    },
+    {
+      "from": "Fabian",
+      "summary": "Ranked all 7 DFM items: 2 medium (met1 line ends, li density near max) first, then 5 low near-limit geometry items. No high items, antenna at 50.97% of limit, no redundant-via opportunities. Scorecard written."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Numbers are quoted directly from the tool data, but path detail is limited (no hold paths, no cell delays), so path explanations and fix ranking are partly qualitative.",
+    "confidence": "medium"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "pre_layout_setup_ws_by_corner": {
+    "nom_tt_025C_1v80": 9.468617269364206,
+    "nom_ss_100C_1v60": 7.035543902160927,
+    "nom_ff_n40C_1v95": 9.576872010932588
+  },
+  "pre_layout_hold_ws_by_corner": {
+    "nom_tt_025C_1v80": 0.18164276152886152,
+    "nom_ss_100C_1v60": 0.6181605402523026,
+    "nom_ff_n40C_1v95": 0.013112872270280695
+  },
+  "worst_corner": "nom_ss_100C_1v60"
+}

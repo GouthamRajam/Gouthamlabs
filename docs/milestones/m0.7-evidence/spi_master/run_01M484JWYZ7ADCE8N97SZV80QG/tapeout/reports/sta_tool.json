@@ -1,0 +1,763 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 9.7879,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3159,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 8.9549,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8633,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 9.7938,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1058,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 9.7817,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.313,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 8.9716,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8583,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 9.789,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.104,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 9.7955,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3191,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 8.9381,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8688,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 9.7999,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1076,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    }
+  },
+  "worst_paths": {
+    "nom_tt_025C_1v80": [
+      {
+        "startpoint": "miso",
+        "endpoint": "_764_",
+        "type": "max",
+        "slack": 9.7879,
+        "state": "MET"
+      },
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_813_",
+        "type": "max",
+        "slack": 11.6193,
+        "state": "MET"
+      }
+    ],
+    "nom_ss_100C_1v60": [
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_813_",
+        "type": "max",
+        "slack": 8.9549,
+        "state": "MET"
+      },
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_812_",
+        "type": "max",
+        "slack": 9.2624,
+        "state": "MET"
+      }
+    ],
+    "nom_ff_n40C_1v95": [
+      {
+        "startpoint": "miso",
+        "endpoint": "_764_",
+        "type": "max",
+        "slack": 9.7938,
+        "state": "MET"
+      },
+      {
+        "startpoint": "start",
+        "endpoint": "_818_",
+        "type": "max",
+        "slack": 12.4111,
+        "state": "MET"
+      }
+    ],
+    "min_tt_025C_1v80": [
+      {
+        "startpoint": "miso",
+        "endpoint": "_764_",
+        "type": "max",
+        "slack": 9.7817,
+        "state": "MET"
+      },
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_813_",
+        "type": "max",
+        "slack": 11.6274,
+        "state": "MET"
+      }
+    ],
+    "min_ss_100C_1v60": [
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_813_",
+        "type": "max",
+        "slack": 8.9716,
+        "state": "MET"
+      },
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_812_",
+        "type": "max",
+        "slack": 9.281,
+        "state": "MET"
+      }
+    ],
+    "min_ff_n40C_1v95": [
+      {
+        "startpoint": "miso",
+        "endpoint": "_764_",
+        "type": "max",
+        "slack": 9.789,
+        "state": "MET"
+      },
+      {
+        "startpoint": "start",
+        "endpoint": "_818_",
+        "type": "max",
+        "slack": 12.4424,
+        "state": "MET"
+      }
+    ],
+    "max_tt_025C_1v80": [
+      {
+        "startpoint": "miso",
+        "endpoint": "_764_",
+        "type": "max",
+        "slack": 9.7955,
+        "state": "MET"
+      },
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_813_",
+        "type": "max",
+        "slack": 11.613,
+        "state": "MET"
+      }
+    ],
+    "max_ss_100C_1v60": [
+      {
+        "startpoint": "clk_div[6]",
+        "endpoint": "_813_",
+        "type": "max",
+        "slack": 8.9381,
+        "state": "MET"
+      },
+      {
+        "startpoint": "start",
+        "endpoint": "_819_",
+        "type": "max",
+        "slack": 9.2184,
+        "state": "MET"
+      }
+    ],
+    "max_ff_n40C_1v95": [
+      {
+        "startpoint": "miso",
+        "endpoint": "_764_",
+        "type": "max",
+        "slack": 9.7999,
+        "state": "MET"
+      },
+      {
+        "startpoint": "start",
+        "endpoint": "_818_",
+        "type": "max",
+        "slack": 12.3856,
+        "state": "MET"
+      }
+    ]
+  },
+  "clock_period_ns": 20.0
+}

@@ -1,0 +1,17 @@
+{
+  "worst_drop_v": 0.000411,
+  "avg_drop_v": 0.00011,
+  "limit_v": 0.09,
+  "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)",
+  "assumptions": [
+    "Input switching activity is 0.2 (20% toggle rate, the default), not simulation activity.",
+    "Clock is 50 MHz per spec/spec.yaml.",
+    "Corners evaluated are exactly those in the tool data: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95.",
+    "IR limit is 5% of the 1.8 V supply = 0.09 V (A.13 Phase 0 default), as given in the tool data.",
+    "Voltage source locations and the IR analysis corner/tool are not stated in the input data, so no claim is made about them.",
+    "Electromigration, dynamic/transient IR and package inductance are not analyzed by the open flow.",
+    "PDK sky130A and library sky130_fd_sc_hd are DEFAULT choices pending G1 review.",
+    "All numbers are quoted from reports/power_tool.json; no tool was run by me."
+  ],
+  "explained_by": "Volta"
+}

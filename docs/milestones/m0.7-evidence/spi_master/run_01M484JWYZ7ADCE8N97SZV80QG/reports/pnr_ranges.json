@@ -1,0 +1,53 @@
+{
+  "core_utilization_pct": {
+    "min": 30,
+    "max": 65,
+    "default": 45
+  },
+  "placement_density": {
+    "min": 0.4,
+    "max": 0.8,
+    "default": 0.55
+  },
+  "clock_uncertainty_ns": {
+    "min": 0.1,
+    "max": 0.5,
+    "default": 0.25
+  },
+  "max_fanout": {
+    "min": 6,
+    "max": 20,
+    "default": 10
+  },
+  "cts_cluster_size": {
+    "min": 6,
+    "max": 25,
+    "default": 25
+  },
+  "antenna_repair_iters": {
+    "min": 3,
+    "max": 15,
+    "default": 3
+  },
+  "antenna_repair_margin_pct": {
+    "min": 10,
+    "max": 30,
+    "default": 10
+  },
+  "cts_cluster_diameter_um": {
+    "min": 15,
+    "max": 50,
+    "default": 50
+  },
+  "cts_buffer_distance_um": {
+    "min": 0,
+    "max": 200,
+    "default": 0
+  },
+  "cts_max_wire_length_um": {
+    "min": 0,
+    "max": 500,
+    "default": 0
+  },
+  "iteration_budget": 8
+}
