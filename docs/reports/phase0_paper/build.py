@@ -59,7 +59,9 @@ s.append(P(
     "um<super>2</super>. Estimated total power at the typical corner ranges from 146.6 uW to 5.75 mW at 20% input activity, "
     "and the worst static IR drop is 1.37 mV (0.08% of 1.8 V) against a 90 mV limit. One block (spi_master) passes only under "
     "a clock-net fanout rule of 20, and electromigration, dynamic IR, scan/ATPG test coverage, reliability and foundry-certified "
-    "signoff are not yet assessed. We list, check by check, what a production tape-out additionally requires.", absS))
+    "signoff are not yet assessed. We also document the tools and the agent-team organisation used, every significant failure "
+    "and its fix, a comparison against SKY130 process data and published designs of the same function, and, check by "
+    "check, what a production tape-out additionally requires.", absS))
 
 s.append(P("1. Introduction", h1))
 s.append(P(
@@ -86,6 +88,8 @@ s.append(P(
     "re-runs the checks in a clean container; a SHA-256 manifest covers every file (Appendix A). Tool pass/fail decides each "
     "check; the agents never decide it."))
 
+exec(open(f"{S}/sections_new.py").read())
+s += sec_tools() + sec_teams()
 s.append(P("3. Designs and implementation", h1))
 rows = [["Block", "Function", "Clock", "Cells (synth)", "Synth area um<super>2</super>", "Die area um<super>2</super>",
          "Placed inst.", "Util.", "Wire length um", "Vias", "Nets"]]
@@ -97,7 +101,7 @@ for d in N:
                  f1(v["die_area_um2"]), v["instances"], f"{v['utilization'] * 100:.1f}%", f"{v['wirelength_um']:,}",
                  f"{v['vias']:,}", v["nets"]])
 s.append(KeepTogether([table(rows, [17, 27, 20, 13, 15, 16, 13, 11, 16, 13, 10]),
-P("Table 1. Implementation summary. Placed instances include tap cells, timing buffers and hold buffers; utilization is "
+P("Table 4. Implementation summary. Placed instances include tap cells, timing buffers and hold buffers; utilization is "
            "placed standard-cell area over core area. Wire length and via count are from the detailed router.", cap)]))
 s.append(KeepTogether([Image(f"{S}/fig_layouts.png", width=178 * mm, height=178 * mm * 792 / 3300),
 P("Figure 1. Final layouts rendered from the signed GDSII files (li1 and met1-met5 shown; to scale per panel). The "
@@ -110,7 +114,7 @@ for d in N:
     v = D[d]
     rows.append([d, v["drc_magic"], v["drc_klayout"], v["lvs"], v["lvs_devices"], v["antenna_nets"], v["xor"], "PASS"])
 s.append(KeepTogether([table(rows, [20, 17, 18, 38, 15, 18, 22, 17]),
-P("Table 2. Physical verification on the final streamed GDS. Two DRC engines with the SKY130 open rule decks agree at 0 "
+P("Table 5. Physical verification on the final streamed GDS. Two DRC engines with the SKY130 open rule decks agree at 0 "
            "violations; LVS matches device-for-device and net-for-net.", cap)]))
 
 s.append(P("4.2 Timing", h2))
@@ -122,7 +126,7 @@ for d in N:
                  f"+{v['hold_ws'][0]:.4f} ({v['hold_ws'][1]})", f"{v['corners_passed']}/{v['corners']}",
                  f"{v['tree_skew_ns_max']:.4f}", f"{v['slew_viol']} / {v['cap_viol']}", v["hold_buffers"]])
 s.append(KeepTogether([table(rows, [17, 14, 30, 15, 30, 13, 17, 14, 13]),
-P("Table 3. Post-route static timing with extracted parasitics at 9 corners (OpenSTA, propagated clocks, 0.25 ns clock "
+P("Table 6. Post-route static timing with extracted parasitics at 9 corners (OpenSTA, propagated clocks, 0.25 ns clock "
            "uncertainty). Total negative slack is 0 at every corner for every block.", cap)]))
 s.append(P(
     "Setup is limited at the slow corner (SS 100 &deg;C 1.60 V, max RC) and hold at the fast corner (FF -40 &deg;C 1.95 V, min "
@@ -140,7 +144,7 @@ for d in N:
                  uW(t["switching_w"]), f"{t['leakage_w'] * 1e9:.2f}", f"{p['ss_100C_1v60']['leakage_w'] * 1e9:.0f}",
                  f"{t['total_w'] * v['period_ns'] * 1e-9 * 1e12:.2f}", f"{t['total_w'] / (v['die_area_um2'] * 1e-8):.2f}"])
 s.append(KeepTogether([table(rows, [17, 18, 18, 18, 16, 17, 15, 15, 17, 20]),
-P("Table 4. Estimated power (OpenSTA report_power, vector-less, 20% switching activity on inputs, post-route netlist "
+P("Table 7. Estimated power (OpenSTA report_power, vector-less, 20% switching activity on inputs, post-route netlist "
            "with parasitics). Energy per cycle = total power x clock period. Power density uses die area.", cap)]))
 s.append(KeepTogether([Image(f"{S}/fig_power_ir.png", width=165 * mm, height=165 * mm * 792 / 2420),
 P("Figure 2. Left: estimated total power per corner (log scale). Right: worst static IR drop on VPWR at TT against the "
@@ -157,7 +161,7 @@ s.append(P(
     "A chip has no single \"resistance\". Two resistances matter for signoff: (i) the resistance of the signal wires and vias, "
     "which with their capacitance sets wire delay (RC) and is read back from the layout as SPEF parasitics, and (ii) the "
     "resistance of the power-delivery network (PDN), which causes a static IR (current x resistance) drop between the supply "
-    "pins and each cell. Table 5 gives both."))
+    "pins and each cell. Table 8 gives both."))
 rows = [["Block", "Total wire+via R, min RC (ohm)", "Total R, nom RC (ohm)", "Total R, max RC (ohm)", "Total net C, nom (pF)",
          "Highest-R net, nom (ohm, net)", "R segments (nom)", "Worst IR drop VPWR (mV)", "Avg IR drop (mV)",
          "Worst ground bounce VGND (mV)", "IR limit (mV)"]]
@@ -169,7 +173,7 @@ for d in N:
                  f"{v['ir_worst_v'] * 1e3:.3f}", f"{v['ir_avg_v'] * 1e3:.3f}", f"{v['vgnd_bounce_v'] * 1e3:.3f}",
                  f"{v['ir_limit_v'] * 1e3:.0f}"])
 s.append(KeepTogether([table(rows, [16, 17, 16, 16, 14, 25, 14, 15, 13, 17, 12]),
-P("Table 5. Interconnect resistance and capacitance summed over all routed nets from the signed SPEF files (OpenROAD "
+P("Table 8. Interconnect resistance and capacitance summed over all routed nets from the signed SPEF files (OpenROAD "
            "extraction, three RC corners), and static PDN IR drop at TT (OpenROAD PSM).", cap)]))
 s.append(P(
     "Total routed resistance scales with wire length (2.6-3.6 ohm per um of routed wire at nominal RC across the five blocks), "
@@ -177,7 +181,7 @@ s.append(P(
     "highest-resistance single net is 232-561 ohm; in spi_master it is a leaf clock net (clknet_3_5__leaf_clk). The worst static "
     "IR drop is 0.05-1.37 mV, at most about 1.5% of the 90 mV budget, so the default SKY130 power grid is heavily over-provisioned for "
     "blocks of this size. Electromigration (current density in wires and vias) and dynamic (switching-transient) IR drop were "
-    "<b>not analysed</b>; they are required before a production tape-out (Section 5)."))
+    "<b>not analysed</b>; they are required before a production tape-out (Section 6)."))
 
 rows = [["Block", "High", "Medium", "Low", "Top items"]]
 for d in N:
@@ -185,7 +189,7 @@ for d in N:
     top = "; ".join(f"{i[0]} ({i[1]}): {i[2]}" for i in v["dfm_items"][:3])
     rows.append([d, v["dfm"]["high"], v["dfm"]["medium"], v["dfm"]["low"], top])
 s.append(KeepTogether([P("4.5 Manufacturability (DFM)", h2), table(rows, [17, 10, 12, 10, 121]),
-P("Table 6. DFM scorecard from KLayout geometry analysis of the final GDS (near-minimum spacing, line ends, via "
+P("Table 9. DFM scorecard from KLayout geometry analysis of the final GDS (near-minimum spacing, line ends, via "
            "redundancy and density). No high-severity item in any block. All vias are single-cut.", cap)]))
 
 s.append(P("4.6 Gate decision", h2))
@@ -195,7 +199,7 @@ for d in N:
     tim = "PASS (conditional)" if v["clock_rule_allowed"] else "PASS"
     rows.append([d, "PASS", "PASS", "PASS", tim, "PASS", v["hard"], f"{v['A']}% / {v['B']}%"])
 s.append(KeepTogether([table(rows, [18, 12, 12, 14, 26, 18, 30, 26]),
-P("Table 7. Phase 0 gate: hard checks pass/fail. The percentage is a derived figure (Baseline A = open-shuttle "
+P("Table 10. Phase 0 gate: hard checks pass/fail. The percentage is a derived figure (Baseline A = open-shuttle "
            "requirements, 90/97 points; Baseline B = commercial production, 68/106 points) with partial credit dft = 0 and "
            "ir_em = 0.5 (static IR only).", cap)]))
 s.append(P(
@@ -204,9 +208,11 @@ s.append(P(
     "scan/ATPG and artifact-provenance checking are deferred to Phase 1. No check was waived, and no constraint was loosened to "
     "obtain these results."))
 
-s.append(P("5. What a real-world tape-out checks", h1))
+s += sec_failures()
+s += sec_compare()
+s.append(P("6. What a real-world tape-out checks", h1))
 s.append(P(
-    "Table 8 lists the checks a production tape-out on a commercial foundry process normally requires, and where this work "
+    "Table 11 lists the checks a production tape-out on a commercial foundry process normally requires, and where this work "
     "stands on each. \"Done\" means a real tool ran and passed on these blocks; \"Partial\" means a reduced form ran; \"Not "
     "done\" means it is open work; \"n/a\" means it does not apply to these blocks. Typical pass criteria are industry practice; "
     "the exact limits come from the foundry PDK, the product specification and the qualification standard."))
@@ -245,10 +251,10 @@ C = [["Area", "Check", "Typical pass criterion", "This work (Phase 0)"],
      ["Silicon", "Wafer sort, characterization (shmoo), yield", "Functional at spec V/F/T; yield target met", "Not applicable yet (no silicon)"],
      ["Silicon", "Qualification (e.g. JEDEC JESD47: HTOL, ESD, LU)", "Passes stress tests on sample lots", "Not applicable yet (no silicon)"]]
 s.append(KeepTogether([table(C, [19, 50, 66, 41]),
-P("Table 8. Production tape-out checks and the status of this work. Project targets (coverage, mutation) are S2S's "
+P("Table 11. Production tape-out checks and the status of this work. Project targets (coverage, mutation) are S2S's "
            "own; other criteria are typical industry values.", cap)]))
 
-s.append(P("6. Discussion and limitations", h1))
+s.append(P("7. Discussion and limitations", h1))
 s.append(P(
     "<b>What is established.</b> For five blocks, the open-source flow driven by agents produced layouts that pass the hard "
     "signoff checks of an open SKY130 shuttle, with independent re-checks (two DRC engines, independent STA that must agree with "
@@ -263,7 +269,7 @@ s.append(P(
     "spi_master's clock-tree fanout (11-17 per leaf buffer) is accepted only under an explicit clock-net rule; the installed "
     "TritonCTS builds this tree with an average of 13 sinks per leaf buffer, and no in-range parameter reduced it."))
 
-s.append(P("7. Conclusion and next steps", h1))
+s.append(P("8. Conclusion and next steps", h1))
 s.append(P(
     "All five blocks reached a signed GDSII with 0 DRC violations (Magic and KLayout), full LVS match, 0 antenna violations and "
     "positive setup and hold slack at nine corners, at 146.6 uW-5.75 mW estimated power and at most 1.37 mV static IR drop. "
@@ -271,6 +277,27 @@ s.append(P(
     "insertion and ATPG with measured fault coverage (OpenROAD DFT + Fault), an artifact hash/provenance check, and a first "
     "processor-class design (RV32I core) taken to the same signoff."))
 
+REFS = [
+    "SkyWater Open Source PDK documentation, foundry-provided libraries (sky130_fd_sc_hd site, density). https://skywater-pdk.readthedocs.io/en/main/contents/libraries/foundry-provided.html",
+    "SkyWater PDK, device details (metal sheet resistance). https://skywater-pdk.readthedocs.io/en/main/rules/device-details.html",
+    "SkyWater PDK, periphery rules (minimum widths). https://skywater-pdk.readthedocs.io/en/main/rules/periphery.html",
+    "SkyWater PDK, resistance-values table (contact/via resistance). https://foss-eda-tools.googlesource.com/skywater-pdk/+/b844d2f0815ee53ec010f926ca7b678d9f919527%5E%21",
+    "sky130_fd_sc_hd liberty tt_025C_1v80 (cell area, leakage), open_pdks commit 0fe599b2, as installed in the s2s-eda image.",
+    "A. Ajami, K. Banerjee et al., IR-drop analysis, ISQED 2003. https://web.ece.ucsb.edu/Faculty/Banerjee/pubs/ISQED_IRDrop_2003.pdf",
+    "CAST Inc., H16550S UART IP core brief. https://www.cast-inc.com/pdfs/cast_h16550s-brief-asic.pdf",
+    "CAST Inc., SPI-MS SPI master/slave IP. https://cast-inc.com/interfaces/serial-communications/spi-ms",
+    "SPI core with APB interface, Silterra 0.18 um (UiTM repository). https://ir.uitm.edu.my/id/eprint/52072",
+    "Texas Instruments, TL16C550D asynchronous communications element, datasheet. https://www.ti.com/lit/ds/symlink/tl16c550d.pdf",
+    "UART on SKY130 with Yosys + OpenROAD (open-source project). https://github.com/raghunandanr487-collab/uart_on_openroad",
+    "Tiny Tapeout FAQ and clock specification. https://tinytapeout.com/faq/ ; https://www.tinytapeout.com/specs/clock/",
+    "Efabless Caravel harness documentation (user area). https://caravel-harness.readthedocs.io/",
+    "ExperiarCore SDC, Efabless SKY130 MPW-6 shuttle. https://foss-eda-tools.googlesource.com/third_party/shuttle/sky130/mpw-006/slot-032/+/13a164dc6c63b6a005987b3b3c3b982e518f4302/sdc/ExperiarCore.sdc",
+    "Siemens EDA, test coverage targets, DVCon India 2025. https://dvcon-proceedings.org/wp-content/uploads/P1-DVConIndia2025_Final_Paper_0782.pdf",
+    "OpenLane 2 (2.3.10), OpenROAD, OpenSTA, Magic, KLayout, Netgen, Yosys, SymbiYosys, Verilator, Icarus Verilog, cocotb: versions as listed in Table 1 and each package's versions.lock.",
+]
+s.append(P("References", h1))
+for i, r in enumerate(REFS, 1):
+    s.append(P(f"[{i}] {r}", small))
 s.append(P("Appendix A. Data and reproducibility", h1))
 rows = [["Block", "Run", "P&amp;R iteration", "GDS size (bytes)", "GDS SHA-256"]]
 for d in N:
@@ -294,6 +321,12 @@ def footer(c, doc):
     c.drawRightString(A4[0] - 18 * mm, 10 * mm, f"{doc.page}"); c.restoreState()
 
 
+merged = []
+for f in s:  # a heading directly before a kept-together table goes into that block
+    if isinstance(f, KeepTogether) and merged and isinstance(merged[-1], Paragraph) and merged[-1].style.name in ("h1", "h2"):
+        f = KeepTogether([merged.pop()] + list(f._content))
+    merged.append(f)
+s = merged
 doc = SimpleDocTemplate(OUT, pagesize=A4, leftMargin=17 * mm, rightMargin=17 * mm, topMargin=16 * mm, bottomMargin=17 * mm,
                         title="Agent-Driven RTL-to-GDSII on Open SKY130: Phase 0 Signoff Results",
                         author="S2S project, Goutham Labs", subject="Phase 0 results: power, resistance, timing, signoff")

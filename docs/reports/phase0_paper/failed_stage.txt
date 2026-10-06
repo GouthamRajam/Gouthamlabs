@@ -1,0 +1,8 @@
+verification|10
+place_route|8
+synthesis|6
+test_build|3
+signoff|3
+architecture|2
+floorplan|2
+spec|1
