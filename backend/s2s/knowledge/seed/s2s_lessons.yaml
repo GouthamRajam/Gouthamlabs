@@ -208,3 +208,17 @@ entries:
     date: "2026-10-06"
     confidence: high
     owner: Sage
+  - id: s2s-eq-003
+    kind: s2s_lesson
+    title: "Synthesis merged identical registers: run Yosys opt on the RTL side so the merged register keeps a matching name"
+    symptom: "LEC proves most points but leaves outputs unproven that depend on a register present in the RTL but missing by name in the netlist (spi_master: rx_data[15:8] via u_spi_shift.wl_q; netlist has only u_spi_clkgen.wl_q)"
+    root_cause: "Two RTL registers with the same D, enable, reset and init (spi_master: both wl_q latch word_len on start_acc) are merged into one flop by synthesis (Yosys opt_merge); OpenLane's quiet log does not record the merge, so name-based register correspondence has nothing to pair the removed register with."
+    wrong_assumption: "Unproven points after synthesis mean the netlist differs from the RTL; a single opt_merge on the RTL side is enough (the two registers still had different mux cells in front; the full `opt` loop is needed)."
+    lesson: "Run Yosys `opt` (opt_expr/opt_merge/opt_dff to a fixpoint) on the RTL side before equiv_make: it makes the same equivalence-preserving merges as synthesis, and registers that differ are never merged, so a wrong merge still fails. Confirm with caught mutants that the check still fails."
+    evidence: "spi_master run_01M484JWYZ7ADCE8N97SZV80QG synth: 95/8 without opt, 103/0 with opt; caught mutants spi_shift_L59_stuck_bit_2 (1 unproven), L86_wrong_operator_2 (15), L90_swapped_condition_1 (17), spi_clkgen_L87_off_by_one_2 (1)"
+    regression_test: "tests/platform/test_lec_fallback.py::test_lec_with_register_merge_still_rejects_real_bugs"
+    tags: [equivalence, lec, register_merging, opt_merge, yosys, synthesis, netlist, sienna, spi_master]
+    source: {title: "Synopsys Formality SVF guidance (register merging) / Yosys opt_merge", url: "https://yosyshq.readthedocs.io/projects/yosys/en/stable/cmd/opt_merge.html"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage

@@ -71,3 +71,39 @@ def test_lec_with_fsm_map_still_rejects_real_bugs(tmp_path, mutant):
     assert not r.passed and r.metrics["lec_points_unproven"] >= 1
     r = _uart_lec(tmp_path / "final", mutant, netlist="uart_top.final.nl.v")
     assert not r.passed and r.metrics["lec_points_unproven"] >= 1
+
+
+SPI = Path(__file__).parent / "lec_fixtures" / "spi_master"
+
+
+def _spi_lec(tmp_path, mutant=None):
+    """spi_master 2026-10-06: synthesis merged the identical registers u_spi_clkgen.wl_q and u_spi_shift.wl_q
+    (and re-encoded the control FSM); the RTL side runs Yosys `opt`, which makes the same merge."""
+    shutil.copytree(SPI, tmp_path / "d")
+    d = tmp_path / "d"
+    (d / "logs").mkdir()
+    if mutant:
+        shutil.copy2(d / "mutants" / mutant, d / "rtl" / (mutant.split("_L")[0] + ".v"))
+    pdk = d / "formal_pdk.v"
+    rec = signoff.runner.run(["eqy.formal_pdk_proc", "--output", str(pdk), *signoff.CELL_MODELS], d,
+                             d / "logs" / "pdk.log", "eqy", 600)
+    assert rec.exit_code == 0
+    base = ToolResult(tool="eqy", passed=False, status="FAIL", exit_code=1, timed_out=False, error_count=0,
+                      warning_count=0, errors=[], warnings=[], stage_failures=[],
+                      metrics={"status": "FAIL", "partitions_proven": [], "partitions_failed": []},
+                      reasons=["eqy not run"], safety_net_hits=[], log_path=None, report_paths={}, command=[],
+                      tool_version=None, env_hash=None, duration_s=None)
+    return signoff._lec_fallback(base, sorted((d / "rtl").glob("*.v")), pdk, d / "spi_master.nl.v", "spi_master",
+                                 d, "t", d)
+
+
+def test_lec_proves_merged_registers(tmp_path):
+    r = _spi_lec(tmp_path)
+    assert r.passed and r.metrics["lec_points_unproven"] == 0 and r.metrics["lec_points_proven"] >= 103
+
+
+@pytest.mark.parametrize("mutant", ["spi_shift_L59_stuck_bit_2.v", "spi_shift_L86_wrong_operator_2.v",
+                                    "spi_shift_L90_swapped_condition_1.v", "spi_clkgen_L87_off_by_one_2.v"])
+def test_lec_with_register_merge_still_rejects_real_bugs(tmp_path, mutant):
+    r = _spi_lec(tmp_path, mutant)
+    assert not r.passed and r.metrics["lec_points_unproven"] >= 1

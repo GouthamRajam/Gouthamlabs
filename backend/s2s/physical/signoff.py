@@ -295,14 +295,19 @@ def _lec_fallback(eqy_res, rtl: list[Path], pdk: Path, netlist: Path, top: str, 
             keep = "".join(f" w:{r['signal']} %d" for r in recs)
         elif alias:
             fsm_problems.append("netlist has more than one module; FSM alias wires not added")
-    prep = "hierarchy -top {t}\nproc\nflatten\nopt_clean\nmemory -nomap\nmemory_map\nopt_clean\nsplitnets -format []"
+    prep = "hierarchy -top {t}\nproc\nflatten\nopt_clean\nmemory -nomap\nmemory_map\nopt_clean\n{opt}splitnets -format []"
     prep = prep + (f" w:*{keep}" if keep else "")
+    # RTL side only: Yosys `opt` merges identical registers (same D/enable/reset/init), as synthesis does
+    # (spi_master: u_spi_clkgen.wl_q and u_spi_shift.wl_q became one flop), so the merged register keeps a name
+    # the netlist has. Equivalence-preserving by construction; registers that differ are never merged, so a
+    # wrong merge in the netlist still leaves points unproven.
+    gold_prep, gate_prep = prep.format(t=top, opt="opt\n"), prep.format(t=top, opt="")
     ys.write_text(f"""read_verilog -sv {' '.join(str(Path(p).resolve()) for p in rtl)}
-{prep.format(t=top)}
+{gold_prep}
 rename {top} gold
 design -stash gold
 read_verilog -sv {pdk} {gate_nl}
-{prep.format(t=top)}
+{gate_prep}
 rename {top} gate
 design -stash gate
 design -copy-from gold -as gold gold
