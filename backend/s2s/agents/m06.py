@@ -1065,6 +1065,28 @@ def verification_steps() -> list[Step]:
         flags = guard.diff_files(before, after)
         approved = [f for g in ctx.state.get("guard_approvals", []) for f in g["flags"]]
         unreviewed = [f for f in flags if f not in approved]
+        if unreviewed:
+            # A flagged change with no recorded Sentinel decision (e.g. lost with an interrupted step) is
+            # reviewed now, baseline vs final, by the same rule as during the loop; a rejection stays a failure.
+            files = sorted({f.split(":", 1)[0] for f in unreviewed})
+            data = llm.ask(ctx, "Sentinel", goal="The anti-cheating guard flagged these verification changes "
+                           "(baseline -> final) and no review was recorded. Approve ONLY if each flagged change keeps "
+                           "or strengthens what is checked against the spec (cite the requirement); otherwise file a "
+                           "blocking finding.",
+                           inputs={"spec/spec.yaml": _read(ctx, "spec/spec.yaml"),
+                                   **{f"reports/guard_before_{Path(p).name}.txt": before.get(p, "") for p in files},
+                                   **{p: after.get(p, "") for p in files}},
+                           exit_criteria=["approve only changes that do not weaken verification"],
+                           schema=REVIEW_ANSWER, previous_attempts="Guard flags:\n- " + "\n- ".join(unreviewed))
+            blocking = [f for f in data["findings"] if f["severity"] == "blocking"]
+            ctx.check("anti_cheat_guard", "s2s.verify.guard", not blocking,
+                      {"flags": len(unreviewed), "detail": unreviewed, "stage": "final review",
+                       "sentinel": "rejected" if blocking else "approved"}, **_who("Sentinel"))
+            if not blocking:
+                ctx.state.setdefault("guard_approvals", []).append(
+                    {"author": "final review", "flags": unreviewed, "sentinel": [f["what"] for f in data["findings"]]})
+                approved += unreviewed
+                unreviewed = []
         ctx.state["anticheat_final"] = {"flags": flags, "approved_by_sentinel": approved, "unreviewed": unreviewed}
         _record(ctx, "anti_cheat_final", unreviewed, "s2s.verify.guard", "Sentinel")
 
