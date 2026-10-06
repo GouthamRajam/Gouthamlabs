@@ -62,6 +62,18 @@
  "weights_A_total": 97.0,
  "weights_B_total": 106.0,
  "weights_total": 106.0,
+ "phase0_gate": {
+  "status": "QUALIFIED PASS",
+  "marked_by_human": true,
+  "source": "PHASE_GATES.md",
+  "headline": "QUALIFIED PASS \u2014 marked by the human CEO, 2026-10-06. NOT a clean or unconditional pass:",
+  "summary": [
+   "counter8, alu8, sync_fifo, uart: full hard-check pass (5/5).",
+   "spi_master: CONDITIONAL pass (5/5) \u2014 only under the approved clock-net max-fanout limit of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of 10 fails it.",
+   "Explicitly deferred to Phase 1 (MASTER_SPEC 13.4): EM analysis and full IR/EM (Phase 0 has static IR only), DFT scan insertion + ATPG (no fault coverage measured), and the artifact hash/provenance check (\"no human edits\" is NOT CHECKED).",
+   "Derived readiness for all five: Baseline A 92.7% (90/97, dft=0, ir_em=0.5), Baseline B 64.1% (68/106). Evidence: docs/milestones/m0.7-evidence/*/tapeout (re-signed)."
+  ]
+ },
  "rows": [
   {
    "check": "functional_sim",

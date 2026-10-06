@@ -1312,12 +1312,15 @@ def gdsii_steps() -> list[Step]:
     def release_notes(ctx: StepContext) -> None:
         data = llm.ask(ctx, "Gideon", goal="Write tapeout/release_notes.md: what this package is, its signoff status "
                        "with the checklist, the hard checks (pass/fail, with any condition stated prominently) as the "
-                       "headline, the readiness percentages only as derived figures with their baselines and "
-                       "partial-credit values, the scope labels (DFT deferred, not measured), known limits and open items.",
+                       "headline, the Phase 0 gate status (tapeout_readiness.json phase0_gate), the readiness "
+                       "percentages only as derived figures with their arithmetic, baselines and partial-credit values, "
+                       "the scope labels (DFT deferred: not measured, 0 fault coverage; static IR measured and passed, "
+                       "EM not analysed), known limits and open items.",
                        inputs=_inputs(ctx, ["spec/spec.yaml", "reports/tapeout_checklist.json",
                                             "reports/tapeout_readiness.json", "reports/dfm_scorecard.json"]),
                        exit_criteria=["no claim beyond the checklist and readiness data", "both baselines shown",
-                                      "hard checks lead; no percentage is presented as the pass criterion"],
+                                      "hard checks lead; no percentage is presented as the pass criterion",
+                                      "every percentage is copied from the input reports; none is estimated"],
                        schema=REPORT_ANSWER, extra_note="Put the release notes in `report_markdown`. ")
         _answer_fields(ctx, "Gideon", data)
         _write(ctx, "Gideon", [{"path": "tapeout/release_notes.md", "content": data["report_markdown"]}], "release_notes")
@@ -1344,13 +1347,17 @@ def gdsii_steps() -> list[Step]:
         s = ctx.session
         _tool_json(ctx, "Sloane", "reports/division_cost.json", {"run_spend_by_agent_usd": _spend(s, [ctx.task.run_id])})
         data = llm.ask(ctx, "Sloane", goal="Write the Division 4 (Zone 4) report to the human VP for this design: signoff "
-                       "results, tape-out package status, risks, cost, and decisions needed (G4 is a human decision for "
-                       "real silicon).",
+                       "results led by the hard checks (pass/fail, with any condition stated prominently), the Phase 0 "
+                       "gate status (tapeout_readiness.json phase0_gate), tape-out package status, the readiness "
+                       "percentages only as derived figures with their partial-credit values and scope labels (DFT "
+                       "deferred: not measured, 0 fault coverage; static IR measured and passed, EM not analysed), "
+                       "risks, cost, and decisions needed (G4 is a human decision for real silicon).",
                        inputs=_inputs(ctx, ["reports/sta_signoff.json", "reports/power_report.json", "reports/ir_report.json",
                                             "reports/pv_signoff.json", "reports/dfm_scorecard.json",
                                             "reports/tapeout_checklist.json", "reports/tapeout_readiness.json",
                                             "reports/division_cost.json"]),
-                       exit_criteria=["one page", "every number from the reports"], schema=REPORT_ANSWER,
+                       exit_criteria=["one page", "every number from the reports",
+                                      "no percentage is presented as the pass criterion"], schema=REPORT_ANSWER,
                        extra_note="Put the report in `report_markdown`. ")
         _answer_fields(ctx, "Sloane", data)
         _write(ctx, "Sloane", [{"path": "reports/division4_report.md", "content": data["report_markdown"]}], "report")

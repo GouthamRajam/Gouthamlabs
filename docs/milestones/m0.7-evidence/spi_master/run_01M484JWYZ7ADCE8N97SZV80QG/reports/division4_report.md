@@ -1,32 +1,60 @@
-# Division 4 report: spi_master (stage gdsii)
+# Division 4 (Signoff and Manufacturing, Zone 4) report: spi_master
 
-To: Human VP. From: Sloane, Director of Signoff & Manufacturing. Every number is quoted from the eight input reports. I ran no tool; the S2S runtime runs the real checks.
+To: human VP. Stage: gdsii. Source: the eight reports listed in the task. Nothing was re-run by me.
 
-## Bottom line
-All signoff checks in the reports are clean and the tape-out checklist shows 16 of 16 items done, including "G3 approved" (gate_01M48RVBQACX41SHEYXGWPKCZQ). G4 (real silicon) is your decision. I do not approve gates. Everything is pre-silicon and uses open tools and the open SKY130 PDK only, so it is not a commercial foundry signoff.
+## 1. Hard checks (verdict: CONDITIONAL PASS)
 
-## Signoff results
-- Timing (OpenSTA, 9 corners): setup and hold TNS are 0.0 in every corner. Worst setup slack is 8.9381 ns (max_ss_100C_1v60) on a 20.0 ns clock. Worst hold slack is 0.104 ns (min_ff_n40C_1v95), the thinnest margin in the design. The only design-rule item is max fanout on 8 clock-tree buffers (values 11 to 17 against the SDC limit of 10). The tool accepts them under its rule "clock-tree net, limit 20". I added no waiver.
-- Physical verification (final GDS, sha256 fc4eecba...b000d3): Magic DRC 0, KLayout DRC 0, LVS errors 0 ("Circuits match uniquely"; 684 devices and 723 nets in layout and schematic). Antenna: 0 net and 0 pin violations on 692 nets; worst is 50.97% of its limit.
-- Power (OpenSTA, 20% input activity): total 0.0005809897 W typical (tt), 0.0006728195 W at ff_n40C_1v95, 0.0004625672 W at ss_100C_1v60. The spec has no power budget, so there is nothing to compare against.
-- IR drop (static): worst 0.000411 V, average 0.00011 V, limit 0.09 V.
-- DFM scorecard: 0 high, 2 medium, 5 low. Medium items: DFM-003 (103 met1 line ends at near-minimum spacing, the only item with a direct defect mechanism) and DFM-001 (20 li windows within 10% of the 0.6 max density, worst window 0.583). Owner of both: Orion.
+**CONDITION, read first:** timing and DRV pass only under the approved clock-net max-fanout limit of 20 (config/signoff.yaml cts.clock_max_fanout). Eight clock-tree buffer outputs (clkbuf_3_0 to clkbuf_3_7) have fanout 11 to 17, above the SDC limit of 10. Under a flat SDC max-fanout limit of 10 this design FAILS. The same 8 entries appear in all 9 corners.
 
-## Tape-out package status
-Checklist: 16 of 16 done. Readiness score: 95.3% against the open SKY130 shuttle baseline (A) and 64.1% against a commercial production baseline (B). Rows not fully earned: DFT scan/ATPG is partial (plan only, 2.5 of 5 points under A); signal integrity, reliability and foundry-certified signoff are "not run" (out of open-flow scope).
+| Hard check | Status | Detail |
+|---|---|---|
+| DRC (Magic + KLayout, final GDS) | PASS | Magic 0, KLayout 0 violations |
+| LVS (Netgen, final GDS) | PASS | Circuits match uniquely (684 devices, 723 nets) |
+| Antenna | PASS | 0 net / 0 pin violations, 692 nets checked |
+| Timing, all corners (setup, hold, DRV) | PASS (conditional) | 9/9 corners; worst setup +8.9381 ns (max_ss_100C_1v60); worst hold +0.104 ns (min_ff_n40C_1v95); TNS 0 |
+| Equivalence RTL vs final netlist | PASS | eqy_rtl_vs_final |
+| No human edits to artifacts | NOT CHECKED | no automated edit-detection exists yet; hash/provenance check is in the Phase 1 plan |
 
-## Risks and what I am doing
-1. Hold margin of 0.104 ns is thin. Suggestion for Chronos: re-run CTS with hold repair and a slack margin. This is not required for a pass.
-2. Clock-tree fanout (up to 17 against the limit of 10) passes only through the limit-20 clock rule. I need your call on whether that exception is acceptable.
-3. DFM-003 line ends and DFM-001 li density: Orion to extend line ends and spread li routing if you want them closed before tape-out.
-4. Open-flow gaps: no OCV/AOCV or SI-aware timing, no foundry-certified DRC/LVS decks, no EM analysis, no ATPG number, power based on flat 20% activity. The OpenLane power total (0.0005702339 W) differs from the OpenSTA tt total and the reports do not say why.
-5. Data to confirm: pv_signoff lists metal density of m2 0.9387, m3 0.9823, m4 0.9771 and m5 1.0. The reports state no limit for these and the checklist marks density as met. I cannot interpret them and ask for a human check. IR source locations and the IR corner are also undocumented. IO delays and other SDC values are DEFAULT placeholders from G1.
+Result as reported: 5 of 5 checks passed, with the conditional timing pass above; the sixth item, no human edits, is not checked. Hold margin of 0.104 ns is the thinnest margin in the design and the data does not list the limiting hold paths.
 
-## Quality and cost
-Escaped defects: none reported. No physical silicon has been made or tested. Division spend for this run is $0.089963 (sum of the 14 per-agent figures in division_cost.json); the largest is Sienna at $0.075562, then Rex at $0.008309. No budget figure is in the inputs, so I cannot state spend against budget or give a weekly forecast.
+## 2. Phase 0 gate
 
-## Decisions needed from you
-1. G4 for real silicon. Options: (a) approve for an open SKY130 shuttle (Baseline A, 95.3%); (b) hold until the risks above are closed; (c) reject. Recommendation: (a) only if you accept the open-tool limits, because the checklist is complete and all checks are clean. Do not treat this as commercial-grade signoff (Baseline B, 64.1%).
-2. Clock-tree max fanout exception (limit 20). Options: accept, or have CTS re-run with smaller leaf clusters. Recommendation: accept, since setup slack is large.
-3. Hold margin and the two medium DFM items. Options: accept as is, or rework with a CTS and routing re-run. Recommendation: accept for a shuttle; rework before any production use.
-4. Metal density values above. Recommendation: have a human confirm them against the PDK limits before G4.
+PHASE_GATES.md status: **QUALIFIED PASS**, marked by the human CEO, 2026-10-06. This is NOT a clean or unconditional pass. For spi_master it is a conditional pass (5/5) only under the clock-net fanout limit of 20. Explicitly deferred to Phase 1: EM analysis and full IR/EM (Phase 0 has static IR only), DFT scan insertion and ATPG, and the artifact hash/provenance check.
+
+## 3. Tape-out package
+
+Checklist: 16 of 16 items done, including spec approved at G1, RTL frozen at G2, regression, equivalence, STA, DRC, LVS, antenna, density, DFM (zero high severity), power and IR, pin list, Sentinel findings, reproduce.sh in a fresh container, versions.lock and hashes, and G3 approved (gate_01M48RVBQACX41SHEYXGWPKCZQ). Final GDS sha256: fc4eecba71494124a0c36c7ab32b7e820a3d2ab26ef5fe1140dddf2490b000d3, verdict: clean on the final streamed GDS. G4 (real silicon) is not approved; see decisions.
+
+## 4. Other signoff results
+
+- **Power** (20% input activity, no power budget in spec): tt 0.0005809897 W, ss 0.0004625672 W, ff 0.0006728195 W. OpenLane total 0.0005702339112758636 W; the reports do not say why it differs from the tt figure.
+- **Static IR:** measured and passed. Worst drop 0.000411 V, average 0.00011 V, limit 0.09 V (5% of 1.8 V). EM: not analysed.
+- **DFM scorecard:** high 0, medium 2, low 5. Medium items: DFM-003, 103 met1 line ends at near-minimum spacing; DFM-001, 20 li windows within 10% of the 0.6 max density (worst window 0.583). Owner: Orion.
+- **Antenna worst case:** 50.97% of limit (net _115_, met1 side area).
+
+## 5. Readiness figures (derived, not a pass criterion)
+
+These are partial-credit derived figures. The hard checks above decide pass or fail, not these numbers.
+
+- Baseline A (open SKY130 shuttle requirements): 92.7% derived (90.0 of 97.0 weighted points), partial credit dft = 0.0, ir_em = 0.5.
+- Baseline B (commercial production tape-out, real foundry PDK): 64.1% derived (68.0 of 106.0).
+- Scope labels: DFT: deferred, not measured, 0 fault coverage (0.0 of 5 points). Static IR: measured, passed; EM: not analysed (2.0 of 4 points in A). Signal integrity, reliability and foundry-certified signoff: not run, excluded from Baseline A as beyond open tools.
+- No physical silicon was made or tested; all results are pre-silicon, from open SKY130 tools, not foundry-certified decks.
+
+## 6. Risks
+
+1. Clock fanout exception (fails under a flat limit of 10): needs human acceptance. Mitigation if not accepted: re-run CTS with smaller sink clusters.
+2. Hold slack 0.104 ns, no hold path list, no OCV/SI-aware timing.
+3. IO delays and other SDC values are placeholders (DEFAULT) per the STA report.
+4. DFT not measured; EM not analysed; IR source locations and corner not documented.
+5. Yield exposure: DFM-003 line ends and DFM-001 li density, both medium.
+
+## 7. Cost
+
+Total run spend 0.089963 USD (my sum of the per-agent figures). Largest: Sienna 0.075562, Rex 0.008309, Orion 0.002589, Proof 0.001698. No budget figure is in the cost report, so spend vs budget and a weekly forecast cannot be stated.
+
+## 8. Decisions needed from the human
+
+1. **Accept the clock-net fanout limit of 20 for spi_master?** Options: (a) accept and record it; (b) require a CTS re-run to bring leaf fanout to 10 or below. Recommendation: your call; I will not waive it myself. If real silicon is the goal, (b) removes the condition.
+2. **G4 (real silicon):** this is a human decision. Options: (a) approve G4 with the conditions in sections 1 and 2 accepted; (b) hold G4 until Phase 1 closes DFT, EM and the provenance check. Recommendation: (b) if the die is to be fabricated, since DFT has 0 measured fault coverage and the no-human-edits check is not run.
+3. **Medium DFM items (DFM-003, DFM-001):** fix before G4 or accept? Recommendation: ask Orion for a fix estimate first.

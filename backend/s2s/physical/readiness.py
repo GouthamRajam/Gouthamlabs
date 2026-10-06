@@ -17,7 +17,7 @@ import math
 import re
 from pathlib import Path
 
-from s2s.config import _load
+from s2s.config import REPO_ROOT, _load
 
 # Part 22.3: (counts toward A, counts toward B); "full" | "partial" | "no" | None (n/a)
 CAPS = {
@@ -135,7 +135,28 @@ def score(results: dict[str, dict], hard: dict | None = None) -> dict:
             "baseline_B_pct": _floor1(100 * num["B"] / den["B"]), "derived": True, "partial_credit": partial,
             "earned_A_total": round(num["A"], 4), "earned_B_total": round(num["B"], 4),
             "weights_A_total": den["A"], "weights_B_total": den["B"], "weights_total": float(sum(weights.values())),
-            "rows": rows, "gaps": gaps, "assumptions": ASSUMPTIONS}
+            "phase0_gate": phase0_gate(), "rows": rows, "gaps": gaps, "assumptions": ASSUMPTIONS}
+
+
+def phase0_gate(path: Path | None = None) -> dict:
+    """The program-level Phase 0 -> Phase 1 gate as a human marked it in PHASE_GATES.md (read, never set here)."""
+    try:
+        lines = (path or REPO_ROOT / "PHASE_GATES.md").read_text().splitlines()
+    except OSError:
+        return {"status": "UNKNOWN (PHASE_GATES.md not found)", "marked_by_human": False, "summary": []}
+    i = next((k for k, ln in enumerate(lines) if "PHASE 0 -> PHASE 1" in ln and ln.lstrip().startswith("- [")), None)
+    if i is None:
+        return {"status": "UNKNOWN (no Phase 0 gate line)", "marked_by_human": False, "summary": []}
+    head, marked = lines[i], "[x]" in lines[i]
+    status = ("QUALIFIED PASS" if "QUALIFIED PASS" in head else "PASSED") if marked else "OPEN (not marked by a human)"
+    body = []
+    for ln in lines[i + 1:]:
+        if ln.lstrip().startswith(("- [", "Gate criterion:")) or not ln.strip():
+            break
+        body.append(ln.strip())
+    parts = " ".join([head.split(":", 1)[1].strip().replace("**", "")] + body).split(" - ")  # undo line wraps
+    return {"status": status, "marked_by_human": marked, "source": "PHASE_GATES.md",
+            "headline": parts[0], "summary": parts[1:]}
 
 
 def _json(p: Path) -> dict:
@@ -210,6 +231,11 @@ def markdown(design: str, rep: dict, links: dict[str, str]) -> str:
         out += [f"| {i['check']} | {i['status']} | {i['detail']} | {i['evidence']} |" for i in hard["items"]]
     else:
         out += ["Hard checks: not supplied to this report."]
+    g = rep.get("phase0_gate")
+    if g:
+        out += ["", f"**Phase 0 gate (program level, {g.get('source', 'PHASE_GATES.md')}): {g['status']}**"
+                + (f" - {g['headline']}" if g.get("headline") else ""), ""]
+        out += [f"- {s}" for s in g["summary"]]
     out += ["", "Pre-silicon: no number here proves working silicon, only that the design passes the checks that were run.",
             "", "## Derived score (not the gate)", "",
             f"Baseline A (open shuttle): {rep['baseline_A_pct']:.1f}% · Baseline B (commercial production): "

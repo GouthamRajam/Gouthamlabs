@@ -1,113 +1,125 @@
-# alu8 — Tape-out Release Notes
+# alu8 Release Notes (Phase 0 tape-out package)
 
 ## 1. What this package is
-- **Design:** `alu8` (spec version 1): 8-bit synchronous ALU with a registered 8-bit result and registered N/Z/C/V flags. Operations: ADD, SUB, AND, OR, XOR, SHL, SHR, CMP (op codes 0-7, all defined).
-- **Clock / reset:** one clock `clk`, target 75 MHz (period 13.333 ns), rising edge; synchronous active-low reset `rst_n`.
-- **Technology:** open SkyWater **sky130A** PDK, standard cell library **sky130_fd_sc_hd**. Phase 0: open-source tools only.
-- **Package contents (per checklist item 15):** final GDS, final netlist, constraints, signoff reports, evidence packets, `tapeout/versions.lock`, `MANIFEST.sha256` (SHA-256 of every file), `reproduce.sh`, and these release notes.
-- **Not included:** no physical silicon was manufactured or tested. Every result below is pre-silicon, from simulation and layout tools.
 
-## 2. Signoff status — tape-out checklist (Appendix B.9)
-All 16 items are marked done in `reports/tapeout_checklist.json`. This file only reports that status; the linked check results hold the evidence.
+Tape-out package for `alu8`: an 8-bit synchronous ALU with registered result and N/Z/C/V flags (add, subtract, AND, OR, XOR, shift left/right, compare). Target is SKY130 (`sky130A`, `sky130_fd_sc_hd`) at 75 MHz (13.333 ns), single clock `clk`, synchronous active-low reset `rst_n` (spec/spec.yaml v1).
 
-| # | Item | Evidence kind | Done | Evidence |
-|---|------|---------------|------|----------|
-| 1 | Spec approved at G1 | gate record | yes | gate `gate_01M43C276RCFZE7W148MKQDK6Q` |
-| 2 | RTL frozen at G2; no changes since | hash comparison | yes | checks `rtl_frozen_at_g2`, `constraints_not_loosened` |
-| 3 | Regression 100% passing on frozen RTL | packet stage 4 | yes | M0.6 check `regression_100pct` |
-| 4 | Equivalence RTL vs final netlist proven | eqy report | yes | check `eqy_rtl_vs_final` |
-| 5 | Setup and hold met at all corners | STA reports | yes | check `sta_all_corners` (9 corners) |
-| 6 | Zero DRC (Magic and KLayout) on final GDS | DRC reports | yes | checks `drc_magic_final_gds`, `drc_klayout_final_gds`, `package_drc_*` |
-| 7 | LVS clean on final GDS | Netgen report | yes | checks `lvs_final_gds`, `package_lvs` |
-| 8 | Antenna clean | report | yes | check `antenna_final` |
-| 9 | Density rules met | report | yes | check `density_rules` |
-| 10 | DFM scorecard: zero high-severity open items | Fabian report | yes | check `dfm_no_high_severity` |
-| 11 | Power and IR within limits | Volta reports | yes | checks `power_estimated`, `ir_drop_within_limit` |
-| 12 | Pin list matches spec | comparison report | yes | check `pins_match_spec` |
-| 13 | All Sentinel findings closed or human-overruled | findings list | yes | all Sentinel reviews passed |
-| 14 | reproduce.sh re-runs cleanly in a fresh container | CI log | yes | check `reproduce_clean_container` |
-| 15 | versions.lock and hashes recorded | manifest | yes | `tapeout/versions.lock`, `MANIFEST.sha256` |
-| 16 | G3 approved | gate record | yes | gate `gate_01M44EQ71TZYHCF6FPGZDHXEPS` (approved) |
+This is a Phase 0 package: open-source tools and open SKY130 decks only. All results are pre-silicon (simulation and layout tools). No silicon was manufactured or tested. PDK and library choice, and several behaviours, are spec DEFAULTS flagged "needs G1 review" (see section 8).
 
-**Checklist completion: 16 / 16 items marked done.**
+## 2. Hard checks (headline)
 
-## 3. Tape-out readiness — both baselines
-Source: `reports/tapeout_readiness.json`. Partial credit = 0.5 × weight.
+Hard-check verdict: **PASS, 5 of 5** (tapeout_readiness.json `hard_checks`). Conditions attached to this verdict: **none** (the `conditions` list is empty).
 
-| Baseline | Meaning | Score | Weight total |
-|----------|---------|-------|--------------|
-| **A** | Open SKY130 shuttle requirements | **95.3 %** | 97 |
-| **B** | Commercial production tape-out on a real foundry PDK | **64.1 %** | 106 |
+| Hard check | Status | Detail (from report) |
+|---|---|---|
+| DRC = 0 (Magic + KLayout, final GDS) | PASS | Magic 0, KLayout 0 violations on the final GDS |
+| LVS match (Netgen, final GDS) | PASS | Circuits match uniquely (243 devices, 261 nets) |
+| Antenna clean | PASS | 0 net / 0 pin violations (247 nets checked) |
+| Timing met, all corners (setup, hold, DRV) | PASS | 9/9 corners; worst setup +3.276 ns (max_ss_100C_1v60), worst hold +0.4196 ns (min_ff_n40C_1v95); TNS 0 |
+| Equivalence RTL vs final netlist proven | PASS | check eqy_rtl_vs_final |
 
-These two numbers answer different questions. Baseline A says how ready this package is for an open SKY130 shuttle. Baseline B says how far it is from a commercial production tape-out. **The Baseline B score of 64.1 % means this package is not production-signoff-ready.**
+Listed in the same report but not counted in the 5 of 5: **"No human edits to artifacts" is NOT CHECKED.** Artifacts are machine-generated by the flow, but no automated edit-detection check exists yet (the hash/provenance check is in the Phase 1 plan). This is not a pass.
 
-| Check | Weight | Result | Tool | Earned A | Earned B | Note |
-|-------|-------:|--------|------|---------:|---------:|------|
-| Functional sim (RTL + gate-level) | 12 | clean | cocotb/Verilator/Icarus | 12.0 | 12.0 | |
-| Coverage (line, toggle, functional) | 8 | clean | Verilator coverage + waveform bins | 8.0 | 8.0 | |
-| Formal properties + RTL/netlist equivalence | 10 | clean | SymbiYosys, eqy | 10.0 | 10.0 | |
-| DRC | 14 | clean | Magic + KLayout (SKY130 decks) | 14.0 | 7.0 | open decks, not foundry-certified |
-| LVS | 14 | clean | Magic extraction + Netgen | 14.0 | 7.0 | open decks, not foundry-certified |
-| Antenna | 4 | clean | OpenROAD check_antennas | 4.0 | 4.0 | |
-| Density / fill | 4 | clean | KLayout PDK density deck | 4.0 | 4.0 | |
-| Setup + hold STA, all PDK corners | 12 | clean | OpenSTA (9 corners) | 12.0 | 6.0 | no OCV/AOCV, no SI-aware timing |
-| Power estimate | 4 | clean | OpenSTA report_power | 4.0 | 2.0 | 20% input activity; no power budget in spec |
-| IR drop / EM (static) | 4 | clean | OpenROAD PSM | 2.0 | 2.0 | static IR only; EM not analyzed |
-| DFT scan + ATPG fault coverage | 5 | partial | plan only (dft_plan.md) | 2.5 | 0.0 | plan only in Phase 0 |
-| Signal integrity / crosstalk | 3 | not run | - | n/a | 0.0 | out of open-flow scope |
-| Reliability (aging, ESD, latch-up) | 3 | not run | - | n/a | 0.0 | out of open-flow scope |
-| Foundry-certified signoff (Calibre-class) | 3 | not run | - | n/a | 0.0 | no foundry-certified decks |
-| GDS integrity + reproducibility | 6 | clean | KLayout read-back + reproduce.sh | 6.0 | 6.0 | |
-| **Total** | | | | **92.5 / 97** | **68.0 / 106** | |
+## 3. Phase 0 gate status
 
-Under Baseline A, the three "not run" rows are excluded (earned A = n/a), so the weight total is 97 instead of 106.
+`phase0_gate.status` = **QUALIFIED PASS**, marked by the human CEO, 2026-10-06 (source: PHASE_GATES.md). It is NOT a clean or unconditional pass. Gate summary as recorded:
 
-## 4. DFM scorecard (`reports/dfm_scorecard.json`)
-High: **0** · Medium: **2** · Low: **5**. All items are owned by Orion; none are high severity (checklist item 10).
+- counter8, alu8, sync_fifo, uart: full hard-check pass (5/5).
+- spi_master: CONDITIONAL pass (5/5), only under the approved clock-net max-fanout limit of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of 10 fails it. (This condition concerns spi_master, not alu8.)
+- Explicitly deferred to Phase 1 (MASTER_SPEC 13.4): EM analysis and full IR/EM (Phase 0 has static IR only), DFT scan insertion + ATPG (no fault coverage measured), and the artifact hash/provenance check ("no human edits" is NOT CHECKED).
 
-| Rank | ID | Severity | Finding |
-|-----:|----|----------|---------|
-| 1 | DFM-003 | medium | met1: 35 line ends at near-minimum spacing (lithography open/bridge risk) |
-| 2 | DFM-001 | medium | li: 7 density windows within 10% of the 0.6 max (up to 0.569, 94.9% of limit) in the 20-70 µm core |
-| 3 | DFM-004 | low | met1: 51.6% of routing edge length near min width/spacing (3843 / 8940 edges) |
-| 4 | DFM-005 | low | met2: 81.1% near min width (1254 / 6224 edges) |
-| 5 | DFM-002 | low | li: 100% near min (mostly intrinsic to std-cell li) |
-| 6 | DFM-006 | low | met3: 62.2% near min (148 edges, sparse layer) |
-| 7 | DFM-007 | low | met4: 36.7% near min (8 edges) |
+## 4. Tape-out checklist (reports/tapeout_checklist.json)
 
-## 5. Known limits
-- **PDK and decks:** open SKY130 PDK. DRC and LVS use the open Magic, KLayout and Netgen decks. A foundry's certified decks (e.g. Calibre) were not run and may give different results.
-- **Timing:** OpenSTA at the PDK's typical, slow and fast corners (9 corners). No on-chip variation (OCV/AOCV) and no SI-aware timing. The spec's I/O timing assumes 0 ns external input/output delay because no budget was given.
-- **Power / IR:** power is estimated at 20% input switching activity, and the spec has no power budget. IR is static only, and EM was not analyzed. Because of this, the IR/EM row earns only 2 of 4 points even under Baseline A.
-- **DFT:** there is a plan only. No scan insertion and no ATPG fault-coverage number.
-- **Not assessed:** signal integrity/crosstalk, reliability (aging, ESD, latch-up), and foundry-certified signoff.
-- **Pre-silicon only:** no silicon was built or measured.
-- **Functional scope (from spec):** no arithmetic shift, rotate, multiply, divide, carry-in, bus interface, valid/enable handshake, deeper pipelining, X/Z input handling, CDC, or power modes.
+All 16 items are marked done, each with an evidence reference:
 
-## 6. Open items
-1. **Production gaps (Baseline B), Phase 1 / commercial tools:**
-   - foundry-certified DRC and LVS decks
-   - OCV/AOCV and SI-aware STA
-   - vector-based power with silicon-correlated models
-   - full static/dynamic IR and EM with a package model
-   - scan insertion and ATPG
-2. **Not-run checks:** signal integrity, reliability and foundry signoff. `tapeout_readiness.json` lists their closure as "fix and re-run the check (this phase)", but its own row notes say these are out of open-flow scope. A human needs to decide which is right; until then, treat them as not closable in Phase 0.
-3. **DFM medium items:** DFM-003 (met1 line ends) and DFM-001 (li density margin) remain open and are owned by Orion. Neither blocks the checklist, and neither has been fixed.
-4. **Spec defaults:** `spec/spec.yaml` still lists six open questions marked "DEFAULT - needs G1 review":
-   - CMP result behaviour
-   - shift semantics
-   - SUB/CMP carry convention
-   - opcode encoding
-   - flag_z reset value
-   - I/O delay budget
+| # | Item | Done | Evidence |
+|---|---|---|---|
+| 1 | Spec approved at G1 | yes | gate gate_01M43C276RCFZE7W148MKQDK6Q |
+| 2 | RTL frozen at G2; no changes since | yes | checks rtl_frozen_at_g2, constraints_not_loosened |
+| 3 | Regression 100% passing on frozen RTL | yes | M0.6 check regression_100pct |
+| 4 | Equivalence RTL vs final netlist proven | yes | check eqy_rtl_vs_final |
+| 5 | Setup and hold met at all corners | yes | check sta_all_corners (9 corners) |
+| 6 | Zero DRC (Magic and KLayout) on final GDS | yes | checks drc_magic_final_gds, drc_klayout_final_gds, package_drc_* |
+| 7 | LVS clean on final GDS | yes | checks lvs_final_gds, package_lvs |
+| 8 | Antenna clean | yes | check antenna_final |
+| 9 | Density rules met | yes | check density_rules |
+| 10 | DFM scorecard: zero high-severity open items | yes | check dfm_no_high_severity |
+| 11 | Power and IR within limits | yes | checks power_estimated, ir_drop_within_limit |
+| 12 | Pin list matches spec | yes | check pins_match_spec |
+| 13 | All Sentinel findings closed or human-overruled | yes | all Sentinel reviews passed |
+| 14 | reproduce.sh re-runs cleanly in a fresh container | yes | check reproduce_clean_container |
+| 15 | versions.lock and hashes recorded | yes | tapeout/versions.lock, MANIFEST.sha256 |
+| 16 | G3 approved | yes | gate gate_01M44EQ71TZYHCF6FPGZDHXEPS (approved) |
 
-   G1 is recorded as approved (checklist item 1). These release notes do not say whether each default was explicitly confirmed. The customer should confirm them against the delivered behaviour.
+Checklist: 16 of 16 items marked done. Checklist completion is a signoff-record statement; it is not a substitute for the hard checks in section 2.
 
-## 7. Traceability
-- Inputs:
-  - `spec/spec.yaml` (sha256:c31399d29dc2)
-  - `reports/tapeout_checklist.json` (sha256:c1e0e7807c11)
-  - `reports/tapeout_readiness.json` (sha256:a3b37279b183)
-  - `reports/dfm_scorecard.json` (sha256:8ad0f2f2cd0b)
-- Full file hashes are in `MANIFEST.sha256`; tool versions are in `tapeout/versions.lock`.
-- These notes restate the checklist and readiness data only. They make no new pass/fail claim. Pass/fail is decided by the real check results named in the evidence column.
+## 5. Readiness figures (derived, not a pass criterion)
+
+The percentages below are **derived figures copied from tapeout_readiness.json** (`derived: true`). They are not the pass criterion; the pass criterion is the hard-check result in section 2. Nothing here was estimated or recomputed by this document.
+
+| Baseline | Reported value | Arithmetic as reported (earned / weights) |
+|---|---|---|
+| Baseline A: open SKY130 shuttle requirements | **92.7%** | 90.0 / 97.0 |
+| Baseline B: commercial production tape-out on a real foundry PDK | **64.1%** | 68.0 / 106.0 |
+
+Partial-credit values used: DFT = 0.0, IR/EM = 0.5, other = 0.5.
+
+Per-row weights and earned points (from the report rows):
+
+| Check | Weight | Earned A | Earned B | Scope |
+|---|---|---|---|---|
+| Functional sim (RTL + gate-level) | 12 | 12.0 | 12.0 | measured: passed |
+| Coverage | 8 | 8.0 | 8.0 | measured: passed |
+| Formal properties + RTL/netlist equivalence | 10 | 10.0 | 10.0 | measured: passed |
+| DRC | 14 | 14.0 | 7.0 | measured: passed |
+| LVS | 14 | 14.0 | 7.0 | measured: passed |
+| Antenna | 4 | 4.0 | 4.0 | measured: passed |
+| Density / fill | 4 | 4.0 | 4.0 | measured: passed |
+| Setup + hold STA, all PDK corners | 12 | 12.0 | 6.0 | measured: passed |
+| Power estimate (20% input activity; no power budget in spec) | 4 | 4.0 | 2.0 | measured: passed |
+| IR drop / EM (static) | 4 | 2.0 | 2.0 | static IR: measured, passed; EM: not analysed (Phase 1) |
+| DFT scan + ATPG fault coverage | 5 | 0.0 | 0.0 | deferred - not measured, 0 fault coverage |
+| Signal integrity / crosstalk | 3 | excluded | 0.0 | excluded from Baseline A; not run |
+| Reliability (aging, ESD, latch-up) | 3 | excluded | 0.0 | excluded from Baseline A; not run |
+| Foundry-certified signoff (Calibre-class) | 3 | excluded | 0.0 | excluded from Baseline A; not run |
+| GDS integrity + reproducibility | 6 | 6.0 | 6.0 | measured: passed |
+| **Total** | **106 (A: 97)** | **90.0** | **68.0** | |
+
+Baseline A excludes the three rows (9 weight) that open tools structurally cannot do; Baseline B counts them at 0. The report states these figures were regenerated by backend/scripts/regen_readiness.py (docs/DECISIONS.md 2026-10-06) with tools_rerun = false, i.e. from existing results, without re-running the tools.
+
+## 6. Scope labels
+
+- **DFT: deferred, not measured, 0 fault coverage.** Plan only in Phase 0; earns no credit. Achievable with open tools (OpenROAD DFT + Fault) in Phase 1.
+- **Static IR: measured and passed. EM: not analysed** (Phase 1).
+- Power: estimated at 20% input activity; no power budget in the spec.
+- Not run (out of open-flow scope): signal integrity/crosstalk, reliability (aging, ESD, latch-up), foundry-certified signoff.
+- No-human-edits / artifact provenance: NOT CHECKED.
+
+## 7. DFM scorecard (reports/dfm_scorecard.json)
+
+High 0, medium 2, low 5 (checklist item 10 requires zero high-severity items). Open items:
+
+- DFM-003 (medium): met1, 35 line ends at near-minimum spacing.
+- DFM-001 (medium): li, 7 windows within 10% of the PDK max density 0.6 (up to 0.569, 94.9% of limit).
+- DFM-004 (low): met1, 51.6% of routing edge length within 5% of min width/spacing (3843 of 8940 edges).
+- DFM-005 (low): met2, 81.1% (1254 edges).
+- DFM-002 (low): li, 100.0% (3665 near-limit edges of 3408 total as reported; largely intrinsic to standard-cell li geometry per the report).
+- DFM-006 (low): met3, 62.2% (148 edges).
+- DFM-007 (low): met4, 36.7% (8 edges).
+
+Owner of all items: Orion. These are open advisory items; none is high severity.
+
+## 8. Known limits and open items
+
+- DRC/LVS used open-source Magic, KLayout and Netgen decks; foundry-certified decks (e.g. Calibre) were not run and may differ.
+- Timing is OpenSTA at the PDK typical/slow/fast corners, with no OCV/AOCV and no SI-aware timing.
+- Power/IR are estimates at 20% switching activity unless simulation activity was used; EM is not analysed.
+- No physical silicon was manufactured or tested.
+- Spec items marked DEFAULT and needing G1 review (spec open_questions): CMP holds result and updates flags only; shift amount is b[2:0] with logical right shift; SUB/CMP carry means no borrow; opcode encoding 0 ADD ... 7 CMP; flag_z resets to 0; no I/O delay budget given (0 ns external delay assumed).
+- PDK and library choice are DEFAULT and need G1 review (spec target_clock_note). Checklist item 1 records G1 approval by gate record; this document does not restate its scope.
+- Reported readiness figures: 90.0/97.0 and 68.0/106.0 are the earned and weight totals as reported; the printed percentages (92.7 and 64.1) are copied as given and have not been re-derived here. A reviewer may wish to confirm the rounding convention used by regen_readiness.py.
+- Phase 1 items: EM and full IR/EM, DFT scan + ATPG, artifact hash/provenance check, SI, reliability, foundry-certified signoff.
+
+## 9. Sources
+
+spec/spec.yaml (sha256:c31399d29dc2), reports/tapeout_checklist.json (sha256:c1e0e7807c11), reports/tapeout_readiness.json (sha256:517457c7f988), reports/dfm_scorecard.json (sha256:8ad0f2f2cd0b). This document makes no claim beyond these reports; the runtime's own checks are separate.
