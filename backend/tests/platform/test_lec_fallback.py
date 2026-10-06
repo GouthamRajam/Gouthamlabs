@@ -37,7 +37,7 @@ def test_lec_rejects_a_changed_rtl(tmp_path):
 UART = Path(__file__).parent / "lec_fixtures" / "uart"
 
 
-def _uart_lec(tmp_path, mutant=None):
+def _uart_lec(tmp_path, mutant=None, netlist="uart_top.nl.v"):
     """The LEC fallback directly on the uart fixture (eqy's own 1800 s attempt is not what is tested here)."""
     shutil.copytree(UART, tmp_path / "d")
     d = tmp_path / "d"
@@ -53,12 +53,13 @@ def _uart_lec(tmp_path, mutant=None):
                       metrics={"status": "FAIL", "partitions_proven": [], "partitions_failed": []},
                       reasons=["eqy not run"], safety_net_hits=[], log_path=None, report_paths={}, command=[],
                       tool_version=None, env_hash=None, duration_s=None)
-    return signoff._lec_fallback(base, sorted((d / "rtl").glob("*.v")), pdk, d / "uart_top.nl.v", "uart_top", d,
+    return signoff._lec_fallback(base, sorted((d / "rtl").glob("*.v")), pdk, d / netlist, "uart_top", d,
                                  "t", d)
 
 
-def test_lec_proves_a_recoded_fsm_with_the_synthesis_map(tmp_path):
-    r = _uart_lec(tmp_path)
+@pytest.mark.parametrize("netlist", ["uart_top.nl.v", "uart_top.final.nl.v"])  # synthesized; routed (output buffers)
+def test_lec_proves_a_recoded_fsm_with_the_synthesis_map(tmp_path, netlist):
+    r = _uart_lec(tmp_path, netlist=netlist)
     assert r.passed and r.metrics["lec_points_unproven"] == 0 and r.metrics["lec_points_proven"] >= 125
     assert r.metrics["fsm_recoded"] == ["u_uart_tx.state_q"] and "encfile" in r.metrics["method"]
 
@@ -67,4 +68,6 @@ def test_lec_proves_a_recoded_fsm_with_the_synthesis_map(tmp_path):
                                     "uart_rx_L113_swapped_condition_2.v"])
 def test_lec_with_fsm_map_still_rejects_real_bugs(tmp_path, mutant):
     r = _uart_lec(tmp_path, mutant)
+    assert not r.passed and r.metrics["lec_points_unproven"] >= 1
+    r = _uart_lec(tmp_path / "final", mutant, netlist="uart_top.final.nl.v")
     assert not r.passed and r.metrics["lec_points_unproven"] >= 1

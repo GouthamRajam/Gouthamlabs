@@ -46,6 +46,21 @@ _PATH = re.compile(
 _ERROR = re.compile(r"^Error:?\s*(?P<msg>.*)$", re.M)
 _WARNING = re.compile(r"^Warning:?\s*(?P<msg>.*)$", re.M)
 _VIOLATOR_SECTION = re.compile(r"^(?P<kind>max slew|max capacitance|max fanout)\b", re.I | re.M)
+_VIOLATOR_PIN = re.compile(r"^(?P<pin>\S+)\s+(?P<limit>-?[\d.]+)\s+(?P<value>-?[\d.]+)(?:\s+-?[\d.]+)?\s+\(VIOLATED\)", re.M)
+
+
+def violator_pins(block: str) -> list[dict]:
+    """report_check_types -violators rows: [{kind, pin, limit, value}] (OpenSTA prints Pin Limit Value Slack)."""
+    rows, kind = [], None
+    for line in block.splitlines():
+        k = _VIOLATOR_SECTION.match(line.strip())
+        if k:
+            kind = k["kind"].lower()
+            continue
+        m = _VIOLATOR_PIN.match(line.strip())
+        if m and kind:
+            rows.append({"kind": kind, "pin": m["pin"], "limit": float(m["limit"]), "value": float(m["value"])})
+    return rows
 
 
 def _num(m: re.Match | None) -> float | None:
@@ -95,6 +110,7 @@ def parse(log: str, reports: dict[str, str]) -> ParsedLog:
         "violated_paths_reported": sum(1 for p in paths if p["state"] == "VIOLATED"),
         "worst_paths": paths,
         "drv_violators": violator_kinds,
+        "drv_violator_pins": violator_pins(block),
     }
     return out
 

@@ -223,6 +223,25 @@ def fsm_recodings(log: str) -> list[dict]:
     return recs
 
 
+_BUFFER_CELL = re.compile(r"sky130_fd_sc_\w+__(?:buf|clkbuf|dlygate\w*|dlymetal\w*)_\d+$")  # non-inverting, A -> X
+
+
+def _flop_q_through_buffers(netlist_text: str, net: str, depth: int = 4) -> str | None:
+    """The flip-flop Q net that drives `net` directly or through a chain of non-inverting buffers (place and
+    route inserts output buffers, e.g. dfxtp .Q(net42) -> buf_1 output42 -> tx_ready). None if no such flop."""
+    for _ in range(depth + 1):
+        if re.search(rf"\.Q\(\s*{re.escape(net)}\s*\)", netlist_text):
+            return net
+        m = re.search(rf"\n\s*(\S+)\s+\S+\s*\(([^;]*?\.X\(\s*{re.escape(net)}\s*\)[^;]*?)\);", netlist_text)
+        if not m or not _BUFFER_CELL.match(m.group(1)):
+            return None
+        a = re.search(r"\.A\(\s*([^)\s]+)\s*\)", m.group(2))
+        if not a:
+            return None
+        net = a.group(1)
+    return None
+
+
 def fsm_state_aliases(netlist_text: str, recs: list[dict]) -> tuple[str, list[str]]:
     """Verilog lines that give each recoded state register one named wire in the CHECKER's copy of the netlist
     (an alias, no logic), so equiv_make -encfile can pair it with the RTL register. Bit i is the net
@@ -236,7 +255,7 @@ def fsm_state_aliases(netlist_text: str, recs: list[dict]) -> tuple[str, list[st
             if f"\\{sig}[{i}] ;" in netlist_text:
                 bits.append(f"\\{sig}[{i}] ")
                 continue
-            cands = [o for o in r["outputs"] if re.search(rf"\.Q\({re.escape(o)}\)", netlist_text)]
+            cands = [q for q in (_flop_q_through_buffers(netlist_text, o) for o in r["outputs"]) if q]
             if len(cands) != 1:
                 problems.append(f"{sig}[{i}]: no netlist net (flip-flop-driven FSM outputs: {cands})")
                 break

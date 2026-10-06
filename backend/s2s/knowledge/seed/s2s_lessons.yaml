@@ -145,11 +145,38 @@ entries:
     symptom: "RTL vs netlist LEC leaves every point of one FSM's fan-out unproven (state register widths differ, e.g. 3-bit RTL state vs 5 netlist flops; one state bit missing by name); eqy times out proving partitions"
     root_cause: "OpenLane's Yosys synthesis always runs `fsm`; fsm_recode re-encodes FSMs ('auto' -> one-hot for small FSMs) and fsm_opt can merge a state bit with an identical FSM output (uart: IDLE bit == tx_ready). Name-based register correspondence cannot pair a binary register with one-hot flops."
     wrong_assumption: "An unproven point after synthesis means the netlist differs from the RTL; or: an unbounded no-correspondence proof (PDR/dprove from reset) will settle it (it stays UNDECIDED: real differences need counterexamples hundreds of cycles deep)."
-    lesson: "Read the 'Recoding FSM' map (old -> new codes) and the FSM output list from the synthesis log; give equiv_make -encfile the map (Yosys' own fsm_recode -encfile format, the open-source counterpart of Formality SVF FSM guidance) and a named alias of the new state flops in the checker's copy of the netlist only. The map is a correspondence hypothesis equiv_induct must prove; a wrong map leaves points unproven, it cannot pass anything. Always confirm with known-bad RTL (caught mutants) that the check still fails. Never trust FSM guidance without the proof, and never change the signed-off netlist."
+    lesson: "Read the 'Recoding FSM' map (old -> new codes) and the FSM output list from the synthesis log; give equiv_make -encfile the map (Yosys' own fsm_recode -encfile format, the open-source counterpart of Formality SVF FSM guidance) and a named alias of the new state flops in the checker's copy of the netlist only (a merged bit is found through non-inverting buffers: place and route inserts output buffers, dfxtp .Q(net42) -> buf_1 -> tx_ready). The map is a correspondence hypothesis equiv_induct must prove; a wrong map leaves points unproven, it cannot pass anything. Always confirm with known-bad RTL (caught mutants) that the check still fails. Never trust FSM guidance without the proof, and never change the signed-off netlist."
     evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY synth: 105 proven / 19 unproven without map; 125/125 with map; caught mutants tx_L153_stuck_bit_2, tx_L56_dropped_handshake_3, rx_L113_swapped_condition_2 all fail (2, 1, 3 unproven). PDR/dprove from reset: control mutant UNDECIDED (scratch_uart_synth_eq)."
-    regression_test: "tests/platform/test_lec_fallback.py::test_lec_with_fsm_map_still_rejects_real_bugs"
+    regression_test: "tests/platform/test_lec_fallback.py::test_lec_with_fsm_map_still_rejects_real_bugs (synthesized and routed netlist)"
     tags: [equivalence, lec, fsm, fsm_recode, one_hot, encoding, encfile, eqy, yosys, synthesis, netlist, sienna, uart]
     source: {title: "Yosys fsm_recode -encfile / equiv_make -encfile", url: "https://yosyshq.readthedocs.io/projects/yosys/en/0.40/cmd/fsm_recode.html"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-pnr-002
+    kind: s2s_lesson
+    title: "OpenLane's post-route DRV count can miss clock-buffer fanout; check with an independent STA run"
+    symptom: "Place and route reports max_fanout_violations = 0, but signoff STA on the same routed netlist and SDC fails max fanout on clock buffers (clkbuf_0_clk 16 vs 10, three leaf buffers 11)"
+    root_cause: "OpenLane 2.3.10 OpenROAD.STAPostPNR (checks.rpt, design__max_fanout_violation__count) listed no violators for a clock tree whose root drives 16 level-4 buffers; standalone OpenSTA 2.6.0 with the same netlist and SDC (set_max_fanout 10 [current_design]) reports them. The netlist in both is identical (17 references to clknet_0_clk)."
+    wrong_assumption: "The OpenLane metric is the same as running report_check_types ourselves."
+    lesson: "Every place-and-route iteration also runs S2S's own OpenSTA report_check_types on the routed netlist with the reviewed SDC; a violator from EITHER tool is a problem for Orion. Fix clock-tree fanout with the tree-shape knobs (lesson s2s-cts-001); count each violating buffer's level first."
+    evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY it1 (CTS_SINK_CLUSTERING_SIZE 25): pnr_iteration_1 max_fanout_violations 0; signoff sta_all_corners FAILED; logs/sta_uart_top_*.log"
+    regression_test: "tests/test_pnr_independent_drv.py"
+    tags: [cts, clock_tree, fanout, max_fanout, drv, sta, opensta, openlane, signoff, orion, chronos, place_route, uart]
+    source: {title: "S2S DECISIONS 2026-10-06", url: "docs/DECISIONS.md"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-003
+    kind: s2s_lesson
+    title: "A long-running orchestrator keeps the code it started with"
+    symptom: "A fix is committed and tested, but the next stage run by the orchestrator behaves as before"
+    root_cause: "The orchestrator imports the agents and tool adapters once at start; uart's signoff (03:32) ran the LEC without the FSM map committed at 02:15 because the orchestrator had started at 01:25."
+    lesson: "After changing agent or tool code, restart the orchestrator (or run the task in a fresh runner) before the stage that needs the change, at a point where no worker is mid-step; check the process start time against the commit time."
+    evidence: "uart eqy_rtl_vs_final 03:32: 105/19 again; orchestrator pid 1130 started 01:25:54"
+    regression_test: "none (operations)"
+    tags: [orchestrator, restart, stale_code, deployment, operations]
+    source: {title: "S2S DECISIONS 2026-10-06", url: "docs/DECISIONS.md"}
     date: "2026-10-06"
     confidence: high
     owner: Sage

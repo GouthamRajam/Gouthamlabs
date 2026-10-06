@@ -33,3 +33,16 @@ def test_no_synthesis_log_means_no_recoding(tmp_path):
     (tmp_path / "x.nl.v").write_text("module x; endmodule\n")
     assert signoff.find_synth_log(tmp_path / "x.nl.v") is None
     assert signoff.find_synth_log(FIX / "uart_top.nl.v") == (FIX / "yosys-synthesis.log").resolve()
+
+
+def test_merged_bit_is_found_through_output_buffers():
+    """Routed netlist: dfxtp _1288_ .Q(net42) -> buf_1 output42 .X(tx_ready)."""
+    recs = signoff.fsm_recodings((FIX / "yosys-synthesis.log").read_text())
+    alias, problems = signoff.fsm_state_aliases((FIX / "uart_top.final.nl.v").read_text(), recs)
+    assert problems == [] and alias.rstrip().endswith(", net42 };")
+
+
+def test_inverting_cell_is_not_followed():
+    nl = "  dfxtp f (.Q(n1));\n  sky130_fd_sc_hd__inv_1 i (.A(n1), .Y(o));\n  sky130_fd_sc_hd__buf_1 b (.A(n2), .X(p));\n  dfxtp g (.Q(n2));\n"
+    assert signoff._flop_q_through_buffers(nl, "o") is None
+    assert signoff._flop_q_through_buffers(nl, "p") == "n2"

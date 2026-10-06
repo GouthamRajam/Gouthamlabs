@@ -46,6 +46,7 @@ from s2s.design.schemas import FABIAN_ANSWER, ORION_ANSWER, REPORT_ANSWER, REVIE
 from s2s.physical import dfm, flow as olf, package as pk, readiness, signoff as so
 from s2s.tools.klayout_drc import run_klayout_drc
 from s2s.tools.magic_drc import run_magic_drc
+from s2s.tools.opensta import run_opensta
 
 MAX_ORION_ATTEMPTS = 3  # an invalid parameter proposal goes back with the exact problems
 
@@ -582,6 +583,25 @@ def _route_problems(m: dict, cts: dict) -> tuple[list[str], dict]:
     return p, facts
 
 
+def _independent_drv(ctx: StepContext, r: dict, k: int, top: str) -> tuple[list[str], dict]:
+    """Max slew / capacitance / fanout from S2S's own OpenSTA run on the routed netlist with the reviewed SDC.
+    OpenLane's post-route STA can report 0 fanout violators where OpenSTA on the same netlist and SDC reports
+    clock buffers over the limit (uart 2026-10-06: clkbuf_0_clk fanout 16 vs 10, caught only at signoff), so a
+    violator from EITHER tool is a place-and-route problem. Fanout is structural; the slowest library corner
+    is used and slew/cap without parasitics stay OpenLane's (with SPEF)."""
+    nl = (r.get("views") or {}).get("nl")
+    if not nl or not Path(nl).exists():
+        return ["independent DRV check: routed netlist not found"], {"independent_drv_pins": None}
+    res = _run(ctx, "Orion", f"opensta report_check_types on the routed netlist (iteration {k})", run_opensta,
+               Path(nl), ctx.workdir / "pnr/src/constraints.sdc", top, ctx.workdir, corner="ss_100C_1v60",
+               post_route=True, tag=f"pnr_it{k}_drv", paths=1)
+    pins = res.metrics.get("drv_violator_pins")
+    if res.status in ("ERROR", "TIMEOUT") or pins is None:
+        return [f"independent DRV check did not run cleanly ({res.status})"], {"independent_drv_pins": None}
+    p = [f"independent STA: {v['kind']} {v['pin']} {v['value']:g} (limit {v['limit']:g})" for v in pins]
+    return p, {"independent_drv_pins": pins, "independent_drv_log": res.log_path}
+
+
 def _orion_changes(ctx: StepContext, k: int, problems: list[str]) -> dict:
     """Orion proposes at most two changes within pnr_ranges.yaml; invalid proposals go back verbatim."""
     ph = _phys(ctx)
@@ -656,6 +676,10 @@ def place_route_steps() -> list[Step]:
             m = r["metrics"]
             cts = _cts_data(ctx, Path(r["run_dir"]), m, ph["period_ns"])
             problems, facts = _route_problems(m, cts) if r["ok"] else ([f"{st} failed: {r['errors'][:3]}"], {})
+            if r["ok"]:
+                p2, f2 = _independent_drv(ctx, r, k, ph["top"])
+                problems += p2
+                facts.update(f2)
             row = {"iteration": k, "tag": tag, "params": ph["params"], "problems": problems, "facts": facts,
                    "changes": ph.get("last_changes", [])}
             table.append(row)
@@ -716,9 +740,11 @@ def place_route_steps() -> list[Step]:
         _check(ctx, "Orion", "post_route_timing_all_corners", "opensta (OpenROAD.STAPostPNR)", clean or not [
             p for p in last["problems"] if "slack" in p or "corners" in p],
                {"setup": f.get("setup_ws_by_corner"), "hold": f.get("hold_ws_by_corner")})
-        _check(ctx, "Orion", "drv_clean", "opensta report_check_types", all(f.get(k) == 0 for k in (
-            "max_slew_violations", "max_cap_violations", "max_fanout_violations")),
-               {k: f.get(k) for k in ("max_slew_violations", "max_cap_violations", "max_fanout_violations")})
+        _check(ctx, "Orion", "drv_clean", "opensta report_check_types (OpenLane post-route + S2S on the routed netlist)",
+               all(f.get(k) == 0 for k in ("max_slew_violations", "max_cap_violations", "max_fanout_violations"))
+               and f.get("independent_drv_pins") == [],
+               {**{k: f.get(k) for k in ("max_slew_violations", "max_cap_violations", "max_fanout_violations")},
+                "independent_drv_pins": f.get("independent_drv_pins")})
         ctx.evidence = f"{len(table)} iteration(s); {'clean' if clean else 'not clean'}"
 
     def tick(ctx: StepContext) -> None:
