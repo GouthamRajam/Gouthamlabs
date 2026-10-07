@@ -156,6 +156,20 @@ Schema 2 (from harness #9 onward) captures provenance live; all future runs will
 - **sync_fifo**: 8 runs (2 autonomous, 6 operator-influenced); 5 pass, 1 fail, 2 incomplete
 - **uart**: 3 runs (1 autonomous, 2 operator-influenced); 3 pass, 0 fail, 0 incomplete
 
+## Validator grades
+
+Run `python -m s2s.records.validate --dir docs/trajectories/` to grade each export.
+
+| grade | count | meaning |
+|---|---|---|
+| training-grade | 13 | Schema complete, provenance known, no errors |
+| usable | 12 | Structurally sound but provenance gaps (early Phase 0 runs) |
+| incomplete | 0 | Schema errors — not suitable for training |
+
+All 12 "usable" runs are early Phase 0 runs whose model-call provenance is unrecorded
+(the operator session transcript does not cover them). Schema 2 (all future runs) will
+produce training-grade exports with no manual backfill.
+
 ## Known gaps
 
 1. **Unrecorded model-call provenance**: 114 of 337 calls (34%) have no answered_by — early Phase 0 runs 
