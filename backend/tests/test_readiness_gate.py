@@ -142,5 +142,7 @@ def test_phase0_gate_status_is_read_from_phase_gates(tmp_path):
     assert g["status"] == "RE-OPENED (human decision)" and not g["marked_by_human"]
     p.write_text("## Gates\n- [x] PHASE 0 -> PHASE 1: **QUALIFIED PASS** - ok\n")
     assert readiness.phase0_gate(p)["status"] == "QUALIFIED PASS"
+    p.write_text("## Gates\n- [x] PHASE 0 -> PHASE 1: **CLOSED** - closed with sync_fifo FAIL\n")
+    assert readiness.phase0_gate(p)["status"] == "CLOSED (human decision)"  # closed is never read as PASSED
     p.write_text("## Gates\n- [ ] PHASE 0 -> PHASE 1: all 5 blocks\n")
     assert readiness.phase0_gate(p)["status"] == "OPEN (not marked by a human)"

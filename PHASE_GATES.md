@@ -4,7 +4,11 @@ Phases 0-2 PROVE the AI on small chips and one real RISC-V core. The heavy Phase
 is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED by a HUMAN.
 
 ## Gates
-- [ ] PHASE 0 -> PHASE 1: **RE-OPENED** — CEO decision 2026-10-07 (derated signoff): the gate now also needs
+- [x] PHASE 0 -> PHASE 1: **CLOSED** — CEO decision 2026-10-07, marked by the CEO: "Phase 0 is closed". Closed with
+      the state below, NOT as a clean pass: counter8, alu8, uart pass all 6 hard checks; spi_master CONDITIONAL
+      (clock-net fanout rule 20); sync_fifo FAIL (timing solved at RTL, physical closure open). sync_fifo's
+      physical closure and spi_master's CTS fix are carried into Phase 1 (docs/PHASE1_BACKLOG.md list B).
+      History - CEO decision 2026-10-07 (derated signoff): the gate also needs
       timing met at all corners with a flat +/-10% OCV derate (engineering estimate; SKY130 has no foundry OCV
       tables). 4 of 5 blocks pass it (counter8, alu8, uart, spi_master; recorded check sta_derated_10pct);
       sync_fifo FAILS it (what-if on the signed netlist: setup -0.408 ns at +/-10%) until its design change #2

@@ -149,7 +149,8 @@ def phase0_gate(path: Path | None = None) -> dict:
     if i is None:
         return {"status": "UNKNOWN (no Phase 0 gate line)", "marked_by_human": False, "summary": []}
     head, marked = lines[i], "[x]" in lines[i]
-    status = (("QUALIFIED PASS" if "QUALIFIED PASS" in head else "PASSED") if marked else
+    status = (("CLOSED (human decision)" if "CLOSED" in head else "QUALIFIED PASS" if "QUALIFIED PASS" in head
+               else "PASSED") if marked else
               "RE-OPENED (human decision)" if "RE-OPENED" in head else "OPEN (not marked by a human)")
     body = []
     for ln in lines[i + 1:]:

@@ -37,6 +37,7 @@ import yaml
 from sqlalchemy import select
 
 from s2s.agents import llm
+from s2s.finance import meter
 from s2s.agents.m05 import (DesignAgent, _answer_fields, _author_loop, _inputs, _record, _sage_search, _task_result, _write,
                             stop_if_blocked)
 from s2s.agents.m06 import _assign
@@ -642,6 +643,12 @@ def unpropagated_clocks(run_dir: Path) -> dict[str, list[str]]:
     return out
 
 
+def pnr_iteration_runs(start_stage: str) -> int:
+    """Tool runs one P&R iteration takes: one OpenLane run per stage from `start_stage` through routing, plus the
+    independent OpenSTA DRV check on the routed netlist."""
+    return olf.ORDER.index("routing") - olf.ORDER.index(start_stage) + 1 + 1
+
+
 CLUSTER_KNOBS = ("CTS_SINK_CLUSTERING_SIZE", "CTS_SINK_CLUSTERING_MAX_DIAMETER")
 
 
@@ -768,6 +775,23 @@ def place_route_steps() -> list[Step]:
         while True:
             ph = _phys(ctx)
             k, tag = ph["iteration"], ph["tag"]
+            # Budget pre-check (Phase 1 harness #1): never start an iteration that cannot finish and be evaluated
+            # before the tool-run hard stop (sync_fifo 2026-10-07: 14/16 could not fit a 4-run iteration).
+            need = pnr_iteration_runs(start_stage)
+            ub = meter.tool_runs_left(ctx.task.id, ctx.task.budget)
+            fits = ub is None or meter.iteration_fits(ub[0], ub[1], need)
+            _check(ctx, "Orion", "pnr_iteration_fits_budget", "s2s.finance.meter.iteration_fits", fits,
+                   {"iteration": k, "start_stage": start_stage, "runs_needed": need,
+                    "tool_runs_used": ub[0] if ub else None, "tool_runs_limit": ub[1] if ub else None})
+            if not fits:
+                ctx.emit("escalation", f"Orion: iteration {k} needs {need} tool runs (from {start_stage}); "
+                         f"{ub[0]} of {ub[1]} used, so it cannot finish before the hard stop - not started",
+                         **_who("Orion"), to_agent_id="Mason",
+                         detail={"rule": "budget pre-check", "iteration": k, "runs_needed": need,
+                                 "tool_runs_used": ub[0], "tool_runs_limit": ub[1], "start_stage": start_stage})
+                ctx.state["blocked"] = (f"budget pre-check: iteration {k} needs {need} tool runs from {start_stage}; "
+                                        f"{ub[0]} of {ub[1]} used (the run reaching the limit is stopped)")
+                return
             for st in olf.ORDER[olf.ORDER.index(start_stage):olf.ORDER.index("routing") + 1]:
                 who = {"synthesis": "Sienna", "floorplan": "Grid", "cts": "Tick"}.get(st, "Orion")
                 r = _run(ctx, who, f"openlane {st} (iteration {k}, {olf.STAGES[st][0]} .. {olf.STAGES[st][1]})",
