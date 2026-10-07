@@ -148,8 +148,9 @@ def candidates(files: dict[str, str]) -> list[Mutant]:
                         add("wrong_operator", code[:start] + alt[0] + code[start + len(tok[0]):],
                             f"operand {tok[0]} replaced by {alt[0]}")
                         break
-            if bm and bm[4].strip() != bm[2]:
-                add("stuck_bit", f"{bm[1]}{bm[2]}{bm[3]}= {bm[2]};", f"{bm[2]} keeps its old value (update lost)")
+            if bm and bm[4].strip() != bm[2] + bm[3].strip():
+                add("stuck_bit", f"{bm[1]}{bm[2]}{bm[3]}= {bm[2]}{bm[3].strip()};",
+                    f"{bm[2]}{bm[3].strip()} keeps its old value (update lost)")
             # off by one on sized literals in expressions/comparisons
             for m in _LITERAL.finditer(code):
                 if m.start() < rhs_start and not _COND.search(code):
@@ -187,8 +188,10 @@ def candidates(files: dict[str, str]) -> list[Mutant]:
             # stuck bit: a register that stops updating outside reset
             if is_nb and reset_depth is None:
                 m = _NB_ASSIGN.match(code)
-                if m[4].strip() != m[2]:
-                    add("stuck_bit", f"{m[1]}{m[2]}{m[3]}<= {m[2]};", f"{m[2]} stuck (never updates)")
+                if m[4].strip() != m[2] + m[3].strip():
+                    # an indexed target holds its own element (mem_q[a] <= mem_q[a]), never the whole array
+                    add("stuck_bit", f"{m[1]}{m[2]}{m[3]}<= {m[2]}{m[3].strip()};",
+                        f"{m[2]}{m[3].strip()} stuck (never updates)")
             # dropped handshake: an output-style continuous assign forced to a constant
             if m := _ASSIGN.match(code):
                 if re.search(r"(ready|valid|ack|req|busy|done|full|empty|_o\b)", m[2]):
