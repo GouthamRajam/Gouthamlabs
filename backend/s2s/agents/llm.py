@@ -15,7 +15,9 @@ Every call emits events: agent.status (thinking), tool_call (the model call), to
 """
 from __future__ import annotations
 
+import datetime as dt
 import fnmatch
+import hashlib
 import json
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -141,25 +143,52 @@ def ask(ctx, a: AgentDef | str, *, goal: str, inputs: dict[str, str], exit_crite
     ctx.emit("tool_call", f"{a.name}: model call ({a.effort or 'default'} effort) - {goal[:120]}",
              status="thinking", detail={"tool": "model", "model_hint": a.model_hint, "effort": a.effort,
                                         "inputs": list(inputs)}, **who)
-    r = ctx.gateway.complete(task=ctx.ref, system=system_prompt(a), messages=[{"role": "user", "content": user}],
+    system = system_prompt(a)
+    goal_sha = hashlib.sha256(goal.encode()).hexdigest()[:16]
+    attempt = 1 + sum(1 for c in ctx.state.get("model_calls", []) if c.get("agent") == a.name
+                      and c.get("goal_sha") == goal_sha)
+    r = ctx.gateway.complete(task=ctx.ref, system=system, messages=[{"role": "user", "content": user}],
                              max_tokens=a.max_tokens, model_hint=a.model_hint, output_schema=schema,
                              effort=a.effort, agent_id=a.name)
     ctx.emit("tool_result", f"{a.name}: model answered ({r.input_tokens} in / {r.output_tokens} out tokens, "
              f"${r.cost_usd:.4f}, {r.latency_ms} ms)", status="working",
              detail={"tool": "model", "model": r.model, "call_id": r.call_id, "input_tokens": r.input_tokens,
                      "output_tokens": r.output_tokens, "cost_usd": round(r.cost_usd, 6),
-                     "latency_ms": r.latency_ms, "stop_reason": r.stop_reason}, **who)
+                     "latency_ms": r.latency_ms, "stop_reason": r.stop_reason, "attempt": attempt,
+                     "answered_by": (r.provenance or {}).get("answered_by", r.model),
+                     "operator_influenced": bool((r.provenance or {}).get("operator_influenced"))}, **who)
     data = r.data
     if data.get("plan"):
         ctx.emit("plan", f"{a.name}: {data['plan'][:300]}", detail={"plan": data["plan"]}, **who)
-    ctx.state.setdefault("model_calls", []).append({"agent": a.name, "call_id": r.call_id, "cost_usd": r.cost_usd})
-    _transcript(ctx, a.name, user, r.text)
+    ctx.state.setdefault("model_calls", []).append({"agent": a.name, "call_id": r.call_id, "cost_usd": r.cost_usd,
+                                                     "goal_sha": goal_sha})
+    _transcript(ctx, a, user, r, system=system, goal=goal, attempt=attempt, prior_feedback=previous_attempts)
     return data
 
 
-def _transcript(ctx, agent_name: str, prompt: str, answer: str) -> None:
-    """Request and answer, kept in the run folder so a manager can review a transcript."""
-    p = ctx.workdir / "logs" / "model_calls.jsonl"
-    p.parent.mkdir(parents=True, exist_ok=True)
-    with p.open("a") as f:
-        f.write(json.dumps({"task_id": ctx.task.id, "agent": agent_name, "prompt": prompt, "answer": answer}) + "\n")
+TRANSCRIPT_SCHEMA = 2  # 1 = {task_id, agent, prompt, answer} (Phase 0); 2 adds the provenance below
+
+
+def _transcript(ctx, a: AgentDef, prompt: str, r, *, system: str, goal: str, attempt: int,
+                prior_feedback: str) -> None:
+    """One model call, kept in the run folder (logs/model_calls.jsonl) as a training-grade record: the exact
+    system prompt (stored once by hash in logs/system_prompts/), the user prompt, the answer, the model asked for and
+    the model that actually answered, the attempt number and the feedback the earlier attempt got, and whether an
+    operator note influenced it (Phase 1 trajectory item 3/4)."""
+    logs = ctx.workdir / "logs"
+    sp = logs / "system_prompts"
+    sp.mkdir(parents=True, exist_ok=True)
+    sys_sha = hashlib.sha256(system.encode()).hexdigest()
+    if not (sp / f"{sys_sha}.txt").exists():
+        (sp / f"{sys_sha}.txt").write_text(system)
+    prov = dict(r.provenance or {})
+    rec = {"schema": TRANSCRIPT_SCHEMA, "ts": dt.datetime.now(dt.timezone.utc).isoformat(), "call_id": r.call_id,
+           "task_id": ctx.task.id, "run_id": ctx.task.run_id, "step_index": ctx.step_index, "agent": a.name,
+           "goal": goal, "attempt": attempt, "prior_feedback": prior_feedback or None,
+           "model_hint": a.model_hint, "effort": a.effort, "model": r.model,
+           "answered_by": prov.get("answered_by", r.model), "operator_influenced": bool(prov.get("operator_influenced")),
+           "provenance": prov, "system_sha256": sys_sha, "input_tokens": r.input_tokens,
+           "output_tokens": r.output_tokens, "latency_ms": r.latency_ms, "stop_reason": r.stop_reason,
+           "prompt": prompt, "answer": r.text}
+    with (logs / "model_calls.jsonl").open("a") as f:
+        f.write(json.dumps(rec) + "\n")

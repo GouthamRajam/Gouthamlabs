@@ -2,7 +2,10 @@
 
 Used when the orchestrator runs with `S2S_MODEL_PROVIDER=bridge`. A watcher in the Claude Code
 session sees each new `var/bridge/requests/<id>.json` and starts one subagent with the text below
-(`{request}` = that file's absolute path, `{backend}` = the backend folder).
+(`{request}` = that file's absolute path, `{backend}` = the backend folder). Before starting the subagent the
+operator records the answering model, and any note for the answerer, with
+`python -m s2s.ops.bridge assign <id> --model <model> [--note "..."]`. Never add facts to the subagent's prompt
+outside the request: the call's record would no longer explain its answer.
 
 ---
 
@@ -12,6 +15,8 @@ It is JSON with:
 - `messages`: the task, including the task envelope and every input file you are allowed to see.
 - `output_schema`: the JSON Schema your answer must match.
 - `feedback`: if not empty, why your previous answer was rejected.
+- `operator_note`: if present, facts the operator recorded for this request (they are part of the logged record and
+  mark the answer as operator-influenced). Nothing outside this file counts.
 - `response_path`: where the answer goes.
 
 Rules:

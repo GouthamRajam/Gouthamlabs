@@ -53,6 +53,7 @@ class ModelResponse:
     stop_reason: str | None = None
     latency_ms: int = 0
     cost_usd: float = 0.0
+    provenance: dict = field(default_factory=dict)  # who/what actually answered, attempts, operator influence
 
 
 @dataclass
@@ -62,6 +63,7 @@ class ProviderReply:
     output_tokens: int
     stop_reason: str | None = None
     model: str | None = None  # the model that answered (defaults to the provider's model)
+    provenance: dict = field(default_factory=dict)
 
 
 class ModelOutputError(RuntimeError):
@@ -153,7 +155,7 @@ class BridgeProvider:
         (root / "responses").mkdir(parents=True, exist_ok=True)
         rid = new_id("br")
         prompt = system + "".join(str(m.get("content", "")) for m in messages)
-        feedback, problem = "", None
+        feedback, problem, attempts = "", None, []
         for attempt in (1, 2):
             req_id = rid if attempt == 1 else f"{rid}_retry"
             out = root / "responses" / f"{req_id}.json"
@@ -170,10 +172,34 @@ class BridgeProvider:
             time.sleep(0.5)
             text = out.read_text()
             problem = bridge_problem(text, output_schema)
+            attempts.append({"request_id": req_id, "feedback_given": feedback or None, "rejected_because": problem})
             if not problem:
-                return ProviderReply(text, _tokens(prompt), _tokens(text), "end_turn", self.model)
+                return ProviderReply(text, _tokens(prompt), _tokens(text), "end_turn", self.model,
+                                     provenance=bridge_provenance(root, attempts))
             feedback = f"Your previous answer was rejected: {problem}. Answer again, exactly in the schema."
         raise ModelOutputError(f"bridge: answer for {rid} still invalid after a retry: {problem}")
+
+
+def bridge_provenance(root: Path, attempts: list[dict]) -> dict:
+    """What actually answered a bridge call and whether an operator influenced it. The operator records the
+    answering model (and any note, which is written INTO the request so the answerer and the log both see it) with
+    `python -m s2s.ops.bridge assign`; without it the answering model is "unrecorded", never guessed."""
+    assigned, notes = {}, []
+    for a in attempts:
+        rq = root / "requests" / f"{a['request_id']}.json"
+        try:
+            note = json.loads(rq.read_text()).get("operator_note")
+        except (OSError, ValueError):
+            note = None
+        if note:
+            notes.append({"request_id": a["request_id"], "note": note})
+        try:
+            assigned = json.loads((root / "requests" / f"{a['request_id']}.assign.json").read_text()) or assigned
+        except (OSError, ValueError):
+            pass
+    return {"provider": "bridge", "attempts": attempts,
+            "answered_by": assigned.get("answered_by") or "unrecorded",
+            "operator_notes": notes, "operator_influenced": bool(notes)}
 
 
 def bridge_problem(text: str, schema: dict | None) -> str | None:
@@ -229,7 +255,10 @@ class ModelGateway:
         # money whatever happens next). May raise meter.BudgetExceeded (hard stop).
         rec = meter.record_llm(task, model, tin, tout, call_id)
         resp = ModelResponse(reply.text, model, tin, tout, call_id, None, reply.stop_reason, latency_ms,
-                             float(rec.cost_usd))
+                             float(rec.cost_usd),
+                             provenance={"provider": type(self.provider).__name__, "model_answered": model,
+                                         "model_hint": model_hint, "effort": effort,
+                                         "operator_influenced": False, **reply.provenance})
         if reply.stop_reason == "refusal":
             raise ModelOutputError(f"{task.agent_id}: the model declined the request (stop_reason=refusal)")
         if output_schema is not None:
