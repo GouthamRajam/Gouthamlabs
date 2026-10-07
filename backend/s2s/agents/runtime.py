@@ -29,6 +29,7 @@ from s2s.events.bus import emit, utcnow
 from s2s.finance import meter
 from s2s.models.gateway import ModelGateway
 from s2s.org import load_org
+from s2s.tools import runner
 
 log = logging.getLogger(__name__)
 
@@ -142,6 +143,37 @@ class Agent:
         raise NotImplementedError
 
 
+def tool_pulse(task: Task, step_index: int, step_count: int):
+    """(heartbeat callable, interval) for one step while EDA tools run (Phase 1 harness #3). It captures plain values
+    only and writes in its own transactions, so tool threads may call it; one beat per interval per task, however
+    many threads run tools. Interval: the SLA heartbeat, but at most a third of the task's stall threshold."""
+    import threading
+    from s2s.config import sla_seconds
+    from s2s.orchestrator.watchdog import stall_threshold_s
+    every = max(0.05, min(sla_seconds("heartbeat_minutes"), stall_threshold_s(task) / 3))
+    tid, agent, team, run_id, stage = task.id, task.agent_id, task.team_id, task.run_id, task.stage
+    design_id, percent = (task.inputs or {}).get("design_id"), task.percent
+    lock, last = threading.Lock(), [0.0]
+
+    def pulse(evidence: str) -> None:
+        import time as _t
+        with lock:
+            if _t.monotonic() - last[0] < every * 0.9:
+                return
+            last[0] = _t.monotonic()
+        with db_session() as s:
+            t = s.get(Task, tid, with_for_update={"key_share": True})
+            now = utcnow()
+            t.last_progress_at, t.evidence_signal, t.stalled_at = now, evidence[:200], None
+            s.add(Heartbeat(task_id=tid, percent=percent, evidence_signal=evidence[:200],
+                            step=f"step {step_index + 1}/{step_count} (tool running)", blockers=[]))
+        emit(None, "task.heartbeat", f"{agent}: {evidence[:160]}", run_id=run_id, design_id=design_id, stage=stage,
+             task_id=tid, agent_id=agent, team=team, status="working", progress=percent, immediate=True,
+             detail={"step": step_index + 1, "of": step_count, "evidence_signal": evidence, "in_step": True,
+                     "source": "tool runner"})
+    return pulse, every
+
+
 class NeedsHuman(RuntimeError):
     """The stage cannot finish on its own (e.g. blocking Sentinel findings remain, or the same
     check failed three times): the task pauses and a human decides (Sentinel rule, Part 6.6.2)."""
@@ -189,7 +221,9 @@ def _run_task(task_id: str, agent: Agent, gateway: ModelGateway | None = None) -
                 task = s.get(Task, task_id)
                 state = dict((task.checkpoint or {}).get("state", {}))
                 ctx = StepContext(s, task, state, gateway, i, n)
-                steps[i](ctx)
+                pulse, every = tool_pulse(task, i, n)
+                with runner.heartbeat_to(pulse, every):
+                    steps[i](ctx)
                 now = utcnow()
                 evidence = ctx.evidence or f"steps_done={i + 1}/{n}"
                 task.checkpoint = {"step": i + 1, "state": ctx.state, "at": now.isoformat()}

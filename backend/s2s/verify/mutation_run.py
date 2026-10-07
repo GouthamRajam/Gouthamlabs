@@ -190,7 +190,7 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         undecided = [m for m in batch if res[m.id]["compiles"] and res[m.id]["equiv"] == "unknown"]
         with ThreadPoolExecutor(max_workers=parallel) as pool:  # CEO decision D2: unbounded proof, never a guess
             proofs = dict(zip([m.id for m in undecided],
-                              pool.map(lambda m: _unbounded_equivalence(base, m, orig_dir, rtl_files, top, cache),
+                              pool.map(runner.carry_heartbeat(lambda m: _unbounded_equivalence(base, m, orig_dir, rtl_files, top, cache)),
                                        undecided)))
         for m in batch:
             r = res[m.id]
@@ -266,7 +266,7 @@ def run_mutation(*, workdir: Path, rtl_files: dict[str, str], top: str, tb_dir: 
         return res
 
     with ThreadPoolExecutor(max_workers=parallel) as pool:
-        results = list(pool.map(run_one, kept))
+        results = list(pool.map(runner.carry_heartbeat(run_one), kept))  # tool heartbeats reach the step
     errors = [r for r in results if r["detected"] is None]
     if errors:
         raise MutationHarnessError(f"{len(errors)} mutant run(s) failed to run: {errors[0]['how']}")

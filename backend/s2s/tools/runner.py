@@ -16,6 +16,7 @@ slots BEFORE its timeout starts: queueing never makes a tool run time out.
 from __future__ import annotations
 
 import contextlib
+import contextvars
 import fcntl
 import hashlib
 import os
@@ -27,10 +28,51 @@ import uuid
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from typing import Callable
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 IMAGE = os.environ.get("S2S_EDA_IMAGE", "s2s-eda")
 DEFAULT_TIMEOUT_S = 1800
+
+
+# Heartbeat while a tool runs (Phase 1 harness #3): the agent runtime installs a callable for the step being run; the
+# runner calls it every `interval` seconds while a tool process is alive (or while the run waits for a tool slot), so
+# the stall watchdog sees a live task during long mutation, formal and OpenLane runs. A hung tool still ends at its
+# own timeout, and a step hung outside a tool still has no heartbeat, so real stalls stay visible.
+_HEARTBEAT: contextvars.ContextVar[tuple[Callable[[str], None], float] | None] = \
+    contextvars.ContextVar("s2s_tool_heartbeat", default=None)
+
+
+@contextlib.contextmanager
+def heartbeat_to(fn: Callable[[str], None] | None, interval_s: float):
+    token = _HEARTBEAT.set((fn, max(0.05, interval_s)) if fn else None)
+    try:
+        yield
+    finally:
+        _HEARTBEAT.reset(token)
+
+
+def carry_heartbeat(fn: Callable) -> Callable:
+    """Wrap `fn` for a worker thread so tool runs inside it keep beating for the calling step (thread pools do not
+    copy context variables)."""
+    hb = _HEARTBEAT.get()
+
+    def run(*a, **kw):
+        token = _HEARTBEAT.set(hb)
+        try:
+            return fn(*a, **kw)
+        finally:
+            _HEARTBEAT.reset(token)
+    return run
+
+
+def _beat(evidence: str) -> None:
+    hb = _HEARTBEAT.get()
+    if hb:
+        try:
+            hb[0](evidence)
+        except Exception:  # noqa: BLE001 - a failed heartbeat must never break the tool run
+            pass
 
 
 class EdaUnavailable(RuntimeError):
@@ -82,6 +124,8 @@ def tool_slots_held(version_key: str):
     d.mkdir(parents=True, exist_ok=True)
     held: list = []
     try:
+        hb = _HEARTBEAT.get()
+        waited, last = time.monotonic(), time.monotonic()
         with open(d / "acquire.lock", "a") as acq:
             fcntl.flock(acq, fcntl.LOCK_EX)
             try:
@@ -97,6 +141,9 @@ def tool_slots_held(version_key: str):
                             f.close()
                     if len(held) < need:
                         time.sleep(0.5)
+                        if hb and time.monotonic() - last >= hb[1]:
+                            last = time.monotonic()
+                            _beat(f"{version_key}: waiting for a tool slot ({last - waited:.0f}s)")
             finally:
                 fcntl.flock(acq, fcntl.LOCK_UN)
         yield len(held)
@@ -194,10 +241,20 @@ def run(
         with open(log_path, "wb") as log:
             proc = subprocess.Popen(full, stdout=log, stderr=subprocess.STDOUT, cwd=cwd, env=proc_env,
                                     start_new_session=True)
-            try:
-                exit_code: int | None = proc.wait(timeout=timeout_s)
-            except subprocess.TimeoutExpired:
-                timed_out = True
+            hb = _HEARTBEAT.get()
+            deadline = start + timeout_s
+            exit_code: int | None = None
+            while True:
+                left = deadline - time.monotonic()
+                try:
+                    exit_code = proc.wait(timeout=max(0.0, min(left, hb[1]) if hb else left))
+                    break
+                except subprocess.TimeoutExpired:
+                    if time.monotonic() >= deadline:
+                        timed_out = True
+                        break
+                    _beat(f"{version_key} running {time.monotonic() - start:.0f}s ({log_path.name})")
+            if timed_out:
                 if mode() == "local":
                     os.killpg(proc.pid, 9)
                 else:
