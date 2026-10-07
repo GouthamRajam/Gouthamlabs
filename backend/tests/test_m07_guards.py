@@ -56,7 +56,9 @@ def test_params_must_stay_inside_pnr_ranges():
                                     "CTS_SINK_CLUSTERING_SIZE": 25, "GRT_ANTENNA_ITERS": 3, "GRT_ANTENNA_MARGIN": 10,
                                     # clock-tree shape settings (D1) default to OpenLane 2.3.10's defaults
                                     "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50, "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
-                                    "CTS_CLK_MAX_WIRE_LENGTH": 0}
+                                    "CTS_CLK_MAX_WIRE_LENGTH": 0,
+                                    # heuristic diode insertion defaults to OpenLane's default (off)
+                                    "RUN_HEURISTIC_DIODE_INSERTION": 0}
     assert olf.check_params({"CTS_SINK_CLUSTERING_MAX_DIAMETER": 80})  # wider clusters than the default: refused
     assert olf.check_params({"CTS_DISTANCE_BETWEEN_BUFFERS": -5})
     assert olf.check_params({"CTS_CLK_MAX_WIRE_LENGTH": 900})
@@ -68,6 +70,19 @@ def test_params_must_stay_inside_pnr_ranges():
     assert olf.check_params({"PL_TARGET_DENSITY_PCT": 30})  # below 0.40 x 100
     assert olf.check_params({"MAX_FANOUT_CONSTRAINT": 5})
     assert olf.check_params({"RUN_KLAYOUT_DRC": False})    # not a tunable at all
+    assert olf.check_params({"RUN_HEURISTIC_DIODE_INSERTION": 1}) == []
+    assert olf.check_params({"RUN_HEURISTIC_DIODE_INSERTION": 2})    # 0/1 only
+    assert olf.check_params({"RUN_HEURISTIC_DIODE_INSERTION": 0.5})
+
+
+def test_heuristic_diode_switch_is_written_as_a_boolean(tmp_path):
+    """OpenLane reads RUN_HEURISTIC_DIODE_INSERTION as a JSON boolean; the guard accepts it (CEO 2026-10-07)."""
+    pnr, frozen, sdc_sha = _pnr(tmp_path)
+    assert json.loads((pnr / "config.json").read_text())["RUN_HEURISTIC_DIODE_INSERTION"] is False
+    olf.write_config(pnr, "top", [tmp_path / "top.v"], "clk", 10.0, tmp_path / "c.sdc",
+                     {**olf.default_params(), "RUN_HEURISTIC_DIODE_INSERTION": 1}, None)
+    assert json.loads((pnr / "config.json").read_text())["RUN_HEURISTIC_DIODE_INSERTION"] is True
+    assert olf.config_guard(pnr, period_ns=10.0, reviewed_sdc_sha=sdc_sha, frozen_rtl=frozen) == []
 
 
 def _pnr(tmp_path: Path) -> tuple[Path, dict, str]:

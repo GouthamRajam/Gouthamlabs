@@ -70,6 +70,69 @@ for d, r in RUNS.items():
               "dfm": dfm.get("summary"), "dfm_items": [(i.get("id"), i.get("severity"), i.get("title")) for i in dfm.get("items", [])],
               "spef": sp, "hard": (rd.get("hard_checks") or {}).get("verdict"),
               "A": rd.get("baseline_A_pct"), "B": rd.get("baseline_B_pct")}
+# --- Derated (flat OCV) timing and the current hard-check verdict (CEO decision 2026-10-07) ---
+for d, v in out.items():
+    rep = f"{ROOT}/{v['run']}/reports"
+    der = J(f"{rep}/sta_tool.json").get("derated") or {}
+    v["derated"] = {}
+    for pct, x in der.items():
+        cs = x.get("corners", {})
+        v["derated"][pct] = {"early": x.get("early"), "late": x.get("late"), "setup_ws": x.get("setup_ws_ns"),
+                             "hold_ws": x.get("hold_ws_ns"), "passed": x.get("passed"), "gate": x.get("gate"),
+                             "corners": len(cs), "corners_passed": sum(1 for c in cs.values() if c.get("passed")),
+                             "setup_corner": min(cs, key=lambda k: cs[k]["setup_ws_ns"]) if cs else None,
+                             "hold_corner": min(cs, key=lambda k: cs[k]["hold_ws_ns"]) if cs else None,
+                             "caveat": x.get("caveat")}
+    rdn = J(f"{rep}/tapeout_readiness.json"); hc = rdn.get("hard_checks") or {}
+    v["gate_now"] = {"source": "reports/tapeout_readiness.json", "verdict": hc.get("verdict"), "passed": hc.get("passed"),
+                     "of": hc.get("of"), "items": [(i.get("check"), i.get("status")) for i in hc.get("items", [])],
+                     "conditions": hc.get("conditions"), "phase0_gate": (rdn.get("phase0_gate") or {}).get("status"),
+                     "A": rdn.get("baseline_A_pct"), "B": rdn.get("baseline_B_pct"),
+                     "earned_A": rdn.get("earned_A_total"), "weights_A": rdn.get("weights_A_total"),
+                     "earned_B": rdn.get("earned_B_total"), "weights_B": rdn.get("weights_B_total")}
+    sdc = open(f"{ROOT}/{v['run']}/pnr/src/constraints.sdc").read()
+    unc = re.search(r"set_clock_uncertainty\s+([\d.]+)", sdc)
+    v["clock_uncertainty_ns"] = float(unc.group(1)) if unc else None
+
+# sync_fifo what-if derated STA (OpenSTA on read-only copies; NOT recorded signoff checks).
+# Each log prints "WS <seconds>" (or "S2S_WS"); the .tcl next to it names the liberty corner, SPEF and derate.
+SCR = "/home/user/Gouthamlabs/var/artifacts/scratch_ocv"
+WHATIF = [("signed original", "sync_fifo", "run_01M43MDNVKWCHEQ0GGHPJFT602 (signed netlist)", {0: "_0", 5: "_5", 10: "_10"}),
+          ("design change #1 (registered rd_data)", "sync_fifo_fix_it3", "run_01M4A7YXRDRF2TV0HY1ERGQJ0A, P&R it3",
+           {0: "1.0", 5: "1.05", 10: "1.1"}),
+          ("design change #2 (registered read-mux selects)", "sync_fifo_fix2_it3", "run_01M4AFNT5QK68FGT27TVRBYWZN, P&R it3",
+           {0: "1.0", 5: "1.05", 10: "1.1"})]
+def ws(log):
+    m = re.search(r"^(?:S2S_)?WS\s+(\S+)", open(log).read(), re.M)
+    return float(m.group(1)) * 1e9 if m else None
+def tclinfo(tcl):
+    t = open(tcl).read()
+    lib = re.search(r"sky130_fd_sc_hd__(\w+)\.lib", t); sp = re.search(r"/(\w+)\.spef", t)
+    der = re.findall(r"set_timing_derate -(early|late) ([\d.]+)", t)
+    return {"lib": lib.group(1) if lib else None, "rc": sp.group(1) if sp else None, "derate": dict(der)}
+wi = []
+for label, sub, src, suf in WHATIF:
+    row = {"label": label, "dir": f"var/artifacts/scratch_ocv/{sub}", "netlist": src, "setup": {}, "hold": {}}
+    for pct, sx in suf.items():
+        for kind in ("setup", "hold"):
+            log = f"{SCR}/{sub}/{kind}{sx}.log"
+            row[kind][pct] = ws(log)
+            if pct == 10: row[f"{kind}_tcl"] = tclinfo(log[:-4] + ".tcl")
+    wi.append(row)
+out["sync_fifo"]["whatif"] = wi
+# change #2 P&R iterations 3, 4 and 5 (why the block is still FAIL)
+C2 = f"{ROOT}/run_01M4AFNT5QK68FGT27TVRBYWZN"
+c2 = {}
+for k in (3, 4, 5):
+    it = J(f"{C2}/reports/pnr_iteration_{k}.json"); f = it.get("facts", {}); mm = J(f"{C2}/pnr/runs/it{k}/final/metrics.json")
+    c2[f"it{k}"] = {"antenna_nets": f.get("antenna_violating_nets"), "slew_viol": f.get("max_slew_violations"),
+                    "cap_viol": f.get("max_cap_violations"), "problems": len(it.get("problems", [])),
+                    "max_clkbuf_fanout": max((p["value"] for p in (f.get("independent_drv_pins") or []) if p["pin"].startswith("clkbuf")), default=None),
+                    "instances": mm.get("design__instance__count"),
+                    "setup_ws": min(f.get("setup_ws_by_corner", {}).values(), default=None),
+                    "hold_ws": min(f.get("hold_ws_by_corner", {}).values(), default=None),
+                    "diode_insertion": it.get("params", {}).get("RUN_HEURISTIC_DIODE_INSERTION", 0)}
+out["sync_fifo"]["change2_pnr"] = c2
 json.dump(out, open(sys.argv[1], "w"), indent=1, default=str)
 for d, v in out.items():
     p = v["power"]["tt_025C_1v80"]

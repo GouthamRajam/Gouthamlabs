@@ -50,8 +50,11 @@ TUNABLE = {  # config key -> (pnr_ranges key, scale from range units to config u
     "CTS_SINK_CLUSTERING_MAX_DIAMETER": ("cts_cluster_diameter_um", 1, "cts"),
     "CTS_DISTANCE_BETWEEN_BUFFERS": ("cts_buffer_distance_um", 1, "cts"),
     "CTS_CLK_MAX_WIRE_LENGTH": ("cts_max_wire_length_um", 1, "cts"),
+    "RUN_HEURISTIC_DIODE_INSERTION": ("heuristic_diode_insertion", 1, "routing"),
 }
-INT_PARAMS = {"MAX_FANOUT_CONSTRAINT", "CTS_SINK_CLUSTERING_SIZE", "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN"}
+INT_PARAMS = {"MAX_FANOUT_CONSTRAINT", "CTS_SINK_CLUSTERING_SIZE", "GRT_ANTENNA_ITERS", "GRT_ANTENNA_MARGIN",
+              "RUN_HEURISTIC_DIODE_INSERTION"}
+BOOL_PARAMS = {"RUN_HEURISTIC_DIODE_INSERTION"}  # range 0/1 in pnr_ranges.yaml; OpenLane reads a JSON boolean
 SYNTH_STRATEGIES = ["AREA 0", "AREA 1", "AREA 2", "AREA 3", "DELAY 0", "DELAY 1", "DELAY 2", "DELAY 3", "DELAY 4"]
 
 
@@ -101,7 +104,7 @@ def write_config(pnr: Path, design: str, rtl: list[Path], clock_port: str, perio
     cfg = {"DESIGN_NAME": design, "VERILOG_FILES": [f"dir::src/{Path(f).name}" for f in rtl],
            "CLOCK_PORT": clock_port, "CLOCK_PERIOD": period_ns, "PNR_SDC_FILE": "dir::src/constraints.sdc",
            "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc", "ERRORS_ON_UNMATCHED_IO": "both",
-           **{k: int(v) if k in INT_PARAMS else v for k, v in params.items()}}
+           **{k: bool(v) if k in BOOL_PARAMS else int(v) if k in INT_PARAMS else v for k, v in params.items()}}
     if pin_cfg:
         shutil.copy2(pin_cfg, src / "pin_order.cfg")
         cfg["FP_PIN_ORDER_CFG"] = "dir::src/pin_order.cfg"

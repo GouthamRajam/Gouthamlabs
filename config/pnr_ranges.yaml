@@ -12,4 +12,8 @@ antenna_repair_margin_pct: {min: 10, max: 30, default: 10} # GRT_ANTENNA_MARGIN 
 cts_cluster_diameter_um: {min: 15, max: 50, default: 50}       # CTS_SINK_CLUSTERING_MAX_DIAMETER
 cts_buffer_distance_um: {min: 0, max: 200, default: 0}         # CTS_DISTANCE_BETWEEN_BUFFERS (0 = automatic)
 cts_max_wire_length_um: {min: 0, max: 500, default: 0}         # CTS_CLK_MAX_WIRE_LENGTH (0 = no limit)
+# Antenna (CEO decision 2026-10-07, sync_fifo change #2): a violation that survives repair because the global-route
+# estimate passes and detailed routing comes out longer. 0 = OpenLane 2.3.10 default (off); 1 = Odb.HeuristicDiodeInsertion
+# adds a diode at the sink of nets longer than 90 um before antenna repair. Adds diodes only; no check is loosened.
+heuristic_diode_insertion: {min: 0, max: 1, default: 0}   # RUN_HEURISTIC_DIODE_INSERTION
 iteration_budget: 8

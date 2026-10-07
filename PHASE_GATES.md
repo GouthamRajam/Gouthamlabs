@@ -11,7 +11,15 @@ is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED 
       passes derated signoff. The 2026-10-06 QUALIFIED PASS stands for the other four blocks:
       - counter8, alu8, uart: full hard-check pass (6/6, including the +/-10% derated timing).
       - sync_fifo: FAIL - nominal 5/5, but +/-10% derated setup fails (-0.408 ns, what-if); design change #1
-        (registered rd_data) measured -1.063 ns at +/-10% (what-if on its routed netlist); change #2 in progress.
+        (registered rd_data) measured -1.063 ns at +/-10% (what-if on its routed netlist). Design change #2
+        (registered read-mux selects) SOLVED THE TIMING FAILURE: +1.896 ns setup / +0.075 ns hold at +/-10%
+        (what-if on its P&R iteration-3 routed netlist; verified: 20/20 mutants, unbounded old-vs-new
+        equivalence PASS). Still FAIL because the physical cleanup did not close: antenna violations on
+        long input-buffer nets after detailed routing (it3, it5) or a diode flood (it4, heuristic
+        insertion). Root cause: OpenLane 2.3.10 repairs antennas only on the global route, which cannot
+        see the layer split the detailed route creates; no parameter acts on it. P&R stopped at 18/20
+        tool runs (CEO ceiling 30, used one iteration at a time); no fix #3. Pending: a post-detailed-route
+        antenna repair step (Phase 1), then a recorded derated signoff.
       - spi_master: CONDITIONAL pass (6/6) — only under the approved clock-net max-fanout limit
         of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of
         10 fails it.

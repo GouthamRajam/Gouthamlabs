@@ -236,3 +236,57 @@ entries:
     date: "2026-10-06"
     confidence: high
     owner: Sage
+  - id: s2s-mut-003
+    kind: s2s_lesson
+    title: "A 'stuck' mutant of an indexed register must hold its element, not the whole array"
+    symptom: "Mutation run stops with a harness error: one mutant's regression exits 1 with no success marker (C++ build of the Verilator model fails)"
+    root_cause: "The stuck_bit mutation wrote the bare register name on the right-hand side, so `mem_q[wr_addr] <= wr_data;` became `mem_q[wr_addr] <= mem_q;` (array assigned to an element). Verilator lints it with -Wno-fatal, so the compile screen passed, and clang++ then rejected the generated model."
+    wrong_assumption: "A mutant that passes the Verilator lint screen will build and simulate."
+    lesson: "Mutants keep the full indexed target (`x[i] <= x[i];`). A mutant run that cannot build is a harness bug to fix at the generator, never a mutant to drop or a check to relax."
+    evidence: "sync_fifo change #2 run_01M4A93ZB1F1BAFC6ZQFSFB6RA mutation/logs/regress_fifo_mem_L76_stuck_bit_3/regress.log (clang: assigning VlUnpacked<IData,16> to unsigned int); after the fix 20/20 caught"
+    regression_test: "tests/test_mutate_stuck_index.py"
+    tags: [mutation, mutant, stuck_bit, verilator, harness, myra, verification]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-004
+    kind: s2s_lesson
+    title: "Resuming a task after a blocked step: checkpoint 'step' counts COMPLETED steps"
+    symptom: "After a fix, a resumed verification task completes in seconds with 'mutation {}' and no mutation report; G2 stays pending"
+    root_cause: "The step that set state.blocked (myra, index 7) had completed, so the checkpoint was step 8 (stop_if_blocked). Clearing 'blocked' and resuming at 8 skipped the mutation step entirely."
+    lesson: "To re-run a step that blocked, set the checkpoint step to THAT step's index (checkpoint step - 1 when the following stop_if_blocked raised), clear state.blocked, and check afterwards that the step's report exists. The auto-gate rule (every check's last record must pass) is the safety net: it kept G2 pending."
+    evidence: "sync_fifo change #2 task_01M4A93ZC3FH415R3F4HJA5KR4, operator events 05:42:57 and 05:44:53 2026-10-07"
+    regression_test: "tests/test_gate_auto_last_check.py"
+    tags: [operations, resume, checkpoint, blocked, gate, g2, operator]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-005
+    kind: s2s_lesson
+    title: "A tool result with status ERROR and no log is an infrastructure refusal, not a design fact"
+    symptom: "P&R iteration lists 'independent DRV check did not run cleanly (ERROR)'; the check took 0 s and wrote no log"
+    root_cause: "The disk-headroom guard (S2S_MIN_FREE_GB, default 2) refused to start OpenSTA: 1.7 GB free on the run disk. Simulation waveform dumps (dump.vcd, up to 320 MB each) in finished verification runs filled the disk."
+    lesson: "On ERROR with no log, read the tool's 'reasons' (tool could not be run: ...) before diagnosing the design; no P&R parameter acts on it. Free space without deleting evidence (gzip finished runs' VCDs, remove test scratch and package caches), then re-run the check."
+    evidence: "sync_fifo change #2 run_01M4AFNT5QK68FGT27TVRBYWZN pnr iteration 3 (06:25:38); 34 VCDs gzipped, free space 1.7 -> 5.0 GB"
+    regression_test: "tests/test_run_lock_disk.py"
+    tags: [operations, disk, headroom, error, vcd, orion, place_route, infrastructure]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage
+  - id: s2s-ant-001
+    kind: s2s_lesson
+    title: "A marginal antenna violation that survives repair; heuristic diode insertion fixes it but floods the design with diodes"
+    symptom: "One net stays ~3% over the antenna side-area ratio after detailed routing (sync_fifo net34, met1, 410.75 vs 400) through repair iterations 3->6 and margin 10->20%"
+    root_cause: "OpenROAD antenna repair runs on the global-route estimate, which passes after repair; detailed routing makes the wire longer, so repair never targets the net."
+    wrong_assumption: "OpenLane's heuristic diode inserter (RUN_HEURISTIC_DIODE_INSERTION, threshold 90 um on SKY130) adds a few diodes on the long nets only."
+    lesson: "On a 34k um2 design the heuristic inserter added about 2,550 diodes (instance count 4,307 -> 6,858), on clock nets too: antenna 0, but clock buffers drove up to 25 loads (13 of them diodes), 18 max-slew and 1 max-cap violations, 236 problems. Prefer a placement change (it reroutes the net) with antenna margin raised; use heuristic insertion only with a much higher HEURISTIC_ANTENNA_THRESHOLD, and never on clock nets. Count diodes in the netlist after any diode setting. Root cause (it5, check_antennas -verbose on the global route): the global-route model ties the gate's met1 piece to the driver's diffusion (allowed ratio 2,736); the detailed route splits it across layers, so the allowed ratio drops to 400. Global-route repair and margins cannot see this; the fix is repair on the detailed route (diode or layer jump at the gate, incremental re-route), a flow step OpenLane 2.3.10 lacks."
+    evidence: "sync_fifo change #2 run_01M4AFNT5QK68FGT27TVRBYWZN reports/pnr_iteration_3.json and pnr_iteration_4.json; grep -c diode final/nl (it3 26, it4 2577)"
+    regression_test: "tests/test_m07_guards.py::test_heuristic_diode_switch_is_written_as_a_boolean"
+    tags: [antenna, diode, heuristic_diode_insertion, global_routing, detailed_routing, fanout, slew, clock_tree, orion, place_route, sync_fifo]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage

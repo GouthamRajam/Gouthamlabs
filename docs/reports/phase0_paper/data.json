@@ -144,7 +144,80 @@
   },
   "hard": "PASS",
   "A": 92.7,
-  "B": 64.1
+  "B": 64.1,
+  "derated": {
+   "5": {
+    "early": 0.95,
+    "late": 1.05,
+    "setup_ws": 1.75,
+    "hold_ws": 0.0976,
+    "passed": true,
+    "gate": false,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   },
+   "10": {
+    "early": 0.9,
+    "late": 1.1,
+    "setup_ws": 1.4867,
+    "hold_ws": 0.0812,
+    "passed": true,
+    "gate": true,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   }
+  },
+  "gate_now": {
+   "source": "reports/tapeout_readiness.json",
+   "verdict": "PASS",
+   "passed": 6,
+   "of": 6,
+   "items": [
+    [
+     "DRC = 0 (Magic + KLayout, final GDS)",
+     "PASS"
+    ],
+    [
+     "LVS match (Netgen, final GDS)",
+     "PASS"
+    ],
+    [
+     "Antenna clean",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners (setup, hold, DRV)",
+     "PASS"
+    ],
+    [
+     "Equivalence RTL vs final netlist proven",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners, with +/-10% OCV derate (estimate)",
+     "PASS"
+    ],
+    [
+     "No human edits to artifacts",
+     "NOT CHECKED"
+    ]
+   ],
+   "conditions": [],
+   "phase0_gate": "RE-OPENED (human decision)",
+   "A": 92.7,
+   "B": 64.1,
+   "earned_A": 90.0,
+   "weights_A": 97.0,
+   "earned_B": 68.0,
+   "weights_B": 106.0
+  },
+  "clock_uncertainty_ns": 0.25
  },
  "alu8": {
   "run": "run_01M44DR7XRWAQ9XY53AG8SRJCM",
@@ -291,7 +364,80 @@
   },
   "hard": "PASS",
   "A": 92.7,
-  "B": 64.1
+  "B": 64.1,
+  "derated": {
+   "5": {
+    "early": 0.95,
+    "late": 1.05,
+    "setup_ws": 2.9581,
+    "hold_ws": 0.3869,
+    "passed": true,
+    "gate": false,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   },
+   "10": {
+    "early": 0.9,
+    "late": 1.1,
+    "setup_ws": 2.6401,
+    "hold_ws": 0.3543,
+    "passed": true,
+    "gate": true,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   }
+  },
+  "gate_now": {
+   "source": "reports/tapeout_readiness.json",
+   "verdict": "PASS",
+   "passed": 6,
+   "of": 6,
+   "items": [
+    [
+     "DRC = 0 (Magic + KLayout, final GDS)",
+     "PASS"
+    ],
+    [
+     "LVS match (Netgen, final GDS)",
+     "PASS"
+    ],
+    [
+     "Antenna clean",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners (setup, hold, DRV)",
+     "PASS"
+    ],
+    [
+     "Equivalence RTL vs final netlist proven",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners, with +/-10% OCV derate (estimate)",
+     "PASS"
+    ],
+    [
+     "No human edits to artifacts",
+     "NOT CHECKED"
+    ]
+   ],
+   "conditions": [],
+   "phase0_gate": "RE-OPENED (human decision)",
+   "A": 92.7,
+   "B": 64.1,
+   "earned_A": 90.0,
+   "weights_A": 97.0,
+   "earned_B": 68.0,
+   "weights_B": 106.0
+  },
+  "clock_uncertainty_ns": 0.25
  },
  "sync_fifo": {
   "run": "run_01M43MDNVKWCHEQ0GGHPJFT602",
@@ -448,7 +594,183 @@
   },
   "hard": "PASS",
   "A": 92.7,
-  "B": 64.1
+  "B": 64.1,
+  "derated": {},
+  "gate_now": {
+   "source": "reports/tapeout_readiness.json",
+   "verdict": "FAIL",
+   "passed": 5,
+   "of": 6,
+   "items": [
+    [
+     "DRC = 0 (Magic + KLayout, final GDS)",
+     "PASS"
+    ],
+    [
+     "LVS match (Netgen, final GDS)",
+     "PASS"
+    ],
+    [
+     "Antenna clean",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners (setup, hold, DRV)",
+     "PASS"
+    ],
+    [
+     "Equivalence RTL vs final netlist proven",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners, with +/-10% OCV derate (estimate)",
+     "NOT RUN"
+    ],
+    [
+     "No human edits to artifacts",
+     "NOT CHECKED"
+    ]
+   ],
+   "conditions": [],
+   "phase0_gate": "RE-OPENED (human decision)",
+   "A": 92.7,
+   "B": 64.1,
+   "earned_A": 90.0,
+   "weights_A": 97.0,
+   "earned_B": 68.0,
+   "weights_B": 106.0
+  },
+  "clock_uncertainty_ns": 0.25,
+  "whatif": [
+   {
+    "label": "signed original",
+    "dir": "var/artifacts/scratch_ocv/sync_fifo",
+    "netlist": "run_01M43MDNVKWCHEQ0GGHPJFT602 (signed netlist)",
+    "setup": {
+     "0": 0.2428630629935924,
+     "5": -0.08249312344332793,
+     "10": -0.4078515303262975
+    },
+    "hold": {
+     "0": 0.13843709512073588,
+     "5": 0.11982725922621285,
+     "10": 0.10121736782053858
+    },
+    "setup_tcl": {
+     "lib": "ss_100C_1v60",
+     "rc": "max",
+     "derate": {
+      "early": "0.9",
+      "late": "1.1"
+     }
+    },
+    "hold_tcl": {
+     "lib": "ff_n40C_1v95",
+     "rc": "min",
+     "derate": {
+      "early": "0.9",
+      "late": "1.1"
+     }
+    }
+   },
+   {
+    "label": "design change #1 (registered rd_data)",
+    "dir": "var/artifacts/scratch_ocv/sync_fifo_fix_it3",
+    "netlist": "run_01M4A7YXRDRF2TV0HY1ERGQJ0A, P&R it3",
+    "setup": {
+     "0": 0.018316903549475683,
+     "5": -0.5225508914463717,
+     "10": -1.063418686442219
+    },
+    "hold": {
+     "0": 0.10848322240519792,
+     "5": 0.09133366285496436,
+     "10": 0.07418404779357957
+    },
+    "setup_tcl": {
+     "lib": "ss_100C_1v60",
+     "rc": "max",
+     "derate": {
+      "early": "0.9",
+      "late": "1.1"
+     }
+    },
+    "hold_tcl": {
+     "lib": "ff_n40C_1v95",
+     "rc": "min",
+     "derate": {
+      "early": "0.9",
+      "late": "1.1"
+     }
+    }
+   },
+   {
+    "label": "design change #2 (registered read-mux selects)",
+    "dir": "var/artifacts/scratch_ocv/sync_fifo_fix2_it3",
+    "netlist": "run_01M4AFNT5QK68FGT27TVRBYWZN, P&R it3",
+    "setup": {
+     "0": 2.506769014587462,
+     "5": 2.2014621237076426,
+     "10": 1.8961561210062428
+    },
+    "hold": {
+     "0": 0.10942269312863573,
+     "5": 0.09225054053985104,
+     "10": 0.07507849897336882
+    },
+    "setup_tcl": {
+     "lib": "ss_100C_1v60",
+     "rc": "max",
+     "derate": {
+      "early": "0.9",
+      "late": "1.1"
+     }
+    },
+    "hold_tcl": {
+     "lib": "ff_n40C_1v95",
+     "rc": "min",
+     "derate": {
+      "early": "0.9",
+      "late": "1.1"
+     }
+    }
+   }
+  ],
+  "change2_pnr": {
+   "it3": {
+    "antenna_nets": 1,
+    "slew_viol": 0,
+    "cap_viol": 0,
+    "problems": 3,
+    "max_clkbuf_fanout": null,
+    "instances": 4307,
+    "setup_ws": 2.5067690854837337,
+    "hold_ws": 0.10942269622332092,
+    "diode_insertion": 0
+   },
+   "it4": {
+    "antenna_nets": 0,
+    "slew_viol": 18,
+    "cap_viol": 1,
+    "problems": 236,
+    "max_clkbuf_fanout": 25.0,
+    "instances": 6858,
+    "setup_ws": 1.9992843502180866,
+    "hold_ws": 0.10980333619807889,
+    "diode_insertion": 1
+   },
+   "it5": {
+    "antenna_nets": 2,
+    "slew_viol": 0,
+    "cap_viol": 0,
+    "problems": 3,
+    "max_clkbuf_fanout": null,
+    "instances": 4300,
+    "setup_ws": 1.9893571797403389,
+    "hold_ws": 0.11101725408753597,
+    "diode_insertion": 0
+   }
+  }
  },
  "uart": {
   "run": "run_01M47BE6QKCPAEAE7RVYYJ9TEY",
@@ -595,7 +917,80 @@
   },
   "hard": "PASS",
   "A": 92.7,
-  "B": 64.1
+  "B": 64.1,
+  "derated": {
+   "5": {
+    "early": 0.95,
+    "late": 1.05,
+    "setup_ws": 5.1724,
+    "hold_ws": 0.0747,
+    "passed": true,
+    "gate": false,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   },
+   "10": {
+    "early": 0.9,
+    "late": 1.1,
+    "setup_ws": 4.6743,
+    "hold_ws": 0.0317,
+    "passed": true,
+    "gate": true,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   }
+  },
+  "gate_now": {
+   "source": "reports/tapeout_readiness.json",
+   "verdict": "PASS",
+   "passed": 6,
+   "of": 6,
+   "items": [
+    [
+     "DRC = 0 (Magic + KLayout, final GDS)",
+     "PASS"
+    ],
+    [
+     "LVS match (Netgen, final GDS)",
+     "PASS"
+    ],
+    [
+     "Antenna clean",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners (setup, hold, DRV)",
+     "PASS"
+    ],
+    [
+     "Equivalence RTL vs final netlist proven",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners, with +/-10% OCV derate (estimate)",
+     "PASS"
+    ],
+    [
+     "No human edits to artifacts",
+     "NOT CHECKED"
+    ]
+   ],
+   "conditions": [],
+   "phase0_gate": "RE-OPENED (human decision)",
+   "A": 92.7,
+   "B": 64.1,
+   "earned_A": 90.0,
+   "weights_A": 97.0,
+   "earned_B": 68.0,
+   "weights_B": 106.0
+  },
+  "clock_uncertainty_ns": 0.25
  },
  "spi_master": {
   "run": "run_01M484JWYZ7ADCE8N97SZV80QG",
@@ -742,6 +1137,81 @@
   },
   "hard": "CONDITIONAL PASS",
   "A": 92.7,
-  "B": 64.1
+  "B": 64.1,
+  "derated": {
+   "5": {
+    "early": 0.95,
+    "late": 1.05,
+    "setup_ws": 8.6503,
+    "hold_ws": 0.0863,
+    "passed": true,
+    "gate": false,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   },
+   "10": {
+    "early": 0.9,
+    "late": 1.1,
+    "setup_ws": 8.3625,
+    "hold_ws": 0.0571,
+    "passed": true,
+    "gate": true,
+    "corners": 9,
+    "corners_passed": 9,
+    "setup_corner": "max_ss_100C_1v60",
+    "hold_corner": "min_ff_n40C_1v95",
+    "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+   }
+  },
+  "gate_now": {
+   "source": "reports/tapeout_readiness.json",
+   "verdict": "CONDITIONAL PASS",
+   "passed": 6,
+   "of": 6,
+   "items": [
+    [
+     "DRC = 0 (Magic + KLayout, final GDS)",
+     "PASS"
+    ],
+    [
+     "LVS match (Netgen, final GDS)",
+     "PASS"
+    ],
+    [
+     "Antenna clean",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners (setup, hold, DRV)",
+     "PASS (conditional)"
+    ],
+    [
+     "Equivalence RTL vs final netlist proven",
+     "PASS"
+    ],
+    [
+     "Timing met, all corners, with +/-10% OCV derate (estimate)",
+     "PASS"
+    ],
+    [
+     "No human edits to artifacts",
+     "NOT CHECKED"
+    ]
+   ],
+   "conditions": [
+    "CONDITIONAL PASS: timing/DRV passes only under the approved clock-net max-fanout limit of 20 (config/signoff.yaml cts.clock_max_fanout). 8 clock-tree buffer outputs have fanout 11-17, above the SDC limit of 10. Under a flat SDC max-fanout limit of 10 this design FAILS."
+   ],
+   "phase0_gate": "RE-OPENED (human decision)",
+   "A": 92.7,
+   "B": 64.1,
+   "earned_A": 90.0,
+   "weights_A": 97.0,
+   "earned_B": 68.0,
+   "weights_B": 106.0
+  },
+  "clock_uncertainty_ns": 0.25
  }
 }
