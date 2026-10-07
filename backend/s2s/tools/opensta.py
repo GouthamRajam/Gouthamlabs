@@ -21,6 +21,7 @@ link_design {top}
 read_sdc {sdc}
 {post_route}
 {read_spef}
+{derate}
 puts "S2S_STA_CORNER {corner}"
 report_checks -path_delay max -group_count {paths} -digits 4
 report_checks -path_delay min -group_count {paths} -digits 4
@@ -127,8 +128,12 @@ def run_opensta(
     netlist: Path, sdc: Path, top: str, workdir: Path, corner: str = "tt_025C_1v80",
     liberty: list[Path] | None = None, spef: Path | None = None, paths: int = 5,
     timeout_s: float = 1800, post_route: bool = False, tag: str | None = None,
+    derate: tuple[float, float] | None = None,
 ) -> ToolResult:
-    """post_route: the clock tree exists, so clock latencies are propagated through it."""
+    """post_route: the clock tree exists, so clock latencies are propagated through it.
+    derate: flat OCV derate (early, late), e.g. (0.90, 1.10), applied to cell and net delays on data and clock
+    paths (OpenSTA set_timing_derate; clock reconvergence pessimism removal stays on). SKY130 has no foundry
+    OCV/AOCV tables, so a flat derate is an engineering estimate, not a foundry signoff number."""
     libs = [str(Path(p).resolve()) for p in liberty] if liberty else [SKY130_HD_LIB.format(corner=corner)]
     name = f"sta_{top}_{tag or corner}"
     script = workdir.resolve() / ".s2s" / f"{name}.tcl"
@@ -137,7 +142,8 @@ def run_opensta(
         read_libs="\n".join(f"read_liberty {lib}" for lib in libs),
         netlist=Path(netlist).resolve(), top=top, sdc=Path(sdc).resolve(),
         read_spef=f"read_spef {Path(spef).resolve()}" if spef else "", corner=tag or corner, paths=paths,
-        post_route="set_propagated_clock [all_clocks]" if post_route else ""))
+        post_route="set_propagated_clock [all_clocks]" if post_route else "",
+        derate=(f"set_timing_derate -early {derate[0]}\nset_timing_derate -late {derate[1]}" if derate else "")))
     cmd = ["sta", "-no_init", "-exit", str(script)]
     try:
         rec = runner.run(cmd, workdir, workdir / "logs" / f"{name}.log", SPEC.version_key,

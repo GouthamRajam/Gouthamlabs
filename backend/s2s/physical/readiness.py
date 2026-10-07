@@ -68,8 +68,9 @@ ASSUMPTIONS = """ASSUMPTIONS
 - PDK: SkyWater SKY130 (open), library sky130_fd_sc_hd. Not a commercial foundry PDK.
 - DRC/LVS: open-source Magic, KLayout and Netgen decks. A foundry's own certified
   decks (e.g. Calibre) were not run and may differ.
-- Timing: OpenSTA at the PDK's typical/slow/fast corners. No on-chip variation
-  (OCV/AOCV), no SI-aware timing. Clock target as stated per design.
+- Timing: OpenSTA at the PDK's typical/slow/fast corners, nominal and with flat
+  +/-5% and +/-10% OCV derates (engineering estimates: SKY130 has no foundry
+  OCV/AOCV tables). No SI-aware timing. Clock target as stated per design.
 - Power/IR: estimated at 20% switching activity unless simulation activity was used;
   IR/EM analysis limited to what the open flow supports.
 - DFT: deferred in Phase 0 (plan only). Not measured: 0 fault coverage, earns no
@@ -148,7 +149,8 @@ def phase0_gate(path: Path | None = None) -> dict:
     if i is None:
         return {"status": "UNKNOWN (no Phase 0 gate line)", "marked_by_human": False, "summary": []}
     head, marked = lines[i], "[x]" in lines[i]
-    status = ("QUALIFIED PASS" if "QUALIFIED PASS" in head else "PASSED") if marked else "OPEN (not marked by a human)"
+    status = (("QUALIFIED PASS" if "QUALIFIED PASS" in head else "PASSED") if marked else
+              "RE-OPENED (human decision)" if "RE-OPENED" in head else "OPEN (not marked by a human)")
     body = []
     for ln in lines[i + 1:]:
         if ln.lstrip().startswith(("- [", "Gate criterion:")) or not ln.strip():
@@ -172,6 +174,8 @@ def hard_checks(passed: dict[str, bool], evidence: dict[str, str], reports: Path
     relies on the clock-net fanout rule is marked conditional, with what a flat SDC limit would do."""
     pv, sta = _json(reports / "pv_signoff.json"), _json(reports / "sta_signoff.json")
     corners = sta.get("corners") or {}
+    derated = sta.get("derated") or {}
+    gate = next((k for k, v in derated.items() if v.get("gate")), None)
     det = {"drc": "", "lvs": "", "antenna": "", "timing": "", "equivalence": ""}
     if pv:
         det["drc"] = (f"Magic {pv.get('magic_drc', {}).get('violations')}, "
@@ -193,6 +197,16 @@ def hard_checks(passed: dict[str, bool], evidence: dict[str, str], reports: Path
         for v in corners.values():
             for e in v.get("clock_rule_allowed") or []:
                 allowed[e["pin"]] = e
+    if derated:
+        det["timing"] += "; OCV " + ", ".join(
+            f"+/-{k}%: setup {v['setup_ws_ns']:+g} / hold {v['hold_ws_ns']:+g} ns" for k, v in derated.items()
+            if v.get("setup_ws_ns") is not None and v.get("hold_ws_ns") is not None)
+    ocv_pass = bool(gate) and derated[gate].get("passed") is True
+    det["ocv"] = (f"9/9 corners met with early {derated[gate]['early']:g} / late {derated[gate]['late']:g} (flat derate; "
+                  "SKY130 has no foundry OCV tables, so this is an engineering estimate)" if ocv_pass else
+                  (f"NOT met: " + "; ".join(f"{c}: setup {v['setup_ws_ns']} / hold {v['hold_ws_ns']} ns"
+                                             for c, v in derated[gate]["corners"].items() if not v["passed"])[:400]
+                   if gate else "not run (no derated STA in this run's signoff)"))
     if allowed:
         es = list(allowed.values())
         m = re.search(r"limit (\d+(?:\.\d+)?)", es[0].get("rule", ""))
@@ -204,21 +218,36 @@ def hard_checks(passed: dict[str, bool], evidence: dict[str, str], reports: Path
             f"{max(e['limit'] for e in es):g} this design FAILS.")
     names = {"drc": "DRC = 0 (Magic + KLayout, final GDS)", "lvs": "LVS match (Netgen, final GDS)",
              "antenna": "Antenna clean", "timing": "Timing met, all corners (setup, hold, DRV)",
-             "equivalence": "Equivalence RTL vs final netlist proven"}
+             "equivalence": "Equivalence RTL vs final netlist proven",
+             "ocv": f"Timing met, all corners, with +/-{gate or '10'}% OCV derate (estimate)"}
+    passed = {**passed, "ocv": ocv_pass}
     items = []
     for k, name in names.items():
         ok = bool(passed.get(k, False))
         st = "PASS" if ok else "FAIL"
         if ok and k == "timing" and allowed:
             st = "PASS (conditional)"
-        items.append({"check": name, "status": st, "passed": ok, "detail": det[k], "evidence": evidence.get(k, "")})
+        if k == "ocv" and not gate:
+            st = "NOT RUN"
+        ev = evidence.get(k, "") or (f"check sta_derated_{gate}pct, reports/sta_signoff.json derated" if k == "ocv" and gate else "")
+        items.append({"check": name, "status": st, "passed": ok, "detail": det[k], "evidence": ev})
     items.append({"check": "No human edits to artifacts", "status": "NOT CHECKED", "passed": None,
                   "detail": NO_EDIT_CHECK, "evidence": ""})
     n_ok = sum(1 for i in items if i["passed"])
     verdict = "PASS" if n_ok == len(names) else "FAIL"
     if verdict == "PASS" and conditions:
         verdict = "CONDITIONAL PASS"
-    return {"verdict": verdict, "passed": n_ok, "of": len(names), "items": items, "conditions": conditions}
+    tt = []
+    if corners:
+        tt.append({"run": "nominal (no derate)", "setup": min(v["setup_ws_ns"] for v in corners.values()),
+                   "hold": min(v["hold_ws_ns"] for v in corners.values()),
+                   "result": "met" if all(v.get("passed") for v in corners.values()) else "NOT met"})
+    for k, v in derated.items():
+        if v.get("setup_ws_ns") is not None:
+            tt.append({"run": f"+/-{k}% derate (early {v['early']:g} / late {v['late']:g})" + (" - gate" if v.get("gate") else ""),
+                       "setup": v["setup_ws_ns"], "hold": v["hold_ws_ns"], "result": "met" if v["passed"] else "NOT met"})
+    return {"verdict": verdict, "passed": n_ok, "of": len(names), "items": items, "conditions": conditions,
+            "timing_table": tt}
 
 
 def markdown(design: str, rep: dict, links: dict[str, str]) -> str:
@@ -229,6 +258,12 @@ def markdown(design: str, rep: dict, links: dict[str, str]) -> str:
         out += [f"> **{c}**" for c in hard["conditions"]] + ([""] if hard["conditions"] else [])
         out += ["| Hard check | Result | Detail | Evidence |", "|---|---|---|---|"]
         out += [f"| {i['check']} | {i['status']} | {i['detail']} | {i['evidence']} |" for i in hard["items"]]
+        if hard.get("timing_table"):
+            out += ["", "**Timing: nominal next to flat OCV derates** (worst slack over 9 corners, ns; 0.25 ns SDC clock "
+                    "uncertainty applied to setup and hold in every column). SKY130 has no foundry OCV/AOCV tables, so "
+                    "the derated columns are engineering estimates, not foundry signoff numbers.", "",
+                    "| Run | Setup WNS | Hold WNS | Result |", "|---|---|---|---|"]
+            out += [f"| {r['run']} | {r['setup']:+.4f} | {r['hold']:+.4f} | {r['result']} |" for r in hard["timing_table"]]
     else:
         out += ["Hard checks: not supplied to this report."]
     g = rep.get("phase0_gate")

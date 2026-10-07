@@ -613,18 +613,172 @@
       "passed": true
     }
   },
+  "derated": {
+    "5": {
+      "early": 0.95,
+      "late": 1.05,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 9.7603,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2895,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 8.669,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8119,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7751,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.088,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 9.7545,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2868,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 8.6875,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8072,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7706,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0863,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 9.7674,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2924,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 8.6503,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8169,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7809,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0901,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 8.6503,
+      "hold_ws_ns": 0.0863,
+      "passed": true,
+      "gate": false,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    },
+    "10": {
+      "early": 0.9,
+      "late": 1.1,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 9.7327,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.25,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 8.3832,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7605,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7564,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0584,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 9.7272,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.248,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 8.4035,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7561,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7522,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0571,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 9.7394,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2522,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 8.3625,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7651,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7618,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0598,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 8.3625,
+      "hold_ws_ns": 0.0571,
+      "passed": true,
+      "gate": true,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    }
+  },
   "explained_by": "Chronos",
-  "explanation": "# Signoff timing report: spi_master (sky130_fd_sc_hd, clk 50 MHz, 20.0 ns period)\n\nSource: reports/sta_tool.json (OpenSTA results as provided). 9 corners (min/nom/max x tt/ss/ff). I did not run any tool myself; every number below is quoted from that file.\n\n## Per-corner results\n\n| Corner | Setup WNS (ns) | Setup TNS | Hold WNS (ns) | Hold TNS | DRV violators | Tool passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 9.7879 | 0.0 | 0.3159 | 0.0 | max fanout (clock-tree only) | true |\n| nom_ss_100C_1v60 | 8.9549 | 0.0 | 0.8633 | 0.0 | max fanout (clock-tree only) | true |\n| nom_ff_n40C_1v95 | 9.7938 | 0.0 | 0.1058 | 0.0 | max fanout (clock-tree only) | true |\n| min_tt_025C_1v80 | 9.7817 | 0.0 | 0.313 | 0.0 | max fanout (clock-tree only) | true |\n| min_ss_100C_1v60 | 8.9716 | 0.0 | 0.8583 | 0.0 | max fanout (clock-tree only) | true |\n| min_ff_n40C_1v95 | 9.789 | 0.0 | 0.104 | 0.0 | max fanout (clock-tree only) | true |\n| max_tt_025C_1v80 | 9.7955 | 0.0 | 0.3191 | 0.0 | max fanout (clock-tree only) | true |\n| max_ss_100C_1v60 | 8.9381 | 0.0 | 0.8688 | 0.0 | max fanout (clock-tree only) | true |\n| max_ff_n40C_1v95 | 9.7999 | 0.0 | 0.1076 | 0.0 | max fanout (clock-tree only) | true |\n\nWorst setup slack over all corners: 8.9381 ns (max_ss_100C_1v60). Worst hold slack over all corners: 0.104 ns (min_ff_n40C_1v95). Setup and hold TNS are 0.0 in every corner, so REQ-021 (setup and hold slack >= 0 in every evaluated corner) is met according to the tool data.\n\n## Design rule violations\n\nThe only DRV category listed in any corner is max fanout, and it is the same in all 9 corners: 8 clock-tree buffer outputs (clkbuf_3_0 .. clkbuf_3_7 __f_clk/X) exceed the SDC default limit of 10 (values 17, 17, 14, 14, 13, 12, 12, 11). The tool classifies all of them under the rule \"clock-tree net, limit 20\", so they are within that rule and are not counted as failures (the tool reports clock_rule_allowed). The data lists no max transition or max capacitance violators, and no max fanout violators on non-clock nets. Note that the data does not state transition or capacitance limits, so \"no violators\" means none were reported by the tool, nothing more.\n\n## Worst paths in plain words\n\nThe tool data gives start point, end point, slack and state only. It does not give per-cell delays, so I cannot name the dominant cells in a path and I do not guess them.\n\n- miso to _764_ (setup, 9.7879 ns in nom_tt, 9.7938 in nom_ff, 9.7817 in min_tt, 9.789 in min_ff, 9.7955 in max_tt, 9.7999 in max_ff): the asynchronous MISO input, constrained with a 10.0 ns input delay, goes into the first flop of the 2-flop synchronizer (_764_ is presumably that flop; the instance name alone does not prove it). About half of the 20 ns period is used by the input delay and the rest is left as slack. It is the worst setup path in the tt and ff corners.\n- clk_div[6] to _813_ (setup, 8.9549 ns in nom_ss, 8.9716 in min_ss, 8.9381 in max_ss; 11.6193 in nom_tt): the clock-divider input (6.0 ns input delay) feeds logic ending at register _813_. It is the worst setup path in all three slow (ss, 100C, 1.60 V) corners. Also in ss: clk_div[6] to _812_ at 9.2624 (nom) and 9.281 (min), and start to _819_ at 9.2184 (max_ss).\n- start to _818_ (setup, 12.4111 ns nom_ff, 12.4424 min_ff, 12.3856 max_ff): second-worst path in the ff corners.\n\nNo hold path is listed in worst_paths (only type \"max\" entries are present), so I cannot name the start and end of the limiting hold paths. Hold data is limited to the per-corner WNS numbers above.\n\n## Margin assessment and ranked fixes\n\n- Setup: thin margin? No. The worst setup slack is 8.9381 ns on a 20 ns period, roughly 45 percent of the period. No setup fix is needed.\n- Hold: the smallest slack is 0.104 ns (min_ff_n40C_1v95), 0.1058 ns (nom_ff) and 0.1076 ns (max_ff). It is positive in every corner and TNS is 0.0, so hold passes, but it is the thinnest margin in the design, and it is on the fast corner as expected. The data does not say which paths limit it.\n- Max fanout on clock buffers: values of 17 against the SDC limit of 10 are only accepted through the clock-tree rule of limit 20. This is a decision for the human reviewer, not something I waive.\n\nRanked suggestions (none required for a pass; each is a suggestion, not a verified result):\n1. Hold margin: if a larger hold margin is wanted (for example against on-chip variation not modelled here), re-run CTS with hold repair enabled and a hold slack margin, and look at the hold paths in the ff corners first. Expected effect: raises the 0.104 ns floor at a small area cost. Needs a hold path report to target specific nets.\n2. Clock buffer fanout: if the 10-fanout limit should also apply to clock nets, re-run CTS with a lower sink cluster size so that the leaf buffers drive at most 10 sinks. Expected effect: removes the clock_rule_allowed entries. Only if the reviewer decides the clock-tree exception is not wanted.\n3. Setup: no action. If extra margin on clk_div paths were ever wanted for faster clocks, registering clk_div after latching would shorten that path, but there is no timing need at 50 MHz.\n\n## Constraint notes for the reviewer\n\n- The IO delays (10.0 ns on miso, 5.0 ns on sck/mosi/cs_n) and the other values in the SDC are marked DEFAULT / placeholder (G1 review). Slack numbers depend on them.\n- Clock uncertainty is 0.25 ns and the clock is ideal in the SDC; the flow handles latency.\n- REQ-022 (setup slack >= 0 on all IO paths) is consistent with the tool data: the worst IO-related setup paths shown are 9.7879 ns (miso) and 12.4111 ns (start), but the data shows only top paths, not a per-IO table, so I cannot confirm every output path individually.\n",
+  "explanation": "# Signoff STA report - spi_master (stage: signoff)\n\nSource of all numbers: `reports/sta_tool.json` (sha256:68fd12c79c48). Constraints: `constraints/constraints.sdc` (clk period 20.0 ns, uncertainty 0.25 ns, set_max_fanout 10). I did not run any tool in this task.\n\n## 1. Verdict\n\n- Setup and hold are met in all 9 evaluated corners (`passed: true` in each). Setup TNS = 0.0 ns and hold TNS = 0.0 ns in every corner. REQ-021 (setup and hold slack >= 0 in every evaluated corner) is satisfied by this data.\n- Worst setup slack: **8.9381 ns** at `max_ss_100C_1v60` (path `clk_div[6]` -> `_813_`).\n- Worst hold slack: **0.104 ns** at `min_ff_n40C_1v95`.\n- Gating 10% flat derate (early 0.9 / late 1.1): worst setup **8.3625 ns**, worst hold **0.0571 ns**, `passed: true`.\n- Only thin margin: hold at the fast (ff, -40C, 1.95 V) corners.\n\n## 2. Per-corner table (no derate)\n\n| Corner | Setup WNS (ns) | Setup TNS (ns) | Hold WNS (ns) | Hold TNS (ns) | DRV categories | Passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 9.7879 | 0.0 | 0.3159 | 0.0 | max fanout (clock tree) | true |\n| nom_ss_100C_1v60 | 8.9549 | 0.0 | 0.8633 | 0.0 | max fanout (clock tree) | true |\n| nom_ff_n40C_1v95 | 9.7938 | 0.0 | 0.1058 | 0.0 | max fanout (clock tree) | true |\n| min_tt_025C_1v80 | 9.7817 | 0.0 | 0.313 | 0.0 | max fanout (clock tree) | true |\n| min_ss_100C_1v60 | 8.9716 | 0.0 | 0.8583 | 0.0 | max fanout (clock tree) | true |\n| min_ff_n40C_1v95 | 9.789 | 0.0 | 0.104 | 0.0 | max fanout (clock tree) | true |\n| max_tt_025C_1v80 | 9.7955 | 0.0 | 0.3191 | 0.0 | max fanout (clock tree) | true |\n| max_ss_100C_1v60 | 8.9381 | 0.0 | 0.8688 | 0.0 | max fanout (clock tree) | true |\n| max_ff_n40C_1v95 | 9.7999 | 0.0 | 0.1076 | 0.0 | max fanout (clock tree) | true |\n\n## 3. Derated results (flat OCV, engineering estimate)\n\nThe tool notes: \"flat derate; SKY130 has no foundry OCV tables (engineering estimate)\".\n\n| Corner | 5% setup WNS | 5% hold WNS | 10% setup WNS | 10% hold WNS |\n|---|---|---|---|---|\n| nom_tt_025C_1v80 | 9.7603 | 0.2895 | 9.7327 | 0.25 |\n| nom_ss_100C_1v60 | 8.669 | 0.8119 | 8.3832 | 0.7605 |\n| nom_ff_n40C_1v95 | 9.7751 | 0.088 | 9.7564 | 0.0584 |\n| min_tt_025C_1v80 | 9.7545 | 0.2868 | 9.7272 | 0.248 |\n| min_ss_100C_1v60 | 8.6875 | 0.8072 | 8.4035 | 0.7561 |\n| min_ff_n40C_1v95 | 9.7706 | 0.0863 | 9.7522 | 0.0571 |\n| max_tt_025C_1v80 | 9.7674 | 0.2924 | 9.7394 | 0.2522 |\n| max_ss_100C_1v60 | 8.6503 | 0.8169 | 8.3625 | 0.7651 |\n| max_ff_n40C_1v95 | 9.7809 | 0.0901 | 9.7618 | 0.0598 |\n\nAll setup and hold TNS values are 0.0 under both derates. Summary: 5% (gate=false) worst setup 8.6503 ns, worst hold 0.0863 ns, passed; 10% (gate=true) worst setup 8.3625 ns, worst hold 0.0571 ns, passed.\n\n## 4. Design rule (DRV) findings\n\n- The only DRV category the tool lists (`drv_violators`) in every corner is **max fanout**. No max transition or max capacitance violators are listed.\n- All max-fanout instances are clock-tree buffer outputs, identical in every corner, against SDC limit 10.0:\n\n| Pin | Fanout |\n|---|---|\n| clkbuf_3_5__f_clk/X | 17.0 |\n| clkbuf_3_7__f_clk/X | 17.0 |\n| clkbuf_3_4__f_clk/X | 14.0 |\n| clkbuf_3_6__f_clk/X | 14.0 |\n| clkbuf_3_1__f_clk/X | 13.0 |\n| clkbuf_3_0__f_clk/X | 12.0 |\n| clkbuf_3_2__f_clk/X | 12.0 |\n| clkbuf_3_3__f_clk/X | 11.0 |\n\n- The flow classifies these under its rule \"clock-tree net, limit 20\"; all values are at or below 20. These are the leaf buffers of the CTS tree driving flop clock pins. I report the classification as the tool gives it; whether this clock-net rule is approved policy is an open issue for a human (see open issues). No data-net fanout violations are listed.\n\n## 5. Worst setup paths in plain words\n\nThe tool gives start, end and slack only (no per-cell delays), so dominant cells cannot be named from this data.\n\n1. **`clk_div[6]` -> `_813_`, slack 8.9381 ns (max_ss_100C_1v60)**; also 8.9549 ns (nom_ss) and 8.9716 ns (min_ss). This is the worst setup path in the design. It starts at the `clk_div[6]` input port (input delay 6.0 ns, driven by an inv_2 model) and ends at internal flop `_813_`. By the spec, clk_div is latched at start and compared with 4 (N = max(clk_div,4)), so this is most likely the clamp/compare and load logic feeding the divider register. It is worst at the slow corner because cell delays grow at 1.60 V / 100C. The related path `clk_div[6]` -> `_812_` has 9.2624 ns (nom_ss) and 9.281 ns (min_ss).\n2. **`start` -> `_819_`, slack 9.2184 ns (max_ss_100C_1v60)**. Starts at the `start` port (input delay 6.0 ns), ends at flop `_819_`; this is the start-accept / parameter-latch enable logic. In the ff corners `start` -> `_818_` appears with 12.4111 ns (nom_ff), 12.4424 ns (min_ff), 12.3856 ns (max_ff).\n3. **`miso` -> `_764_`, slack 9.7879 ns (nom_tt), 9.7817 ns (min_tt), 9.7955 ns (max_tt), 9.7938 ns (nom_ff), 9.789 ns (min_ff), 9.7999 ns (max_ff)**. Starts at the asynchronous `miso` port with the spec's 10.0 ns input delay (REQ-022) and ends at `_764_`, which I take to be the first flop of the 2-flop synchronizer. The path is short; most of the budget is consumed by the 10 ns input delay itself, so this path is worst only in tt/ff corners where internal logic paths are fast. REQ-022 (setup slack >= 0 on IO paths) is met by this data.\n\nAll worst setup paths are input-port-to-flop paths; slack is dominated by the SDC input delays (6.0 ns and 10.0 ns) rather than by internal logic. No flop-to-flop path appears among the reported worst paths.\n\n## 6. Hold\n\n- Hold slack is positive in every corner. Worst: 0.104 ns (min_ff_n40C_1v95), 0.1058 ns (nom_ff), 0.1076 ns (max_ff). Under the gating 10% derate: 0.0571 ns (min_ff), 0.0584 ns (nom_ff), 0.0598 ns (max_ff).\n- This is post-CTS signoff data, so the hold check is the required one (hold after CTS). Hold endpoints are not in the tool data; a min-path report for the ff corners is needed to name them.\n\n## 7. Ranked fixes (only hold margin is thin; setup needs no fix)\n\nNo fix is required to meet the current targets. If a larger hold guard band is wanted at the ff corners, in order of expected effect:\n\n1. **Targeted hold-buffer insertion on the hold-critical endpoints at ff corners** (OpenROAD repair_timing -hold with a positive hold margin). Most direct: adds delay only on the short min paths. Setup cost is negligible because setup slack is at least 8.9381 ns everywhere.\n2. **Delay cell on short flop-to-flop paths found in the ff min-path report** (for example shift-register and synchronizer stage-to-stage connections, which are typically the shortest paths in this design). Same effect as (1) but chosen by hand per path.\n3. **Reduce clock skew on the CTS leaf buffers** by re-running CTS with a lower max fanout per buffer (bringing clkbuf_3_*__f_clk/X from 11-17 toward the SDC limit 10). This also removes the max-fanout findings, but its effect on hold is indirect and could go either way; verify with a re-run.\n4. **Re-placement** of launch/capture flop pairs on hold-critical paths is the weakest lever here and is not recommended unless (1)-(3) are insufficient.\n\nAny change must be confirmed by a fresh OpenSTA run on all 9 corners; no result above is claimed beyond what reports/sta_tool.json shows.\n\n## 8. Gaps in the input data\n\n- No per-cell delay breakdown for any path (dominant cells cannot be named).\n- No hold path list.\n- No explicit counts for max transition / max capacitance (only absent from `drv_violators`).\n",
   "assumptions": [
-    "All numbers are taken from reports/sta_tool.json as given; I ran no tool.",
-    "Instance names such as _764_ are not resolved to cell types; the synchronizer identification of _764_ is inferred from the spec, not from the data.",
-    "The tool's classification of the clock buffer fanout entries under 'clock-tree net, limit 20' is accepted as given, without any waiver added by me.",
-    "Absence of max transition/capacitance entries in drv_violators is read as none reported by the tool."
+    "All numbers are taken verbatim from reports/sta_tool.json; I did not run OpenSTA in this task.",
+    "The nine corners in reports/sta_tool.json (min/nom/max RC x tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95) are the complete corner set the flow evaluates for REQ-021.",
+    "The 'clock_rule_allowed' entries mean the flow applies a clock-tree fanout limit of 20 to these nets instead of the SDC set_max_fanout 10; I report this classification as given and do not treat it as my own waiver.",
+    "reports/sta_tool.json lists only 'max fanout' in drv_violators for every corner; I take that to mean the tool found no max transition or max capacitance violators, but the file does not give explicit counts for those checks.",
+    "reports/sta_tool.json gives startpoint, endpoint and slack for the worst setup paths only; it gives no per-cell delay breakdown and no hold path details, so dominant cells and hold endpoints cannot be named from this data.",
+    "_764_ is assumed to be the first flop of the miso 2-flop synchronizer (it is the endpoint of the path from miso); this is inferred from the spec, not confirmed by a netlist in my inputs.",
+    "The 10% derate result (gate=true) is the gating OCV check; the 5% result is informational (gate=false). Both are flat derates, which the report itself flags as an engineering estimate because SKY130 has no foundry OCV tables."
   ],
   "open_issues": [
-    "Clock-tree buffers exceed the SDC max fanout of 10 (up to 17); reviewer to confirm the clock-tree limit of 20 is acceptable.",
-    "Hold slack is only 0.104 ns at min_ff_n40C_1v95; the data has no hold path list, so limiting hold paths are unknown.",
-    "worst_paths lists only setup (max) paths and no cell-level delay breakdown, so dominant cells cannot be named.",
-    "IO delay values and other SDC numbers are DEFAULT placeholders pending G1 review."
+    "Hold margin at the fast corners is thin: 0.104 ns (min_ff_n40C_1v95) without derate and 0.0571 ns with the gating 10% derate. It passes, but leaves little room for extraction or model error. Recommend a human decide whether a positive hold-margin target (for example a hold slack guard band) should be added; I have not changed any target.",
+    "Max fanout on 8 clock-tree buffer outputs (clkbuf_3_0..7__f_clk/X, fanout 11 to 17) exceeds the SDC set_max_fanout 10. The flow accepts them under a clock-tree rule with limit 20. A human should confirm this clock-net rule is an approved flow policy (G-gate review), since the SDC itself does not state a separate clock-net limit.",
+    "Worst hold paths (start, end, cells) are not in reports/sta_tool.json; a per-corner hold path report (report_checks -path_delay min) for the ff corners is needed to name the hold-critical paths and target fixes precisely.",
+    "Per-cell delay breakdown of the worst setup paths is not in the input data, so dominant cells cannot be named. Not required for closure given 8.9381 ns of setup slack, but needed if the report must list dominant cells.",
+    "IO constraints (miso input delay 10 ns, sck/mosi/cs_n output delay 5 ns, 6 ns for others) are spec placeholders marked DEFAULT - needs G1 review; signoff slack is only as valid as these values."
   ]
 }

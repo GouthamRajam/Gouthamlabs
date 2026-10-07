@@ -8,6 +8,13 @@ cts:
   # sinks per leaf and ignores set_max_fanout; 20 is the top of the published 8-20 per-buffer band. Data nets keep the
   # SDC set_max_fanout (10); clock slew, capacitance and skew stay enforced.
   clock_max_fanout: 20
+ocv:
+  # CEO decision 2026-10-07 (after an external review): signoff STA also runs every corner with a flat OCV derate,
+  # early (1 - pct/100) and late (1 + pct/100) on cell and net delays, data and clock paths. SKY130 has no foundry
+  # OCV/AOCV/POCV tables, so these are engineering estimates, not foundry numbers. The +/-gate_pct run is a hard check:
+  # timing must be met at every corner with it. The SDC clock uncertainty (setup and hold) stays applied on top.
+  derate_pcts: [5, 10]
+  gate_pct: 10
 power:
   default_toggle_rate: 0.2        # A.13: 20% switching activity unless simulation activity is used
 ir:

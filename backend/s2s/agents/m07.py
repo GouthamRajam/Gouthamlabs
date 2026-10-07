@@ -897,6 +897,43 @@ def _final(ctx: StepContext) -> dict[str, Path]:
             **{f"spef_{rc}": f / "spef" / rc / f"{top}.{rc}.spef" for rc in so.RC_CORNERS}}
 
 
+def ocv_timing(ctx: StepContext, F: dict, ph: dict, spef: dict) -> tuple[dict, list[str]]:
+    """Signoff STA again at every corner with flat OCV derates (config/signoff.yaml ocv; CEO decision 2026-10-07).
+    Timing only (WNS >= 0 and TNS = 0 for setup and hold); design-rule checks are unchanged by a delay derate.
+    One check per derate, sta_derated_<pct>pct; the gate derate (ocv.gate_pct) must pass for signoff.
+    SKY130 has no foundry OCV tables: a flat derate is an engineering estimate."""
+    pol = policy()["ocv"]
+    out, gate_bad = {}, []
+    for pct in pol["derate_pcts"]:
+        res = _run(ctx, "Chronos", f"opensta x9 corners with a flat +/-{pct}% OCV derate (early {1 - pct / 100:g}, "
+                   f"late {1 + pct / 100:g})", so.sta_corners, F["nl"], ctx.workdir / "pnr/src/constraints.sdc",
+                   ph["top"], ctx.workdir, spef, pct)
+        rows, bad = {}, []
+        for c, r in res.items():
+            m = r.metrics
+            ok = (r.status != "ERROR" and m.get("setup_worst_slack") is not None and m.get("hold_worst_slack") is not None
+                  and m["setup_worst_slack"] >= 0 and m["hold_worst_slack"] >= 0
+                  and not m.get("tns") and not m.get("hold_tns"))
+            rows[c] = {"setup_ws_ns": m.get("setup_worst_slack"), "setup_tns_ns": m.get("tns"),
+                       "hold_ws_ns": m.get("hold_worst_slack"), "hold_tns_ns": m.get("hold_tns"), "passed": ok}
+            if not ok:
+                bad.append(f"{c}: setup {m.get('setup_worst_slack')} / hold {m.get('hold_worst_slack')} ns")
+        out[str(pct)] = {"early": round(1 - pct / 100, 4), "late": round(1 + pct / 100, 4), "corners": rows,
+                         "setup_ws_ns": min((v["setup_ws_ns"] for v in rows.values() if v["setup_ws_ns"] is not None), default=None),
+                         "hold_ws_ns": min((v["hold_ws_ns"] for v in rows.values() if v["hold_ws_ns"] is not None), default=None),
+                         "passed": len(rows) == 9 and not bad, "gate": pct == pol["gate_pct"],
+                         "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"}
+        _check(ctx, "Chronos", f"sta_derated_{pct:g}pct", f"opensta (9 corners, flat +/-{pct:g}% OCV derate)",
+               out[str(pct)]["passed"], {"corners": rows, "problems": bad, "early": out[str(pct)]["early"],
+                                         "late": out[str(pct)]["late"], "gate": pct == pol["gate_pct"]})
+        if pct == pol["gate_pct"]:
+            gate_bad = bad
+    _result(ctx, "Chronos", "OCV derates: " + "; ".join(
+        f"+/-{k}% setup {v['setup_ws_ns']} / hold {v['hold_ws_ns']} ns ({'met' if v['passed'] else 'NOT met'})"
+        for k, v in out.items()))
+    return out, gate_bad
+
+
 def signoff_steps() -> list[Step]:
     def ol_signoff(ctx: StepContext) -> None:
         ph = _phys(ctx)
@@ -996,8 +1033,9 @@ def signoff_steps() -> list[Step]:
         _check(ctx, "Chronos", "sta_all_corners", "opensta (9 corners, propagated clocks, SPEF)",
                len(res) == 9 and not bad, {"corners": table, "problems": bad})
         _check(ctx, "Chronos", "sta_matches_openlane", "opensta vs OpenLane STAPostPNR", not mism, {"mismatches": mism})
+        derated, ocv_bad = ocv_timing(ctx, F, ph, spef)
         _tool_json(ctx, "Chronos", "reports/sta_tool.json", {"corners": table, "worst_paths": worst_paths,
-                                                              "clock_period_ns": ph["period_ns"]})
+                                                              "clock_period_ns": ph["period_ns"], "derated": derated})
         ws = min(v["setup_ws_ns"] for v in table.values())
         wh = min(v["hold_ws_ns"] for v in table.values())
         _result(ctx, "Chronos", f"9 corners: worst setup slack {ws} ns, worst hold slack {wh} ns, "
@@ -1005,9 +1043,11 @@ def signoff_steps() -> list[Step]:
         _explain(ctx, "Chronos", "Signoff timing report (A.12): per-corner setup/hold WNS/TNS and DRV violations, the "
                  "worst paths in plain words (start, end, dominant cells) and ranked fixes if any margin is thin.",
                  ["spec/spec.yaml", "constraints/constraints.sdc", "reports/sta_tool.json"], "reports/sta_signoff.json",
-                 {"corners": table})
+                 {"corners": table, "derated": derated})
         if bad:
             ctx.state["blocked"] = f"timing not met at {len(bad)} corner(s)"
+        elif ocv_bad:
+            ctx.state["blocked"] = f"timing not met with the +/-{policy()['ocv']['gate_pct']}% OCV derate: {ocv_bad[:3]}"
 
     def volta(ctx: StepContext) -> None:
         ph, F, pol = _phys(ctx), _final(ctx), policy()

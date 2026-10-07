@@ -759,5 +759,155 @@
       }
     ]
   },
-  "clock_period_ns": 20.0
+  "clock_period_ns": 20.0,
+  "derated": {
+    "5": {
+      "early": 0.95,
+      "late": 1.05,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 9.7603,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2895,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 8.669,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8119,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7751,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.088,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 9.7545,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2868,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 8.6875,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8072,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7706,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0863,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 9.7674,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2924,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 8.6503,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8169,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7809,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0901,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 8.6503,
+      "hold_ws_ns": 0.0863,
+      "passed": true,
+      "gate": false,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    },
+    "10": {
+      "early": 0.9,
+      "late": 1.1,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 9.7327,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.25,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 8.3832,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7605,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7564,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0584,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 9.7272,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.248,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 8.4035,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7561,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7522,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0571,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 9.7394,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2522,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 8.3625,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7651,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 9.7618,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0598,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 8.3625,
+      "hold_ws_ns": 0.0571,
+      "passed": true,
+      "gate": true,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    }
+  }
 }

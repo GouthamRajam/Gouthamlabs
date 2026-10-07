@@ -4,10 +4,15 @@ Phases 0-2 PROVE the AI on small chips and one real RISC-V core. The heavy Phase
 is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED by a HUMAN.
 
 ## Gates
-- [x] PHASE 0 -> PHASE 1: **QUALIFIED PASS** — marked by the human CEO, 2026-10-06. NOT a clean or
-      unconditional pass:
-      - counter8, alu8, sync_fifo, uart: full hard-check pass (5/5).
-      - spi_master: CONDITIONAL pass (5/5) — only under the approved clock-net max-fanout limit
+- [ ] PHASE 0 -> PHASE 1: **RE-OPENED** — CEO decision 2026-10-07 (derated signoff): the gate now also needs
+      timing met at all corners with a flat +/-10% OCV derate (engineering estimate; SKY130 has no foundry OCV
+      tables). 4 of 5 blocks pass it (counter8, alu8, uart, spi_master; recorded check sta_derated_10pct);
+      sync_fifo FAILS it (what-if on the signed netlist: setup -0.408 ns at +/-10%) until its design change #2
+      passes derated signoff. The 2026-10-06 QUALIFIED PASS stands for the other four blocks:
+      - counter8, alu8, uart: full hard-check pass (6/6, including the +/-10% derated timing).
+      - sync_fifo: FAIL - nominal 5/5, but +/-10% derated setup fails (-0.408 ns, what-if); design change #1
+        (registered rd_data) measured -1.063 ns at +/-10% (what-if on its routed netlist); change #2 in progress.
+      - spi_master: CONDITIONAL pass (6/6) — only under the approved clock-net max-fanout limit
         of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of
         10 fails it.
       - Explicitly deferred to Phase 1 (MASTER_SPEC 13.4): EM analysis and full IR/EM (Phase 0

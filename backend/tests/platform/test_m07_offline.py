@@ -136,7 +136,7 @@ def test_counter8_physical_end_to_end(platform):
     rep = json.loads((root / "reports/tapeout_readiness.json").read_text())
     # decision 2026-10-06: DFT deferred (0), IR/EM 0.5 -> A 90/97; the gate is the hard checks
     assert rep["baseline_A_pct"] == 92.7 and rep["baseline_B_pct"] == 64.1
-    assert rep["hard_checks"]["verdict"] == "PASS" and rep["hard_checks"]["passed"] == 5
+    assert rep["hard_checks"]["verdict"] == "PASS" and rep["hard_checks"]["passed"] == 6
     items = json.loads((root / "reports/tapeout_checklist.json").read_text())
     assert all(i["done"] for i in items) and len(items) == 16
     man = (root / "tapeout/MANIFEST.sha256").read_text()

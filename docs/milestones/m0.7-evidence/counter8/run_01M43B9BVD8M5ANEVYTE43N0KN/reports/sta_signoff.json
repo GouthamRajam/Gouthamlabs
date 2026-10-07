@@ -6,6 +6,7 @@
       "hold_ws_ns": 0.3604,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "nom_ss_100C_1v60": {
@@ -14,6 +15,7 @@
       "hold_ws_ns": 0.9341,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "nom_ff_n40C_1v95": {
@@ -22,6 +24,7 @@
       "hold_ws_ns": 0.1163,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "min_tt_025C_1v80": {
@@ -30,6 +33,7 @@
       "hold_ws_ns": 0.3573,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "min_ss_100C_1v60": {
@@ -38,6 +42,7 @@
       "hold_ws_ns": 0.9291,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "min_ff_n40C_1v95": {
@@ -46,6 +51,7 @@
       "hold_ws_ns": 0.114,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "max_tt_025C_1v80": {
@@ -54,6 +60,7 @@
       "hold_ws_ns": 0.3639,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "max_ss_100C_1v60": {
@@ -62,6 +69,7 @@
       "hold_ws_ns": 0.9404,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "max_ff_n40C_1v95": {
@@ -70,24 +78,175 @@
       "hold_ws_ns": 0.1187,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     }
   },
+  "derated": {
+    "5": {
+      "early": 0.95,
+      "late": 1.05,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 4.2017,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3325,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 1.7959,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8803,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 5.1198,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0998,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 4.2279,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3295,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 1.8395,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8755,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 5.1372,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0976,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 4.1778,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3357,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 1.75,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8862,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 5.1038,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.102,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 1.75,
+      "hold_ws_ns": 0.0976,
+      "passed": true,
+      "gate": false,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    },
+    "10": {
+      "early": 0.9,
+      "late": 1.1,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 4.064,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3045,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 1.535,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8264,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 5.0306,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0833,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 4.0915,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3018,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 1.5807,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8219,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 5.0489,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0812,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 4.0388,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3076,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 1.4867,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.832,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 5.0136,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0854,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 1.4867,
+      "hold_ws_ns": 0.0812,
+      "passed": true,
+      "gate": true,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    }
+  },
   "explained_by": "Chronos",
-  "explanation": "# counter8 - Signoff timing report (sta_signoff)\n\nSource of every number: `reports/sta_tool.json` (sha256:06ad5d67fe71). Constraints: `constraints/constraints.sdc` (sha256:64a9767e03bd). Clock period: 10.0 ns (100 MHz, REQ-011). I did not run any tool; the runtime runs the real checks.\n\n## 1. Per-corner results\n\n| Corner | Setup WNS (ns) | Setup TNS (ns) | Hold WNS (ns) | Hold TNS (ns) | DRV violators | passed (tool) |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 4.3394 | 0.0 | 0.3604 | 0.0 | none | true |\n| nom_ss_100C_1v60 | 2.0569 | 0.0 | 0.9341 | 0.0 | none | true |\n| nom_ff_n40C_1v95 | 5.209 | 0.0 | 0.1163 | 0.0 | none | true |\n| min_tt_025C_1v80 | 4.3642 | 0.0 | 0.3573 | 0.0 | none | true |\n| min_ss_100C_1v60 | 2.0982 | 0.0 | 0.9291 | 0.0 | none | true |\n| min_ff_n40C_1v95 | 5.2254 | 0.0 | 0.114 | 0.0 | none | true |\n| max_tt_025C_1v80 | 4.3169 | 0.0 | 0.3639 | 0.0 | none | true |\n| max_ss_100C_1v60 | **2.0134** | 0.0 | 0.9404 | 0.0 | none | true |\n| max_ff_n40C_1v95 | 5.1939 | 0.0 | 0.1187 | 0.0 | none | true |\n\n- Worst setup slack: **2.0134 ns** at `max_ss_100C_1v60` (slow process, 100 C, 1.60 V, max RC).\n- Worst hold slack: **0.114 ns** at `min_ff_n40C_1v95` (fast process, -40 C, 1.95 V, min RC).\n- DRV (max transition / max capacitance / max fanout 10): the tool lists no violators in any corner. The data gives no per-type counts.\n- Against the REQ-011 acceptance (setup WNS >= 0 and hold WNS >= 0 at the configured corners), the tool data shows non-negative values at all 9 corners. Final pass/fail is decided by the runtime's own check.\n\n## 2. Worst paths in plain words\n\nThe same two setup (max) paths are the worst in every corner:\n\n| Corner | Path 1: load -> _133_ slack (ns) | Path 2: load -> _132_ slack (ns) |\n|---|---|---|\n| nom_tt_025C_1v80 | 4.3394 | 4.4995 |\n| nom_ss_100C_1v60 | 2.0569 | 2.3393 |\n| nom_ff_n40C_1v95 | 5.209 | 5.3178 |\n| min_tt_025C_1v80 | 4.3642 | 4.5272 |\n| min_ss_100C_1v60 | 2.0982 | 2.3876 |\n| min_ff_n40C_1v95 | 5.2254 | 5.3362 |\n| max_tt_025C_1v80 | 4.3169 | 4.4745 |\n| max_ss_100C_1v60 | 2.0134 | 2.2909 |\n| max_ff_n40C_1v95 | 5.1939 | 5.3013 |\n\n**Path 1 (worst): input port `load` to register `_133_`.** The path starts at the `load` input pin, which the constraints say arrives 3.0 ns after the clock edge (DEFAULT input delay). From there `load` drives the next-state select logic of the counter (it chooses between load_data and the up/down step), and the path ends at the data pin of the flip-flop instance `_133_`. In other words, the critical path is \"how fast the load control can steer a counter bit's next value\". With 3.0 ns of the 10.0 ns period spent outside the chip and 0.25 ns of clock uncertainty, the path still has 2.0134 ns spare at the slowest corner.\n\n**Path 2: input port `load` to register `_132_`.** Same start, a different counter flip-flop, 0.1 to 0.3 ns more slack.\n\n**Dominant cells:** not available. The tool data contains only start, end, type, slack and state for each path, with no per-cell delays, so I cannot say which cells dominate. A full path report is needed (see open issues).\n\n**Hold paths:** the tool data gives hold slack per corner but no hold path start/end points. The smallest hold slack is at the fast corners (0.114 / 0.1163 / 0.1187 ns), as expected, since fast cells make short flop-to-flop paths even shorter.\n\n## 3. Is any margin thin? Ranked fixes\n\n- **Setup:** 2.0134 ns spare at the worst corner (about 20% of the 10.0 ns period). Not thin. No fix needed. The margin is sensitive to the DEFAULT 3.0 ns input delay: every extra ns of real input delay on `load` removes one ns from this slack.\n- **Hold:** 0.114 ns spare at `min_ff_n40C_1v95`. Positive with 0.0 TNS, so no violation and no fix required now. It is the thinnest margin in the design, so I list fixes only for use if a later change (ECO, constraint update, added hold uncertainty) makes it negative, ranked by expected effect:\n  1. Insert hold-fix delay buffers (e.g. sky130_fd_sc_hd delay cells) at the D input of the failing endpoint only, in the post-CTS repair step - targeted, adds delay only to short paths, minimal setup impact (setup has 2.0134 ns spare).\n  2. Re-run post-CTS timing repair (hold repair) with a hold slack margin target, letting the tool choose buffer locations.\n  3. Reduce clock skew on the short paths (re-balance the clock tree) if the hold paths turn out to be skew-dominated.\n  Do not reduce the clock uncertainty or input delays to gain margin; that would loosen constraints.\n\n## 4. What is still needed\n\n1. Full path report with per-cell delays for `load -> _133_` at `max_ss_100C_1v60` to name dominant cells.\n2. Hold path list for `min_ff_n40C_1v95`.\n3. An input-to-`count[*]` combinational path check for REQ-012.\n4. G1 confirmation of the signoff corner set, the sky130A release and the DEFAULT input/output delay and uncertainty values.\n",
+  "explanation": "# Signoff STA report: counter8 (sky130_fd_sc_hd, clk 10.0 ns / 100 MHz)\n\nSource: `reports/sta_tool.json`, with the constraints in `constraints/constraints.sdc`. I did not run STA in this task. All numbers are quoted from the tool data.\n\n## 1. Verdict\n\n- **Setup:** met at all 9 corners. Worst slack (WNS) is **+2.0134 ns** at `max_ss_100C_1v60`. Setup TNS is 0.0 ns at every corner.\n- **Hold:** met at all 9 corners. Worst slack is **+0.114 ns** at `min_ff_n40C_1v95`. Hold TNS is 0.0 ns at every corner.\n- **DRV** (max transition, max capacitance, max fanout): no violators listed at any corner.\n- **Clock-rule exceptions:** none (`clock_rule_allowed` is empty at every corner).\n- **10% flat OCV derate (the gating check):** passes. Setup WS is +1.4867 ns and hold WS is +0.0812 ns.\n- **REQ-011** asks for setup WNS >= 0 and hold WNS >= 0 at the configured corners. The tool data meets this at all 9 corners.\n\n## 2. Per-corner results (no derate)\n\n| Corner | Setup WS (ns) | Setup TNS (ns) | Hold WS (ns) | Hold TNS (ns) | DRV violators | Passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 4.3394 | 0.0 | 0.3604 | 0.0 | none | true |\n| nom_ss_100C_1v60 | 2.0569 | 0.0 | 0.9341 | 0.0 | none | true |\n| nom_ff_n40C_1v95 | 5.209 | 0.0 | 0.1163 | 0.0 | none | true |\n| min_tt_025C_1v80 | 4.3642 | 0.0 | 0.3573 | 0.0 | none | true |\n| min_ss_100C_1v60 | 2.0982 | 0.0 | 0.9291 | 0.0 | none | true |\n| min_ff_n40C_1v95 | 5.2254 | 0.0 | **0.114** | 0.0 | none | true |\n| max_tt_025C_1v80 | 4.3169 | 0.0 | 0.3639 | 0.0 | none | true |\n| max_ss_100C_1v60 | **2.0134** | 0.0 | 0.9404 | 0.0 | none | true |\n| max_ff_n40C_1v95 | 5.1939 | 0.0 | 0.1187 | 0.0 | none | true |\n\nSetup is tightest at the slow (ss, 100C, 1.60 V) corners, at about 2.0 to 2.1 ns. Hold is tightest at the fast (ff, -40C, 1.95 V) corners, at about 0.11 to 0.12 ns. The RC corners (min/nom/max) change setup slack by less than 0.09 ns, so wire parasitics have little effect on this small design.\n\n## 3. Flat OCV derate results\n\nTool caveat: \"flat derate; SKY130 has no foundry OCV tables (engineering estimate)\".\n\n| Corner | 5% setup WS | 5% hold WS | 10% setup WS | 10% hold WS |\n|---|---|---|---|---|\n| nom_tt_025C_1v80 | 4.2017 | 0.3325 | 4.064 | 0.3045 |\n| nom_ss_100C_1v60 | 1.7959 | 0.8803 | 1.535 | 0.8264 |\n| nom_ff_n40C_1v95 | 5.1198 | 0.0998 | 5.0306 | 0.0833 |\n| min_tt_025C_1v80 | 4.2279 | 0.3295 | 4.0915 | 0.3018 |\n| min_ss_100C_1v60 | 1.8395 | 0.8755 | 1.5807 | 0.8219 |\n| min_ff_n40C_1v95 | 5.1372 | 0.0976 | 5.0489 | **0.0812** |\n| max_tt_025C_1v80 | 4.1778 | 0.3357 | 4.0388 | 0.3076 |\n| max_ss_100C_1v60 | 1.75 | 0.8862 | **1.4867** | 0.832 |\n| max_ff_n40C_1v95 | 5.1038 | 0.102 | 5.0136 | 0.0854 |\n| **Overall** | 1.75 | 0.0976 | 1.4867 | 0.0812 |\n| passed / gate | true / false | | true / **true** | |\n\nAll setup and hold TNS values are 0.0 ns under both derates.\n\n## 4. Worst paths in plain words\n\nThe tool reports the two worst setup ('max') paths per corner. They are the same two paths at every corner.\n\n| Corner | Path 1: load -> _133_ slack (ns) | Path 2: load -> _132_ slack (ns) |\n|---|---|---|\n| nom_tt_025C_1v80 | 4.3394 | 4.4995 |\n| nom_ss_100C_1v60 | 2.0569 | 2.3393 |\n| nom_ff_n40C_1v95 | 5.209 | 5.3178 |\n| min_tt_025C_1v80 | 4.3642 | 4.5272 |\n| min_ss_100C_1v60 | 2.0982 | 2.3876 |\n| min_ff_n40C_1v95 | 5.2254 | 5.3362 |\n| max_tt_025C_1v80 | 4.3169 | 4.4745 |\n| max_ss_100C_1v60 | 2.0134 | 2.2909 |\n| max_ff_n40C_1v95 | 5.1939 | 5.3013 |\n\nAll entries are MET.\n\n**Path 1 (worst at every corner):**\n- **Start:** input port `load`. Under the SDC it arrives 3.0 ns after the clk edge (a DEFAULT value).\n- **End:** register `_133_`, read here as one of the `count` flip-flops.\n- **What it is:** the `load` select signal travelling through the next-state logic to a counter bit. In the RTL behaviour this is the reset > load > enable priority mux in front of each count bit. Of the 10 ns period, 3.0 ns is already used by the assumed external input delay and 0.25 ns by clock uncertainty. The internal logic plus flop setup take the rest, leaving +2.0134 ns at the worst corner.\n- **Path 2** (`load` -> `_132_`) has the same structure on another bit and is 0.11 to 0.29 ns less critical, depending on the corner.\n- **Dominant cells:** cannot be stated. The tool data has no per-stage cell or delay breakdown. See open issues.\n\nThe worst paths start at an input port, not at a count flop. So the internal counter carry logic (flop -> incrementer/decrementer -> flop) is not the limiter. The budget taken by the assumed `load` input delay is.\n\n**Hold paths:** none are listed in the tool data, so I cannot name the start or end of the +0.114 ns worst hold path. In a counter, the shortest paths are usually flop -> mux -> same flop (hold) or input port -> mux -> flop. The latter is helped by the 3.0 ns input delay, so the internal flop-to-flop paths are the most likely candidates. This is an inference, not tool data.\n\n## 5. Margin assessment and ranked fixes\n\nNo fix is required. Every check in the tool data has positive slack. I am not proposing to change any constraint or target.\n\n**Thinnest margin: hold at the ff corners.** It is +0.114 ns raw and +0.0812 ns with the 10% derate. Ranked follow-ups, if a human decides more hold margin is wanted:\n\n1. **Get the hold path reports** (`report_checks -path_delay min`) at `min_ff_n40C_1v95`. This tells us whether the critical hold path is internal (flop -> flop) or starts at a port. It is needed before any change.\n2. **Targeted hold buffering** (for example delay cells such as `sky130_fd_sc_hd__dlygate4sd3_1`) on the specific short paths, through the PnR hold-repair step. There is about 2.0 ns of slow-corner setup slack to absorb the added delay.\n3. **Check clock skew** on the reported hold path after CTS. Adjust the clock tree only if skew is the cause.\n\n**Setup (comfortable): +2.0134 ns raw, +1.4867 ns with the 10% derate.** Ranked actions, only if the DEFAULT input timing later turns out to be tighter:\n\n1. **Confirm the real input delay of `load`** at G1. The setup margin moves one-to-one with the 3.0 ns default.\n2. **Upsize the cells** on the `load` -> count-bit mux path, or buffer the high-fanout `load` net. `load` drives all 8 bits. Gains of a few tenths of a ns are typical.\n3. **Register `load` (and the other control inputs) at the input** (pipelining). This removes the port-to-flop path but adds one cycle of latency, which is a spec change that needs human approval.\n\n## 6. Items for human decision\n\n- Confirm the 9 corners are the signoff corner set, and pin the sky130A release (spec open question).\n- Review the DEFAULT SDC values: input/output delay 3.0 ns, clock uncertainty 0.25 ns, max fanout 10.\n- Decide whether +0.0812 ns of derated hold margin at the ff corners is acceptable, given that the OCV derate is an engineering estimate.\n- Ask for hold-path and full cell-level path reports so the dominant cells can be named.",
   "assumptions": [
-    "reports/sta_tool.json is the post-route signoff STA output (OpenSTA via the flow) with propagated clocks after CTS; the data itself does not state the clock mode.",
-    "Corner names follow the flow convention: prefix nom/min/max = RC extraction corner, then process (tt/ss/ff), temperature and voltage.",
-    "An empty drv_violators list means 0 max transition, 0 max capacitance and 0 max fanout violations (max fanout constraint is 10 per constraints.sdc); the tool data does not give separate counts per DRV type.",
-    "The worst_paths lists contain only setup (type max) paths; no hold (type min) path details were provided, so hold paths are not explained beyond their slack.",
-    "_133_ and _132_ are synthesized instance names; the tool data does not identify their cell type or which count bit they hold, so I assume they are counter flip-flops (input-to-register paths) but cannot name them.",
-    "Input and output delays of 3.0 ns and clock uncertainty of 0.25 ns are the DEFAULT values in constraints.sdc, not customer-specified values."
+    "The report covers all 9 corners in reports/sta_tool.json (nom/min/max x tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95). I assume this is the full corner set the flow configured. The spec leaves it open ('Which sky130A release and STA corners apply?').",
+    "I read min/nom/max as RC-extraction (parasitic) corners and tt/ss/ff as process/voltage/temperature corners, as the corner names suggest. The tool data does not state this.",
+    "I read the endpoints _133_ and _132_ as flip-flop instances of the count register. The tool data gives only instance names. It gives no cell types, per-stage delays or the bit each instance holds.",
+    "I read an empty drv_violators list as 0 max-transition, max-capacitance and max-fanout violations at that corner. The DRV checks use the limits in constraints.sdc (max fanout 10) and the library defaults.",
+    "The 10% flat derate is the gating OCV check ('gate': true). The 5% derate is for information only ('gate': false). Both carry the tool caveat that SKY130 has no foundry OCV tables, so the derate is an engineering estimate.",
+    "I did not run STA myself in this task. Every number below is quoted from reports/sta_tool.json."
   ],
   "open_issues": [
-    "Dominant cells on the worst paths cannot be named: the tool data gives only startpoint, endpoint, type, slack and state per path, with no per-cell delay breakdown. A full report_checks -path_delay max -format full_clock_expanded for load -> _133_ at max_ss_100C_1v60 is needed to name them.",
-    "No hold path details (startpoint/endpoint) are in the tool data; hold worst paths at min_ff_n40C_1v95 (0.114 ns) should be reported for completeness.",
-    "REQ-012 (no combinational input-to-count path) is not shown by this data; an STA path check from all inputs to count[*] is needed to close it.",
-    "Signoff corners are not confirmed by the spec (open question: which sky130A release and STA corners apply); the 9 corners here are the flow's configuration and need G1 confirmation.",
-    "Input/output delay (3.0 ns) and clock uncertainty (0.25 ns) are DEFAULT assumptions; if the real interface budget is tighter, setup slack on the load -> _133_ path shrinks directly. Human review needed."
+    "The tool data includes no hold worst-path list. Only setup ('max') paths are reported. I cannot name the start, end or cells of the worst hold path (+0.114 ns at min_ff_n40C_1v95). Please have the runtime add 'min' path reports so the hold margin can be explained.",
+    "The worst-path entries have no per-stage cell or delay breakdown. I cannot say from the data which cells dominate the delay on load -> _133_. A full report_checks -path_delay max -fields {cap slew input_pins} for that path would answer this.",
+    "The input and output delays (3.0 ns, 30% of the period), the clock uncertainty (0.25 ns) and the max fanout (10) are DEFAULT values in constraints.sdc. All of them are marked for G1 review. The setup margin depends directly on the 3.0 ns input delay assumed on 'load'. If the real external timing is worse, the worst setup slack (+2.0134 ns, or +1.4867 ns with the 10% derate) shrinks by the same amount.",
+    "The sky130A PDK release and the official STA corner list are still an open question in the spec. A human should confirm that the 9 corners analysed here are the signoff set.",
+    "The hold margin at ff corners is small: +0.114 ns raw at min_ff_n40C_1v95 and +0.0812 ns with the 10% derate. It is positive, so this is not a violation. Because SKY130 has no foundry OCV data, a human should decide whether that margin is enough or whether a hold-margin target, for example >= 0.1 ns after derate, should be set. I do not change any target myself."
   ]
 }

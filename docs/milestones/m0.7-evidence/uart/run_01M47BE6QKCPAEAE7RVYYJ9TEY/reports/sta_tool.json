@@ -6,6 +6,7 @@
       "hold_ws_ns": 0.3268,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "nom_ss_100C_1v60": {
@@ -14,6 +15,7 @@
       "hold_ws_ns": 0.8566,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "nom_ff_n40C_1v95": {
@@ -22,6 +24,7 @@
       "hold_ws_ns": 0.1105,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "min_tt_025C_1v80": {
@@ -30,6 +33,7 @@
       "hold_ws_ns": 0.3235,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "min_ss_100C_1v60": {
@@ -38,6 +42,7 @@
       "hold_ws_ns": 0.8513,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "min_ff_n40C_1v95": {
@@ -46,6 +51,7 @@
       "hold_ws_ns": 0.1082,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "max_tt_025C_1v80": {
@@ -54,6 +60,7 @@
       "hold_ws_ns": 0.3297,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "max_ss_100C_1v60": {
@@ -62,6 +69,7 @@
       "hold_ws_ns": 0.8618,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     },
     "max_ff_n40C_1v95": {
@@ -70,6 +78,7 @@
       "hold_ws_ns": 0.113,
       "hold_tns_ns": 0.0,
       "drv_violators": [],
+      "clock_rule_allowed": [],
       "passed": true
     }
   },
@@ -219,5 +228,155 @@
       }
     ]
   },
-  "clock_period_ns": 20.0
+  "clock_period_ns": 20.0,
+  "derated": {
+    "5": {
+      "early": 0.95,
+      "late": 1.05,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 9.4938,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2887,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 5.339,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8053,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 11.0721,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0778,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 9.5894,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2836,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 5.5121,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8003,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 11.1269,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0747,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 9.405,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.293,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 5.1724,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8102,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 11.019,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0804,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 5.1724,
+      "hold_ws_ns": 0.0747,
+      "passed": true,
+      "gate": false,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    },
+    "10": {
+      "early": 0.9,
+      "late": 1.1,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 9.2398,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2219,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 4.8499,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7009,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 10.9075,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0344,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 9.3375,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2174,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 5.032,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.6962,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 10.9652,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0317,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 9.146,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.2254,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 4.6743,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7046,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 10.8516,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0364,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 4.6743,
+      "hold_ws_ns": 0.0317,
+      "passed": true,
+      "gate": true,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    }
+  }
 }

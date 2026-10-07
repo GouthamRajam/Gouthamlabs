@@ -78,13 +78,17 @@ def lvs(gds: Path, powered_netlist: Path, top: str, workdir: Path, name: str = "
     return r
 
 
-def sta_corners(netlist: Path, sdc: Path, top: str, workdir: Path, spef: dict[str, Path]) -> dict:
-    """9 corners: every RC corner (SPEF) x every library corner; post-route (propagated clocks)."""
+def sta_corners(netlist: Path, sdc: Path, top: str, workdir: Path, spef: dict[str, Path],
+                derate_pct: float | None = None) -> dict:
+    """9 corners: every RC corner (SPEF) x every library corner; post-route (propagated clocks).
+    derate_pct: flat OCV derate, early (1 - pct/100) / late (1 + pct/100), on every corner (engineering estimate)."""
     out = {}
+    d = (round(1 - derate_pct / 100, 4), round(1 + derate_pct / 100, 4)) if derate_pct else None
     for rc in RC_CORNERS:
         for lib_key, lib in LIB_CORNERS.items():
             name = f"{rc}_{lib}"
-            r = run_opensta(netlist, sdc, top, workdir, corner=lib, spef=spef[rc], post_route=True, tag=name, paths=3)
+            r = run_opensta(netlist, sdc, top, workdir, corner=lib, spef=spef[rc], post_route=True, paths=3,
+                            tag=f"{name}_ocv{derate_pct:g}" if derate_pct else name, derate=d)
             out[name] = r
     return out
 

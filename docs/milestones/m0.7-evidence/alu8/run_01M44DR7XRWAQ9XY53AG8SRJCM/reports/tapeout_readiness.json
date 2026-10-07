@@ -1,8 +1,8 @@
 {
  "hard_checks": {
   "verdict": "PASS",
-  "passed": 5,
-  "of": 5,
+  "passed": 6,
+  "of": 6,
   "items": [
    {
     "check": "DRC = 0 (Magic + KLayout, final GDS)",
@@ -29,7 +29,7 @@
     "check": "Timing met, all corners (setup, hold, DRV)",
     "status": "PASS",
     "passed": true,
-    "detail": "9/9 corners; worst setup +3.276 ns (max_ss_100C_1v60), worst hold +0.4196 ns (min_ff_n40C_1v95); TNS 0",
+    "detail": "9/9 corners; worst setup +3.276 ns (max_ss_100C_1v60), worst hold +0.4196 ns (min_ff_n40C_1v95); TNS 0; OCV +/-5%: setup +2.9581 / hold +0.3869 ns, +/-10%: setup +2.6401 / hold +0.3543 ns",
     "evidence": "check sta_all_corners (9 corners)"
    },
    {
@@ -40,6 +40,13 @@
     "evidence": "check eqy_rtl_vs_final"
    },
    {
+    "check": "Timing met, all corners, with +/-10% OCV derate (estimate)",
+    "status": "PASS",
+    "passed": true,
+    "detail": "9/9 corners met with early 0.9 / late 1.1 (flat derate; SKY130 has no foundry OCV tables, so this is an engineering estimate)",
+    "evidence": "check sta_derated_10pct, reports/sta_signoff.json derated"
+   },
+   {
     "check": "No human edits to artifacts",
     "status": "NOT CHECKED",
     "passed": null,
@@ -47,7 +54,27 @@
     "evidence": ""
    }
   ],
-  "conditions": []
+  "conditions": [],
+  "timing_table": [
+   {
+    "run": "nominal (no derate)",
+    "setup": 3.276,
+    "hold": 0.4196,
+    "result": "met"
+   },
+   {
+    "run": "+/-5% derate (early 0.95 / late 1.05)",
+    "setup": 2.9581,
+    "hold": 0.3869,
+    "result": "met"
+   },
+   {
+    "run": "+/-10% derate (early 0.9 / late 1.1) - gate",
+    "setup": 2.6401,
+    "hold": 0.3543,
+    "result": "met"
+   }
+  ]
  },
  "baseline_A_pct": 92.7,
  "baseline_B_pct": 64.1,
@@ -63,13 +90,15 @@
  "weights_B_total": 106.0,
  "weights_total": 106.0,
  "phase0_gate": {
-  "status": "QUALIFIED PASS",
-  "marked_by_human": true,
+  "status": "RE-OPENED (human decision)",
+  "marked_by_human": false,
   "source": "PHASE_GATES.md",
-  "headline": "QUALIFIED PASS \u2014 marked by the human CEO, 2026-10-06. NOT a clean or unconditional pass:",
+  "headline": "RE-OPENED \u2014 CEO decision 2026-10-07 (derated signoff): the gate now also needs timing met at all corners with a flat +/-10% OCV derate (engineering estimate; SKY130 has no foundry OCV tables). 4 of 5 blocks pass it (counter8, alu8, uart, spi_master; recorded check sta_derated_10pct); sync_fifo FAILS it (what-if on the signed netlist: setup -0.408 ns at +/-10%) until its design change #2 passes derated signoff. The 2026-10-06 QUALIFIED PASS stands for the other four blocks:",
   "summary": [
-   "counter8, alu8, sync_fifo, uart: full hard-check pass (5/5).",
-   "spi_master: CONDITIONAL pass (5/5) \u2014 only under the approved clock-net max-fanout limit of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of 10 fails it.",
+   "counter8, alu8, uart: full hard-check pass (6/6, including the +/-10% derated timing).",
+   "sync_fifo: FAIL",
+   "nominal 5/5, but +/-10% derated setup fails (-0.408 ns, what-if); design change #1 (registered rd_data) measured -1.063 ns at +/-10% (what-if on its routed netlist); change #2 in progress.",
+   "spi_master: CONDITIONAL pass (6/6) \u2014 only under the approved clock-net max-fanout limit of 20; 8 clock-tree buffers drive 11-17 vs the SDC limit of 10, so a flat SDC limit of 10 fails it.",
    "Explicitly deferred to Phase 1 (MASTER_SPEC 13.4): EM analysis and full IR/EM (Phase 0 has static IR only), DFT scan insertion + ATPG (no fault coverage measured), and the artifact hash/provenance check (\"no human edits\" is NOT CHECKED).",
    "Derived readiness for all five: Baseline A 92.7% (90/97, dft=0, ir_em=0.5), Baseline B 64.1% (68/106). Evidence: docs/milestones/m0.7-evidence/*/tapeout (re-signed)."
   ]
@@ -303,7 +332,7 @@
    "closes_with": "Calibre-class foundry signoff (Phase 1)"
   }
  ],
- "assumptions": "ASSUMPTIONS\n- PDK: SkyWater SKY130 (open), library sky130_fd_sc_hd. Not a commercial foundry PDK.\n- DRC/LVS: open-source Magic, KLayout and Netgen decks. A foundry's own certified\n  decks (e.g. Calibre) were not run and may differ.\n- Timing: OpenSTA at the PDK's typical/slow/fast corners. No on-chip variation\n  (OCV/AOCV), no SI-aware timing. Clock target as stated per design.\n- Power/IR: estimated at 20% switching activity unless simulation activity was used;\n  IR/EM analysis limited to what the open flow supports.\n- DFT: deferred in Phase 0 (plan only). Not measured: 0 fault coverage, earns no\n  credit. Achievable with open tools (OpenROAD DFT + Fault) in Phase 1.\n- Not assessed (out of open-flow scope): signal integrity/crosstalk, aging/ESD/\n  latch-up reliability, foundry-certified signoff.\n- No physical silicon was manufactured or tested. All results are pre-silicon,\n  from simulation and layout tools.\n- Baseline A = open SKY130 shuttle requirements. Baseline B = commercial production\n  tape-out on a real foundry PDK.",
+ "assumptions": "ASSUMPTIONS\n- PDK: SkyWater SKY130 (open), library sky130_fd_sc_hd. Not a commercial foundry PDK.\n- DRC/LVS: open-source Magic, KLayout and Netgen decks. A foundry's own certified\n  decks (e.g. Calibre) were not run and may differ.\n- Timing: OpenSTA at the PDK's typical/slow/fast corners, nominal and with flat\n  +/-5% and +/-10% OCV derates (engineering estimates: SKY130 has no foundry\n  OCV/AOCV tables). No SI-aware timing. Clock target as stated per design.\n- Power/IR: estimated at 20% switching activity unless simulation activity was used;\n  IR/EM analysis limited to what the open flow supports.\n- DFT: deferred in Phase 0 (plan only). Not measured: 0 fault coverage, earns no\n  credit. Achievable with open tools (OpenROAD DFT + Fault) in Phase 1.\n- Not assessed (out of open-flow scope): signal integrity/crosstalk, aging/ESD/\n  latch-up reliability, foundry-certified signoff.\n- No physical silicon was manufactured or tested. All results are pre-silicon,\n  from simulation and layout tools.\n- Baseline A = open SKY130 shuttle requirements. Baseline B = commercial production\n  tape-out on a real foundry PDK.",
  "regenerated": {
   "by": "backend/scripts/regen_readiness.py",
   "decision": "docs/DECISIONS.md 2026-10-06",

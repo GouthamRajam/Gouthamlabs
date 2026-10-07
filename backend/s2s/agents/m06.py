@@ -29,6 +29,7 @@ import ast
 import json
 import re
 import shutil
+import time
 from pathlib import Path
 
 import yaml
@@ -514,6 +515,15 @@ def _snapshot(ctx: StepContext) -> dict[str, str]:
     return snap
 
 
+def flag_file(flag: str, paths: set[str]) -> str:
+    """The guarded file a guard flag is about. Test-file flags start with the path ('tb/test_x.py: ...'); test-plan
+    flags start with 'testplan:' (s2s.verify.guard.diff_testplan), which is tb/testplan.yaml."""
+    head = flag.split(":", 1)[0]
+    if head in paths:
+        return head
+    return next((p for p in sorted(paths) if Path(p).stem == head or Path(p).name == head), head)
+
+
 def guarded(ctx: StepContext, author: str, change, reason: str) -> list[str]:
     """Run `change()` (an agent rewriting verification files); diff before/after with the
     anti-cheating guard. Flags go to Sentinel; rejected changes are reverted."""
@@ -672,6 +682,135 @@ def fix_testplan_refs(ctx: StepContext, problems: list[str], reason: str) -> Non
         f"operator decision: correct illegal-state assertion references (no check, property or test removed). {reason}")
     if any(g["author"] == "Vera" for g in ctx.state.get("guard_rejections", [])):
         ctx.state["blocked"] = "Sentinel rejected the test-plan reference fix"
+
+
+def rtl_design_change(ctx: StepContext, cr: dict) -> None:
+    """Operator decision: an RTL design change for a measured implementation problem (e.g. a timing path), not a
+    functional bug. The spec, the top-level ports, the testbench and the formal properties stay unchanged.
+    1. Kepler updates arch/arch.yaml (internal module ports/connections/descriptions only; same modules, same top).
+    2. The owner of every module whose ports changed, plus cr['module'], rewrites it (Lumen: lint + elaboration).
+    3. Sequential equivalence, old vs new RTL at the top-level ports from reset (SymbiYosys BMC, cr['equiv_depth']):
+       the change must not alter behaviour. A mismatch goes back to the owners with the tool output.
+    4. Sentinel reviews the change against the spec. Rejected or still failing: arch and RTL are reverted and the
+       run blocks. The normal verification (regression, formal, coverage, mutation, anti-cheat) then runs in full."""
+    from s2s.verify import rtl_equiv
+    from s2s.agents.m05 import ARCH_SCHEMA, _leaf_first, schema_brief, validate_arch
+    diag, reason, target = cr["diagnosis"], cr["reason"], cr["module"]
+    old_rtl = {p.name: p.read_text() for p in _rtl_files(ctx)}
+    old_arch_text = _read(ctx, "arch/arch.yaml")
+    old_arch = yaml.safe_load(old_arch_text)
+    spec = yaml.safe_load(_read(ctx, "spec/spec.yaml"))
+    ctx.emit("plan", f"Reid: operator design change on {target}: Kepler updates the architecture (internal ports only), "
+             "module owners rewrite, Lumen lints, old-vs-new sequential equivalence, Sentinel review; then full "
+             "re-verification", **_who("Reid"), detail={"diagnosis": diag, "reason": reason})
+
+    def revert(why: str) -> None:
+        (ctx.workdir / "arch/arch.yaml").write_text(old_arch_text)
+        for p in _rtl_files(ctx):
+            if p.name not in old_rtl:
+                p.unlink()
+        for name, text in old_rtl.items():
+            (ctx.workdir / "rtl" / name).write_text(text)
+        ctx.state["blocked"] = why
+
+    old_mods = {m["name"]: m for m in old_arch["modules"]}
+
+    def v_arch(c: StepContext) -> list[str]:
+        probs = validate_arch(c)
+        if probs:
+            return probs
+        new = yaml.safe_load(_read(c, "arch/arch.yaml"))
+        mods = {m["name"]: m for m in new["modules"]}
+        if new.get("top") != old_arch.get("top") or set(mods) != set(old_mods):
+            probs.append("the top and the set of modules must stay the same")
+        top = old_arch["top"]
+        for k in ("ports_from_spec", "instances", "ports", "kind"):
+            if mods.get(top, {}).get(k) != old_mods[top].get(k):
+                probs.append(f"top module {top}: `{k}` may not change (top-level ports come from the spec)")
+        for n, m in mods.items():
+            if n in old_mods and m.get("kind") != old_mods[n].get("kind"):
+                probs.append(f"module {n}: `kind` may not change (it decides the RTL owner)")
+        return probs
+
+    _assign(ctx, "Reid", "Kepler", f"Update arch.yaml for the design change on {target} (operator decision)",
+            ["internal ports/connections only", "top and modules unchanged", "arch checks pass"], "files passing checks")
+    if not _author_loop(ctx, "Kepler", goal="An implementation problem was measured and a design change is decided. "
+                        f"Diagnosis: {diag} Required change: {cr['change']} Update arch/arch.yaml so it describes the "
+                        "changed design: you may add or change ports of internal modules, connections, descriptions, "
+                        "max_logic_depth, rationale and verification hooks. Do NOT change the top module, its ports "
+                        "(they come from the spec), the set of modules or any module's `kind`. The externally visible "
+                        "behaviour must stay exactly as the spec defines it, cycle for cycle.",
+                        inputs=["spec/spec.yaml", "arch/arch.yaml"], validate=v_arch, kind="arch",
+                        previous=reason, constraints=schema_brief("B.2", ARCH_SCHEMA)):
+        revert("Kepler could not update arch.yaml for the design change")
+        return
+    new_arch = _arch(ctx)
+    new_mods = {m["name"]: m for m in new_arch["modules"]}
+    changed = [n for n in _leaf_first(new_arch) if n == target or new_mods[n].get("ports") != old_mods[n].get("ports")
+               or n == new_arch["top"] and any(new_mods[x].get("ports") != old_mods[x].get("ports") for x in new_mods)]
+    owners = {n: OWNER_BY_KIND.get(new_mods[n]["kind"], "Ada") for n in changed}
+    coding_std = (REPO / "docs" / "coding_standard.md").read_text()
+    reqs = {r["id"]: r["text"] for r in spec.get("requirements", [])}
+    previous = f"Operator decision: {reason}\nDiagnosis: {diag}\nRequired change: {cr['change']}"
+    depth = int(cr.get("equiv_depth", 24))
+    eq = None
+    for attempt in range(1, MAX_FIX_ATTEMPTS + 1):
+        for n in changed:
+            data = llm.ask(ctx, owners[n], goal=f"Rewrite rtl/{n}.v for the decided design change. Implement the "
+                           "module EXACTLY as arch.yaml now defines it (its ports may have changed; other modules are "
+                           "rewritten by their own owners to the same arch.yaml). The externally visible behaviour of "
+                           "the top module must not change at all, cycle for cycle (an old-vs-new equivalence check "
+                           "runs). Keep the header and // REQ-### trace comments current.",
+                           inputs=_inputs(ctx, ["spec/spec.yaml", "arch/arch.yaml", *[f"rtl/{p.name}" for p in _rtl_files(ctx)]]),
+                           exit_criteria=["lint clean", "ports exactly as arch.yaml", "behaviour unchanged at the top"],
+                           schema=WRITER_ANSWER, previous_attempts=previous, constraints="Coding standard:\n" + coding_std,
+                           extra_note=f"Put the file in `files` (rtl/{n}.v). ")
+            _answer_fields(ctx, owners[n], data)
+            _write(ctx, owners[n], data["files"], "rtl", assigned={f"rtl/{n}.v"})
+        problems = lumen_checks(ctx)
+        if problems:
+            previous = (f"Operator decision: {reason}\nDiagnosis: {diag}\nAttempt {attempt} broke lint/elaboration "
+                        "(exact tool output):\n- " + "\n- ".join(problems[:20]))
+            continue
+        ctx.emit("tool_call", f"Proof: old-vs-new RTL sequential equivalence at the top ports from reset (BMC depth {depth})",
+                 status="working", **_who("Proof"), detail={"tool": "sby", "depth": depth})
+        ctx.beat(f"rtl equivalence depth {depth}")
+        t0 = time.monotonic()
+        eq = rtl_equiv.check(ctx.workdir, old_rtl, _rtl_files(ctx), new_arch["top"], list(new_mods), spec["interfaces"],
+                             (spec.get("resets") or [None])[0], depth)
+        ctx.compute("sby", time.monotonic() - t0, agent_id="Proof")
+        ctx.check("rtl_change_equivalence", "s2s.verify.rtl_equiv (SymbiYosys BMC)", eq["passed"],
+                  {k: eq[k] for k in ("status", "depth", "failed_assertions", "method", "log", "tool_version")},
+                  **_who("Proof"))
+        if eq["passed"]:
+            break
+        previous = (f"Operator decision: {reason}\nDiagnosis: {diag}\nAttempt {attempt}: the new RTL behaves "
+                    f"differently from the old RTL at the top-level ports (outputs {eq['failed_assertions'] or '?'} "
+                    f"differ within {depth} cycles of reset; SymbiYosys {eq['status']}). Tool output tail:\n{eq['tail']}")
+    if not eq or not eq["passed"]:
+        revert(f"design change on {target}: " + ("lint/elaboration still failing" if not eq else
+               f"old-vs-new equivalence {eq['status']} ({eq['failed_assertions']})") + f" after {MAX_FIX_ATTEMPTS} attempts; reverted")
+        return
+    before = {"reports/guard_before_arch.txt": old_arch_text,
+              **{f"reports/guard_before_rtl_{n}.txt": t for n, t in old_rtl.items()}}
+    data = llm.ask(ctx, "Sentinel", goal="Review this RTL design change (operator decision for a measured "
+                   "implementation problem). Approve ONLY if: it implements the stated change; every spec requirement "
+                   "is still met (cite any requirement whose wording or intent it strains); the top-level ports and "
+                   "the testbench/properties are untouched; nothing hides or waives a problem. The old-vs-new "
+                   "equivalence result is in previous_attempts.",
+                   inputs={"spec/spec.yaml": _read(ctx, "spec/spec.yaml"), "arch/arch.yaml": _read(ctx, "arch/arch.yaml"),
+                           **{f"rtl/{p.name}": p.read_text() for p in _rtl_files(ctx)}, **before},
+                   exit_criteria=["approve only a change that keeps every requirement"], schema=REVIEW_ANSWER,
+                   previous_attempts=f"{previous}\nEquivalence: {eq['method']}: {eq['status']}")
+    blocking = [f for f in data["findings"] if f["severity"] == "blocking"]
+    ctx.check("sentinel_rtl_change_review", "Sentinel", not blocking,
+              {"findings": data["findings"], "changed_modules": changed}, **_who("Sentinel"))
+    if blocking:
+        revert(f"Sentinel rejected the design change on {target}: {blocking[0].get('what', '')[:200]}")
+        return
+    ctx.emit("tool_result", f"Design change on {target}: modules {changed} rewritten; old-vs-new equivalence PASS "
+             f"(depth {depth}); Sentinel approved; full re-verification follows", **_who("Reid"),
+             detail={"changed": changed, "owners": owners, "requirements_checked": len(reqs)})
 
 
 # --- Zone 2C: verification ---------------------------------------------------------------------
@@ -918,6 +1057,8 @@ def verification_steps() -> list[Step]:
                 reclassify_bin(ctx, cr["bin"], cr["reason"])
             elif cr["kind"] == "fix_testplan_assertion_refs":
                 fix_testplan_refs(ctx, cr["problems"], cr["reason"])
+            elif cr["kind"] == "rtl_design_change":
+                rtl_design_change(ctx, cr)
             else:
                 raise ValueError(f"unknown change request {cr['kind']!r}")
             if ctx.state.get("blocked"):
@@ -1068,7 +1209,7 @@ def verification_steps() -> list[Step]:
         if unreviewed:
             # A flagged change with no recorded Sentinel decision (e.g. lost with an interrupted step) is
             # reviewed now, baseline vs final, by the same rule as during the loop; a rejection stays a failure.
-            files = sorted({f.split(":", 1)[0] for f in unreviewed})
+            files = sorted({flag_file(f, set(before) | set(after)) for f in unreviewed})
             data = llm.ask(ctx, "Sentinel", goal="The anti-cheating guard flagged these verification changes "
                            "(baseline -> final) and no review was recorded. Approve ONLY if each flagged change keeps "
                            "or strengthens what is checked against the spec (cite the requirement); otherwise file a "
