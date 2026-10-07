@@ -224,6 +224,12 @@ def _run_task(task_id: str, agent: Agent, gateway: ModelGateway | None = None) -
                 pulse, every = tool_pulse(task, i, n)
                 with runner.heartbeat_to(pulse, every):
                     steps[i](ctx)
+                # Remember WHICH step blocked the task (Phase 1 harness #4): a resume must re-run that step, never
+                # start after it (2026-10-07: a resume at the following step skipped the mutation run).
+                if ctx.state.get("blocked"):
+                    ctx.state.setdefault("blocked_step", {"index": i, "name": steps[i].__name__})
+                else:
+                    ctx.state.pop("blocked_step", None)
                 now = utcnow()
                 evidence = ctx.evidence or f"steps_done={i + 1}/{n}"
                 task.checkpoint = {"step": i + 1, "state": ctx.state, "at": now.isoformat()}
