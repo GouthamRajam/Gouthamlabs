@@ -232,6 +232,30 @@ def _model_rec(c: dict, ev: Event | None, alignment: str) -> dict:
                            "answer": c.get("answer"), "provenance": prov or None}}
 
 
+def export_all(out_dir: Path, artifacts: Path, with_heartbeats: bool = False) -> list[dict]:
+    """Export every run in the database. Returns a summary list."""
+    from sqlalchemy import select as sa_select
+    from s2s.db.models import Run
+    from s2s.db.session import session as db_session
+    out_dir.mkdir(parents=True, exist_ok=True)
+    summaries = []
+    with db_session() as s:
+        run_ids = [r.id for r in s.scalars(sa_select(Run).order_by(Run.started_at)).all()]
+    for rid in run_ids:
+        out_file = out_dir / f"sample_{rid}.jsonl"
+        if out_file.exists():
+            recs = [json.loads(l) for l in out_file.read_text().splitlines() if l.strip()]
+            summaries.append({"run_id": rid, "records": len(recs), "status": "exists"})
+            continue
+        try:
+            recs = export(rid, artifacts, with_heartbeats)
+            out_file.write_text("".join(json.dumps(r, default=str) + "\n" for r in recs))
+            summaries.append({"run_id": rid, "records": len(recs), "status": "exported"})
+        except Exception as e:
+            summaries.append({"run_id": rid, "records": 0, "status": f"error: {e}"})
+    return summaries
+
+
 def main(argv: list[str] | None = None) -> int:
     import os
     ap = argparse.ArgumentParser(prog="python -m s2s.records.trajectory")
@@ -240,8 +264,18 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("run_id")
     e.add_argument("-o", "--out", type=Path)
     e.add_argument("--with-heartbeats", action="store_true")
+    ea = sub.add_parser("export-all")
+    ea.add_argument("-o", "--out-dir", type=Path, default=Path("docs/trajectories"))
+    ea.add_argument("--with-heartbeats", action="store_true")
     a = ap.parse_args(argv)
-    recs = export(a.run_id, Path(os.environ.get("S2S_ARTIFACT_DIR", "/tmp/s2s-artifacts")), a.with_heartbeats)
+    art = Path(os.environ.get("S2S_ARTIFACT_DIR", "/tmp/s2s-artifacts"))
+    if a.cmd == "export-all":
+        sums = export_all(a.out_dir, art, a.with_heartbeats)
+        for s in sums:
+            print(f"  {s['run_id']}: {s['records']} records ({s['status']})")
+        print(f"{len(sums)} runs processed")
+        return 0
+    recs = export(a.run_id, art, a.with_heartbeats)
     text = "".join(json.dumps(r, default=str) + "\n" for r in recs)
     if a.out:
         a.out.write_text(text)
