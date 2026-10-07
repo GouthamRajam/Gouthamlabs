@@ -319,3 +319,43 @@ class BudgetEvent(Base):
     amount: Mapped[float] = mapped_column(Numeric(14, 6), nullable=False)
     decided_by: Mapped[str | None] = mapped_column(String)
     ts: Mapped[dt.datetime] = _now()
+
+
+# --- Trajectory record (Phase 1: the agents' decision record is the product) ---------------------------------
+ANNOTATION_LABELS = ("false_alarm", "operator_influenced", "manual_intervention", "legacy_unstructured")
+
+
+class Annotation(Base):
+    """An append-only label on a record of the trajectory (an event, check, model call, bridge request, task or run):
+    e.g. a stall event that was a false alarm, or a task an operator influenced. History is never edited; a label is
+    added with its reason and author, so consumers of the record can filter (pure-autonomous vs operator-influenced)."""
+    __tablename__ = "annotations"
+    id: Mapped[str] = mapped_column(String, primary_key=True)  # ann_<ulid>
+    ts: Mapped[dt.datetime] = _now()
+    target_kind: Mapped[str] = mapped_column(String, nullable=False)
+    target_id: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    run_id: Mapped[str | None] = mapped_column(String, index=True)
+    label: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    author: Mapped[str] = mapped_column(String, nullable=False)
+    detail: Mapped[dict[str, Any]] = mapped_column(default=dict)
+
+
+class Analysis(Base):
+    """An analysis made outside the flow's recorded steps (e.g. a what-if derated STA on a copy of a routed netlist),
+    linked to its run with the hashes of its inputs, the method and the results. Never a recorded signoff."""
+    __tablename__ = "analyses"
+    id: Mapped[str] = mapped_column(String, primary_key=True)  # ana_<ulid>
+    ts: Mapped[dt.datetime] = _now()
+    run_id: Mapped[str | None] = mapped_column(String, index=True)
+    task_id: Mapped[str | None] = mapped_column(String)
+    kind: Mapped[str] = mapped_column(String, nullable=False)  # what_if | diagnosis
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    label: Mapped[str] = mapped_column(String, nullable=False, default="what-if, not a recorded signoff")
+    method: Mapped[str] = mapped_column(Text, nullable=False)
+    inputs: Mapped[list[Any]] = mapped_column(default=list)    # [{path, sha256}]
+    results: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    sources: Mapped[list[Any]] = mapped_column(default=list)
+    author: Mapped[str] = mapped_column(String, nullable=False)
+    operator_influenced: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    location: Mapped[str | None] = mapped_column(String)       # where the files are
