@@ -86,9 +86,12 @@ module picorv32 #(
             3'b010: alu_result = {31'd0, $signed(rs1_val) < $signed((opcode == OP_IMM) ? imm_i : rs2_val)};
             3'b011: alu_result = {31'd0, rs1_val < ((opcode == OP_IMM) ? imm_i : rs2_val)};
             3'b100: alu_result = rs1_val ^ ((opcode == OP_IMM) ? imm_i : rs2_val);
-            3'b101: alu_result = funct7[5] ?
-                     ($signed(rs1_val) >>> shamt) :
-                     (rs1_val >> shamt);
+            3'b101: begin
+                     if (funct7[5])
+                         alu_result = $signed(rs1_val) >>> shamt;  // SRA
+                     else
+                         alu_result = rs1_val >> shamt;            // SRL
+                     end
             3'b110: alu_result = rs1_val | ((opcode == OP_IMM) ? imm_i : rs2_val);
             3'b111: alu_result = rs1_val & ((opcode == OP_IMM) ? imm_i : rs2_val);
             default: alu_result = 32'd0;
@@ -188,7 +191,7 @@ module picorv32 #(
     // Load data alignment
     // ---------------------------------------------------------------
     reg [31:0] load_data;
-    wire [1:0] load_offset = alu_result[1:0];
+    wire [1:0] load_offset = 2'b00;
 
     always @(*) begin
         case (funct3)
@@ -230,7 +233,7 @@ module picorv32 #(
     // ---------------------------------------------------------------
     reg [31:0] store_data;
     reg [ 3:0] store_strb;
-    wire [1:0] store_offset = alu_result[1:0];
+    wire [1:0] store_offset = 2'b00;
 
     always @(*) begin
         case (funct3)
