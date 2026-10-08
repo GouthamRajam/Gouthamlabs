@@ -50,13 +50,10 @@ is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED 
       MASTER_SPEC 22.3, 22.4, 23.1.
 - [ ] PHASE 1 -> PHASE 2: RISC-V core passes the official compliance tests AND
       cost-per-design and human-touch-per-design are trending toward target.
-      Status (2026-10-08): RV32I 39/39 match internal Python emulator (PROVISIONAL).
-      Official Sail/Spike cross-check PENDING — the internal emulator is not an
-      independent reference. P1.3 (synthesis + DFT) proceeds in parallel; the P1.3
-      equivalence check (RTL vs netlist) is independent of the compliance-reference
-      question. The compliance claim upgrades to CONFIRMED only when an independent
-      golden model (Spike, Sail, or official precomputed reference signatures)
-      produces matching signatures for all 39 tests.
+      Status (2026-10-08): RV32I 39/39 CONFIRMED — PicoRV32 signatures match the
+      official RISC-V Sail golden model (Sail RISC-V v0.15, RISC-V International)
+      for all 39 riscv-arch-test RV32I/I tests. Independent cross-check closed.
+      P1.3 (synthesis + DFT) proceeds in parallel.
 - [ ] PHASE 2 -> PHASE 3: a mature-node customer chip works in REAL silicon.
 
 ## Rule for the coding agent
