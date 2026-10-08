@@ -45,7 +45,7 @@ from s2s.agents.runtime import Step, StepContext, artifact_dir
 from s2s.config import REPO_ROOT, _load
 from s2s.db.models import Artifact, Check, Gate, Task, UsageRecord
 from s2s.design.schemas import FABIAN_ANSWER, ORION_ANSWER, REPORT_ANSWER, REVIEW_ANSWER
-from s2s.physical import dfm, flow as olf, package as pk, readiness, signoff as so
+from s2s.physical import antenna_repair as antrep, dfm, flow as olf, package as pk, readiness, signoff as so
 from s2s.tools.klayout_drc import run_klayout_drc
 from s2s.tools.magic_drc import run_magic_drc
 from s2s.tools.opensta import run_opensta
@@ -865,9 +865,17 @@ def place_route_steps() -> list[Step]:
         clean = not last["problems"]
         _check(ctx, "Orion", "route_drc_zero", "openroad detailed routing", f.get("route_drc_errors") == 0,
                {"route_drc_errors": f.get("route_drc_errors")})
+        ant_nets = f.get("antenna_violating_nets", 0) or 0
+        ant_pins = f.get("antenna_violating_pins", 0) or 0
+        ant_needs_repair = ant_nets > 0 or ant_pins > 0
         _check(ctx, "Orion", "antenna_clean_after_route", "openroad check_antennas",
-               f.get("antenna_violating_nets") == 0 and f.get("antenna_violating_pins") == 0,
-               {"nets": f.get("antenna_violating_nets"), "pins": f.get("antenna_violating_pins")})
+               not ant_needs_repair or ctx.state.get("antenna_repair_pending"),
+               {"nets": ant_nets, "pins": ant_pins,
+                "note": "post-detail-route repair will run" if ant_needs_repair else None})
+        if ant_needs_repair:
+            ctx.state["antenna_repair_pending"] = True
+            ctx.emit("plan", f"Orion: {ant_nets} antenna net violations after detailed route; "
+                     f"post-detail-route targeted diode repair will run next", **_who("Orion"))
         _check(ctx, "Orion", "no_disconnected_pins", "odb", f.get("disconnected_pins") == 0,
                {"disconnected_pins": f.get("disconnected_pins")})
         _check(ctx, "Tick", "cts_skew_target", "openroad report_clock_skew (minus SDC uncertainty)",
@@ -882,6 +890,58 @@ def place_route_steps() -> list[Step]:
                {**{k: f.get(k) for k in ("max_slew_violations", "max_cap_violations", "max_fanout_violations")},
                 "independent_drv_pins": f.get("independent_drv_pins"), "clock_rule_allowed": f.get("clock_rule_allowed")})
         ctx.evidence = f"{len(table)} iteration(s); {'clean' if clean else 'not clean'}"
+
+    def post_route_antenna_repair(ctx: StepContext) -> None:
+        """P1.0A: targeted diode insertion on the detailed-routed ODB (lesson s2s-ant-001).
+        Runs only when pnr_loop left antenna violations (antenna_repair_pending in state).
+        Skips silently if routing was clean or the design is blocked for other reasons."""
+        if not ctx.state.get("antenna_repair_pending"):
+            ctx.evidence = "no antenna violations after detailed route; repair not needed"
+            return
+        ph = _phys(ctx)
+        pnr = _pnr(ctx)
+        run_dir = pnr / "runs" / ph["tag"]
+        # locate the routed ODB: last state_out.json after routing stage
+        final_odb = run_dir / "final" / "odb" / f"{ph['top']}.odb"
+        if not final_odb.exists():
+            # before signoff, the ODB is in the last routing step dir
+            rd = olf.step_dir(run_dir, "OpenROAD.STAPostPNR") or olf.step_dir(run_dir, "OpenROAD.DetailedPlacement")
+            if rd:
+                candidates = sorted(rd.glob("*.odb"))
+                final_odb = candidates[-1] if candidates else final_odb
+        if not final_odb.exists():
+            ctx.state["blocked"] = "antenna repair: routed ODB not found"
+            return
+        repaired = ctx.workdir / "reports" / "antenna_repaired.odb"
+        ctx.emit("plan", f"Orion: running post-detail-route antenna repair on {final_odb.name} "
+                 f"(targeted diode insertion, up to {antrep.MAX_REPAIR_ITERATIONS} iterations)",
+                 **_who("Orion"))
+        summary, before, after = _run(ctx, "Orion",
+            "openroad post-detail-route antenna repair (targeted diode insertion + incremental reroute)",
+            antrep.run_antenna_repair, final_odb, ctx.workdir, repaired)
+        over_before = [v for v in before if v["pct_of_limit"] >= 100]
+        over_after = [v for v in after if v["pct_of_limit"] >= 100]
+        _tool_json(ctx, "Orion", "reports/antenna_repair.json", {
+            **summary, "violations_before": len(over_before), "violations_after": len(over_after),
+            "worst_before": over_before[:5], "worst_after": over_after[:5]})
+        repaired_clean = summary.get("after", {}).get("nets", -1) == 0 if summary.get("after") else False
+        _check(ctx, "Orion", "antenna_repair_post_detail_route",
+               f"openroad targeted diode insertion (P1.0A, {summary.get('tool_version')})",
+               repaired_clean,
+               {"before_nets": summary.get("before", {}).get("nets"),
+                "after_nets": summary.get("after", {}).get("nets"),
+                "diodes_inserted": summary.get("diodes_inserted"),
+                "iterations": summary.get("iterations"),
+                "log": summary.get("log")})
+        _result(ctx, "Orion", f"antenna repair: {len(over_before)} -> {len(over_after)} violating nets, "
+                f"{summary.get('diodes_inserted', 0)} diodes inserted in {summary.get('iterations', 0)} iteration(s)"
+                f"{'; CLEAN' if repaired_clean else '; NOT CLEAN — violations remain'}")
+        if repaired_clean:
+            del ctx.state["antenna_repair_pending"]
+        else:
+            ctx.state["blocked"] = (f"post-detail-route antenna repair did not converge: "
+                                    f"{len(over_after)} net(s) still violating after "
+                                    f"{summary.get('iterations', 0)} iteration(s)")
 
     def tick(ctx: StepContext) -> None:
         cts = json.loads((ctx.workdir / "reports/cts_tool.json").read_text())
@@ -912,7 +972,7 @@ def place_route_steps() -> list[Step]:
     def result(ctx: StepContext) -> None:
         _task_result(ctx, "place_route")
 
-    return [pnr_loop, stop_if_blocked, tick, orion_report, mason, result]
+    return [pnr_loop, post_route_antenna_repair, stop_if_blocked, tick, orion_report, mason, result]
 
 
 # --- signoff (Chronos lead; Calla, Volta, Fabian) ---------------------------------------------------------------
