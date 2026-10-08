@@ -1,0 +1,27 @@
+# P1.3 Step 1: PicoRV32 Synthesis to sky130_fd_sc_hd
+# Yosys synthesis script
+
+# Read RTL
+read_verilog /rtl/picorv32.v
+
+# Set top module and parameters
+hierarchy -top picorv32 -chparam RESET_VECTOR 32'h80000000
+
+# Generic synthesis
+synth -top picorv32
+
+# Technology mapping to sky130_fd_sc_hd
+dfflibmap -liberty /opt/pdk/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /opt/pdk/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+# Clean up
+opt_clean -purge
+
+# Statistics
+stat -liberty /opt/pdk/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+# Write synthesized netlist (no attributes, clean for simulation)
+write_verilog -noattr /work/picorv32_synth.v
+
+# Write for equivalence checking (with attributes)
+write_verilog /work/picorv32_synth_attr.v

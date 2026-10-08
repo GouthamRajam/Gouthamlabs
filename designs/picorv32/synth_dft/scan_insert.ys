@@ -1,0 +1,18 @@
+# P1.3 Step 3a: Scan insertion
+# Replace dfxtp (regular DFFs) with sdfxtp (scan DFFs) using techmap
+
+read_verilog sky130_cells.v
+read_verilog picorv32_synth.v
+hierarchy -top picorv32
+
+# Count DFFs before scan insertion
+stat
+
+# Techmap: replace dfxtp cells with sdfxtp + mux wrapper
+techmap -map scan_map.v
+
+# Count cells after scan insertion
+stat
+
+# Write out the scan-inserted netlist
+write_verilog -noattr picorv32_scan.v
