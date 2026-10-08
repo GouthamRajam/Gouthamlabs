@@ -8,6 +8,13 @@ is NOT built until Phases 1 and 2 have actually passed. A gate is marked PASSED 
       the state below, NOT as a clean pass: counter8, alu8, uart pass all 6 hard checks; spi_master CONDITIONAL
       (clock-net fanout rule 20); sync_fifo FAIL (timing solved at RTL, physical closure open). sync_fifo's
       physical closure and spi_master's CTS fix are carried into Phase 1 (docs/PHASE1_BACKLOG.md list B).
+      Specific antenna violations (P1.0A, 2026-10-08): sync_fifo has 2 met1 side-area antenna violations
+      under the pinned flow — net19/fanout261/A (469.18 vs limit 400, 17% over) and net41/\_2059\_/A
+      (453.16 vs limit 400, 13% over). The "clean GDSII" claim for sync_fifo is qualified pending
+      antenna repair. Diode-insertion + broad re-route FAILED (2→7 violations; TritonRoute creates
+      new violations). Net-scoped ECO route also FAILED (2→4 violations on different nets; dont_touch
+      did not prevent topology changes). Both approaches exhausted on pinned OpenROAD edf00dff.
+      Pending CEO decision on toolchain version (re-pin requires Trust-Layer re-validation).
       History - CEO decision 2026-10-07 (derated signoff): the gate also needs
       timing met at all corners with a flat +/-10% OCV derate (engineering estimate; SKY130 has no foundry OCV
       tables). 4 of 5 blocks pass it (counter8, alu8, uart, spi_master; recorded check sta_derated_10pct);
