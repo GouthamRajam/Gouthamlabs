@@ -93,15 +93,14 @@ for {{set iter 0}} {{$iter < {max_iterations}}} {{incr iter}} {{
         if {{[regexp {{^\\s+Pin:\\s+(\\S+)}} $line -> p]}} {{
             set cur_pin $p
         }}
-        if {{[regexp {{ratio:\\s+([\\d.]+)}} $line -> r]}} {{
-            set cur_ratio $r
-        }}
         if {{[regexp {{Required ratio:\\s+([\\d.]+)}} $line -> req]}} {{
             if {{$req > 0 && $cur_ratio > $req && $cur_pin ne ""}} {{
                 if {{[string first "/" $cur_pin] >= 0}} {{
                     lappend viol_pins [list $cur_pin $cur_net]
                 }}
             }}
+        }} elseif {{[regexp {{ratio:\\s+([\\d.]+)}} $line -> r]}} {{
+            set cur_ratio $r
         }}
     }}
 
