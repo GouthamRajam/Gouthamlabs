@@ -1,0 +1,153 @@
+# Phase 1.5 — Hardening + Autonomy Proof
+
+**Executes AFTER Phase 1 closes (PicoRV32 → GDSII). BEFORE Phase 2 entry.**
+
+Phase 1 proves a hand-authored RISC-V core reaches clean GDSII through the AI pipeline.
+Phase 1.5 proves the pipeline is *autonomous*, *repeatable*, and *self-recovering* —
+the three things a customer needs to believe before handing it a real chip.
+
+ALL five pillars must pass to enter Phase 2. No existing verification or signoff gate
+is weakened — every check that Phase 0/1 required still applies, plus the additions below.
+
+---
+
+## Pillar A — Agent-Generated RTL, Full Chain
+
+**Goal:** The agent pipeline generates a core's RTL from a written spec (not hand-authored),
+then that RTL passes the SAME gates PicoRV32 did.
+
+**Required gates (same as Phase 1, no relaxation):**
+1. Sail RISC-V compliance (39/39 RV32I minimum; report ISA extensions attempted)
+2. Synthesis + formal equivalence (BMC or better) vs the generated RTL
+3. DFT: scan insertion + ATPG fault coverage (report %)
+4. P&R with antenna fix in place (the blocker from Phase 0 sync_fifo must be solved)
+5. Full OCV-honest signoff (derated STA at all corners, DRC 0, LVS match, antenna clean)
+6. Clean GDSII
+
+**Provenance rule:** Every artifact is tagged `provenance: agent-generated` in the
+trajectory log. The hand-authored PicoRV32 RTL is tagged `provenance: hand-authored`.
+A fresh agent must be able to distinguish which is which from the log alone.
+
+**Acceptance test:** The generated design's GDSII passes the same signoff checks as
+PicoRV32, with no manual RTL edits. Any human intervention during the run is logged
+and counted toward the human-touch metric.
+
+---
+
+## Pillar B — Repeatability
+
+**Goal:** At least one additional distinct design (different from the Pillar-A core)
+taken end-to-end to GDSII, proving the pipeline is not overfitted to one design.
+
+**Requirements:**
+- Different architecture or function from the Pillar-A design (e.g., a peripheral,
+  a DSP block, a different ISA subset)
+- Same signoff bar: DRC 0, LVS match, antenna clean, timing met, equivalence proven
+- Pipeline configuration differences (if any) are documented, not hardcoded
+
+**Acceptance test:** Two distinct clean GDSIIs produced by the same pipeline, with
+the pipeline's design-specific parameters clearly separated from its fixed machinery.
+
+---
+
+## Pillar C — Stress / Random Verification
+
+**Goal:** Move beyond directed tests. Prove the generated core survives constrained-random
+stimulus and honest corner analysis.
+
+**Requirements:**
+1. **Constrained-random testing:** riscv-dv or riscv-torture generating random instruction
+   sequences, scored against the Sail golden model. Report:
+   - Number of random programs generated
+   - Pass/fail count against Sail signatures
+   - Instruction coverage (% of RV32I encoding space exercised)
+   - Any mismatches: root-caused and fixed, not dropped
+2. **OCV corner stress:** Derated STA at the corners used in Phase 0 (+/-10% flat OCV)
+   PLUS at least one additional corner (e.g., SS/-40C/1.60V or FF/125C/1.95V if
+   liberty files are available in the open PDK)
+3. **Clock stress:** Timing closure at a target frequency above the conservative 20 MHz
+   used in P1.3 (report the actual achievable Fmax)
+
+**Trust Layer:** Real coverage numbers from real tools. No cherry-picking passing seeds.
+A failing random test is a real bug — report it, root-cause it, fix the RTL, re-run.
+
+**Acceptance test:** Random test campaign completes with 0 mismatches against Sail,
+coverage report shows ≥ 90% of RV32I instruction encodings exercised, derated timing
+met at all reported corners.
+
+---
+
+## Pillar D — Persistent Engineering Memory + Cold-Start Gate
+
+**Goal:** The pipeline's accumulated knowledge (experiments, failures, root causes,
+decisions, known-good methods) is captured in a machine-readable, indexed knowledge
+store that a fresh agent can bootstrap from.
+
+**Requirements:**
+1. **Knowledge store** (`knowledge/`): structured entries derived from:
+   - `docs/DECISIONS.md` (every non-obvious decision with rationale)
+   - `logs/model_calls.jsonl` (trajectory corpus)
+   - Phase 0/1 experiment results and failure analyses
+   - Known-good methods (synthesis recipes, P&R parameters, verification strategies)
+   Each entry has: topic, summary, evidence (file paths/commit hashes), tags, status.
+2. **Bootstrap entry point** (`docs/START_HERE.md`): the ONE document a fresh agent
+   reads first. It points to CONTEXT.md (the project seed), PHASE_GATES.md (what's
+   done and what's next), and the knowledge store index. It does NOT duplicate their
+   content — it is a routing table.
+3. **Cold-start acceptance test** (the gate): a fresh agent with NO conversation history,
+   given only the repo, must correctly:
+   - (a) Reconstruct current project status (which phases passed, which are open)
+   - (b) Explain the antenna blocker and why each attempted mechanism failed
+   - (c) Explain why the NOP-patch is legitimate and that compliance was proven against Sail
+   - (d) Name the next gated step
+   - (e) Continue one real task using only retrieved knowledge (no prior conversation)
+   Grade against ground truth extracted from DECISIONS.md and this plan.
+
+**Rubric** (5 checks, binary pass/fail each):
+| Check | Ground truth source | Pass criterion |
+|-------|-------------------|----------------|
+| (a) Status | PHASE_GATES.md | Names Phase 0 closed, Phase 1 open, P1.1-P1.3 done |
+| (b) Antenna | PHASE_GATES.md + DECISIONS.md | Names diode-insertion AND net-scoped ECO, both failed, root cause = OpenLane post-detail-route gap |
+| (c) NOP-patch | DECISIONS.md P1.1 entry | States zeros are at jump targets (not unreachable), GAS defect, compliance confirmed 39/39 vs Sail |
+| (d) Next step | PHASE_GATES.md | Names the correct next Phase 1 milestone (P1.4 or P&R, whichever follows P1.3) |
+| (e) Task continuation | Task output | Produces a valid next action (not a hallucinated tool result) using knowledge store entries |
+
+Pass threshold: 5/5. The cold-start test is documented in `tests/cold_start_test.md`
+with the rubric, ground truth, and grading procedure.
+
+**Acceptance test:** A fresh agent session passes the cold-start test 5/5.
+
+---
+
+## Sequencing
+
+```
+Phase 1 (in progress)
+  P1.1 ✓  RV32I compliance (39/39 Sail CONFIRMED)
+  P1.3 ✓  Synthesis + DFT (all 5 steps PASS)
+  P1.4    P&R → signoff → GDSII (includes antenna fix)
+  ─── Phase 1 gate: human marks PASSED ───
+
+Phase 1.5 (this plan)
+  Pillar D  Knowledge store + bootstrap (scaffold NOW, gates later)
+  Pillar A  Agent-generated RTL → full chain
+  Pillar B  Second design → GDSII
+  Pillar C  Stress/random verification
+  Cold-start test (Pillar D gate)
+  ─── Phase 1.5 gate: ALL five pillars PASS ───
+
+Phase 2
+```
+
+Pillar D's knowledge store and `docs/START_HERE.md` may be scaffolded in parallel with
+Phase 1 (they are documentation infrastructure, not EDA flow changes). Pillars A, B, C
+must NOT start until Phase 1 closes.
+
+---
+
+## Non-Goals (explicitly out of scope)
+
+- No commercial tools, NDAs, or customer data (still Phase 0 toolchain)
+- No new PDK nodes
+- No changes to the Trust Layer (real tools decide, AI never does)
+- No weakening of any existing Phase 0/1 gate or signoff check

@@ -1,0 +1,25 @@
+topic: "Antenna violation repair does not converge post-detailed-route"
+summary: |
+  sync_fifo had 2 met1 side-area antenna violations after detailed routing in OpenLane 2.3.10
+  (OpenROAD edf00dff). Two repair approaches were tried and both failed:
+  1. Diode-insertion + broad re-route: violations went from 2 → 7 (TritonRoute creates new
+     violations while fixing old ones).
+  2. Net-scoped ECO route with dont_touch on passing nets: violations went from 2 → 4 on
+     different nets (dont_touch did not prevent topology changes).
+  Root cause: OpenLane 2.3.10 repairs antennas only on the global route, which cannot see the
+  layer split the detailed route creates. There is no parameter in the pinned flow that acts
+  on post-detailed-route antenna violations. The fix must be architectural: insert diodes
+  BEFORE detailed routing so the router connects diode pins as part of its normal operation.
+evidence:
+  - path: PHASE_GATES.md
+    note: "Lines 13-17: detailed failure description"
+  - path: docs/DECISIONS.md
+    note: "Phase 0 gate closure entries, 2026-10-07"
+tags: [antenna, p-and-r, openroad, openlane, sync_fifo, phase-0, blocker]
+status: confirmed
+date: 2026-10-07
+related: [k006-ocv-derated-sta]
+lesson: |
+  Post-detailed-route antenna repair is fundamentally unreliable in OpenLane 2.3.10.
+  The correct approach is pre-DRT diode insertion with margin. This is the Phase 1 fix
+  required before the Phase 1 → Phase 1.5 gate can close.

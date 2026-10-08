@@ -1,0 +1,53 @@
+# Knowledge Store Master Index
+# Each entry: id, topic, file, tags, status, date
+# Populated incrementally as experiments complete and decisions are recorded.
+
+entries:
+  - id: k001-antenna-blocker
+    topic: "Antenna violation repair does not converge post-detailed-route"
+    file: failures/antenna_post_drt.yaml
+    tags: [antenna, p-and-r, openroad, phase-0, sync_fifo, blocker]
+    status: confirmed
+    date: 2026-10-07
+
+  - id: k002-nop-patch-legitimacy
+    topic: "NOP-patch fixes GAS zero-fill defect; compliance proven against Sail"
+    file: decisions/nop_patch_and_sail.yaml
+    tags: [compliance, rv32i, sail, nop-patch, phase-1, trust-layer]
+    status: confirmed
+    date: 2026-10-08
+
+  - id: k003-bmc-equiv-depth10
+    topic: "BMC equivalence depth 10 accepted for PicoRV32 (k-induction infeasible)"
+    file: decisions/bmc_equiv_approach.yaml
+    tags: [equivalence, bmc, symbiyosys, synthesis, phase-1]
+    status: confirmed
+    date: 2026-10-08
+
+  - id: k004-compiled-fault-sim
+    topic: "Compiled C fault simulator for ATPG on sky130 netlists"
+    file: methods/compiled_fault_sim.yaml
+    tags: [atpg, dft, fault-simulation, sky130, phase-1]
+    status: confirmed
+    date: 2026-10-08
+
+  - id: k005-sky130-cell-models
+    topic: "Behavioral Verilog models for 66+ sky130_fd_sc_hd cells"
+    file: methods/sky130_behavioral_models.yaml
+    tags: [sky130, simulation, cell-models, phase-0]
+    status: confirmed
+    date: 2026-10-08
+
+  - id: k006-ocv-derated-sta
+    topic: "OCV derated STA at ±5%/±10% as permanent signoff check"
+    file: methods/ocv_derated_sta.yaml
+    tags: [sta, ocv, timing, signoff, phase-0]
+    status: confirmed
+    date: 2026-10-06
+
+  - id: k007-equiv-approaches-tried
+    topic: "Equivalence checking approaches tried and failed before BMC"
+    file: failures/equiv_approaches_failed.yaml
+    tags: [equivalence, eqy, yosys, phase-1]
+    status: confirmed
+    date: 2026-10-08
