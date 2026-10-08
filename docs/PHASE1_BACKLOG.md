@@ -42,11 +42,14 @@ Two separate lists. Nothing here is built until the Phase 0 gate is marked PASSE
 2. Dynamic IR drop + electromigration (Phase 0 has static IR only; EM not analysed).
 3. Simulation-based power from real VCD/SAIF activity (Phase 0 power is vector-less).
 4. spi_master clock-tree fix so it passes under the SDC fanout limit 10, not only the clock-net rule 20.
-5. sync_fifo physical closure: design change #2 fixed the timing (+1.896 ns setup at +/-10%, what-if on its it3
-   routed netlist; verified). P&R does not close because OpenLane 2.3.10 repairs antennas only on the global route,
-   which cannot see the layer-split topology detailed routing creates on long input-buffer nets (met1 piece at the
-   gate cut off from the driver's diffusion: allowed ratio 2,736 -> 400). Needed: a post-detailed-route antenna repair
-   step (diode or layer jump at the gate on the real route, then incremental re-route); heuristic diodes cannot
-   target these nets (lesson s2s-ant-001). Then a recorded derated signoff.
+5. **[P1.4 — SCHEDULED, NOT STARTED, awaiting CEO go]** sync_fifo physical closure: design change #2 fixed the
+   timing (+1.896 ns setup at +/-10%, what-if on its it3 routed netlist; verified). P&R does not close because
+   OpenLane 2.3.10 repairs antennas only on the global route, which cannot see the layer-split topology detailed
+   routing creates on long input-buffer nets (met1 piece at the gate cut off from the driver's diffusion: allowed
+   ratio 2,736 -> 400). P1.0A spike (2026-10-08) proved: repair_antennas achieves 0 in the GRT model but diodes
+   are unrouted (DRT-0218) and the GRT modification introduces 29 phantom DRC violations — the "0 antenna" is NOT
+   a real close. The correct fix is pre-DRT diode insertion with sufficient antenna margin, implemented as a
+   flow-level harness change. Heuristic diodes cannot target these nets (lesson s2s-ant-001). Then a recorded
+   derated signoff. Do NOT re-pin OpenROAD without CEO decision (Trust-Layer re-validation required).
 6. RISC-V core (the Phase 1 -> 2 gate: official compliance tests).
 7. Artifact hash/provenance check ("no human edits" is NOT CHECKED today).
