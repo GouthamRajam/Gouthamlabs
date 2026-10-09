@@ -16,12 +16,16 @@ compliance through full P&R, signoff, and GDSII on SKY130.
 
 The agent-generated core passes all 39 RV32I riscv-arch-test tests against
 the Sail RISC-V official golden model, runs through the full OpenLane 2.3.10
-Classic flow (78 steps) with identical config to PicoRV32 P1.4, passes DRC
-(0 violations), LVS (circuits match uniquely), all 9 STA corners, and
-produces GDSII. Compared to the hand-written PicoRV32: 3.9% fewer
-pre-synthesis cells, 5.8% larger die (different architecture), 9.1% lower
-power, 10% lower Fmax — both cores meet the 20 MHz target with wide margin.
-1 residual post-DRT antenna violation (honestly reported, marginal ratio).
+Classic flow (78 steps), passes DRC (0 violations), LVS (circuits match
+uniquely), antenna (0 violations), all 9 STA corners, and produces GDSII.
+An initial run at FP_CORE_UTIL=35 (identical to PicoRV32 P1.4) had 1
+marginal antenna violation; lowering to util=30 closed it on the first
+attempt (same lever that worked for PicoRV32: 40→35). Final config uses
+FP_CORE_UTIL=30 with all other parameters matching PicoRV32.
+Compared to the hand-written PicoRV32 (at util=35): 22.9% larger die
+(lower utilization + different architecture), 6.8% higher power, 16.7%
+lower Fmax — both cores meet the 20 MHz target with wide margin.
+All signoff gates pass with zero violations.
 
 **ALL PILLAR A GATES COMPLETE.**
 
@@ -146,33 +150,32 @@ preserved functional behavior for all tested instruction patterns.
 ## PPA Comparison Summary (Full Backend — Identical Flow/Config)
 
 Both cores run through the same OpenLane 2.3.10 Classic flow with identical
-config: FP_CORE_UTIL=35, GRT_ANTENNA_ITERS=15, GRT_ANTENNA_MARGIN=30,
-RUN_HEURISTIC_DIODE_INSERTION=true, sky130_fd_sc_hd, 20 MHz target.
+antenna settings (GRT_ANTENNA_ITERS=15, GRT_ANTENNA_MARGIN=30,
+RUN_HEURISTIC_DIODE_INSERTION=true), sky130_fd_sc_hd, 20 MHz target.
+The agent core uses FP_CORE_UTIL=30 (lowered from 35 to close antenna);
+PicoRV32 uses FP_CORE_UTIL=35.
 
 | Metric                    | s2s_rv32i (agent) | PicoRV32 (hand) | Delta     | Verdict |
 |---------------------------|-------------------|-----------------|-----------|---------|
+| FP_CORE_UTIL              | 30                | 35              | -5        | Agent needed lower |
 | **Pre-synthesis cells**   | **8,047**         | **8,374**       | **-3.9%** | Agent smaller |
 | DFFs (flip-flops)         | 1,802             | 1,527           | +18.0%    | More state regs |
-| **Post-P&R instances**    | **24,825**        | **26,252**      | **-5.4%** | Agent smaller |
-| Diodes inserted           | 9,772             | 11,631          | -16.0%    | Fewer diodes |
-| Diode % of instances      | 39.4%             | 44.3%           | -4.9pp    | Less overhead |
-| **Die area (um²)**        | **314,513**       | **297,307**     | **+5.8%** | Agent larger |
-| Core area (um²)           | 296,034           | —               | —         | — |
-| **Power (W, TT nom)**     | **0.00308**       | **0.00339**     | **-9.1%** | Agent lower |
-| LVS devices               | 12,152            | 12,267          | -0.9%     | Comparable |
-| LVS nets                  | 10,854            | 10,740          | +1.1%     | Comparable |
-| Setup WNS (ns)            | +29.72            | +29.72          | match     | Both MET |
-| Hold WNS (ns)             | +0.11             | —               | —         | MET |
+| **Post-P&R instances**    | **25,547**        | **26,252**      | **-2.7%** | Agent smaller |
+| Diodes inserted           | 9,839             | 11,631          | -15.4%    | Fewer diodes |
+| **Die area (um²)**        | **365,349**       | **297,228**     | **+22.9%** | Agent larger (lower util) |
+| **Power (W, TT nom)**     | **0.00362**       | **0.00339**     | **+6.8%** | Agent higher (more routing) |
+| Setup WNS (ns)            | +29.18            | +29.72          | -0.54     | Both MET |
+| Hold WNS (ns)             | +0.11             | +0.14           | -0.03     | Both MET |
 | Setup TNS                 | 0                 | 0               | match     | Both MET |
 | Hold TNS                  | 0                 | 0               | match     | Both MET |
-| Fmax (TT nom, MHz)        | 42.63             | 47.37           | -10.0%    | Both >> 20 MHz |
+| Fmax (TT nom, MHz)        | 42.63             | 51.19           | -16.7%    | Both >> 20 MHz |
 | DRC (Magic)               | 0                 | 0               | match     | Both PASS |
+| DRC (KLayout)             | 0                 | 0               | match     | Both PASS |
 | LVS (Netgen)              | match             | match           | match     | Both PASS |
-| Antenna violations        | 1                 | 0               | +1        | Caveat |
+| **Antenna violations**    | **0**             | **0**           | **match** | **Both PASS** |
 | Slew violations           | 0                 | 0               | match     | Both clean |
 | Cap violations             | 0                 | 0               | match     | Both clean |
-| XOR (Magic vs KLayout)    | 0                 | 0               | match     | Both consistent |
-| GDSII (KLayout) SHA-256   | 96800d00...       | 8910174f...     | —         | Recorded |
+| GDSII (KLayout) SHA-256   | 9561c8e8...       | 8910174f...     | —         | Recorded |
 | RTL lines                 | 1,278             | 544             | +135%     | More modular |
 | RTL modules               | 5                 | 1               | +4        | Better structure |
 | Equivalence evidence      | 39/39 gate-level  | BMC depth 10    | Stronger  | s2s_rv32i wins |
@@ -180,25 +183,24 @@ RUN_HEURISTIC_DIODE_INSERTION=true, sky130_fd_sc_hd, 20 MHz target.
 | ATPG fault coverage       | 92.55%            | 83.10%          | +9.45pp   | Agent better |
 
 **Key takeaways:**
-1. The agent core is physically **smaller** in cell count (3.9% fewer pre-synth,
-   5.4% fewer post-P&R instances) but has 5.8% larger die — the modular
-   architecture spreads cells differently.
-2. **Power is 9.1% lower** on the agent core.
-3. **Timing is identical** at 20 MHz (both have +29.72 ns setup slack). Fmax is
-   10% lower for the agent core due to different critical paths.
-4. **1 antenna violation** on the agent core vs PicoRV32's 0 — an honest
-   regression. The violation is marginal (met4 cumulative ratio well under
-   side-area threshold).
+1. **Antenna closed to 0** — matching PicoRV32. Lowering FP_CORE_UTIL 35→30
+   gave the router enough metal resources to avoid the met4 layer promotion.
+   This is the same lever that worked for PicoRV32 (40→35).
+2. **Area trade-off:** 22.9% larger die at util=30 vs PicoRV32's util=35.
+   Not apples-to-apples on area — the agent core needed lower utilization.
+3. **Timing still strong:** both cores meet 20 MHz with 29+ ns setup margin.
+   Fmax 42.63 vs 51.19 MHz reflects different critical paths.
+4. **All signoff gates now pass** with zero violations across the board.
 5. **DRC, LVS, slew, cap all clean** for both cores.
 
 **HONEST CAVEAT:** s2s_rv32i and PicoRV32 are NOT logically equivalent.
 They are different microarchitectures (8-state multi-cycle FSM vs PicoRV32's
 state machine, different register file implementations, dedicated CSR/ALU/decoder
 modules vs monolithic). Sail RV32I compliance (39/39 against the same golden
-model) is the shared correctness bar. PPA comparison uses identical flow/config
-for fairness, but the designs will route differently because they ARE different.
-The 18% more FFs reflects legitimate architectural choices (separate CSR module,
-explicit FSM state registers).
+model) is the shared correctness bar. The agent core runs at FP_CORE_UTIL=30
+vs PicoRV32's 35 — the area and power comparison is not apples-to-apples because
+the agent core needed lower utilization to close its antenna violation.
+Power uses OpenSTA default-activity estimation (not VCD-annotated).
 
 ---
 
@@ -290,69 +292,69 @@ OCV derating: set_timing_derate -early/-late via OpenSTA.
 | A2 (DFT) | **COMPLETE** | Scan: 1,802 DFFs → sdfxtp. ATPG: 92.55% coverage (17,910 faults) |
 | C (STA) | **COMPLETE** | Multi-corner OCV STA: 9/9 corners MET. Fmax: 42.63 MHz |
 | A3 (P&R) | **COMPLETE** | OpenLane 2.3.10, 78 steps, 24,825 instances, 314,513 um² die |
-| A4 (signoff) | **COMPLETE** | DRC 0, LVS match, 9-corner STA MET, 1 antenna violation |
-| A5 (GDSII) | **COMPLETE** | SHA-256 96800d00..., XOR 0 (Magic vs KLayout consistent) |
+| A4 (signoff) | **COMPLETE** | DRC 0, LVS match, antenna 0, 9-corner STA MET — all clean |
+| A5 (GDSII) | **COMPLETE** | SHA-256 9561c8e8... (antenna-fix run, FP_CORE_UTIL=30) |
 
 ---
 
 ## P&R — COMPLETE (OpenLane 2.3.10, 78 steps)
 
 Full place-and-route on agent-generated s2s_rv32i using OpenLane 2.3.10
-Classic flow in the s2s-eda Docker runtime. Identical config to PicoRV32
-P1.4 winning run for fair comparison.
+Classic flow in the s2s-eda Docker runtime.
+
+**Antenna fix history:** Initial run at FP_CORE_UTIL=35 (identical to
+PicoRV32 P1.4) had 1 marginal met4 antenna violation. Attempt 1 of max 2:
+lowered FP_CORE_UTIL to 30 (same lever that closed PicoRV32's violation:
+40→35). Result: **antenna 0 — PASS on first attempt.** Final config uses
+FP_CORE_UTIL=30 with all other parameters unchanged.
 
 | Metric                    | Value        |
 |---------------------------|--------------|
 | Flow steps                | 78/78        |
-| Runtime                   | 16:03        |
-| Total instances (excl fill) | 24,825     |
-| Fill cells                | 17,902       |
-| Tap cells                 | 4,242        |
-| Antenna/diode cells       | 9,772        |
+| Runtime                   | 15:57        |
+| FP_CORE_UTIL              | 30           |
+| Total instances           | 25,547       |
+| Fill cells                | 21,939       |
+| Tap cells                 | 4,905        |
+| Antenna/diode cells       | 9,839        |
 | Sequential cells          | 1,802        |
 | Combinational cells       | 6,121        |
-| Timing repair buffers     | 2,365        |
-| Die area (um²)            | 314,513      |
-| Core area (um²)           | 296,034      |
-| Instance area (um²)       | 153,730      |
-| Wire length (um)          | 506,159      |
-| Nets routed               | 10,670       |
+| Timing repair buffers     | 2,355        |
+| Die area (um²)            | 365,349      |
 
 ### Signoff Results
 
 | Check | Tool | Result |
 |-------|------|--------|
 | DRC | Magic | **0 violations — PASS** |
-| DRC | KLayout (routing) | **0 violations — PASS** |
-| LVS | Netgen | **Circuits match uniquely — PASS** (12,152 devices, 10,854 nets) |
-| Antenna | OpenROAD | **1 pin / 1 net violation** (met4, marginal ratio) |
-| Setup | OpenROAD STA (9 corners) | **0 violations — PASS** (WNS +29.72 ns) |
+| DRC | KLayout | **0 violations — PASS** |
+| LVS | Netgen | **Circuits match uniquely — PASS** (0 device/net/pin differences) |
+| Antenna | OpenROAD | **0 violations — PASS** |
+| Setup | OpenROAD STA (9 corners) | **0 violations — PASS** (WNS +29.18 ns) |
 | Hold | OpenROAD STA (9 corners) | **0 violations — PASS** (WNS +0.11 ns) |
 | Max slew | OpenROAD | **0 violations — PASS** |
 | Max cap | OpenROAD | **0 violations — PASS** |
-| XOR | KLayout vs Magic | **0 differences — PASS** |
-| Power (TT nom) | OpenROAD | **3.081 mW** |
+| Power (TT nom) | OpenROAD | **3.621 mW** |
 
 ### Post-P&R STA (9 corners, all MET)
 
 | Corner               | Setup Slack (ns) | Hold Slack (ns) |
 |----------------------|------------------|-----------------|
-| nom_tt_025C_1v80     | +38.24           | +0.31           |
-| nom_ss_100C_1v60     | +30.08           | +0.85           |
-| nom_ff_n40C_1v95     | +38.75           | +0.11           |
-| min_tt_025C_1v80     | +38.30           | +0.31           |
-| min_ss_100C_1v60     | +30.44           | +0.85           |
-| min_ff_n40C_1v95     | +38.79           | +0.11           |
-| max_tt_025C_1v80     | +38.19           | +0.31           |
-| max_ss_100C_1v60     | +29.72           | +0.86           |
-| max_ff_n40C_1v95     | +38.71           | +0.11           |
+| nom_tt_025C_1v80     | +38.16           | +0.30           |
+| nom_ss_100C_1v60     | +29.52           | +0.83           |
+| nom_ff_n40C_1v95     | +38.69           | +0.11           |
+| min_tt_025C_1v80     | +38.22           | +0.30           |
+| min_ss_100C_1v60     | +29.88           | +0.82           |
+| min_ff_n40C_1v95     | +38.73           | +0.11           |
+| max_tt_025C_1v80     | +38.09           | +0.31           |
+| max_ss_100C_1v60     | +29.18           | +0.84           |
+| max_ff_n40C_1v95     | +38.64           | +0.11           |
 
 ### GDSII
 
 | Artifact | SHA-256 |
 |----------|---------|
-| KLayout GDSII | `96800d007aa767e5b9c5a4b363ba16313034d4465547bb73dcee4bfa6dc96a44` |
-| Magic GDSII | `bcfc996ce445e5c7fd5a2d5ed7c170b2d6148cc51162b476cabe3ce1a275aedb` |
+| KLayout GDSII | `9561c8e8374e37a49540c318da661f4ddffa1c66823d0d9724720a264298b5df` |
 
 ---
 
@@ -389,8 +391,8 @@ P1.4 winning run for fair comparison.
 - STA from real OpenROAD STA across 9 corners (all MET, 0 violations).
 - GDSII from real Magic and KLayout stream-outs with SHA-256 recorded.
 - XOR check (Magic vs KLayout GDSII): 0 differences — consistent.
-- 1 antenna violation honestly reported (not hidden, not waived).
-- PPA comparison uses identical flow/config for both cores (fair comparison).
+- Antenna closed to 0 in 1 attempt (FP_CORE_UTIL 35→30). Honestly reported.
+- PPA comparison uses same flow; agent core at util=30 vs PicoRV32 at util=35.
 - Phase 0 constraint met: open-source tools only, open SKY130 PDK only.
 - No rules weakened, no tests skipped, no fabricated results, no overclaiming.
 - Agent-generated RTL: zero manual edits to execution logic.
@@ -399,12 +401,12 @@ P1.4 winning run for fair comparison.
 
 ## Known Caveats
 
-1. **1 antenna violation:** Post-DRT antenna check reports 1 pin / 1 net
-   violation on a met4 path. The actual ratios (13.38 vs required 4521.32 for
-   side area) are well within bounds — only the cumulative metric triggers.
-   PicoRV32 P1.4 achieved 0 violations. This is an honest regression that
-   could be addressed by a second P&R iteration with tighter antenna margin,
-   but was not attempted in this run.
+1. **Antenna closed (FP_CORE_UTIL trade-off):** Initial run at util=35 had 1
+   marginal met4 antenna violation. Lowering to util=30 closed it on the first
+   attempt (same lever as PicoRV32: 40→35). Trade-off: die area grew 16.2%
+   and power grew 17.5% vs the util=35 run. The PPA comparison vs PicoRV32
+   is not apples-to-apples on area/power because the cores run at different
+   utilizations (30 vs 35).
 
 2. **Different microarchitecture:** s2s_rv32i and PicoRV32 are NOT logically
    equivalent. They implement different microarchitectures — PPA comparison is
@@ -419,7 +421,7 @@ P1.4 winning run for fair comparison.
    patterns. 92.55% coverage is good for random but targeted patterns could
    reach higher. Same methodology as PicoRV32 Phase 1.
 
-5. **Power from STA estimation:** 3.081 mW is OpenROAD's static power estimate
+5. **Power from STA estimation:** 3.621 mW is OpenROAD's static power estimate
    at TT nominal, not VCD-annotated switching power from simulation.
 
 ---
@@ -429,8 +431,9 @@ P1.4 winning run for fair comparison.
 The agent-generated s2s_rv32i core has cleared ALL Pillar A gates —
 compliance (39/39 Sail match), synthesis, pre-P&R STA, gate-level
 equivalence, DFT (92.55% fault coverage), multi-corner OCV STA (9/9 MET,
-Fmax 42.63 MHz), full P&R (78 steps), signoff (DRC 0, LVS match, 1
-antenna), and GDSII stream-out with recorded hashes. Results are
-comparable to the hand-authored PicoRV32 baseline across all metrics, with
-honest caveats logged. Remaining Phase 1.5 items: Pillar B, C-random
-(riscv-dv), and D cold-start.
+Fmax 42.63 MHz), full P&R (78 steps), signoff (DRC 0, LVS match, antenna 0,
+STA all MET), and GDSII stream-out with recorded hash. Antenna closed to 0
+on first attempt (FP_CORE_UTIL 35→30). Results are comparable to the
+hand-authored PicoRV32 baseline with honest caveats logged (different
+utilization, different microarchitecture). Remaining Phase 1.5 items:
+Pillar B, C-random (riscv-dv), and D cold-start.
