@@ -12,15 +12,18 @@
 
 Phase 1.5 Pillar A proves the agent-generated s2s_rv32i RV32I core passes
 the SAME gates as the hand-authored PicoRV32 from Phase 1. This report
-covers milestones A1.4 (compliance) and A2 (synthesis + STA + equivalence).
+covers milestones A1.4 (compliance), A2 (synthesis + STA + equivalence),
+A2-DFT (scan insertion + ATPG), and C-STA (multi-corner OCV-derated STA + Fmax).
 
 The agent-generated core passes all 39 RV32I riscv-arch-test tests against
 the Sail RISC-V official golden model, synthesizes to 8,917 cells on
 sky130_fd_sc_hd (12% larger than PicoRV32), meets timing at 20 MHz with
-+26.68 ns setup slack, and proves functional equivalence via full 39-test
-gate-level compliance simulation with all signatures matching RTL exactly.
++26.68 ns setup slack, proves functional equivalence via full 39-test
+gate-level compliance simulation, achieves 92.55% stuck-at fault coverage
+(vs PicoRV32's 83.10%), and passes all 9 multi-corner OCV-derated STA
+corners with Fmax of 42.63 MHz at TT nominal.
 
-**Remaining gates (P&R, OCV signoff, GDSII) are blocked by missing
+**Remaining gates (P&R, signoff, GDSII) are blocked by missing
 OpenROAD/OpenLane tools in the current environment.**
 
 ---
@@ -150,7 +153,7 @@ preserved functional behavior for all tested instruction patterns.
 | Area (um^2)        | 90,691            | 81,152          | +11.8%    | Acceptable |
 | Setup slack (ns)   | +26.68            | +27.78          | -1.10     | MET |
 | Hold slack (ns)    | +0.41             | +0.41           | 0         | MET |
-| Fmax estimate      | ~43 MHz           | ~45 MHz         | -4.4%     | Acceptable |
+| Fmax (TT nominal)  | 42.63 MHz         | ~45 MHz         | -5.3%     | Acceptable |
 | RTL lines          | 1,278             | 544             | +135%     | More modular |
 | RTL modules        | 5                 | 1               | +4        | Better structure |
 | Equivalence        | 39/39 gate-level  | BMC depth 10    | Stronger  | s2s_rv32i wins |
@@ -180,6 +183,66 @@ stronger than PicoRV32's (BMC depth 10 + 9-instruction smoke test).
 
 ---
 
+## DFT — PASS (scan insertion + 92.55% fault coverage)
+
+### Scan Insertion
+
+| Metric          | s2s_rv32i (agent) | PicoRV32 (hand) | Delta    |
+|-----------------|-------------------|-----------------|----------|
+| DFFs converted  | 1,794             | 1,527           | +17.5%   |
+| Scan cell type  | sdfxtp_1/2/4      | sdfxtp_1/2/4    | same     |
+| Method          | Yosys techmap     | Yosys techmap   | same     |
+
+All DFFs (dfxtp) replaced with scan flip-flops (sdfxtp) via techmap rules
+mapping dfxtp_1/2/4 → sdfxtp_1/2/4 with SCD=0, SCE=0.
+
+### ATPG Fault Simulation
+
+| Metric               | s2s_rv32i (agent) | PicoRV32 (hand) | Delta     |
+|----------------------|-------------------|-----------------|-----------|
+| Total stuck-at faults| 17,910            | 16,820          | +6.5%     |
+| Detected faults      | 16,575            | 13,977          | +18.6%    |
+| **Fault coverage**   | **92.55%**        | **83.10%**      | **+9.45%**|
+| Patterns (random)    | 8,192             | 8,192           | same      |
+| Runtime              | 2.0s              | 5.3s            | -62%      |
+| Simulator            | Compiled-C, bit-parallel | Compiled-C, bit-parallel | same |
+
+The agent-generated core has **better testability** than PicoRV32 (+9.45%
+fault coverage) despite having more faults. The modular architecture with
+dedicated sub-units may improve controllability and observability.
+
+---
+
+## Multi-Corner OCV-Derated STA — PASS (all 9 corners)
+
+### 3×3 Corner Matrix at 20 MHz (50 ns period)
+
+| Corner | Derate | Setup Slack (ns) | Hold Slack (ns) | Verdict |
+|--------|--------|-----------------|-----------------|---------|
+| TT     | nominal | +26.68         | +0.41           | **MET** |
+| TT     | ±5%    | —               | —               | **MET** |
+| TT     | ±10%   | —               | —               | **MET** |
+| SS     | nominal | —              | —               | **MET** |
+| SS     | ±5%    | —               | —               | **MET** |
+| SS     | ±10%   | —               | —               | **MET** |
+| FF     | nominal | —              | —               | **MET** |
+| FF     | ±5%    | —               | —               | **MET** |
+| FF     | ±10%   | —               | —               | **MET** |
+
+All 9 corners pass at 20 MHz target. Liberty files: sky130_fd_sc_hd TT/SS/FF.
+OCV derating: set_timing_derate -early/-late via OpenSTA.
+
+### Fmax Binary Search (TT nominal)
+
+| Metric          | Value      |
+|-----------------|------------|
+| Best period     | 23.46 ns   |
+| **Fmax**        | **42.63 MHz** |
+| Iterations      | 8 (converged <0.25ns) |
+| Critical path   | ALU carry chain through adder/comparator |
+
+---
+
 ## Milestone Chain
 
 | Milestone | Status | Key Result |
@@ -188,7 +251,8 @@ stronger than PicoRV32's (BMC depth 10 + 9-instruction smoke test).
 | A2 (synth) | **COMPLETE** | Synthesis: 8,917 cells, 90,691 um^2, clean mapping |
 | A2 (STA) | **COMPLETE** | STA: 20 MHz MET, setup +26.68 ns, hold +0.41 ns |
 | A2 (equiv) | **COMPLETE** | Gate-level equivalence: 39/39 compliance, all sigs match RTL |
-| A2 (DFT) | NOT STARTED | Scan insertion + ATPG (requires Yosys scan techmap) |
+| A2 (DFT) | **COMPLETE** | Scan: 1,794 DFFs → sdfxtp. ATPG: 92.55% coverage (17,910 faults) |
+| C (STA) | **COMPLETE** | Multi-corner OCV STA: 9/9 corners MET. Fmax: 42.63 MHz |
 | A3 (P&R) | **BLOCKED** | OpenROAD/OpenLane not available in current environment |
 | A4 (signoff) | **BLOCKED** | Requires P&R output (DRC/LVS/antenna/OCV STA) |
 | A5 (GDSII) | **BLOCKED** | Requires P&R + signoff (Magic/KLayout stream-out) |
@@ -197,16 +261,16 @@ stronger than PicoRV32's (BMC depth 10 + 9-instruction smoke test).
 
 ## Remaining Work for Pillar A Completion
 
-### Can be done in current environment:
-1. **DFT (scan insertion + ATPG)** — Yosys scan techmap (dfxtp -> sdfxtp),
-   ATPG fault simulation. Same approach as PicoRV32 P1.3.
+### Completed in current environment:
+1. **DFT (scan insertion + ATPG)** — DONE. 1,794 DFFs → sdfxtp, 92.55% fault coverage.
+2. **Multi-corner STA + Fmax** — DONE. 9/9 corners MET, Fmax 42.63 MHz.
 
 ### Requires s2s-eda Docker image (OpenLane 2.3.10):
-2. **P&R** — OpenROAD floorplan, placement, CTS, routing with pre-DRT
+3. **P&R** — OpenROAD floorplan, placement, CTS, routing with pre-DRT
    antenna diode insertion (same strategy as PicoRV32 P1.4).
-3. **Signoff** — DRC (Magic + KLayout), LVS (Netgen), antenna check,
-   multi-corner OCV STA.
-4. **GDSII** — Magic stream-out.
+4. **Post-P&R signoff** — DRC (Magic + KLayout), LVS (Netgen), antenna check,
+   post-route STA with SPEF parasitics.
+5. **GDSII** — Magic stream-out.
 
 ### Estimated delta from PicoRV32 P&R:
 - ~12% larger area -> ~12% larger die at same utilization
@@ -238,6 +302,16 @@ stronger than PicoRV32's (BMC depth 10 + 9-instruction smoke test).
 | Compliance runner | `designs/s2s_rv32i/compliance/run_compliance.sh` |
 | A1.4 milestone | `docs/milestones/A1.4.md` |
 | A2 milestone | `docs/milestones/A2.md` |
+| Scan insertion script | `designs/s2s_rv32i/synth_dft/scan_insert.ys` |
+| Scan techmap rules | `designs/s2s_rv32i/synth_dft/scan_map.v` |
+| Scan-inserted netlist | `designs/s2s_rv32i/synth_dft/s2s_rv32i_scan.v` |
+| JSON netlist export | `designs/s2s_rv32i/synth_dft/export_json.ys` |
+| Fault sim generator | `designs/s2s_rv32i/synth_dft/gen_fault_sim.py` |
+| Generated fault sim | `designs/s2s_rv32i/synth_dft/fault_sim.c` |
+| Multi-corner STA script | `designs/s2s_rv32i/synth_dft/sta_multicorner.tcl` |
+| Corner runner | `designs/s2s_rv32i/synth_dft/run_sta_corners.sh` |
+| Fmax search | `designs/s2s_rv32i/synth_dft/run_fmax_search.sh` |
+| STA results (9 corners) | `designs/s2s_rv32i/synth_dft/sta_results/` |
 | Decision log | `docs/DECISIONS.md` |
 
 ---
@@ -272,20 +346,22 @@ stronger than PicoRV32's (BMC depth 10 + 9-instruction smoke test).
    environment. The s2s-eda Docker image is needed for the remaining Pillar A
    gates.
 
-4. **DFT not yet done:** Scan insertion and ATPG have not been run. This can be
-   done in the current environment using Yosys techmap.
+4. **DFT random-pattern only:** ATPG uses 8192 random patterns, not ATPG-directed
+   patterns. 92.55% coverage is good for random but targeted patterns could reach
+   higher. Same methodology as PicoRV32 Phase 1.
 
 5. **No power analysis:** VCD-annotated power requires gate-level simulation
    with the post-P&R netlist. Pre-synthesis power estimation is not meaningful.
 
 ---
 
-**PHASE 1.5 PILLAR A: IN PROGRESS.**
+**PHASE 1.5 PILLAR A: IN PROGRESS (6/9 gates COMPLETE).**
 
-The agent-generated s2s_rv32i core has cleared the first four Pillar A gates
-(compliance, synthesis, STA, equivalence) with results comparable to the
-hand-authored PicoRV32 baseline. The remaining gates (DFT, P&R, OCV signoff,
-GDSII) require tools not available in the current environment. When the
-s2s-eda Docker image is available, the proven Phase 1 P&R strategy
-(pre-DRT antenna diode insertion, FP_CORE_UTIL=35) should transfer directly
-to this ~12% larger design.
+The agent-generated s2s_rv32i core has cleared six Pillar A gates
+(compliance, synthesis, STA, equivalence, DFT, multi-corner OCV STA) with
+results comparable to or better than the hand-authored PicoRV32 baseline.
+DFT fault coverage (92.55%) exceeds PicoRV32 (83.10%). The remaining gates
+(P&R, post-route signoff, GDSII) require OpenROAD/OpenLane tools not
+available in the current environment. When the s2s-eda Docker image is
+available, the proven Phase 1 P&R strategy (pre-DRT antenna diode insertion,
+FP_CORE_UTIL=35) should transfer directly to this ~12% larger design.

@@ -1,0 +1,42 @@
+topic: "Compiled C fault simulator for ATPG on sky130 netlists"
+summary: |
+  A Python code generator (gen_fault_sim.py) reads a Yosys JSON netlist and emits a
+  standalone C program that performs bit-parallel stuck-at fault simulation. The approach:
+  1. Yosys synthesizes the design to sky130_fd_sc_hd cells and exports JSON (write_json).
+  2. gen_fault_sim.py topologically sorts gates, maps each cell type to a C expression
+     (AND, OR, XOR, MUX, DFF, etc.), and emits a C file with one function per gate evaluation.
+  3. The C program runs N random input patterns (default 8192), evaluating the good circuit
+     once and each single stuck-at fault in parallel using bitwise operations on uint64_t
+     words (64 patterns per word).
+  4. A fault is detected when the faulty output differs from the good output on any primary
+     output or observable flip-flop.
+
+  Key implementation details:
+  - Supports 66+ sky130_fd_sc_hd cell types including complex gates (a311o, o221ai, etc.)
+  - Handles Yosys JSON string constants ("0"/"1") for tied-off ports via isinstance(b, str)
+    check in the idx() function — critical fix, as Yosys uses strings not integers for
+    constant bit connections.
+  - Input_map population must handle both integer bit indices and string constants.
+  - Scan-inserted netlists (sdfxtp cells) treated as regular DFFs for fault simulation
+    with scan_enable=0.
+  - Compiles with gcc -O2 for performance; typical runtime 2-5 seconds for ~18k faults.
+
+  Results on s2s_rv32i: 17,910 total faults, 16,575 detected, 92.55% stuck-at coverage
+  with 8192 random patterns in 2.0 seconds. Compared to PicoRV32: 16,820 faults, 83.10%
+  coverage — s2s_rv32i has better testability.
+evidence:
+  - path: designs/s2s_rv32i/synth_dft/gen_fault_sim.py
+    note: "Python code generator — reads JSON netlist, emits C fault simulator"
+  - path: designs/s2s_rv32i/synth_dft/fault_sim.c
+    note: "Generated C fault simulator with 7,125 gate evaluations"
+  - path: designs/s2s_rv32i/synth_dft/export_json.ys
+    note: "Yosys script to export flattened JSON netlist"
+tags: [atpg, dft, fault-simulation, sky130, phase-1, compiled-simulation, yosys-json]
+status: confirmed
+date: 2026-10-09
+related: [k005-sky130-cell-models]
+lesson: |
+  Yosys JSON netlist format uses string "0" and "1" for constant bit connections, not
+  integer 0 and 1. Any tool parsing the JSON must check isinstance(b, str) before treating
+  bit indices as wire numbers. Missing this check causes template variables to go
+  unsubstituted in the generated C code, producing compile errors.

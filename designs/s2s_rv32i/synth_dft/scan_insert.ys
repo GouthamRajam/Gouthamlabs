@@ -1,0 +1,18 @@
+# A2 DFT Step 1: Scan insertion
+# Replace dfxtp (regular DFFs) with sdfxtp (scan DFFs) using techmap
+
+read_verilog sky130_cells.v
+read_verilog s2s_rv32i_synth.v
+hierarchy -top s2s_rv32i_core
+
+# Count DFFs before scan insertion
+stat
+
+# Techmap: replace dfxtp cells with sdfxtp + mux wrapper
+techmap -map scan_map.v
+
+# Count cells after scan insertion
+stat
+
+# Write out the scan-inserted netlist
+write_verilog -noattr s2s_rv32i_scan.v

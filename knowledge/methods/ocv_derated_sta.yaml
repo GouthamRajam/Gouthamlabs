@@ -1,0 +1,45 @@
+topic: "OCV derated STA at ±5%/±10% as permanent signoff check"
+summary: |
+  On-Chip Variation (OCV) derated STA applies flat timing derating to capture manufacturing
+  variability beyond what PVT corners alone model. The methodology:
+
+  1. Three PVT corners from the sky130_fd_sc_hd liberty library:
+     - TT (typical-typical): 25°C, 1.80V — nominal operating point
+     - SS (slow-slow): -40°C, 1.40V — worst-case setup (slowest paths)
+     - FF (fast-fast): -40°C, 1.95V — worst-case hold (fastest paths)
+
+  2. Three OCV derate levels applied on top of each corner:
+     - Nominal: early=1.0, late=1.0 (no derating)
+     - ±5%: early=0.95, late=1.05 (moderate local variation)
+     - ±10%: early=0.90, late=1.10 (conservative local variation)
+
+  3. OpenSTA commands:
+     - set_timing_derate -early $factor (speeds up early paths)
+     - set_timing_derate -late $factor (slows down late paths)
+     - report_checks -path_delay max (setup analysis)
+     - report_checks -path_delay min (hold analysis)
+     - report_tns / report_wns (total/worst negative slack)
+
+  4. A 3×3 matrix (9 runs) is executed. The design must meet timing at all corners.
+     Setup is typically constrained by SS corner; hold by FF corner.
+
+  5. Fmax binary search runs at TT nominal corner to find the maximum operating frequency
+     where setup slack remains non-negative.
+
+  The sta_multicorner.tcl script is parameterized via environment variables (CORNER_LIB,
+  DERATE_EARLY, DERATE_LATE, CLK_PERIOD) so the same script serves all 9 corner+derate
+  combinations and the Fmax search.
+evidence:
+  - path: designs/s2s_rv32i/synth_dft/sta_multicorner.tcl
+    note: "Parameterized STA script using env vars"
+  - path: designs/s2s_rv32i/synth_dft/run_sta_corners.sh
+    note: "Shell runner iterating over 3 corners × 3 derates + Fmax search"
+tags: [sta, ocv, timing, signoff, phase-0, opensta, sky130, multi-corner]
+status: confirmed
+date: 2026-10-09
+related: [k004-compiled-fault-sim, k005-sky130-cell-models]
+lesson: |
+  OpenSTA's Tcl API varies between versions. The `sta::worst_slack` proc is not available
+  in all builds; use `report_checks`, `report_tns`, and `report_wns` for portable output.
+  Port names in the SDC constraints must match the Verilog exactly (case-sensitive) —
+  `get_ports clk` fails if the design uses `CLK`.
