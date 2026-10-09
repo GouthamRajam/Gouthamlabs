@@ -7,7 +7,7 @@
   "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc",
   "ERRORS_ON_UNMATCHED_IO": "both",
 
-  "FP_CORE_UTIL": 35,
+  "FP_CORE_UTIL": 30,
   "PL_TARGET_DENSITY_PCT": 50,
   "MAX_FANOUT_CONSTRAINT": 10,
 
