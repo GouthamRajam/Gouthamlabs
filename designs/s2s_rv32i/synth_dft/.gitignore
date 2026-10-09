@@ -1,0 +1,11 @@
+# Compiled simulation binaries
+gate_compliance_sim
+
+# Gate-level simulation work directory (large, regenerable)
+gate_sim_work/
+
+# SymbiYosys work directory (regenerable)
+equiv_sby/
+
+# Yosys/STA log files (regenerable)
+*.log

@@ -1,0 +1,8 @@
+read_verilog -lib sky130_cells.v
+read_verilog s2s_rv32i_synth.v
+rename s2s_rv32i_core s2s_rv32i_core_gate
+rename s2s_rv32i_alu s2s_rv32i_alu_gate
+rename s2s_rv32i_decoder s2s_rv32i_decoder_gate
+rename s2s_rv32i_regfile s2s_rv32i_regfile_gate
+rename s2s_rv32i_csr s2s_rv32i_csr_gate
+write_verilog -noattr s2s_rv32i_gate.v
