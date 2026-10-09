@@ -64,6 +64,8 @@ module s2s_rv32i_csr (
     localparam ADDR_MARCHID   = 12'hF12;
     localparam ADDR_MIMPID    = 12'hF13;
     localparam ADDR_MHARTID   = 12'hF14;
+    localparam ADDR_MSTATUSH  = 12'h310;
+    localparam ADDR_MCOUNTINHIBIT = 12'h320;
 
     // ---------------------------------------------------------------
     // Internal CSR registers
@@ -126,8 +128,14 @@ module s2s_rv32i_csr (
             ADDR_MVENDORID,
             ADDR_MARCHID,
             ADDR_MIMPID,
-            ADDR_MHARTID:   addr_valid_r = 1'b1;
-            default:         addr_valid_r = 1'b0;
+            ADDR_MHARTID,
+            ADDR_MSTATUSH,
+            ADDR_MCOUNTINHIBIT: addr_valid_r = 1'b1;
+            default:
+                if (csr_addr >= 12'h323 && csr_addr <= 12'h33F)
+                    addr_valid_r = 1'b1;  // mhpmevent3-31
+                else
+                    addr_valid_r = 1'b0;
         endcase
     end
     assign csr_valid = addr_valid_r;
@@ -161,7 +169,9 @@ module s2s_rv32i_csr (
             ADDR_MARCHID:   csr_rdata = 32'h0;
             ADDR_MIMPID:    csr_rdata = 32'h0;
             ADDR_MHARTID:   csr_rdata = 32'h0;
-            default:        csr_rdata = 32'h0;
+            ADDR_MSTATUSH:  csr_rdata = 32'h0;
+            ADDR_MCOUNTINHIBIT: csr_rdata = 32'h0;
+            default:        csr_rdata = 32'h0;  // includes mhpmevent3-31
         endcase
     end
 
