@@ -1,0 +1,17 @@
+{
+  "DESIGN_NAME": "s2s_rv32i_core",
+  "VERILOG_FILES": ["dir::src/s2s_rv32i_alu.v", "dir::src/s2s_rv32i_decoder.v", "dir::src/s2s_rv32i_regfile.v", "dir::src/s2s_rv32i_csr.v", "dir::src/s2s_rv32i_core.v"],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 50.0,
+  "PNR_SDC_FILE": "dir::src/constraints.sdc",
+  "SIGNOFF_SDC_FILE": "dir::src/constraints.sdc",
+  "ERRORS_ON_UNMATCHED_IO": "both",
+
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 50,
+  "MAX_FANOUT_CONSTRAINT": 10,
+
+  "GRT_ANTENNA_ITERS": 15,
+  "GRT_ANTENNA_MARGIN": 30,
+  "RUN_HEURISTIC_DIODE_INSERTION": true
+}
