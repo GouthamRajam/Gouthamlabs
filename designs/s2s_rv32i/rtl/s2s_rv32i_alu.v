@@ -1,4 +1,4 @@
-// Provenance: agent-generated (Phase 1.5 Pillar A)
+// Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 //
 // s2s_rv32i_alu.v — Combinational ALU for the s2s_rv32i RISC-V core.
 // 10 operations controlled by a 4-bit alu_op input.

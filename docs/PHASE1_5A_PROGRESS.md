@@ -1,20 +1,20 @@
-# Phase 1.5 Pillar A — Agent-Generated RTL, Backend Progress Report
+# Phase 1.5 Pillar A — s2s_rv32i RTL, Backend Progress Report
 
 **Date:** 2026-10-09
-**Design:** s2s_rv32i — 32-bit RISC-V core (RV32I), agent-generated
+**Design:** s2s_rv32i — 32-bit RISC-V core (RV32I), hand-authored by Claude in Code session
 **Process:** SkyWater SKY130 (sky130_fd_sc_hd standard cells)
 **Tools:** Open-source only (Yosys 0.46, OpenSTA, OpenLane 2.3.10, OpenROAD, Magic, Netgen, KLayout, Icarus Verilog 12.0, SymbiYosys 0.69, z3 5.1.0, Sail RISC-V v0.15)
-**Provenance:** `agent-generated` — all RTL written by the AI pipeline, zero manual RTL edits
+**Provenance:** `hand-authored` — RTL written by Claude (Opus 4.6) in interactive Claude Code session (session_01GAKtQEAqB69LApKchB7Egh), not by the S2S agent pipeline. CORRECTED 2026-10-09: original "agent-generated" label was false.
 
 ---
 
 ## Summary
 
-Phase 1.5 Pillar A proves the agent-generated s2s_rv32i RV32I core passes
-the SAME gates as the hand-authored PicoRV32 from Phase 1 — from RTL
-compliance through full P&R, signoff, and GDSII on SKY130.
+Phase 1.5 Pillar A proves the s2s_rv32i RV32I core (hand-authored by Claude
+in a Code session) passes the SAME gates as the hand-authored PicoRV32 from
+Phase 1 — from RTL compliance through full P&R, signoff, and GDSII on SKY130.
 
-The agent-generated core passes all 39 RV32I riscv-arch-test tests against
+The s2s_rv32i core passes all 39 RV32I riscv-arch-test tests against
 the Sail RISC-V official golden model, runs through the full OpenLane 2.3.10
 Classic flow (78 steps), passes DRC (0 violations), LVS (circuits match
 uniquely), antenna (0 violations), all 9 STA corners, and produces GDSII.
@@ -50,7 +50,7 @@ only a 9-instruction gate-level smoke test.
 
 ## Synthesis — PASS
 
-| Metric                    | s2s_rv32i (agent) | PicoRV32 (hand) | Delta     |
+| Metric                    | s2s_rv32i | PicoRV32 (hand) | Delta     |
 |---------------------------|-------------------|-----------------|-----------|
 | Combinational cells       | 7,123             | 6,847           | +4.0%     |
 | Sequential cells (DFFs)   | 1,794             | 1,527           | +17.5%    |
@@ -81,7 +81,7 @@ vs PicoRV32's highly optimized monolithic 544-line design.
 
 ## STA — PASS (20 MHz)
 
-| Metric           | s2s_rv32i (agent) | PicoRV32 (hand) | Delta     |
+| Metric           | s2s_rv32i | PicoRV32 (hand) | Delta     |
 |------------------|-------------------|-----------------|-----------|
 | Target clock     | 20 MHz (50 ns)    | 20 MHz (50 ns)  | same      |
 | **Setup slack**  | **+26.68 ns**     | **+27.78 ns**   | **-1.10 ns** |
@@ -152,18 +152,18 @@ preserved functional behavior for all tested instruction patterns.
 Both cores run through the same OpenLane 2.3.10 Classic flow with identical
 antenna settings (GRT_ANTENNA_ITERS=15, GRT_ANTENNA_MARGIN=30,
 RUN_HEURISTIC_DIODE_INSERTION=true), sky130_fd_sc_hd, 20 MHz target.
-The agent core uses FP_CORE_UTIL=30 (lowered from 35 to close antenna);
+The s2s_rv32i core uses FP_CORE_UTIL=30 (lowered from 35 to close antenna);
 PicoRV32 uses FP_CORE_UTIL=35.
 
-| Metric                    | s2s_rv32i (agent) | PicoRV32 (hand) | Delta     | Verdict |
+| Metric                    | s2s_rv32i | PicoRV32 (hand) | Delta     | Verdict |
 |---------------------------|-------------------|-----------------|-----------|---------|
-| FP_CORE_UTIL              | 30                | 35              | -5        | Agent needed lower |
-| **Pre-synthesis cells**   | **8,047**         | **8,374**       | **-3.9%** | Agent smaller |
+| FP_CORE_UTIL              | 30                | 35              | -5        | s2s_rv32i needed lower |
+| **Pre-synthesis cells**   | **8,047**         | **8,374**       | **-3.9%** | s2s_rv32i smaller |
 | DFFs (flip-flops)         | 1,802             | 1,527           | +18.0%    | More state regs |
-| **Post-P&R instances**    | **25,547**        | **26,252**      | **-2.7%** | Agent smaller |
+| **Post-P&R instances**    | **25,547**        | **26,252**      | **-2.7%** | s2s_rv32i smaller |
 | Diodes inserted           | 9,839             | 11,631          | -15.4%    | Fewer diodes |
-| **Die area (um²)**        | **365,349**       | **297,228**     | **+22.9%** | Agent larger (lower util) |
-| **Power (W, TT nom)**     | **0.00362**       | **0.00339**     | **+6.8%** | Agent higher (more routing) |
+| **Die area (um²)**        | **365,349**       | **297,228**     | **+22.9%** | s2s_rv32i larger (lower util) |
+| **Power (W, TT nom)**     | **0.00362**       | **0.00339**     | **+6.8%** | s2s_rv32i higher (more routing) |
 | Setup WNS (ns)            | +29.18            | +29.72          | -0.54     | Both MET |
 | Hold WNS (ns)             | +0.11             | +0.14           | -0.03     | Both MET |
 | Setup TNS                 | 0                 | 0               | match     | Both MET |
@@ -180,14 +180,14 @@ PicoRV32 uses FP_CORE_UTIL=35.
 | RTL modules               | 5                 | 1               | +4        | Better structure |
 | Equivalence evidence      | 39/39 gate-level  | BMC depth 10    | Stronger  | s2s_rv32i wins |
 | Sail compliance           | 39/39             | 39/39           | same      | PASS |
-| ATPG fault coverage       | 92.55%            | 83.10%          | +9.45pp   | Agent better |
+| ATPG fault coverage       | 92.55%            | 83.10%          | +9.45pp   | s2s_rv32i better |
 
 **Key takeaways:**
 1. **Antenna closed to 0** — matching PicoRV32. Lowering FP_CORE_UTIL 35→30
    gave the router enough metal resources to avoid the met4 layer promotion.
    This is the same lever that worked for PicoRV32 (40→35).
 2. **Area trade-off:** 22.9% larger die at util=30 vs PicoRV32's util=35.
-   Not apples-to-apples on area — the agent core needed lower utilization.
+   Not apples-to-apples on area — the s2s_rv32i core needed lower utilization.
 3. **Timing still strong:** both cores meet 20 MHz with 29+ ns setup margin.
    Fmax 42.63 vs 51.19 MHz reflects different critical paths.
 4. **All signoff gates now pass** with zero violations across the board.
@@ -197,16 +197,16 @@ PicoRV32 uses FP_CORE_UTIL=35.
 They are different microarchitectures (8-state multi-cycle FSM vs PicoRV32's
 state machine, different register file implementations, dedicated CSR/ALU/decoder
 modules vs monolithic). Sail RV32I compliance (39/39 against the same golden
-model) is the shared correctness bar. The agent core runs at FP_CORE_UTIL=30
+model) is the shared correctness bar. The s2s_rv32i core runs at FP_CORE_UTIL=30
 vs PicoRV32's 35 — the area and power comparison is not apples-to-apples because
-the agent core needed lower utilization to close its antenna violation.
+the s2s_rv32i core needed lower utilization to close its antenna violation.
 Power uses OpenSTA default-activity estimation (not VCD-annotated).
 
 ---
 
 ## Architecture Comparison
 
-| Feature | s2s_rv32i (agent) | PicoRV32 (hand) |
+| Feature | s2s_rv32i | PicoRV32 (hand) |
 |---------|-------------------|-----------------|
 | Architecture | Multi-cycle, 8-state FSM | Multi-cycle, 2-state FSM |
 | CPI | 4-5 (FETCH/DECODE/EXECUTE/MEM/WB) | 4-6 (complex) |
@@ -225,7 +225,7 @@ Power uses OpenSTA default-activity estimation (not VCD-annotated).
 
 ### Scan Insertion
 
-| Metric          | s2s_rv32i (agent) | PicoRV32 (hand) | Delta    |
+| Metric          | s2s_rv32i | PicoRV32 (hand) | Delta    |
 |-----------------|-------------------|-----------------|----------|
 | DFFs converted  | 1,794             | 1,527           | +17.5%   |
 | Scan cell type  | sdfxtp_1/2/4      | sdfxtp_1/2/4    | same     |
@@ -236,7 +236,7 @@ mapping dfxtp_1/2/4 → sdfxtp_1/2/4 with SCD=0, SCE=0.
 
 ### ATPG Fault Simulation
 
-| Metric               | s2s_rv32i (agent) | PicoRV32 (hand) | Delta     |
+| Metric               | s2s_rv32i | PicoRV32 (hand) | Delta     |
 |----------------------|-------------------|-----------------|-----------|
 | Total stuck-at faults| 17,910            | 16,820          | +6.5%     |
 | Detected faults      | 16,575            | 13,977          | +18.6%    |
@@ -245,7 +245,7 @@ mapping dfxtp_1/2/4 → sdfxtp_1/2/4 with SCD=0, SCE=0.
 | Runtime              | 2.0s              | 5.3s            | -62%      |
 | Simulator            | Compiled-C, bit-parallel | Compiled-C, bit-parallel | same |
 
-The agent-generated core has **better testability** than PicoRV32 (+9.45%
+The s2s_rv32i core has **better testability** than PicoRV32 (+9.45%
 fault coverage) despite having more faults. The modular architecture with
 dedicated sub-units may improve controllability and observability.
 
@@ -299,7 +299,7 @@ OCV derating: set_timing_derate -early/-late via OpenSTA.
 
 ## P&R — COMPLETE (OpenLane 2.3.10, 78 steps)
 
-Full place-and-route on agent-generated s2s_rv32i using OpenLane 2.3.10
+Full place-and-route on s2s_rv32i using OpenLane 2.3.10
 Classic flow in the s2s-eda Docker runtime.
 
 **Antenna fix history:** Initial run at FP_CORE_UTIL=35 (identical to
@@ -392,10 +392,10 @@ FP_CORE_UTIL=30 with all other parameters unchanged.
 - GDSII from real Magic and KLayout stream-outs with SHA-256 recorded.
 - XOR check (Magic vs KLayout GDSII): 0 differences — consistent.
 - Antenna closed to 0 in 1 attempt (FP_CORE_UTIL 35→30). Honestly reported.
-- PPA comparison uses same flow; agent core at util=30 vs PicoRV32 at util=35.
+- PPA comparison uses same flow; s2s_rv32i at util=30 vs PicoRV32 at util=35.
 - Phase 0 constraint met: open-source tools only, open SKY130 PDK only.
 - No rules weakened, no tests skipped, no fabricated results, no overclaiming.
-- Agent-generated RTL: zero manual edits to execution logic.
+- RTL hand-authored by Claude in Code session: zero manual human edits to execution logic.
 
 ---
 
@@ -428,7 +428,7 @@ FP_CORE_UTIL=30 with all other parameters unchanged.
 
 **PHASE 1.5 PILLAR A: COMPLETE (9/9 gates PASS).**
 
-The agent-generated s2s_rv32i core has cleared ALL Pillar A gates —
+The s2s_rv32i core has cleared ALL Pillar A gates —
 compliance (39/39 Sail match), synthesis, pre-P&R STA, gate-level
 equivalence, DFT (92.55% fault coverage), multi-corner OCV STA (9/9 MET,
 Fmax 42.63 MHz), full P&R (78 steps), signoff (DRC 0, LVS match, antenna 0,

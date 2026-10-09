@@ -1,4 +1,4 @@
-// Provenance: agent-generated (Phase 1.5 Pillar A)
+// Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 //
 // s2s_rv32i_regfile.v — 32x32-bit register file for the s2s_rv32i core.
 // Two combinational read ports, one synchronous write port.

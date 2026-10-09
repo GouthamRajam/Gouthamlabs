@@ -1,5 +1,5 @@
 #!/bin/bash
-# Provenance: agent-generated (Phase 1.5 Pillar A compliance)
+# Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 # run_compliance.sh — Run riscv-arch-test RV32I suite against s2s_rv32i_core.
 # Compiles each test, runs via Icarus Verilog, compares signature against Sail.
 # Usage: ./run_compliance.sh <riscv-arch-test-dir>

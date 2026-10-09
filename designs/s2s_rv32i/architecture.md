@@ -4,8 +4,9 @@ This document fully specifies the microarchitecture of the s2s_rv32i processor
 core. It is the single reference for RTL implementation. Every signal name,
 state encoding, and behavior described here is normative.
 
-Provenance: agent-designed. No architecture or RTL borrowed from picorv32 or
-any other existing core.
+Provenance: hand-authored by Claude in interactive Code session (not by S2S
+agent pipeline). No architecture or RTL borrowed from picorv32 or any other
+existing core.
 
 ---
 

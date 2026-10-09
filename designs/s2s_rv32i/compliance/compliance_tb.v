@@ -1,4 +1,4 @@
-// Provenance: agent-generated (Phase 1.5 Pillar A compliance)
+// Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 // compliance_tb.v — Testbench for running riscv-arch-test on s2s_rv32i_core.
 // Uses HTIF-style termination: tohost=1 → PASS, tohost=3 → FAIL.
 // Dumps signature region to "dut_signature.txt" for comparison against Sail.

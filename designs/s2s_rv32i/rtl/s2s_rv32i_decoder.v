@@ -1,4 +1,4 @@
-// Provenance: agent-generated (Phase 1.5 Pillar A)
+// Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 //
 // s2s_rv32i_decoder.v — Combinational instruction decoder for the s2s_rv32i
 // RISC-V core. Extracts all fields, generates the sign-extended immediate,

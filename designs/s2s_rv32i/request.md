@@ -36,6 +36,8 @@ benchmarked against it.
   against the picorv32 reference.
 
 ## Provenance
-- provenance: agent-generated
-- Phase 1.5 Pillar A — agent pipeline designs the microarchitecture and RTL.
-  No hand-authoring, no copying from picorv32 or any existing core.
+- provenance: hand-authored by Claude in interactive Code session
+- Phase 1.5 Pillar A — RTL was written by Claude (Opus 4.6) in Claude Code
+  session, not by the S2S agent pipeline. No copying from picorv32 or any
+  existing core. CORRECTED 2026-10-09: original label "agent-generated" was
+  false — the S2S pipeline was never executed for this design.

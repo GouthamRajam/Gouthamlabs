@@ -1,4 +1,4 @@
-// Provenance: agent-generated (Phase 1.5 Pillar A)
+// Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 //
 // s2s_rv32i_core.v — Top-level module for the s2s_rv32i RISC-V core.
 // Contains the FSM controller, PC register, pipeline registers,

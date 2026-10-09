@@ -1,4 +1,4 @@
-// Provenance: agent-generated (Phase 1.5 Pillar A compliance)
+// Provenance: hand-authored by Claude in interactive Code session (not S2S agent pipeline)
 // rvmodel_macros.h — DUT-specific macros for s2s_rv32i_core
 // Uses HTIF-style termination via tohost memory-mapped address.
 
