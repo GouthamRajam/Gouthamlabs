@@ -1,0 +1,23 @@
+# Flat synthesis for equivalence checking
+# Produces a single flat module (no submodule hierarchy)
+
+read_verilog ../rtl/s2s_rv32i_alu.v
+read_verilog ../rtl/s2s_rv32i_decoder.v
+read_verilog ../rtl/s2s_rv32i_regfile.v
+read_verilog ../rtl/s2s_rv32i_csr.v
+read_verilog ../rtl/s2s_rv32i_core.v
+
+hierarchy -top s2s_rv32i_core -chparam RESET_VECTOR 32'h80000000
+
+# Flatten before synthesis
+synth -top s2s_rv32i_core -flatten
+
+# Technology mapping
+dfflibmap -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+opt_clean -purge
+stat -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+# Write flat netlist (single module)
+write_verilog -noattr s2s_rv32i_flat_gate.v

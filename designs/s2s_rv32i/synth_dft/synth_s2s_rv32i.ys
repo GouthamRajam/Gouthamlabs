@@ -1,0 +1,31 @@
+# Phase 1.5 Pillar A: s2s_rv32i Synthesis to sky130_fd_sc_hd
+# Yosys synthesis script — mirrors PicoRV32 P1.3 flow
+
+# Read all RTL modules
+read_verilog ../rtl/s2s_rv32i_alu.v
+read_verilog ../rtl/s2s_rv32i_decoder.v
+read_verilog ../rtl/s2s_rv32i_regfile.v
+read_verilog ../rtl/s2s_rv32i_csr.v
+read_verilog ../rtl/s2s_rv32i_core.v
+
+# Set top module
+hierarchy -top s2s_rv32i_core
+
+# Generic synthesis
+synth -top s2s_rv32i_core
+
+# Technology mapping to sky130_fd_sc_hd
+dfflibmap -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+# Clean up
+opt_clean -purge
+
+# Statistics
+stat -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+# Write synthesized netlist (no attributes, clean for simulation)
+write_verilog -noattr s2s_rv32i_synth.v
+
+# Write for equivalence checking (with attributes)
+write_verilog s2s_rv32i_synth_attr.v
