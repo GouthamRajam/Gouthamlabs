@@ -19,3 +19,13 @@ web/CLAUDE.md
 
 # subagent worktrees (parallel builders)
 .claude/worktrees/
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+docs/paper/s2s_paper_final.pdf
