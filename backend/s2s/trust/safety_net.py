@@ -8,7 +8,7 @@ A check passes ONLY if all of these hold:
 
 Rule 3 is the defense against parser bugs: if a log contains an error string that the
 parser did not count, the check FAILS. There is no allow-list or waiver mechanism here
-by design (CLAUDE.md rule 2); a pattern that misfires on a genuinely clean log must be
+by design (project rules); a pattern that misfires on a genuinely clean log must be
 made more precise, never suppressed.
 """
 from __future__ import annotations

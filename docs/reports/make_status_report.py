@@ -400,7 +400,7 @@ bullets(["OpenROAD CTS: which clock_tree_synthesis options limit the fanout of n
 h1("Appendix - Key files, commands and identifiers")
 table([["Item", "Where"],
        ["Decisions log", "docs/DECISIONS.md"],
-       ["Rules for this project", "CLAUDE.md, CONTEXT.md, PHASE_GATES.md"],
+       ["Rules for this project", "PROJECT_RULES.md, CONTEXT.md, PHASE_GATES.md"],
        ["Approved P&amp;R knobs and ranges", "config/pnr_ranges.yaml"],
        ["Coverage / formal targets", "config/coverage_targets.yaml (formal_min_depth_by_design)"],
        ["Spend caps / model provider", "config/finance.yaml"],

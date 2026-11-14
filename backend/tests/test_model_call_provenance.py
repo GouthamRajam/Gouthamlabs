@@ -42,7 +42,7 @@ def test_bridge_records_answering_model_attempts_and_operator_note(tmp_path):
     r = bp.complete("sys", [{"role": "user", "content": "go"}], 100, SCHEMA)
     th.join(5)
     p = r.provenance
-    assert p["answered_by"] == {"model": "claude-opus-5-5", "via": "claude-code subagent"}
+    assert p["answered_by"] == {"model": "claude-opus-5-5", "via": "coding-agent subagent"}
     assert [a["rejected_because"] is None for a in p["attempts"]] == [False, True]
     assert p["attempts"][1]["feedback_given"].startswith("Your previous answer was rejected")
     assert p["operator_influenced"] and p["operator_notes"][0]["note"][0]["text"].startswith("18 of 20")

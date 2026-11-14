@@ -4,7 +4,7 @@ In bridge mode a model call is answered outside S2S, so S2S cannot see which mod
 told the answerer anything. Phase 0 answers were sometimes given with operator notes added to the answering prompt,
 outside the logged request, so the record no longer explained the answer. Now, BEFORE a request is answered:
 
-    python -m s2s.ops.bridge assign <request_id> --model claude-opus-5-5 [--via "claude-code subagent"]
+    python -m s2s.ops.bridge assign <request_id> --model claude-opus-5-5 [--via "coding-agent subagent"]
                                     [--note "<fact the answerer needs>"]
 
 - the answering model is written to requests/<id>.assign.json and recorded with the call (answered_by);
@@ -23,7 +23,7 @@ from pathlib import Path
 from s2s.models.gateway import BridgeProvider
 
 
-def assign(request_id: str, model: str, via: str = "claude-code subagent", note: str | None = None,
+def assign(request_id: str, model: str, via: str = "coding-agent subagent", note: str | None = None,
            actor: str = "operator", root: Path | None = None) -> dict:
     root = Path(root or BridgeProvider().root)
     rq = root / "requests" / f"{request_id}.json"
@@ -52,7 +52,7 @@ def main(argv: list[str] | None = None) -> int:
     a = sub.add_parser("assign", help="record the answering model (and an operator note) before answering")
     a.add_argument("request_id")
     a.add_argument("--model", required=True)
-    a.add_argument("--via", default="claude-code subagent")
+    a.add_argument("--via", default="coding-agent subagent")
     a.add_argument("--note")
     args = ap.parse_args(argv)
     print(json.dumps(assign(args.request_id, args.model, args.via, args.note)))

@@ -2,7 +2,7 @@
 
 Labels never edit history: each is an append-only row (target, label, reason, author). The backfill is idempotent.
 
-    python -m s2s.records.annotate backfill [--transcript <claude session .jsonl>]
+    python -m s2s.records.annotate backfill [--transcript <session transcript .jsonl>]
 
 1. false_alarm      - a `task.stalled` event raised while the task was waiting on a running tool or model call
                       (its last tool_call had no tool_result yet): no heartbeat was emitted during tool runs then.
@@ -137,7 +137,7 @@ def backfill_transcript(s, transcript: Path, author: str = "backfill:phase1-tran
         tid, _ = _request_task(rid)
         run_id = s.get(Task, tid).run_id if tid and s.get(Task, tid) else None
         if annotate(s, "bridge_request", rid, "answered_by", f"subagent started with model {model!r}", author, run_id,
-                    {"model": model, "via": "claude-code subagent", "task": tid}):
+                    {"model": model, "via": "coding-agent subagent", "task": tid}):
             n_models += 1
         m = re.search(r"Operator note[^\n]*(?:\n(?!Rules:)[^\n]*)*", prompt)
         if m:

@@ -1048,7 +1048,7 @@ Let founders, engineers, customers and investors watch the AI team work in real 
 ```
 s2s/
 ├── README.md
-├── CLAUDE.md                     # short pointer: "Read docs/MASTER_SPEC.md first"
+├── SESSION_PROMPTS.md            # session prompts for the coding agent
 ├── docs/
 │   ├── MASTER_SPEC.md            # this document
 │   ├── DECISIONS.md              # architecture decisions log
@@ -3228,7 +3228,7 @@ mutation_detection: 0.85
 
 ## APPENDIX G — COPY-PASTE KICKOFF PROMPTS FOR THE CODING AGENT
 
-### G.1 `CLAUDE.md` (put in the repo root)
+### G.1 Project rules (put in the repo root or coding agent config)
 
 ```
 # S2S
