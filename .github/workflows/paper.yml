@@ -1,0 +1,154 @@
+# Auto-compile the S2S paper and build an arXiv submission package.
+# Triggers on pushes that touch the paper source; also runnable manually.
+name: paper
+on:
+  push:
+    paths:
+      - 'docs/paper/**'
+  pull_request:
+    paths:
+      - 'docs/paper/**'
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-publishers \
+            texlive-fonts-recommended \
+            texlive-bibtex-extra \
+            latexmk
+
+      - name: Compile paper
+        working-directory: docs/paper
+        run: |
+          # Two passes to resolve references and citations
+          pdflatex -interaction=nonstopmode -halt-on-error s2s_paper.tex
+          pdflatex -interaction=nonstopmode -halt-on-error s2s_paper.tex
+          echo "--- Compiled PDF ---"
+          ls -lh s2s_paper.pdf
+
+      - name: Build arXiv submission package
+        working-directory: docs/paper
+        run: |
+          mkdir -p arxiv_submission
+
+          # Copy the .tex source
+          cp s2s_paper.tex arxiv_submission/
+
+          # Copy any figures if they exist
+          if ls *.png *.jpg *.eps *.pdf 2>/dev/null | grep -v s2s_paper.pdf; then
+            cp *.png *.jpg *.eps arxiv_submission/ 2>/dev/null || true
+          fi
+
+          # Generate arXiv metadata helper
+          cat > arxiv_submission/ARXIV_METADATA.txt << 'METADATA'
+          ============================================
+           arXiv Submission Metadata — Pre-filled
+          ============================================
+
+          Title:
+            S2S: Autonomous Multi-Agent Specification-to-GDSII
+            Chip Design with Deterministic Verification
+
+          Authors:
+            Goutham Rajam
+
+          Abstract:
+            We present S2S (Spec-to-Silicon), a multi-agent framework that
+            autonomously transforms a chip specification into tape-out-ready
+            GDSII using open-source EDA tools and SkyWater SKY130. Thirty-seven
+            AI agents spanning seven disciplines are coordinated by a Trust Layer
+            enforcing a strict invariant: real tools decide pass/fail — the AI
+            never does. No stage advances unless a deterministic tool (simulator,
+            DRC, LVS, STA) runs and passes, with all results recorded for
+            independent re-verification. The complete codebase, trajectory logs,
+            and signoff evidence are open-source.
+
+          Primary category:
+            cs.AR  (Hardware Architecture)
+
+          Cross-list categories:
+            cs.AI  (Artificial Intelligence)
+            cs.SE  (Software Engineering)
+
+          ACM classes:
+            B.7.2  (Design Aids — Automatic synthesis, placement and routing,
+                     verification)
+            I.2.2  (Automatic Programming — Program synthesis)
+
+          MSC classes:
+            68M99  (Computer system organization)
+
+          Comments:
+            12 pages, 5 tables, open-source code and data at
+            https://github.com/GouthamRajam/Gouthamlabs
+
+          License:
+            arXiv.org perpetual, non-exclusive license to distribute
+          METADATA
+
+          # Generate the submission checklist
+          cat > arxiv_submission/SUBMISSION_CHECKLIST.md << 'CHECKLIST'
+          # arXiv Submission Checklist
+
+          ## Before You Start
+          - [ ] Create an arXiv account at https://arxiv.org/user/register
+          - [ ] Get endorsement for cs.AR (if first-time submitter)
+                Request at https://arxiv.org/auth/endorse — ask a published
+                cs.AR author to endorse you
+
+          ## Upload Package
+          1. Go to https://arxiv.org/submit
+          2. Upload `arxiv_submission.tar.gz` (this archive, minus this file)
+          3. arXiv will compile the .tex — verify the PDF preview matches
+
+          ## Fill In Metadata
+          Copy from ARXIV_METADATA.txt above:
+          - [ ] Title
+          - [ ] Authors
+          - [ ] Abstract
+          - [ ] Primary category: cs.AR
+          - [ ] Cross-list: cs.AI, cs.SE
+          - [ ] Comments field
+          - [ ] License: arXiv perpetual non-exclusive
+
+          ## Final Steps
+          - [ ] Preview the compiled PDF on arXiv
+          - [ ] Click Submit
+          - [ ] Paper appears on arXiv within ~24 hours (announced next business day)
+
+          ## After Submission
+          - [ ] Add arXiv ID to the GitHub README
+          - [ ] Update the repo's About section with the arXiv link
+          CHECKLIST
+
+          # Create the tarball (what you upload to arXiv)
+          tar czf ../arxiv_submission.tar.gz -C arxiv_submission .
+          echo "--- arXiv package ---"
+          ls -lh ../arxiv_submission.tar.gz
+          tar tzf ../arxiv_submission.tar.gz
+
+      - name: Upload compiled PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: s2s-paper-pdf
+          path: docs/paper/s2s_paper.pdf
+
+      - name: Upload arXiv submission package
+        uses: actions/upload-artifact@v4
+        with:
+          name: arxiv-submission
+          path: |
+            docs/paper/arxiv_submission.tar.gz
+            docs/paper/arxiv_submission/SUBMISSION_CHECKLIST.md
