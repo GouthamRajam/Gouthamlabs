@@ -276,7 +276,7 @@ def _models(u: dict) -> str:
     if not u["by_model"]:
         return "– (no model calls recorded)"
     return "; ".join(f"{m} {v['tokens']:,} tok {_usd(v['cost_usd'])}"
-                     + (" (estimated tokens, $0: Claude Code bridge)" if v["estimated_tokens"] else "")
+                     + (" (estimated tokens, $0: coding-agent bridge)" if v["estimated_tokens"] else "")
                      for m, v in u["by_model"].items())
 
 

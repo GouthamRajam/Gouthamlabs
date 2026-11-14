@@ -1,4 +1,4 @@
-"""Check a Claude Code bridge answer before S2S reads it (personal dev mode, S2S_MODEL_PROVIDER=bridge).
+"""Check a coding-agent bridge answer before S2S reads it (personal dev mode, S2S_MODEL_PROVIDER=bridge).
 
     python scripts/bridge_validate.py <request.json> <answer.json>
 

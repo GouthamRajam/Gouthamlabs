@@ -115,8 +115,8 @@ table([["Stage", "What happens", "Real tools"],
       [33, 92, 45])
 h2("1.2 How this round was run")
 bullets([
-    "<b>No API usage (CEO decision).</b> Every agent model call goes through the 'Claude Code bridge': the orchestrator "
-    "writes a request file and a Claude Code subagent in this chat answers it; the answer is schema-checked. Model "
+    "<b>No API usage (CEO decision).</b> Every agent model call goes through the 'coding-agent bridge': the orchestrator "
+    "writes a request file and a coding-agent subagent answers it; the answer is schema-checked. Model "
     "choice: Opus for RTL/test/formal/debug work, Sonnet for routine reviews.",
     "<b>Parallel within 4 cores.</b> A machine-wide pool of 4 tool slots (OpenLane takes 2). A tool's timeout only "
     "starts when it gets a slot, so waiting can never cause a timeout.",
@@ -343,7 +343,7 @@ story.append(PageBreak())
 # ---------------------------------------------------------------- part 5
 h1("Part 5 - Everything that was changed")
 table([["Commit", "Change"],
-       ["7bf7dbb", "Model calls go to the Claude Code bridge by default; no API usage"],
+       ["7bf7dbb", "Model calls go to the coding-agent bridge by default; no API usage"],
        ["4ad31d0", "Machine-wide tool slots; mutation timeouts never count as catches; synth_strategy input; clearer missed-mutant handover"],
        ["fe35a64", "Equivalence: Yosys LEC fallback when eqy cannot prove (must prove every point)"],
        ["aea81be", "OpenLane fork keeps state-file timestamps"],
@@ -425,6 +425,6 @@ def footer(c, d):
 
 
 doc = SimpleDocTemplate(str(OUT), pagesize=A4, leftMargin=15 * mm, rightMargin=15 * mm, topMargin=15 * mm,
-                        bottomMargin=17 * mm, title="S2S status report", author="S2S (Claude Code)")
+                        bottomMargin=17 * mm, title="S2S status report", author="S2S")
 doc.build(story, onFirstPage=footer, onLaterPages=footer)
 print(OUT)

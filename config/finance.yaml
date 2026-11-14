@@ -20,6 +20,6 @@ model_prices:
   # their cost is the coding agent session's usage, NOT metered here, and the spend caps do not limit them.
   claude-code-bridge: {input_per_mtok: 0.00, output_per_mtok: 0.00}
 # Which provider answers the agents' model calls (CEO decision 2026-10-04: no API usage; every call
-# goes to the Claude Code bridge). "bridge" or "anthropic"; the env var S2S_MODEL_PROVIDER overrides it.
+# goes to the coding-agent bridge). "bridge" or "anthropic"; the env var S2S_MODEL_PROVIDER overrides it.
 model_provider: bridge
 compute_usd_per_cpu_hour: 0.05   # placeholder for local compute metering

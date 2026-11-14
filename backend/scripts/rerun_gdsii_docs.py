@@ -1,6 +1,6 @@
 """Re-run ONLY the gdsii documentation steps of a finished run - `release_notes` (Gideon, writes
 tapeout/release_notes.md) and `sloane` (Sloane, writes reports/division4_report.md) - then the `sign` step
-(scripts/resign_package.py). No EDA tool runs. Model calls go through the Claude Code bridge (personal
+(scripts/resign_package.py). No EDA tool runs. Model calls go through the coding-agent bridge (personal
 localhost mode; no API key is read). Every .gds in the run is hashed before and after; any change fails.
 
 Usage: S2S_ARTIFACT_DIR=<...>/var/artifacts python -m scripts.rerun_gdsii_docs <run_id> [--evidence <dir>]

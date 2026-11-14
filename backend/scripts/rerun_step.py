@@ -1,7 +1,7 @@
 """Re-run ONE named step of a finished M0.7 task in the orchestrator's step context (events, checks and artifacts are
 recorded on that task as in a normal run). Used when a new permanent check is added to an existing step, e.g. the
 OCV-derated STA in signoff/chronos (CEO decision 2026-10-07). No other step runs; the signed tape-out package
-(tapeout/) is not touched. Model calls go through the Claude Code bridge.
+(tapeout/) is not touched. Model calls go through the coding-agent bridge.
 
 Usage: S2S_ARTIFACT_DIR=<...>/var/artifacts python -m scripts.rerun_step <run_id> <stage> <step_name>
 """

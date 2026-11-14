@@ -274,6 +274,6 @@ def footer(c, d):
 
 
 doc = SimpleDocTemplate(str(OUT), pagesize=A4, leftMargin=15 * mm, rightMargin=15 * mm, topMargin=15 * mm,
-                        bottomMargin=17 * mm, title="S2S - What To Do Now", author="S2S (Claude Code)")
+                        bottomMargin=17 * mm, title="S2S - What To Do Now", author="S2S")
 doc.build(story, onFirstPage=footer, onLaterPages=footer)
 print(OUT)

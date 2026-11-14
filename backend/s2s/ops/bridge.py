@@ -1,4 +1,4 @@
-"""Operator records for Claude Code bridge requests (Phase 1 trajectory items 3 and 4).
+"""Operator records for coding-agent bridge requests (Phase 1 trajectory items 3 and 4).
 
 In bridge mode a model call is answered outside S2S, so S2S cannot see which model answered or whether the operator
 told the answerer anything. Phase 0 answers were sometimes given with operator notes added to the answering prompt,

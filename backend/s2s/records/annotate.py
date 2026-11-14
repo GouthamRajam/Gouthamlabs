@@ -12,7 +12,7 @@ Labels never edit history: each is an append-only row (target, label, reason, au
                       where the event says the operator changed task/run state, config or files by hand (checkpoint,
                       budget, gate, block, resume point, reverted file).
                     - bridge requests whose answer was given with an operator note OUTSIDE the request (found in the
-                      Claude Code session transcript; the request id, the note and its task are recorded).
+                      coding-agent session transcript; the request id, the note and its task are recorded).
 3. answered_by      - which model answered each Phase 0 bridge request, from the subagent call in the transcript.
 4. analyses         - the what-if derated STA runs (var/artifacts/scratch_ocv/*) and the antenna analysis
                       (scratch_ant/*), linked to their runs with input hashes, method and results.
