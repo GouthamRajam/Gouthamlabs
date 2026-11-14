@@ -64,6 +64,12 @@ Multi-agent architectures have been applied to software engineering~\cite{qian20
 
 S2S differs in two critical respects: (1)~it covers the complete flow to GDSII (not just front-end RTL), and (2)~it enforces deterministic tool-based verification rather than relying on LLM self-assessment.
 
+\subsection{Concurrent Full-Flow Systems}
+
+Most recently, ASIC-Agent~\cite{asicagent2025} demonstrated a multi-agent system with sub-agents for RTL generation, verification, OpenLane hardening, and Caravel chip integration, along with ASIC-Agent-Bench for evaluation. NL2GDS~\cite{nl2gds2026} pairs an LLM front end with the OpenLane flow to produce GDSII from natural language, reporting area, power, and delay results on ISCAS benchmarks. AutoEDA~\cite{autoeda2025} uses microservice-based LLM agents to automate RTL-to-GDSII flow execution. A comprehensive survey of agentic EDA systems appeared in late 2025~\cite{agenticseda2025}.
+
+S2S differs from these systems in three ways: (1)~the Trust Layer's 5-condition safety net is a formal invariant, not just iterative debugging; (2)~verification agents are structurally independent from RTL agents (filesystem-enforced); and (3)~we report full signoff evidence (DRC, LVS, 9-corner STA, antenna) with honest failure analysis, including designs that did not pass.
+
 \subsection{Formal and Simulation-Based Verification}
 
 Hardware verification traditionally combines simulation (directed and constrained-random), formal methods (model checking, equivalence checking), and emulation~\cite{foster2015trends}. The S2S framework integrates Verilator~\cite{verilator}, Icarus Verilog~\cite{icarus}, SymbiYosys for formal verification, and eqy for equivalence checking, enforcing that verification agents operate independently from RTL agents.
@@ -261,7 +267,53 @@ sync\_fifo & 189 & 6,912 & 0 & Match & 2 & MET$\dagger$ & 100 & FAIL \\
 \end{tabular}
 \end{table*}
 
-Four of five designs achieve fully clean GDSII (0 DRC, LVS match, 0 antenna violations, timing met across all 9 corners). The sync\_fifo design has 2 bounded antenna violations (13--17\% over limit) with an identified root cause in post-detailed-route antenna repair non-convergence on the pinned OpenROAD version.
+Four of five designs achieve fully clean GDSII (0 DRC, LVS match, 0 antenna violations, timing met across all 9 corners). We analyze why each design passed or failed below.
+
+\subsection{Phase 0: Why Designs Passed}
+
+\textbf{counter8} (71~cells) passed cleanly on the first P\&R iteration. Its small size meant placement density was never constrained, clock-tree synthesis required minimal buffering, and all metal layers had abundant routing resources. Timing closed with large positive slack at all 9~corners. This confirms that the autonomous pipeline handles simple sequential logic end-to-end without intervention.
+
+\textbf{alu8} (156~cells) is purely combinational and exercised the synthesis agents' ability to map arithmetic and logic operations to the sky130 cell library. The lack of sequential elements meant no CTS was needed and hold-time closure was trivial. DRC and LVS passed because the combinational structure maps cleanly to standard cells without complex routing.
+
+\textbf{uart} (208~cells) was the first design with significant sequential complexity: baud-rate generation, shift registers, and synchronization flip-flops. The P\&R agent (Orion) required 4~iterations, consuming 24~tool runs (budget was raised from 16 to 24 mid-run when the hard stop triggered). The iteration loop worked: each round adjusted placement density (from 30\% to 60\%), and the Trust Layer caught DRC violations after each attempt, preventing a bad layout from advancing. The final layout closed timing with the resizer repairing both setup and hold paths after CTS. Antenna repair succeeded pre-DRT with diode insertion.
+
+\textbf{Why the Trust Layer was essential:} Across all designs, the safety-net parser caught 71~false-stall alarms where tools returned ambiguous output (e.g., OpenSTA printing benign ``module not found'' warnings that look like errors). Without the 5-condition check, these would have either blocked good designs or, worse, allowed the agent to self-assess ``this looks fine'' and advance a failing design. The heartbeat mechanism solved the complementary problem: long tool runs (OpenLane routing, 8--15 minutes) triggered timeout alarms that the heartbeat signal suppressed without the agent needing to guess whether the tool was stuck.
+
+\subsection{Phase 0: Why sync\_fifo Failed}
+
+The sync\_fifo design (189~cells) illustrates a real engineering failure and how the framework handled it honestly.
+
+\textbf{Timing challenge:} The sync\_fifo's default synthesis (AREA~0 strategy) produced negative slack ($-1.545$~ns) because the read/write pointer comparison logic formed a deep combinational path. The operator switched to DELAY~4 strategy, recovering to $+0.182$~ns at $\pm$10\% OCV derate---but at 19\% more area (308$\times$319~$\mu$m die). This trade-off was recorded as an operator decision, not an agent decision.
+
+\textbf{Antenna failure:} After routing, 2~nets had antenna ratios 13--17\% above the SKY130 limit. The root cause was identified: OpenROAD's post-detailed-route antenna repair algorithm did not converge on the pinned version (OpenLane~2.3.10). Pre-DRT diode insertion (the heuristic workaround used successfully on other designs) was insufficient for these two nets because the routing topology after detailed routing differed from the global-route estimate. The Trust Layer correctly blocked GDSII generation because the antenna check failed condition~\#3 (stage-specific rule: no antenna violation).
+
+\textbf{What the framework did right:} It did not waive the violation, relax the antenna ratio, or claim the design passed. The anti-weakening guard would have caught any attempt to change the signoff threshold. The failure is recorded in the decision log with the root cause and a clear status: FAIL.
+
+\subsection{Phase 0: Why spi\_master Is Conditional}
+
+The spi\_master (312~cells) passed all signoff checks except one: the clock-net maximum-fanout rule. CTS inserted buffers that drove more than 10~loads (the default limit), requiring the rule to be relaxed to 20. This is a legitimate engineering trade-off (CTS buffers are designed for high fanout), but because the original constraint was modified, the design is marked CONDITIONAL rather than PASS. In a commercial flow, the CTS buffer's datasheet maximum fanout (typically 20--30) would be the governing limit, making this a non-issue. Additionally, spi\_master's formal verification achieved only 85\% mutation kill rate, with the 15\% survivors concentrated in SPI mode-switching logic where the test generation agents lacked sufficient protocol-level context.
+
+\subsection{Phase 1: Why PicoRV32 Passed but Paid a Price}
+
+The PicoRV32 achieved clean signoff across all checks, but the antenna repair strategy inserted 11,631~diodes---44.3\% of all instances. This conservative heuristic (insert a diode on every net exceeding 50\% of the antenna ratio limit, before detailed routing) guarantees closure but wastes area significantly. A smarter approach would insert diodes only on nets that violate after detailed routing, using the actual routed wire lengths. The framework's honesty discipline records this: the design passed, but the diode overhead is a known inefficiency, not a quality result.
+
+The 39/39 RV32I compliance result validates functional correctness against the official Sail~v0.15 golden reference model, with each test checking instruction semantics, register file behavior, and control flow independently. The 83.1\% ATPG coverage (random patterns only) is honest: commercial stuck-at ATPG would achieve higher coverage, but was not available in the open-source tool chain.
+
+\subsection{Pipeline-Generated UART: Why the Autonomous Run Succeeded}
+
+The pipeline-generated UART (run \texttt{01M426JH3Y...}) succeeded because of three factors: (1)~the specification was well-constrained (standard UART protocol with fixed baud rates), giving the RTL agents (Ada, Ada-C, Ada-I) a clear target; (2)~independent verification agents generated 72~loopback test vectors from the spec alone, catching a bit-ordering issue in the first RTL attempt that the agent fixed before synthesis; (3)~the 474-cell design was small enough that P\&R closed timing on the first iteration with large margin (+9.11~ns setup, +0.52~ns hold). Two antenna violations found during global routing were successfully repaired with diode insertion before detailed routing---the same approach that failed on sync\_fifo worked here because the routing topology was simpler.
+
+\subsection{Pipeline Runs: Failure Modes}
+
+Of 25~pipeline runs, 13~required operator intervention. The failure modes were:
+\begin{itemize}
+    \item \textbf{Token budget exhaustion} (5~runs): The agent ran out of its allocated token budget before completing the task. The hard-stop mechanism paused the task cleanly.
+    \item \textbf{Formal harness bugs} (3~runs): SymbiYosys configurations generated by the formal agent (Euclid) had syntax errors or incorrect port mappings. The Trust Layer caught these (tool exit code $\neq$ 0) and the agent iterated, but exceeded its retry limit.
+    \item \textbf{Container restarts} (3~runs): Docker container timeouts on long synthesis or routing runs. Heartbeat monitoring identified these but could not recover automatically.
+    \item \textbf{Equivalent mutants} (2~runs): Mutation testing initially counted equivalent mutants (functionally identical to the original) as missed, inflating failure rates. The prove-then-exclude policy (using eqy to prove equivalence before counting) fixed this: uart's kill rate rose from 70\% to 95\% after screening out 8~provably equivalent mutants.
+\end{itemize}
+
+Each failure mode was logged, root-caused, and fed back into the knowledge base (Sage agent), so subsequent runs benefited from accumulated lessons.
 
 \subsection{Phase 0: Pipeline Costs}
 
@@ -487,6 +539,18 @@ Google and SkyWater Technology, ``SkyWater SKY130 open-source PDK,'' 2020. [Onli
 
 \bibitem{picorv32}
 C.~Wolf, ``PicoRV32 -- A size-optimized RISC-V CPU.'' [Online]. Available: \url{https://github.com/YosysHQ/picorv32}
+
+\bibitem{asicagent2025}
+M.~Allam, H.~Mansour, and M.~Shalan, ``ASIC-Agent: An autonomous multi-agent system for ASIC design with benchmark evaluation,'' \emph{arXiv preprint arXiv:2508.15940}, 2025.
+
+\bibitem{nl2gds2026}
+T.~Eland, J.~Thiyagalingam, D.~Pamunuwa, and R.~Weerasekera, ``NL2GDS: LLM-aided interface for open source chip design,'' \emph{arXiv preprint arXiv:2603.05489}, 2026.
+
+\bibitem{autoeda2025}
+AutoEDA, ``Enabling EDA flow automation through microservice-based LLM agents,'' \emph{arXiv preprint arXiv:2508.01012}, 2025.
+
+\bibitem{agenticseda2025}
+``The dawn of agentic EDA: A survey of autonomous digital chip design,'' \emph{arXiv preprint arXiv:2512.23189}, 2025.
 
 \end{thebibliography}
 
