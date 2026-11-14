@@ -3319,7 +3319,7 @@ first weekly CEO review pack (real numbers only).
 
 ### G.3 Running Division 6 as sub-agents (optional)
 
-Create one file per Division 6 agent in `.claude/agents/` with the Appendix A4 prompt. Ask the coding agent to delegate: Forge writes the design note, Hook builds adapters, Bolt builds backend, Pixel builds web, Quill writes tests, Aegis reviews security, Compass writes the milestone report. A human reviews and merges.
+Create one file per Division 6 agent as a coding-agent sub-agent with the Appendix A4 prompt. Ask the coding agent to delegate: Forge writes the design note, Hook builds adapters, Bolt builds backend, Pixel builds web, Quill writes tests, Aegis reviews security, Compass writes the milestone report. A human reviews and merges.
 
 ---
 
