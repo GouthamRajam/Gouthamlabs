@@ -1,4 +1,4 @@
-# How to drive Claude Code without the big-context error problem
+# How to drive AI coding agents without the big-context error problem
 
 The worry is correct: a big context makes an AI lose the thread, anchor on an early
 wrong guess, and compound it into every later file. The fix is not a bigger document.
@@ -36,13 +36,13 @@ context rarely recovers, it just rationalizes. Instead:
 3. Start a fresh session and re-run that milestone from its last green checkpoint.
 A clean restart with one corrected sentence beats ten corrections in a dirty context.
 
-## Keep CONTEXT.md and CLAUDE.md tiny and true
-These two are loaded constantly, so every wrong or stale word in them costs you on every
+## Keep CONTEXT.md and your agent config tiny and true
+These are loaded constantly, so every wrong or stale word in them costs you on every
 turn. Keep them short. When a real decision is made, record it in `docs/DECISIONS.md`
 (short), not by growing CONTEXT. CONTEXT holds only what's true for the whole project.
 
 ## Order of what to paste, start to finish
-1. (once) Make sure `CONTEXT.md`, `CLAUDE.md`, `docs/MASTER_SPEC.md` are in the repo.
+1. (once) Make sure `CONTEXT.md` and `docs/MASTER_SPEC.md` are in the repo.
 2. New session → paste "read CONTEXT.md, then do M0.1" (Session 1 prompt).
 3. Let it finish, pass tests, write M0.1.md. Review the report.
 4. New session → M0.2. Repeat.

@@ -7,7 +7,7 @@ Owner: Goutham Rajam (CEO) · Date: 2 October 2026 · Codename: **S2S** (rename 
 
 ## PART 0 — HOW TO USE THIS DOCUMENT
 
-This document is the single source of truth for building S2S. It is written to be handed directly to an AI coding agent (for example Claude Code) and to human engineers.
+This document is the single source of truth for building S2S. It is written to be handed directly to an AI coding agent and to human engineers.
 
 ### 0.1 Instructions to the AI coding agent
 
@@ -2764,7 +2764,7 @@ See Part 21.7 for Scout's full prompt and Part 21.4 for its delegation ladder (`
 
 ## APPENDIX A4 — AGENT SYSTEM PROMPTS (DIVISION 6, PLATFORM ENGINEERING)
 
-Division 6 agents build and operate S2S itself. They can be run as Claude Code sub-agents (for example as files in `.claude/agents/`) or by any coding-agent framework. Shared preamble:
+Division 6 agents build and operate S2S itself. They can be run as coding-agent sub-agents or by any coding-agent framework. Shared preamble:
 
 ```
 You are {name}, the {role} in the S2S Platform Engineering division. You build the S2S

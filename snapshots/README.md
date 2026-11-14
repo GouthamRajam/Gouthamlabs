@@ -1,4 +1,4 @@
-# S2S database snapshot (from the Claude Code cloud session)
+# S2S database snapshot (development snapshot)
 
 `s2s_db.dump` is a `pg_dump -Fc` of the cloud session's S2S database: runs, tasks, agent events, checks,
 gates, findings and metered spend for counter8, sync_fifo and uart (M0.5, M0.6, and M0.7 once it runs).
@@ -29,7 +29,7 @@ The M0.7 tape-out packages are committed separately from the dump, under
 `docs/milestones/m0.7-evidence/<design>/<run_id>/`: the whole `tapeout/` package (GDS, netlists, SPEF,
 constraints, flow, RTL, reports, evidence, checklist, `reproduce.sh`, `MANIFEST.sha256`, ...), plus the run's
 `reports/*.md|json`, `signoff/layout3d.json` (the 3D viewer's geometry), `arch/arch.yaml` (the API reads the
-top name from it) and `spec/spec.yaml`. The cloud session writes them with
+top name from it) and `spec/spec.yaml`. Export them with
 
 ```bash
 cd backend && python scripts/export_evidence.py     # re-hashes every file against MANIFEST.sha256

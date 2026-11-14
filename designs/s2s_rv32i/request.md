@@ -36,8 +36,8 @@ benchmarked against it.
   against the picorv32 reference.
 
 ## Provenance
-- provenance: hand-authored by Claude in interactive Code session
-- Phase 1.5 Pillar A — RTL was written by Claude (Opus 4.6) in Claude Code
-  session, not by the S2S agent pipeline. No copying from picorv32 or any
+- provenance: hand-authored in interactive AI coding session
+- Phase 1.5 Pillar A — RTL was written with AI assistance in an interactive
+  coding session, not by the S2S agent pipeline. No copying from picorv32 or any
   existing core. CORRECTED 2026-10-09: original label "agent-generated" was
   false — the S2S pipeline was never executed for this design.

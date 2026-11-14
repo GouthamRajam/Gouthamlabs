@@ -1,6 +1,6 @@
-# Claude Code bridge: instructions given to each subagent (personal localhost dev mode)
+# Coding agent bridge: instructions given to each subagent (personal localhost dev mode)
 
-Used when the orchestrator runs with `S2S_MODEL_PROVIDER=bridge`. A watcher in the Claude Code
+Used when the orchestrator runs with `S2S_MODEL_PROVIDER=bridge`. A watcher in the coding agent
 session sees each new `var/bridge/requests/<id>.json` and starts one subagent with the text below
 (`{request}` = that file's absolute path, `{backend}` = the backend folder). Before starting the subagent the
 operator records the answering model, and any note for the answerer, with
