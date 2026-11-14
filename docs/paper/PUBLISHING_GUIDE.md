@@ -1,9 +1,10 @@
 # Publishing Guide for Goutham Rajam
 
 ## Your Paper
-**Title:** "S2S: An Autonomous Multi-Agent Framework for Specification-to-GDSII Chip Design with Deterministic Tool-Based Verification"  
+**Title:** "S2S: Autonomous Multi-Agent Specification-to-GDSII Chip Design with Deterministic Verification"  
 **Author:** Goutham Rajam (solo)  
-**File:** `docs/paper/s2s_paper.tex` (IEEE conference format)
+**File:** `docs/paper/s2s_paper.tex` (IEEE conference format)  
+**Page count:** ~6 content pages + ~1 reference page (fits all major venues)
 
 ---
 
@@ -33,17 +34,23 @@ You need a LaTeX installation. Options:
 ### Step 4 (Optional): Submit to a Peer-Reviewed Venue
 After arXiv, consider submitting to a conference or journal:
 
-| Venue | Type | Deadline (typical) | Prestige | Fit |
-|-------|------|-------------------|----------|-----|
-| **DAC** (Design Automation Conference) | Conference | Nov/Dec | Top-tier | Excellent |
-| **ICCAD** (Int'l Conf. on CAD) | Conference | Apr/May | Top-tier | Excellent |
-| **DATE** (Design, Automation & Test in Europe) | Conference | Sep | Top-tier | Good |
-| **ASP-DAC** (Asia/South Pacific DAC) | Conference | Jul | Strong | Good |
-| **MLCAD** (ML for CAD Workshop) | Workshop | ~Aug | Growing | Perfect fit |
-| **IEEE TCAD** | Journal | Rolling | Top journal | Good (longer review) |
-| **IEEE Design & Test** | Magazine | Rolling | Good | Good (shorter format) |
+| Venue | Type | Page Limit | Cost | Deadline (typical) | Fit |
+|-------|------|-----------|------|-------------------|-----|
+| **arXiv** | Preprint | No limit | **FREE** | Anytime | Excellent |
+| **DAC** | Conference | 6 + 1 ref | ~$800 reg | Nov/Dec | Excellent |
+| **ICCAD** | Conference | 6 + 1 ref | ~$700 reg | Apr/May | Excellent |
+| **DATE** | Conference | 6 + 1 ref | ~$600 reg | Sep | Good |
+| **MLCAD** | Workshop | 6 (refs excl.) | ~$400 reg | ~Aug | Perfect fit |
+| **ASP-DAC** | Conference | 6 + 1 ref | ~$500 reg | Jul | Good |
+| **IEEE TCAD** | Journal | ~15 | $0 (OA extra) | Rolling | Good |
 
-**Best first target for a new author:** MLCAD workshop (lower bar, perfect topic match) or DAC/ICCAD (higher prestige, competitive).
+**Page format notes:**
+- The paper is formatted to **6+1 pages** in IEEE two-column (IEEEtran conference class)
+- This fits all conference venues above without modification
+- For arXiv, the paper can be submitted as-is (no page limit)
+- For MLCAD, references are excluded from the 6-page count, so this fits
+
+**Best first target for a new author:** arXiv first (free, instant), then MLCAD workshop (lower bar, perfect topic match) or DAC/ICCAD (higher prestige, competitive). Conference submission requires registration fees ($400-800).
 
 ### Step 5: Put Supplementary Materials on GitHub
 Your GitHub repo (https://github.com/GouthamRajam/Gouthamlabs) already has:
