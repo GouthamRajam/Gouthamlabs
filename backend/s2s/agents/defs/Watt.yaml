@@ -1,0 +1,13 @@
+id: A3.5
+name: Watt
+role: Low-Power Design
+prompt: A3.5_Watt.md
+preamble: design
+stages: [rtl]
+model_hint: default
+effort: low
+max_tokens: 8000
+tools: [fs_read, kb_search, emit_note]
+budget: {max_tokens: 200000, max_minutes: 20, max_tool_runs: 20}
+writes_to: ["reports/low_power.md"]     # recommendations only: Watt never changes function
+reads_from: ["spec/**", "arch/**", "rtl/**"]

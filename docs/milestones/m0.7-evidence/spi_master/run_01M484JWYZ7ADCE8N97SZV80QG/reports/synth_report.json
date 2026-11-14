@@ -1,0 +1,32 @@
+{
+  "cells": 486,
+  "area_um2": 5574.096,
+  "cell_classes": {},
+  "pre_layout_setup_ws_by_corner": {
+    "nom_tt_025C_1v80": 9.468617269364206,
+    "nom_ss_100C_1v60": 7.035543902160927,
+    "nom_ff_n40C_1v95": 9.576872010932588
+  },
+  "pre_layout_hold_ws_by_corner": {
+    "nom_tt_025C_1v80": 0.18164276152886152,
+    "nom_ss_100C_1v60": 0.6181605402523026,
+    "nom_ff_n40C_1v95": 0.013112872270280695
+  },
+  "worst_corner": "nom_ss_100C_1v60",
+  "netlist": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/pnr/runs/it1/06-yosys-synthesis/spi_master.nl.v",
+  "run": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/pnr/runs/it1",
+  "explained_by": "Sienna",
+  "explanation": "# spi_master synthesis and pre-layout STA report\n\nSource: reports/synth_tool.json (Yosys/OpenLane 2 run it1, OpenSTA). All numbers below are copied from that file. I ran no tool myself.\n\n## Synthesis\n- Cells: 486\n- Cell area: 5574.096 um2 (spec REQ-023 limit is 20,000 um2, so this is about 28% of the limit)\n- Cell class breakdown: not provided (`cell_classes` is empty), so I make no statement about flop or combinational counts.\n\n## Pre-layout STA by corner (clock 20 ns, uncertainty 0.25 ns, ideal clock)\n| Corner | Setup WNS (ns) | Hold WNS (ns) |\n|---|---|---|\n| nom_tt_025C_1v80 | 9.4686 | 0.1816 |\n| nom_ss_100C_1v60 | 7.0355 | 0.6182 |\n| nom_ff_n40C_1v95 | 9.5769 | 0.0131 |\n\nThe worst setup corner is nom_ss_100C_1v60 (setup WNS 7.0355 ns). All slacks are positive, so the figures are consistent with REQ-021 setup and hold >= 0 in the three corners reported. The tightest number is hold in the ff corner (0.0131 ns). It is positive but very thin, and this is ideal-clock, pre-layout data, so it will move after clock tree synthesis and placement. Hold fixing in later stages is likely to matter.\n\n## Worst setup paths (nom_ss_100C_1v60)\nThe report text in the input is cut off inside the fourth path, so only three complete paths are available, not ten. I do not describe paths I cannot see.\n\nAll of the first three start at input port clk_div[7] (external input delay 6.0 ns, the DEFAULT 30% of the period) and end at a flop clocked by clk. They share one long front section: a chain of OR gates that appears to be a \"is clk_div below 4 / what is max(clk_div,4)\" style wide-OR reduction on the divider input (inferred from the structure, not stated by the tool).\n\n1. clk_div[7] to flop _813_ (D pin): slack 7.0355 ns (MET). Data arrival 12.425 ns against required 19.461 ns. Path: or4_2 (1.589 ns) then or4_2 (1.807 ns, fanout 8) then or3_2 (1.122 ns) then or2_2 (0.729 ns) then or2_2 (0.685 ns) then a32o_2 (0.481 ns). Delay is dominated by the two or4_2 gates, about 3.4 ns of the 6.4 ns logic delay. Slow OR4 cells with weak drive in the ss corner are the cause, and the second one has fanout 8.\n2. clk_div[7] to flop _812_: slack 7.3528 ns (MET). Same OR chain through the fifth gate, then an a31oi_2 (0.277 ns). Arrival 12.221 ns.\n3. clk_div[7] to flop _811_: slack 7.8652 ns (MET). Same chain through the fourth gate (or2_2), then nand2_2 (0.127 ns) and o211a_2 (0.342 ns). Arrival 11.729 ns.\n4. clk_div[7] to flop _809_: partially shown (or4_2, or4_2, or3_2, o21a_2 ...), no slack value in the data.\n\nWhat dominates: the external input delay (6.0 ns) takes about 30% of the cycle, and the rest is the OR-reduction of clk_div bits feeding the divider/counter logic. Even so, about 7 ns of margin remains out of 20 ns.\n\n## Not covered by the data\n- No hold path details, so I cannot say where the 0.0131 ns ff hold slack path starts and ends.\n- No IO-specific paths (miso 10 ns input delay, sck/mosi/cs_n 5 ns output delay, REQ-022) are visible in the truncated listing, so I cannot state their slack separately. They are not shown to fail.\n- No equivalence (eqy) result was provided to me. Equivalence is not proven by this report and remains a blocking item for the synthesis stage.\n- I did not modify constraints/constraints.sdc.\n",
+  "assumptions": [
+    "All numbers are quoted from reports/synth_tool.json as given; none were recomputed or changed.",
+    "The worst_paths_report text is truncated, so only three complete paths could be described; the fourth is partial.",
+    "The function of the OR chain (clk_div minimum-of-4 / zero-detect style logic) is inferred from structure, not stated by the tool.",
+    "Pre-layout STA uses an ideal clock, so hold and setup figures will change after CTS and placement."
+  ],
+  "open_issues": [
+    "Hold slack in nom_ff_n40C_1v95 is only 0.0131 ns; positive but thin, expect hold buffering after CTS.",
+    "Equivalence check (eqy) RTL vs netlist was not part of the inputs; not proven, so still blocking for this stage.",
+    "Only 3 of the worst 10 paths are available in complete form; hold path details and IO path slacks (REQ-022) are not in the data.",
+    "cell_classes is empty in the tool output, so no cell-type breakdown could be reported."
+  ]
+}

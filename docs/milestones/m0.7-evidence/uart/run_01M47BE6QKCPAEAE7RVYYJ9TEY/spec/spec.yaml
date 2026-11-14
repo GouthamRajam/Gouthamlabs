@@ -1,0 +1,134 @@
+design: uart
+version: 1
+summary: "UART transmitter and receiver with 8N1 and configurable parity (none/even/odd), 16-bit baud divisor, 16x oversampling receive, framing and parity error flags."
+pdk: sky130A
+std_cell_library: sky130_fd_sc_hd
+target_clock_mhz: 50
+target_clock_note: "50 MHz from request. PDK and library choice: DEFAULT - needs G1 review"
+clocks:
+  - {name: clk, freq_mhz: 50}
+resets:
+  - {name: rst_n, active: low, type: synchronous}
+interfaces:
+  - {name: clk, dir: in, width: 1, description: "Single system clock, 50 MHz"}
+  - {name: rst_n, dir: in, width: 1, clock_domain: clk, description: "Synchronous active-low reset"}
+  - {name: tx, dir: out, width: 1, protocol: "UART 8N1/8E1/8O1", clock_domain: clk, reset_value: 1, description: "Serial output, idles high"}
+  - {name: rx, dir: in, width: 1, protocol: "UART", async: true, description: "Serial input, asynchronous; 2-flop synchronizer into clk"}
+  - {name: tx_data, dir: in, width: 8, clock_domain: clk, description: "Byte to transmit, sampled on tx_valid & tx_ready"}
+  - {name: tx_valid, dir: in, width: 1, clock_domain: clk}
+  - {name: tx_ready, dir: out, width: 1, clock_domain: clk, reset_value: 1, description: "1 when transmitter can accept a byte"}
+  - {name: rx_data, dir: out, width: 8, clock_domain: clk, reset_value: 0, description: "Last received byte, valid while rx_valid=1"}
+  - {name: rx_valid, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "One-cycle pulse when a frame is received"}
+  - {name: baud_div, dir: in, width: 16, clock_domain: clk, description: "clk cycles per 16x tick; baud = f_clk/(16*baud_div); 0 treated as 1"}
+  - {name: parity_mode, dir: in, width: 2, clock_domain: clk, values: {0: none, 1: even, 2: odd, 3: reserved (treated as none)}}
+  - {name: frame_err, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "Pulse with rx_valid when stop bit sampled 0"}
+  - {name: parity_err, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "Pulse with rx_valid when received parity mismatches"}
+  - {name: overrun_err, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: "RECOMMENDED - default on. Pulse when a frame completes while the previous rx_valid pulse was not the immediately preceding cycle... see REQ-022"}
+requirements:
+  - id: REQ-001
+    type: functional
+    text: "Transmit one 8-bit word per tx_valid & tx_ready handshake, LSB first, 1 start bit (0), optional parity bit, 1 stop bit (1)."
+    acceptance: "Serialized waveform matches reference model for 10,000 random words in each of parity_mode 0, 1 and 2."
+  - id: REQ-002
+    type: functional
+    text: "Receiver samples rx at 16x oversampling and takes the majority of 3 center samples (ticks 7, 8, 9 of each bit)."
+    acceptance: "Correct reception of 10,000 random words per parity mode with sender baud offset of +2% and -2%."
+  - id: REQ-003
+    type: reset
+    text: "After rst_n is low for at least 1 clk edge, tx=1, tx_ready=1, rx_data=0, rx_valid=0, frame_err=0, parity_err=0, overrun_err=0."
+    acceptance: "Checked by directed test on every output in the cycle after the reset edge and by a formal property."
+  - id: REQ-004
+    type: reset
+    text: "Reset is synchronous, active low, and applies to every state element of transmitter and receiver, including baud counters, shift registers and synchronizer flops (synchronizer reset to 1)."
+    acceptance: "Reset asserted mid-frame returns all outputs to REQ-003 values within 1 clk cycle, and no frame is emitted after release until a new tx_valid; verified by directed test and lint check that every register has a reset branch."
+  - id: REQ-005
+    type: clock
+    text: "Whole design uses single clock clk at 50 MHz; the only asynchronous crossing is rx, via a 2-flop synchronizer."
+    acceptance: "CDC lint reports exactly 1 crossing (rx) with 2 synchronizer stages; static timing meets 20 ns period with setup slack >= 0 at the typical corner."
+  - id: REQ-006
+    type: functional
+    text: "Baud tick generator produces one 16x tick every baud_div clk cycles; bit period is 16*baud_div clk cycles."
+    acceptance: "For baud_div in {1, 2, 27, 65535} the measured tx bit period equals 16*baud_div clk cycles exactly over 100 bits."
+  - id: REQ-007
+    type: performance
+    text: "With baud_div=27 at 50 MHz the nominal baud is 115740 baud, an error of <= 0.5% versus 115200."
+    acceptance: "Computed error |50e6/(16*27)-115200|/115200 <= 0.5%, and measured bit period in simulation is 432 clk cycles."
+  - id: REQ-008
+    type: functional
+    text: "If baud_div is 0, it is treated as 1 (RECOMMENDED - default on)."
+    acceptance: "With baud_div=0 the bit period measured in simulation is 16 clk cycles, identical to baud_div=1."
+  - id: REQ-009
+    type: functional
+    text: "Parity bit follows data bit 7: parity_mode 1 makes the count of 1s in data plus parity even; parity_mode 2 makes it odd; parity_mode 0 sends no parity bit (10-bit frame; with parity 11-bit frame)."
+    acceptance: "For all 256 data values in each mode the transmitted frame length is 10 (mode 0) or 11 (modes 1, 2) bits and parity matches the reference model."
+  - id: REQ-010
+    type: functional
+    text: "parity_mode value 3 is reserved and behaves as mode 0 (none) (RECOMMENDED - default on)."
+    acceptance: "With parity_mode=3, 1,000 random frames are transmitted and received as 10-bit frames with parity_err=0."
+  - id: REQ-011
+    type: interface
+    text: "tx_ready is 0 from the clk edge after a accepted handshake until the stop bit has been fully transmitted, and 1 otherwise."
+    acceptance: "In simulation of 1,000 transfers, tx_ready is low for exactly one frame time (10 or 11 bit periods) after each accept."
+  - id: REQ-012
+    type: functional
+    text: "If tx_valid is 1 while tx_ready is 0, the data is ignored and the current frame is unaffected."
+    acceptance: "Driving tx_valid with a different tx_data throughout a frame leaves the transmitted frame identical to the reference for 1,000 trials."
+  - id: REQ-013
+    type: functional
+    text: "Back-to-back transmission: if tx_valid is held high with tx_ready, the next start bit begins within 1 bit period of the previous stop bit end, with the stop bit lasting exactly 1 bit period."
+    acceptance: "Over 1,000 consecutive frames the stop-to-start gap is <= 1 bit period and each stop bit equals 16*baud_div clk cycles."
+  - id: REQ-014
+    type: functional
+    text: "Receiver detects a start bit on a synchronized falling edge, waits 8 ticks, and re-checks rx is still 0; if it is 1, the start is rejected as a glitch and the receiver returns to idle without asserting rx_valid or any error."
+    acceptance: "A low glitch shorter than 7 ticks produces 0 rx_valid pulses in 1,000 trials; a valid start bit always starts a frame."
+  - id: REQ-015
+    type: functional
+    text: "Receiver samples each following bit at 16 ticks after the previous sample point and shifts data LSB first."
+    acceptance: "rx_data equals transmitted byte for 10,000 random words in each parity mode."
+  - id: REQ-016
+    type: interface
+    text: "On frame completion rx_valid is asserted for exactly 1 clk cycle, with rx_data, frame_err and parity_err valid in that cycle."
+    acceptance: "Every received frame produces exactly one 1-cycle rx_valid pulse in 10,000 frames; rx_data holds its value until next frame completes."
+  - id: REQ-017
+    type: functional
+    text: "frame_err is 1 in the rx_valid cycle if the stop bit majority sample is 0, otherwise 0; rx_valid is still asserted with the received data."
+    acceptance: "In 1,000 frames with injected stop=0 frame_err=1 every time; in 10,000 clean frames frame_err=0 every time."
+  - id: REQ-018
+    type: functional
+    text: "parity_err is 1 in the rx_valid cycle if parity_mode is 1 or 2 and the received parity bit differs from the expected value; always 0 when parity_mode is 0 or 3."
+    acceptance: "In 1,000 frames per mode with injected parity flip parity_err=1 every time; with no injection parity_err=0 every time; mode 0 gives parity_err=0 in 1,000 frames."
+  - id: REQ-019
+    type: functional
+    text: "After a frame with framing error, the receiver returns to idle and waits for rx to be high before detecting a new start bit, so that a held-low line (break) yields one frame_err event and not a continuous stream."
+    acceptance: "Holding rx low for 100 bit periods yields exactly 1 rx_valid pulse with frame_err=1 and rx_data=0."
+  - id: REQ-020
+    type: performance
+    text: "Receiver tolerates combined baud mismatch of +-2% between sender and receiver."
+    acceptance: "Zero data, framing and parity errors over 10,000 frames at +2% and -2% sender baud offset in all parity modes, for baud_div in {1, 27, 255}."
+  - id: REQ-021
+    type: functional
+    text: "Receiver is able to receive a frame immediately after the previous stop bit sample point, so back-to-back frames with stop bit of 1 bit period are received without loss."
+    acceptance: "1,000 back-to-back frames from the transmitter in loopback are received with 0 errors and 0 losses."
+  - id: REQ-022
+    type: functional
+    text: "overrun_err is not a held status: it is a 1-cycle pulse concurrent with rx_valid whenever the previous rx_data was overwritten, defined as a frame completing while the previous rx_valid pulse has not been followed by a new rx_data read; since no read handshake exists, overrun_err is tied to 0 (RECOMMENDED - default on, constant 0 in this version)."
+    acceptance: "overrun_err is 0 in every cycle across 10,000 frames of simulation and after reset."
+    note: "No read handshake is specified, so overrun cannot occur; the output is kept for future extension. Reviewer may remove it at G1."
+  - id: REQ-023
+    type: functional
+    text: "If baud_div or parity_mode changes during a frame, the frame content is undefined but the design must not hang and must return to idle (tx=1, tx_ready=1) within 1 frame time after the frame ends."
+    acceptance: "Changing baud_div and parity_mode at random times in 1,000 trials results in tx_ready=1 and tx=1 within 11*16*65535 clk cycles after the last change with no further tx_valid, and subsequent frames are correct."
+  - id: REQ-024
+    type: test
+    text: "Verification includes loopback of tx into rx, all parity modes, framing and parity error injection, start-bit glitch, +-2% baud offset, and baud_div edge values 0, 1 and 65535."
+    acceptance: "All listed tests pass with 0 failures in simulation, and statement and branch coverage of RTL is >= 95%."
+out_of_scope:
+  - "flow control (RTS/CTS, XON/XOFF)"
+  - "FIFOs larger than 1 entry"
+  - "register bus (APB/AXI/Wishbone)"
+  - "RS-232 / RS-485 electrical drivers"
+  - "stop-bit counts other than 1, data widths other than 8, mark/space parity"
+  - "interrupts, DMA, auto-baud detection"
+open_questions:
+  - "Is a register bus (APB/AXI/Wishbone) required instead of plain ports?"
+  - "Should a frame with framing error still assert rx_valid (spec assumes yes, with frame_err=1)?"

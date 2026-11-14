@@ -1,0 +1,30 @@
+# M0.7 signoff and DFM policy (Phase 0). These are S2S screening policies, NOT foundry rules:
+# every PDK limit (layer numbers, min width/space, density limits, antenna ratios) is read by the
+# tools from the PDK's own decks inside s2s-eda (PDK rules stay tool-resident, PHASE_GATES rule 2).
+cts:
+  max_skew_pct_of_period: 10      # Tick's skew target: measured skew (excluding SDC uncertainty) <= 10% of the clock period
+  # CEO decision 2026-10-06 (D1 part 2, spi_master): fanout limit for CLOCK-TREE nets only (a net whose every load is a
+  # flip-flop clock pin or a CTS-inserted clock buffer/load). OpenLane 2.3.10's TritonCTS stops the H-tree at <= 15
+  # sinks per leaf and ignores set_max_fanout; 20 is the top of the published 8-20 per-buffer band. Data nets keep the
+  # SDC set_max_fanout (10); clock slew, capacitance and skew stay enforced.
+  clock_max_fanout: 20
+ocv:
+  # CEO decision 2026-10-07 (after an external review): signoff STA also runs every corner with a flat OCV derate,
+  # early (1 - pct/100) and late (1 + pct/100) on cell and net delays, data and clock paths. SKY130 has no foundry
+  # OCV/AOCV/POCV tables, so these are engineering estimates, not foundry numbers. The +/-gate_pct run is a hard check:
+  # timing must be met at every corner with it. The SDC clock uncertainty (setup and hold) stays applied on top.
+  derate_pcts: [5, 10]
+  gate_pct: 10
+power:
+  default_toggle_rate: 0.2        # A.13: 20% switching activity unless simulation activity is used
+ir:
+  max_drop_pct_of_supply: 5       # A.13: Phase 0 IR-drop limit, 5% of supply
+dfm:                              # A.15 Fabian (KLayout scripts)
+  near_limit_pct: 5               # edges within 5% of the PDK minimum width/spacing count as near-limit
+  density_window_um: 20           # local density screening windows (block level; the PDK deck checks the whole area)
+  density_step_um: 10
+  density_near_max_pct: 90        # a window at >= 90% of the PDK max density is flagged medium; over the max is high
+  long_parallel_run_um: 10        # parallel run at near-minimum spacing at least this long = bridging risk
+  isolated_clearance_x_min_space: 3   # a near-minimum-width line with nothing within 3x min spacing = isolated
+  antenna_margin_flag_pct: 80     # a net at >= 80% of its antenna limit is flagged (>= 100% is a violation)
+  hotspots_per_item: 20           # locations listed per item in the scorecard

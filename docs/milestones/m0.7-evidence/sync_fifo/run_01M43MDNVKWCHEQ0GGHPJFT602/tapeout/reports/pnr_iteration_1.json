@@ -1,0 +1,179 @@
+{
+  "iteration": 1,
+  "tag": "it1",
+  "params": {
+    "FP_CORE_UTIL": 45,
+    "PL_TARGET_DENSITY_PCT": 55.0,
+    "MAX_FANOUT_CONSTRAINT": 10,
+    "SYNTH_STRATEGY": "DELAY 4"
+  },
+  "problems": [
+    "placement failed: ['[GPL-0302] Use a higher -density or re-floorplan with a larger core area.', 'The following error was encountered while running the flow: OpenROAD.GlobalPlacement failed with the following errors: [GPL-0302] Use a higher -density or re-floorplan with a larger core area.', 'OpenLane will now quit.']"
+  ],
+  "facts": {},
+  "changes": [],
+  "cts": {
+    "per_corner": {
+      "max_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.270603,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.020603,
+          "source_latency_ns": 0.427782,
+          "target_latency_ns": -0.407179
+        },
+        "hold": {
+          "reported_skew_ns": -0.266725,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.016725,
+          "source_latency_ns": 0.411792,
+          "target_latency_ns": -0.428518
+        }
+      },
+      "max_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.289446,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.039446,
+          "source_latency_ns": 1.033727,
+          "target_latency_ns": -0.994281
+        },
+        "hold": {
+          "reported_skew_ns": -0.281404,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.031404,
+          "source_latency_ns": 1.00301,
+          "target_latency_ns": -1.034413
+        }
+      },
+      "max_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.277218,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.027218,
+          "source_latency_ns": 0.608945,
+          "target_latency_ns": -0.581727
+        },
+        "hold": {
+          "reported_skew_ns": -0.272224,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.022224,
+          "source_latency_ns": 0.587444,
+          "target_latency_ns": -0.609668
+        }
+      },
+      "min_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.266499,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.016499,
+          "source_latency_ns": 0.400822,
+          "target_latency_ns": -0.384322
+        },
+        "hold": {
+          "reported_skew_ns": -0.264181,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.014181,
+          "source_latency_ns": 0.386889,
+          "target_latency_ns": -0.40107
+        }
+      },
+      "min_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.282835,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.032835,
+          "source_latency_ns": 0.98142,
+          "target_latency_ns": -0.948585
+        },
+        "hold": {
+          "reported_skew_ns": -0.275661,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.025661,
+          "source_latency_ns": 0.955989,
+          "target_latency_ns": -0.98165
+        }
+      },
+      "min_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.272019,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.022019,
+          "source_latency_ns": 0.574323,
+          "target_latency_ns": -0.552304
+        },
+        "hold": {
+          "reported_skew_ns": -0.268581,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.018581,
+          "source_latency_ns": 0.555985,
+          "target_latency_ns": -0.574566
+        }
+      },
+      "nom_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.268538,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.018538,
+          "source_latency_ns": 0.413209,
+          "target_latency_ns": -0.394671
+        },
+        "hold": {
+          "reported_skew_ns": -0.265662,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.015662,
+          "source_latency_ns": 0.39792,
+          "target_latency_ns": -0.413582
+        }
+      },
+      "nom_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.28654,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.03654,
+          "source_latency_ns": 1.005728,
+          "target_latency_ns": -0.969188
+        },
+        "hold": {
+          "reported_skew_ns": -0.278791,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.028791,
+          "source_latency_ns": 0.977283,
+          "target_latency_ns": -1.006074
+        }
+      },
+      "nom_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.274479,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.024479,
+          "source_latency_ns": 0.590485,
+          "target_latency_ns": -0.566005
+        },
+        "hold": {
+          "reported_skew_ns": -0.270656,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.020656,
+          "source_latency_ns": 0.570195,
+          "target_latency_ns": -0.590851
+        }
+      }
+    },
+    "corners_with_skew": 9,
+    "worst_tree_skew_ns": 0.039446,
+    "target_ns": 1.0,
+    "clock_buffers": 59,
+    "hold_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 0.350684,
+      "nom_ss_100C_1v60": 0.8208647882654752,
+      "nom_ff_n40C_1v95": 0.07271911056922357
+    },
+    "setup_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 4.06286,
+      "nom_ss_100C_1v60": 0.3057905126776926,
+      "nom_ff_n40C_1v95": 4.486132925452186
+    },
+    "hold_buffers": 513,
+    "timing_repair_buffers": 701
+  }
+}

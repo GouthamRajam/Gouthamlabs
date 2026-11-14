@@ -1,0 +1,13 @@
+id: A07
+name: Sienna
+role: Synthesis Agent
+prompt: A07_Sienna.md
+preamble: design
+stages: [synthesis]
+model_hint: default
+effort: medium
+max_tokens: 16000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 300000, max_minutes: 30, max_tool_runs: 40}
+writes_to: ["constraints/constraints.sdc", "reports/synth_report.json"]
+reads_from: ["spec/**", "arch/**", "constraints/**", "reports/sentinel_constraints*.json", "reports/synth_tool.json", "reports/sta_pre.json", "reports/sdc_before_*.sdc"]

@@ -1,0 +1,55 @@
+{
+  "task_id": "task_01M484JWZTYQSE1VKMK5V5ZJS0",
+  "status": "success",
+  "summary": "486 cells, 5574.096 um2. Pre-layout setup WNS: tt 9.4686 ns, ss 7.0355 ns (worst), ff 9.5769 ns; hold WNS: tt 0.1816, ss 0.6182, ff 0.0131 ns. Three complete worst paths all run from clk_div[7] through an OR-gate chain (two or4_2 dominate) to divider flops with 7.0 to 7.9 ns of slack. Report is limited to the data given; eqy not covered.",
+  "outputs": [
+    {
+      "path": "constraints/constraints.sdc",
+      "sha256": "415ca762eeaf7549c502a3c1caea9f95152d605f205da9df3d2ba38a7a9ec5b5"
+    },
+    {
+      "path": "reports/sentinel_constraints.json",
+      "sha256": "19c6ea7b91ae444065e78a6633656268e5baee382925ce04ba06576aaf321b17"
+    },
+    {
+      "path": "reports/sta_pre.json",
+      "sha256": "97a489f34cad36b97ed46e91ee7e941d58bed3c7b3502b75ed19bbb871f8a7e3"
+    },
+    {
+      "path": "reports/synth_report.json",
+      "sha256": "594381c8b20adee8ddec44b50a466eb3bbc80be489f03009a515a7110e79693d"
+    },
+    {
+      "path": "reports/synth_tool.json",
+      "sha256": "ecc34f7b1b0c0d89df1351c4a458ea6cfaac3d5c0e8a615913a09a812f12a78d"
+    }
+  ],
+  "checks_run": [
+    "chk_01M484JXC6SV8V5PMRZMDVWXVF",
+    "chk_01M484MWMHM5QFW0Q2WM2KAMJG",
+    "chk_01M484PC26N8VB6CAWWQPK99JW",
+    "chk_01M484PC31780S6Z958G97DW38",
+    "chk_01M484PGWX74A9TVTWTAX00DMS",
+    "chk_01M484PGX5Q4EQ4QAJ2H1HZC63",
+    "chk_01M486DVBFTJ48P1E39R0G76YQ",
+    "chk_01M488NZS69FFJ6YQH1RA1QBAF",
+    "chk_01M488QDA52DW7K7GQVHYPMMB7"
+  ],
+  "assumptions": [
+    "All numbers are quoted from reports/synth_tool.json as given; none were recomputed or changed.",
+    "Pre-layout STA uses an ideal clock, so hold and setup figures will change after CTS and placement.",
+    "The function of the OR chain (clk_div minimum-of-4 / zero-detect style logic) is inferred from structure, not stated by the tool.",
+    "The worst_paths_report text is truncated, so only three complete paths could be described; the fourth is partial."
+  ],
+  "open_issues": [
+    "Equivalence check (eqy) RTL vs netlist was not part of the inputs; not proven, so still blocking for this stage.",
+    "Hold slack in nom_ff_n40C_1v95 is only 0.0131 ns; positive but thin, expect hold buffering after CTS.",
+    "Only 3 of the worst 10 paths are available in complete form; hold path details and IO path slacks (REQ-022) are not in the data.",
+    "cell_classes is empty in the tool output, so no cell-type breakdown could be reported."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Numbers are direct quotes from the tool data, but the path listing is truncated and no hold, IO or equivalence data was provided.",
+    "confidence": "medium"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "power_w_by_corner": {
+    "tt_025C_1v80": {
+      "internal_w": 0.0004153471,
+      "switching_w": 0.000165638,
+      "leakage_w": 4.652623e-09,
+      "total_w": 0.0005809897,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/power_spi_master_tt_025C_1v80.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/.s2s/power_spi_master_tt_025C_1v80.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ss_100C_1v60": {
+      "internal_w": 0.0003301332,
+      "switching_w": 0.0001280001,
+      "leakage_w": 4.433962e-06,
+      "total_w": 0.0004625672,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/power_spi_master_ss_100C_1v60.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/.s2s/power_spi_master_ss_100C_1v60.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ff_n40C_1v95": {
+      "internal_w": 0.0004754616,
+      "switching_w": 0.0001973493,
+      "leakage_w": 8.609129e-09,
+      "total_w": 0.0006728195,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/power_spi_master_ff_n40C_1v95.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/.s2s/power_spi_master_ff_n40C_1v95.tcl",
+      "tool_version": "2.6.0"
+    }
+  },
+  "input_activity": 0.2,
+  "openlane_power_total_w": 0.0005702339112758636,
+  "ir": {
+    "worst_drop_v": 0.000411,
+    "avg_drop_v": 0.00011,
+    "limit_v": 0.09,
+    "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)"
+  },
+  "explained_by": "Volta",
+  "explanation": "# Power and IR report - spi_master (stage: signoff)\n\nAll numbers below are copied from reports/power_tool.json (tool: sta 2.6.0 for power per corner; IR block as given). Nothing was re-run by me.\n\n## Power (clk = 50 MHz, input activity 0.2 = 20% toggle rate)\n\n| Corner | Internal (W) | Switching (W) | Leakage (W) | Total (W) |\n|---|---|---|---|---|\n| tt_025C_1v80 | 0.0004153471 | 0.000165638 | 4.652623e-09 | 0.0005809897 |\n| ss_100C_1v60 | 0.0003301332 | 0.0001280001 | 4.433962e-06 | 0.0004625672 |\n| ff_n40C_1v95 | 0.0004754616 | 0.0001973493 | 8.609129e-09 | 0.0006728195 |\n\n- Highest total power is in the ff_n40C_1v95 corner: 0.0006728195 W. Typical (tt_025C_1v80): 0.0005809897 W.\n- The OpenLane flow reports a separate total of 0.0005702339112758636 W. The input data does not say which corner or activity setting that figure uses, so I do not compare it with the per-corner numbers.\n- Leakage is much smaller than dynamic power in every corner; it is largest at ss_100C_1v60 (4.433962e-06 W).\n\n## IR drop\n\n- Worst drop: 0.000411 V. Average drop: 0.00011 V.\n- Limit: 0.09 V (5% of 1.8 V, A.13 Phase 0 default).\n- The worst drop is below the limit, so no PDN change is proposed to Grid. The report does not state the check status of the tool itself; the runtime checks decide pass or fail.\n\n## What this analysis does not cover\n\n- Activity is a flat default 0.2 on inputs, not simulation (VCD/SAIF) activity.\n- The IR figures come as a single summary in the input; the voltage source (pad/strap) locations, the analysis corner and the tool used for IR are not given in the data, so they are not stated here.\n- Electromigration (EM) is not analyzed by the open flow.\n- Dynamic/transient IR (di/dt, decap effects) and package/board inductance are not analyzed.\n- The spec lists power targets as out of scope, so there is no power budget to compare against; the numbers are reported only.\n- PDK/library (sky130A, sky130_fd_sc_hd) is a DEFAULT pending G1 review.\n",
+  "assumptions": [
+    "Input switching activity is 0.2 (20% toggle rate, the default), not simulation activity.",
+    "Clock is 50 MHz per spec/spec.yaml.",
+    "Corners evaluated are exactly those in the tool data: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95.",
+    "IR limit is 5% of the 1.8 V supply = 0.09 V (A.13 Phase 0 default), as given in the tool data.",
+    "Voltage source locations and the IR analysis corner/tool are not stated in the input data, so no claim is made about them.",
+    "Electromigration, dynamic/transient IR and package inductance are not analyzed by the open flow.",
+    "PDK sky130A and library sky130_fd_sc_hd are DEFAULT choices pending G1 review.",
+    "All numbers are quoted from reports/power_tool.json; no tool was run by me."
+  ],
+  "open_issues": [
+    "IR source locations, corner and tool are not documented in the input data; a human should confirm them before signoff.",
+    "OpenLane total power (0.0005702339112758636 W) differs from the sta tt total (0.0005809897 W); the cause (tool, activity or corner) is not stated in the data.",
+    "Simulation-based activity is not available; 20% default activity may over- or under-estimate real power.",
+    "Spec marks power targets out of scope, so there is no power limit to check against.",
+    "EM is not checked by the open flow."
+  ]
+}

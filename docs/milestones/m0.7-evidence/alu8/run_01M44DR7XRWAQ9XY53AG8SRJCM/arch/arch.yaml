@@ -1,0 +1,82 @@
+design: alu8
+top: alu8_top
+modules:
+  - name: alu8_top
+    kind: interface
+    ports_from_spec: true
+    instances: [alu8_core, alu8_regs]
+    implements: [REQ-009, REQ-014, REQ-015, REQ-017]
+    description: "Structural top. Exposes exactly the spec I/O (clk, rst_n, a[7:0], b[7:0], op[2:0], result[7:0], flag_z, flag_c, flag_v, flag_n). Single clock domain clk, no logic of its own."
+  - name: alu8_core
+    kind: datapath
+    params: {W: 8}
+    ports:
+      - {name: a, dir: in, width: W}
+      - {name: b, dir: in, width: W}
+      - {name: op, dir: in, width: 3}
+      - {name: res_next, dir: out, width: W}
+      - {name: z_next, dir: out, width: 1}
+      - {name: c_next, dir: out, width: 1}
+      - {name: v_next, dir: out, width: 1}
+      - {name: n_next, dir: out, width: 1}
+      - {name: res_we, dir: out, width: 1}
+    implements: [REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008, REQ-012, REQ-013]
+    max_logic_depth: 20
+    description: "Purely combinational. One shared 9-bit adder computes a + (b ^ {8{sub}}) + sub, with sub = (op==SUB || op==CMP). Logic unit for AND/OR/XOR; 3-stage logarithmic barrel shifter (left and right) using b[2:0] only (b[7:3] ignored), with carry = last bit shifted out (0 for n=0). An 8:1 mux by op selects the 8-bit operation result; z_next = (opres==0), n_next = opres[7], c_next/v_next per op (V = carry into bit 7 XOR carry out of bit 7 for ADD/SUB/CMP, else 0; C = 0 for AND/OR/XOR). For CMP opres is the SUB difference. res_we = (op != CMP)."
+  - name: alu8_regs
+    kind: control
+    params: {W: 8}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: res_next, dir: in, width: W}
+      - {name: z_next, dir: in, width: 1}
+      - {name: c_next, dir: in, width: 1}
+      - {name: v_next, dir: in, width: 1}
+      - {name: n_next, dir: in, width: 1}
+      - {name: res_we, dir: in, width: 1}
+      - {name: result, dir: out, width: W}
+      - {name: flag_z, dir: out, width: 1}
+      - {name: flag_c, dir: out, width: 1}
+      - {name: flag_v, dir: out, width: 1}
+      - {name: flag_n, dir: out, width: 1}
+    implements: [REQ-006, REQ-009, REQ-010, REQ-011, REQ-013, REQ-015, REQ-016]
+    max_logic_depth: 2
+    description: "Output register bank: exactly 12 flops (8 result + 4 flags), all with synchronous active-low reset to 0 (reset has priority). Flags load every cycle; result loads only when res_we=1 (holds on CMP). No FSM."
+connections:
+  - {from: alu8_top.a, to: [alu8_core.a]}
+  - {from: alu8_top.b, to: [alu8_core.b]}
+  - {from: alu8_top.op, to: [alu8_core.op]}
+  - {from: alu8_top.clk, to: [alu8_regs.clk]}
+  - {from: alu8_top.rst_n, to: [alu8_regs.rst_n]}
+  - {from: alu8_core.res_next, to: [alu8_regs.res_next]}
+  - {from: alu8_core.z_next, to: [alu8_regs.z_next]}
+  - {from: alu8_core.c_next, to: [alu8_regs.c_next]}
+  - {from: alu8_core.v_next, to: [alu8_regs.v_next]}
+  - {from: alu8_core.n_next, to: [alu8_regs.n_next]}
+  - {from: alu8_core.res_we, to: [alu8_regs.res_we]}
+  - {from: alu8_regs.result, to: [alu8_top.result]}
+  - {from: alu8_regs.flag_z, to: [alu8_top.flag_z]}
+  - {from: alu8_regs.flag_c, to: [alu8_top.flag_c]}
+  - {from: alu8_regs.flag_v, to: [alu8_top.flag_v]}
+  - {from: alu8_regs.flag_n, to: [alu8_top.flag_n]}
+cdc: []
+state_machines: []
+ppa_estimate:
+  cells: 260
+  critical_path_levels: 20
+  slack_margin_pct: 55
+rationale:
+  - "Full 8-bit b is passed to alu8_core and the shifter uses b[2:0] internally, so all connections are whole ports with matching widths (fixes attempt-1 bit-slice endpoint)."
+  - "One shared ripple 9-bit adder serves ADD, SUB and CMP (SUB/CMP invert b and set carry-in), saving area; ripple carry (~8-16 levels) easily fits a 13.333 ns period in sky130_fd_sc_hd."
+  - "Split into combinational datapath and a 12-flop register bank so REQ-016 flop count and REQ-010/011 reset coverage are checked in one small module, and the datapath can be verified exhaustively in isolation."
+  - "CMP hold is implemented as a load enable on the result register (res_we = op != CMP) rather than feeding result back into the datapath, keeping the datapath free of state."
+  - "Single clock domain and no asynchronous inputs (REQ-014), so no CDC synchronizers and no FSM are needed."
+  - "Critical path estimate: op decode/b-invert (2) + 8-bit ripple carry (~12) + result mux (3) + zero detect (3) = ~20 levels; at ~0.25-0.3 ns per level that is ~6 ns vs 13.333 ns period, ~55% margin (estimate only; real STA decides)."
+verification_hooks:
+  - "alu8_core is purely combinational and can be swept exhaustively (8 x 65,536 vectors) against the reference model (REQ-001..008, REQ-012, REQ-017)."
+  - "Assertion: after any rising clk with rst_n=0, result==0 and all flags==0 (REQ-010)."
+  - "Assertion: if op==CMP at an edge with rst_n=1, result at next cycle equals result at previous cycle (REQ-006)."
+  - "Assertion: outputs only change on rising clk edges, latency 1 (REQ-009)."
+  - "Assertion: flag_v==0 and flag_c==0 when op in {AND, OR, XOR}; flag_v==0 for SHL/SHR (REQ-003, REQ-004, REQ-005, REQ-008)."
+  - "Synthesis check: exactly 12 flops, all with reset (REQ-011, REQ-016)."

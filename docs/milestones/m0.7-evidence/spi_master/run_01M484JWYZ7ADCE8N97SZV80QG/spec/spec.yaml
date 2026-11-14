@@ -1,0 +1,149 @@
+design: spi_master
+version: 2
+summary: 'SPI master, modes 0-3, 8/16-bit MSB-first transfers, programmable SCK divider, automatic or manual chip select, transfer-complete interrupt.'
+pdk: sky130A
+std_cell_library: sky130_fd_sc_hd
+target_clock_mhz: 50
+target_clock_note: 'The 50 MHz system clock is given in the request. The PDK and library choice (sky130A, sky130_fd_sc_hd) is DEFAULT - needs G1 review.'
+clocks:
+  - {name: clk, freq_mhz: 50}
+resets:
+  - {name: rst_n, active: low, type: synchronous}
+interfaces:
+  - {name: clk, dir: in, width: 1, description: 'System clock, 50 MHz. SCK is derived from it.'}
+  - {name: rst_n, dir: in, width: 1, clock_domain: clk, description: 'Synchronous active-low reset.'}
+  - {name: start, dir: in, width: 1, clock_domain: clk, description: 'Start a transfer. Accepted on a rising clk edge where start=1 and busy=0.'}
+  - {name: tx_data, dir: in, width: 16, clock_domain: clk, description: 'Word to send, latched when start is accepted. 8-bit words use tx_data[7:0]; tx_data[15:8] is ignored.'}
+  - {name: word_len, dir: in, width: 1, clock_domain: clk, values: {0: 8 bits, 1: 16 bits}, description: 'Word length, latched at start.'}
+  - {name: cpol, dir: in, width: 1, clock_domain: clk, description: 'SCK idle level. Latched at start; while busy=0 the idle SCK level follows cpol.'}
+  - {name: cpha, dir: in, width: 1, clock_domain: clk, description: 'Clock phase. 0 = sample on leading edge, shift on trailing edge. 1 = shift on leading edge, sample on trailing edge. Latched at start. Mode = {cpol,cpha}: 0=00, 1=01, 2=10, 3=11.'}
+  - {name: clk_div, dir: in, width: 16, clock_domain: clk, description: 'SCK half period in clk cycles is N = max(clk_div,4); f_sck = 50/(2N) MHz. Latched at start.'}
+  - {name: cs_mode, dir: in, width: 1, clock_domain: clk, values: {0: auto per transfer, 1: manual}, description: 'Chip select mode. Changes while busy=1 take effect when busy=0.'}
+  - {name: cs_force, dir: in, width: 1, clock_domain: clk, description: 'In manual mode (cs_mode=1) 1 drives cs_n low, 0 drives cs_n high. Ignored in auto mode.'}
+  - {name: irq_clear, dir: in, width: 1, clock_domain: clk, description: 'One-cycle pulse that clears irq.'}
+  - {name: miso, dir: in, width: 1, protocol: 'SPI MISO', async: true, description: 'Serial data from the slave. Asynchronous to clk; passes a 2-flop synchronizer.'}
+  - {name: sck, dir: out, width: 1, protocol: 'SPI SCK, modes 0-3', clock_domain: clk, reset_value: 0, description: 'Serial clock. Idle level equals cpol. During reset it is 0 and returns to cpol within 1 clk after reset release.'}
+  - {name: mosi, dir: out, width: 1, protocol: 'SPI MOSI', clock_domain: clk, reset_value: 0, description: 'Serial data to the slave, MSB first. 0 when no transfer is in progress.'}
+  - {name: cs_n, dir: out, width: 1, protocol: 'SPI chip select, active low', clock_domain: clk, reset_value: 1, description: 'Chip select, active low.'}
+  - {name: busy, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: '1 from the cycle after start is accepted until the post-transfer CS-high recovery has elapsed.'}
+  - {name: done, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: 'One-cycle pulse when a transfer completes; rx_data is valid in that cycle.'}
+  - {name: irq, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: 'Level interrupt, set when a transfer completes, cleared by irq_clear or reset.'}
+  - {name: rx_data, dir: out, width: 16, clock_domain: clk, reset_value: 0, description: 'Received word, right-aligned; for 8-bit words rx_data[15:8] is 0. Updated only at transfer completion.'}
+  - {name: start_err, dir: out, width: 1, clock_domain: clk, reset_value: 0, description: 'One-cycle pulse when start is asserted while busy=1 (request ignored).'}
+requirements:
+  - id: REQ-001
+    type: interface
+    text: 'The core shall accept a transfer on a rising clk edge where start=1 and busy=0, and shall latch tx_data, word_len, cpol, cpha and clk_div on that edge.'
+    acceptance: 'Directed test: changing all five inputs in the cycle after acceptance has no effect on the transfer; 100 random parameter sets give zero mismatches against the reference model.'
+  - id: REQ-002
+    type: functional
+    text: 'SCK shall idle at the level cpol. With cpha=0 the slave-visible sample edge is the leading edge (first SCK edge after idle) and MOSI shifts on the trailing edge; with cpha=1 MOSI shifts on the leading edge and MISO is sampled on the trailing edge.'
+    acceptance: 'For all 4 modes x 2 word lengths, 1,000 random words each, an independent mode-aware slave model sees 0 bit errors and idle SCK level, sample edge and shift edge match the reference in 100% of bits.'
+  - id: REQ-003
+    type: functional
+    text: 'Each transfer shall send and receive the word MSB first and shall produce exactly 8 SCK pulses when word_len=0 and exactly 16 SCK pulses when word_len=1.'
+    acceptance: 'SCK pulse count equals 8 or 16 in 100% of 1,000 random transfers per word length and mode.'
+  - id: REQ-004
+    type: functional
+    text: 'For word_len=0 the core shall send tx_data[7:0], ignore tx_data[15:8], and return the received byte in rx_data[7:0] with rx_data[15:8]=0. For word_len=1 it shall send and return all 16 bits.'
+    acceptance: 'Random words with random upper byte: rx_data equals the slave-sent word in 1,000 of 1,000 transfers for each word length.'
+  - id: REQ-005
+    type: clock
+    text: 'SCK shall be generated from clk with a half period of N clk cycles, N = max(clk_div,4), so f_sck = 50/(2N) MHz with exactly 50% duty cycle for both odd and even N.'
+    acceptance: 'Measured SCK high and low times equal N clk cycles exactly for clk_div = 4, 5, 7, 100, 65535 in all 4 modes.'
+  - id: REQ-006
+    type: functional
+    text: 'If clk_div is 0, 1, 2 or 3 the core shall behave as clk_div=4 (RECOMMENDED - default on; DEFAULT - needs G1 review).'
+    acceptance: 'For clk_div = 0,1,2,3 the measured SCK half period is exactly 4 clk cycles and the transfer completes correctly.'
+  - id: REQ-007
+    type: functional
+    text: 'Changes to tx_data, word_len, cpha, clk_div and cpol while busy=1 shall not affect the transfer in progress; when busy=0 the idle SCK level shall follow cpol with 1 clk latency.'
+    acceptance: 'Randomly toggling these inputs during 1,000 transfers gives 0 bit errors and 0 extra SCK edges; idle SCK equals cpol 1 clk after a cpol change while busy=0.'
+  - id: REQ-008
+    type: functional
+    text: 'In auto CS mode (cs_mode=0) cs_n shall fall 1 clk after start is accepted and rise after the transfer, and shall be high at all other times.'
+    acceptance: 'Waveform check on 1,000 transfers: cs_n low from cycle 1 to cycle 1+(2W+1)N exclusive, high otherwise, where W is the word length (8 or 16) and cycle 0 is the accepting clk edge.'
+  - id: REQ-009
+    type: functional
+    text: 'In auto CS mode the first SCK leading edge shall occur exactly N clk cycles after cs_n falls, the last SCK edge shall be exactly N clk cycles before cs_n rises, and cs_n shall stay high for at least N clk cycles before the next cs_n fall (DEFAULT - needs G1 review).'
+    acceptance: 'Cycle-accurate check for N = 4, 5, 7, 100 and both word lengths: SCK edge k (k=0..2W-1) occurs at cycle 1+(k+1)N; cs_n rises at cycle 1+(2W+1)N; CS-high time >= N cycles in back-to-back transfers.'
+  - id: REQ-010
+    type: functional
+    text: 'In manual CS mode (cs_mode=1) cs_n shall equal the inverse of cs_force with 1 clk latency and shall not be changed by transfers; a transfer shall use the same SCK timing as in auto mode relative to the accepting edge.'
+    acceptance: 'With cs_force held 1 across 3 back-to-back transfers cs_n stays low in 100% of cycles; with cs_force=0 cs_n stays high; SCK edge cycles match REQ-009.'
+  - id: REQ-011
+    type: interface
+    text: 'miso shall pass a 2-flop synchronizer. Each received bit shall be the miso pin level at the sample SCK edge, captured 2 clk cycles after that edge to compensate the synchronizer latency.'
+    acceptance: 'With a slave model that changes miso at the shift edge with zero delay, 0 bit errors in 1,000 random words for each of 4 modes x 2 word lengths at N = 4, 5, 7.'
+  - id: REQ-012
+    type: functional
+    text: 'On transfer completion done shall pulse for exactly 1 clk cycle, irq shall be set, and rx_data shall be updated, all in cycle 1+(2W+1)N. rx_data shall not change at any other time except reset.'
+    acceptance: 'done is high in exactly 1 cycle per transfer at the stated cycle; rx_data stays constant during 1,000 transfers except at the done cycle.'
+  - id: REQ-013
+    type: functional
+    text: 'irq shall stay 1 until a cycle in which irq_clear=1 is seen, or reset. If irq_clear=1 coincides with a completion, irq shall be 1 afterwards. Starting a new transfer while irq=1 shall not clear irq.'
+    acceptance: 'Directed tests: clear after 1 completion gives irq=0 one cycle later; simultaneous clear and completion leaves irq=1; start with irq pending leaves irq=1 until irq_clear; 0 failures.'
+  - id: REQ-014
+    type: functional
+    text: 'busy shall be 1 from cycle 1 until cycle 1+(2W+2)N exclusive (a CS-high recovery of N clk cycles after cs_n rises at cycle 1+(2W+1)N), so busy is high for exactly (2W+2)N clk cycles per transfer and is 0 in cycle 1+(2W+2)N.'
+    acceptance: 'Measured busy duration equals (2W+2)N clk cycles (72 for W=8,N=4; 136 for W=16,N=4) and busy falls at cycle 1+(2W+2)N, for N = 4, 5, 7, 100 and both word lengths.'
+  - id: REQ-015
+    type: functional
+    text: 'If start=1 while busy=1 the request shall be ignored, start_err shall pulse for exactly 1 clk cycle in the following cycle, and the transfer in progress shall be unaffected (no queueing).'
+    acceptance: 'Start asserted at 20 random cycles inside 100 transfers: 20 start_err pulses of 1 cycle each per 100 transfers, transfer data and timing unchanged, 0 extra transfers.'
+  - id: REQ-016
+    type: functional
+    text: 'A start in cycle 1+(2W+2)N (the first cycle with busy=0 after a transfer) shall be accepted on that clk edge, giving back-to-back transfers whose accepting edges are exactly (2W+2)N+1 clk cycles apart and, in auto mode, a CS-high time of N+1 clk cycles (>= N).'
+    acceptance: '100 back-to-back transfers with random words and modes, start asserted for 1 cycle in the first busy=0 cycle after each transfer: 0 mismatches, 0 start_err pulses, spacing between accepting edges exactly (2W+2)N+1 cycles (73 for W=8,N=4; 137 for W=16,N=4) and auto-mode CS-high time exactly N+1 cycles.'
+  - id: REQ-017
+    type: functional
+    text: 'mosi shall be 0 whenever no transfer is in progress (before the first data bit and after the transfer ends). For cpha=0 the MSB shall be driven from cs_n fall; for cpha=1 it shall be driven at the first leading SCK edge.'
+    acceptance: 'Waveform check: mosi=0 in 100% of idle cycles; MSB timing matches reference in all 4 modes for 1,000 random words.'
+  - id: REQ-018
+    type: reset
+    text: 'rst_n is synchronous and active low. While rst_n=0 on a rising clk edge, all state shall reset and the outputs shall take these values: sck=0, mosi=0, cs_n=1, busy=0, done=0, irq=0, rx_data=0, start_err=0. After reset release sck shall equal cpol within 1 clk cycle.'
+    acceptance: 'Directed test and formal property: all 8 output values as stated in the first cycle after a 1-cycle rst_n pulse, in each of the 4 modes; 0 failures.'
+  - id: REQ-019
+    type: reset
+    text: 'Reset asserted during a transfer shall abort it immediately: no further SCK edges, no done pulse, irq not set, and every output at its reset value in the next cycle. A new transfer after reset shall behave as from power-up.'
+    acceptance: 'Reset injected at 200 random cycles of transfers (all 4 modes, both lengths): outputs at reset values the next cycle, then a following transfer gives 0 bit errors.'
+  - id: REQ-020
+    type: clock
+    text: 'The core shall use one clock domain (clk) with no clock gating and no SCK-clocked flops; the only asynchronous crossing is miso.'
+    acceptance: 'CDC/lint report lists exactly 1 crossing (miso) and 0 clock-gating cells; all flops are clocked by clk.'
+  - id: REQ-021
+    type: performance
+    text: 'The design shall meet setup and hold at clk = 50 MHz (20 ns period) on sky130_fd_sc_hd in every corner the flow evaluates.'
+    acceptance: 'Real STA shows worst setup slack >= 0 ns and worst hold slack >= 0 ns for every evaluated corner.'
+  - id: REQ-022
+    type: performance
+    text: 'The timing constraints shall include set_input_delay of 10 ns on miso and set_output_delay of 5 ns on sck, mosi, cs_n relative to clk (DEFAULT - needs G1 review; placeholder values).'
+    acceptance: 'STA with these constraints shows worst setup slack >= 0 ns on all IO paths.'
+  - id: REQ-023
+    type: area
+    text: 'The synthesized standard-cell area shall be no more than 0.02 mm2 (20,000 um2) (DEFAULT - needs G1 review; placeholder value).'
+    acceptance: 'Synthesis area report shows total cell area <= 20,000 um2.'
+  - id: REQ-024
+    type: test
+    text: 'The testbench shall cover 4 modes x 2 word lengths x divisors {4, 5, 7, 100}, plus back-to-back transfers, auto and manual CS, irq set/clear, start-while-busy, clk_div 0..3, and reset mid-transfer, using an independent mode-aware SPI slave model.'
+    acceptance: 'Functional coverage report shows 100% of these bins hit and 0 scoreboard errors; the slave model is not derived from the DUT.'
+  - id: REQ-025
+    type: test
+    text: 'Formal or assertion properties shall check: sck equals cpol whenever busy=0 outside reset; SCK edge count per transfer equals 2W; cs_n is high whenever busy=0 in auto mode.'
+    acceptance: 'All 3 properties pass in simulation of the full regression and in a bounded formal proof of depth >= 400 cycles with 0 counterexamples.'
+out_of_scope:
+  - 'QSPI, dual, octal SPI, JEDEC xSPI, SD-over-SPI'
+  - 'SPI slave mode'
+  - 'Multiple chip-select lines'
+  - 'LSB-first bit order'
+  - 'Word lengths other than 8 and 16'
+  - 'Bus interfaces (Wishbone, APB, AXI), register map, DMA'
+  - 'FIFOs or queued transfers'
+  - 'Interrupt masking or enable'
+  - 'SCK frequencies above 6.25 MHz (see open questions)'
+  - 'Power targets, clock gating, low-power modes'
+  - 'Use or copying of third-party IP cores'
+open_questions:
+  - 'Is a maximum SCK of 6.25 MHz (N>=4) acceptable? A 25 MHz SCK (divide-by-2) needs a different MISO capture scheme and changes the design.'
+  - 'Is a plain parallel control port acceptable, or is a register bus (APB/Wishbone) required?'
+  - 'Is a single chip-select line enough, or are multiple slave selects needed?'

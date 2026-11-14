@@ -1,0 +1,13 @@
+id: A12
+name: Volta
+role: Power & IR Agent
+prompt: A12_Volta.md
+preamble: design
+stages: [signoff]
+model_hint: default
+effort: low
+max_tokens: 6000
+tools: [fs_read, emit_note]
+budget: {max_tokens: 100000, max_minutes: 20, max_tool_runs: 10}
+writes_to: ["reports/power_report.json", "reports/ir_report.json"]
+reads_from: ["spec/**", "reports/power_tool.json"]

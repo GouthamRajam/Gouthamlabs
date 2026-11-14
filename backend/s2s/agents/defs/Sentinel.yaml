@@ -1,0 +1,13 @@
+id: A16
+name: Sentinel
+role: Critic / Red-team Reviewer
+prompt: A16_Sentinel.md
+preamble: design
+stages: [spec, architecture, rtl, test_build, verification, synthesis]
+model_hint: reviewer     # Part 7.3: configurable to a different model family; Phase 0 = default model
+effort: medium
+max_tokens: 16000
+tools: [fs_read, kb_search, emit_note]
+budget: {max_tokens: 300000, max_minutes: 20, max_tool_runs: 20}
+writes_to: ["reports/sentinel_*.json"]   # Sentinel files findings; it cannot edit artifacts
+reads_from: ["request.md", "spec/**", "arch/**", "rtl/**", "tb/**", "formal/**", "reports/guard_before_*.txt", "constraints/**", "reports/sentinel_constraints*.json"]

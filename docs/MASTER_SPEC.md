@@ -290,7 +290,7 @@ The flow has 10 stages. Each stage has an owning agent, inputs, outputs, determi
 | Item | Detail |
 |---|---|
 | Owner | DFT Agent (Tess) |
-| Phase 0 scope | Document a test strategy and insert simple scan where the open flow allows; produce a DFT plan. Full ATPG is Phase 1 with commercial tools |
+| Phase 0 scope | Document a test strategy and insert simple scan where the open flow allows; produce a DFT plan. Full ATPG is Phase 1 (open tools: OpenROAD DFT + Fault; commercial ATPG later). Until a fault coverage is measured, readiness reports DFT as "deferred - not measured" (Part 22.3) |
 | Phase 1+ output | Scan-inserted netlist, ATPG patterns, fault coverage report (target ≥ 95% stuck-at), memory BIST plan |
 | Checks | Scan chains connected and traced; test coverage at target (Phase 1+) |
 
@@ -1186,6 +1186,11 @@ Clock targets are starting points; the Spec Agent may adjust with justification,
 
 Commercial tool adapters (Synopsys, Cadence, Siemens) behind the same interfaces; multi-design scheduling; customer on-prem install; SSO and role-based access; full DFT with ATPG; first MPW tape-out (for example an open shuttle on SKY130 or GF180MCU); design-partner pilots; Temporal for durable workflows.
 
+Phase 1 backlog from the Phase 0 readiness review (decision 2026-10-06; not to build in Phase 0):
+1. Real static IR drop + EM analysis with OpenROAD (Phase 0 runs static IR only; EM is not analyzed).
+2. Scan insertion + ATPG with open tools (OpenROAD DFT + Fault), reporting a measured stuck-at fault coverage; until then DFT is "deferred - not measured" and earns 0.
+3. Artifact hash/provenance check: detect any edit to a flow-generated artifact that the flow did not make, so "no human edits to artifacts" becomes a measured check instead of "not checked".
+
 ---
 
 ## PART 14 — TESTING AND QUALITY
@@ -1601,7 +1606,7 @@ For every design, the report ends with one honest number: how close this GDS is 
 
 A GDS is scored against both:
 
-- **Baseline A — SKY130 open-shuttle tape-out:** what an open multi-project-wafer program (e.g. an Efabless-style or university SKY130 shuttle) actually requires. Open-source DRC/LVS-clean is the real bar here. A Phase 0 block can legitimately reach ~100% of this.
+- **Baseline A — SKY130 open-shuttle tape-out:** what an open multi-project-wafer program (e.g. an Efabless-style or university SKY130 shuttle) actually requires. Open-source DRC/LVS-clean is the real bar here. A Phase 0 block meets it through the hard checks (Part 23.1), not through a percentage.
 - **Baseline B — commercial production tape-out:** what a foundry expects for a volume product on a real PDK (foundry-certified signoff decks, full reliability and test coverage). Open-source SKY130 tools cannot reach 100% of this; the gap is what Phase 1 (commercial tools) closes.
 
 Report both percentages side by side so the number is never mistaken for more than it is.
@@ -1630,10 +1635,19 @@ Each check is scored 0 (fail/not run), partial, or 1 (clean), then weighted. The
 
 Score A = (sum of weighted points earned on checks that count toward A) ÷ (sum of A weights). Score B likewise over all weights. Only checks whose tools actually ran and passed earn points; a check that was not run earns 0 and is listed as a gap.
 
+Notes (decision 2026-10-06, docs/DECISIONS.md):
+- The weights total **106, not 100**. Every score is earned ÷ applicable total: Baseline A over 97 (the three n/a checks excluded), Baseline B over 106.
+- "Partial" has a value per check, set in `config/readiness.yaml` and printed next to every percentage: **IR/EM `ir_em: 0.5`**, for static IR only (static IR: measured, passed; EM: not analysed, Phase 1); **DFT `dft: 0`**. Baseline B's other Partial caps (DRC, LVS, STA, power) keep `partial_other: 0.5`.
+- **DFT is deferred, not half done.** Phase 0 has a plan only: nothing measured, 0 fault coverage. It stays in Baseline A's denominator at 0 because open tools can do it (OpenROAD DFT + Fault; Phase 1); it just has not been done. DFT never earns credit unless a fault coverage was actually measured.
+- **Signal integrity, reliability and foundry signoff are excluded from Baseline A** (n/a) because open tools structurally cannot do them, not because they were skipped. They count toward B at 0.
+- Every check carries a scope label in the report: measured: passed; static IR: measured, passed; EM: not analysed (Phase 1); deferred - not measured; excluded from Baseline A; measured: FAILED; not run.
+- With every measured check clean, these values give Baseline A = 90/97 = 92.7% (floored) and Baseline B = 68/106 = 64.1%.
+
 ### 22.4 What the numbers typically mean (planning expectation, to be confirmed by real runs)
 
-- A clean Phase 0 block should reach **~98–100% of Baseline A** (open shuttle). That is the real, defensible claim: "this design would pass an open SKY130 shuttle sign-off, verified by open-source tools."
-- The same block reaches roughly **~65–80% of Baseline B** (commercial production). The missing ~20–35% is exactly the commercial-tool and reliability work scheduled for Phase 1 (foundry-certified DRC/LVS, OCV timing, full ATPG, SI, EM/IR, ESD). This is not a defect in the design; it is the known limit of the open-source SKY130 path.
+- The Phase 0 pass is **not a percentage**. It is the hard checks (pass/fail: DRC 0, LVS match, antenna clean, timing met at all corners nominal AND with a flat +/-10% OCV derate, equivalence proven) plus a scope label on every check (Part 23.1). That is the real, defensible claim: "this design would pass an open SKY130 shuttle sign-off, verified by open-source tools." Baseline A is a derived figure, always printed with its partial-credit values; with every measured check clean and dft=0 / ir_em=0.5 it is 90/97 = 92.7% (the earlier "~98–100%" expectation is withdrawn, decision 2026-10-06).
+- **Phase 0 Baseline-B ceiling: 64.1%** (68/106 with every measured check clean, dft=0, ir_em=0.5, partial_other=0.5); Phase 0 cannot score higher on B.
+- **Phase 1+ expectation (not Phase 0):** a block reaches roughly **~65–80% of Baseline B** (commercial production) once Phase 1 work lands. The remaining gap is exactly the commercial-tool and reliability work scheduled for Phase 1 (foundry-certified DRC/LVS, OCV timing, full ATPG, SI, EM/IR, ESD). This is not a defect in the design; it is the known limit of the open-source SKY130 path.
 
 The report never rounds up and never hides a gap. A "not run" check lowers the score and is named.
 
@@ -1646,11 +1660,13 @@ ASSUMPTIONS
 - PDK: SkyWater SKY130 (open), library sky130_fd_sc_hd. Not a commercial foundry PDK.
 - DRC/LVS: open-source Magic, KLayout and Netgen decks. A foundry's own certified
   decks (e.g. Calibre) were not run and may differ.
-- Timing: OpenSTA at the PDK's typical/slow/fast corners. No on-chip variation
-  (OCV/AOCV), no SI-aware timing. Clock target as stated per design.
+- Timing: OpenSTA at the PDK's typical/slow/fast corners, nominal and with flat
+  +/-5% and +/-10% OCV derates (engineering estimates: SKY130 has no foundry
+  OCV/AOCV tables). No SI-aware timing. Clock target as stated per design.
 - Power/IR: estimated at 20% switching activity unless simulation activity was used;
   IR/EM analysis limited to what the open flow supports.
-- DFT: plan only in Phase 0; no ATPG fault coverage number.
+- DFT: deferred in Phase 0 (plan only). Not measured: 0 fault coverage, earns no
+  credit. Achievable with open tools (OpenROAD DFT + Fault) in Phase 1.
 - Not assessed (out of open-flow scope): signal integrity/crosstalk, aging/ESD/
   latch-up reliability, foundry-certified signoff.
 - No physical silicon was manufactured or tested. All results are pre-silicon,
@@ -1661,11 +1677,12 @@ ASSUMPTIONS
 
 ### 22.6 Report layout (per design)
 
-1. Headline: "Baseline A (open shuttle): NN.N% · Baseline B (commercial production): NN.N%".
-2. The rubric table with each check's result (clean / partial / not run) and the tool and version that produced it.
-3. The gaps list: every check below full, with one line on what would close it and in which phase.
-4. The assumptions block (22.5).
-5. Links to the evidence packet and `reproduce.sh`.
+1. Headline: the hard checks, pass/fail (DRC, LVS, antenna, timing at all corners, timing at all corners with a flat +/-10% OCV derate, equivalence), then a table of nominal next to +/-5% and +/-10% derated worst setup/hold slack with the caveat that SKY130 has no foundry OCV tables (flat derates are engineering estimates), with any condition the pass depends on stated prominently (e.g. a clock-net fanout rule), and "No human edits to artifacts: NOT CHECKED" until an automated check exists. No percentage in the headline.
+2. Derived score: "Baseline A (open shuttle): NN.N% · Baseline B (commercial production): NN.N%", with the partial-credit values (dft / ir_em) printed right next to it and the arithmetic (earned ÷ applicable total).
+3. The rubric table with each check's scope label, result (clean / partial / deferred / not run / failed) and the tool and version that produced it.
+4. The gaps list: every check below full, with one line on what would close it and in which phase.
+5. The assumptions block (22.5).
+6. Links to the evidence packet and `reproduce.sh`.
 
 ### 22.7 Honesty rules
 
@@ -1680,7 +1697,7 @@ ASSUMPTIONS
 
 ### 23.1 Trigger (when Phase 1 starts)
 
-Start Phase 1 immediately when Phase 0 meets its bar: all five blocks reach a clean GDS with Tape-out Readiness **Baseline A ≈ 100%** (open-shuttle), zero DRC, zero LVS, timing met at all corners, equivalence proven, no human edits to artifacts. Until that holds, stay in Phase 0.
+Start Phase 1 immediately when Phase 0 meets its bar: all five blocks reach a clean GDS on the **hard checks** (pass/fail): zero DRC, zero LVS errors (full match), antenna clean, timing met at all corners, timing met at all corners with a flat +/-10% OCV derate (engineering estimate; SKY130 has no foundry OCV tables; decision 2026-10-07), equivalence proven; and every check in the readiness report carries an explicit **scope label** (measured / static IR only, EM not analysed / deferred / excluded). Any condition a pass depends on (e.g. the clock-net fanout rule) is stated in the report. The Baseline A/B percentages are derived figures, not part of the bar (decision 2026-10-06). Human edits to artifacts: the artifacts are machine-generated by the flow, but no automated edit-detection check exists yet, so this is labelled "not checked", never an automatic pass; a hash/provenance check is in the Phase 1 plan (Part 13.4) and is not required for Phase 0. Until the hard checks hold, stay in Phase 0. A human marks the gate in PHASE_GATES.md.
 
 ### 23.2 The first real chip
 

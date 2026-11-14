@@ -1,0 +1,77 @@
+{
+  "task_id": "task_01M484JWZVX7F3SH2WFCRSXHKE",
+  "status": "success",
+  "summary": "Wrote tapeout/release_notes.md: package description, 16/16 checklist table with evidence, readiness 95.3% (Baseline A) and 64.1% (Baseline B) with per-check breakdown, DFM scorecard (0 high, 2 medium, 5 low), known limits and open items.",
+  "outputs": [
+    {
+      "path": "reports/division4_report.md",
+      "sha256": "79f3fe409347634fc9287e88521b7f61888d61cabbbaeacc22739ee4948203f0"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "a90cf41dd66325281b2f2a006a301f7228400d063e5cae96b4683e8733d241e9"
+    },
+    {
+      "path": "reports/proof_manifest.json",
+      "sha256": "dbf61a52c72992bba9c716f720fce8284e4e5973aa261b65167551dcdaf209c2"
+    },
+    {
+      "path": "reports/proof_reproduce.json",
+      "sha256": "a5495093cf607868570805df66086288417c12150521c3557a016b2bc6e6c59d"
+    },
+    {
+      "path": "reports/tapeout_checklist.json",
+      "sha256": "f4d290e14e40886be57b1e218df71798874cdd361cd7e9662065823c4e7d989d"
+    },
+    {
+      "path": "reports/tapeout_readiness.json",
+      "sha256": "a3b37279b183ffc4b69b0904126759487dc6fd04d3cbb9e3dbcf07108c12f375"
+    },
+    {
+      "path": "tapeout/release_notes.md",
+      "sha256": "42e74e794b2380502a62b73bdb62fdd2e5656dfa81602ce6d029631c87c9d730"
+    }
+  ],
+  "checks_run": [
+    "chk_01M48RVE4Z1N23KWYAPT8VNYPD",
+    "chk_01M48RVYCBX5N1Q9V1BDV2AGHP",
+    "chk_01M48RVYCCKKJN48VYJQVTMCKM",
+    "chk_01M48RVYCCWGTBZPTEHS02DFWR",
+    "chk_01M48RVYD36HJX96G3PACNG3FA",
+    "chk_01M48RZNTZZ3DTHN5Y8S7VJBY1",
+    "chk_01M48RZNVCWY9M1TCSF172FRT8",
+    "chk_01M48RZPV2WGJ5KM308FM6WX1R",
+    "chk_01M48RZPVAPT3BRKJW1RKR7Q86",
+    "chk_01M48RZPWBATMN0T2JKRXP4JVD",
+    "chk_01M48S18AQD6X0NBTM0KQ87YAE",
+    "chk_01M48S35EM2JPS4VF98EF5ACBZ"
+  ],
+  "assumptions": [
+    "Baseline percentages are quoted as reported (95.3, 64.1); per-row sums give 92.5/97 and 68/106, consistent with truncation to one decimal.",
+    "Checklist and readiness statuses are taken as recorded in the input files; no tools were run in this task.",
+    "File hashes are referenced to MANIFEST.sha256 and versions.lock rather than listed, since they were not provided as inputs.",
+    "I ran no tool; all statuses are as stated in the input reports.",
+    "No budget figure is in the inputs, so no spend-vs-budget or weekly forecast is stated.",
+    "No escaped-defect data is in the inputs; the report says none are reported rather than claiming zero.",
+    "Total spend $0.089963 is my sum of the 14 per-agent values in division_cost.json."
+  ],
+  "open_issues": [
+    "Clock-tree max fanout exception (limit 20) needs a human decision.",
+    "DFM-003 and DFM-001 (medium) remain open.",
+    "Hold slack 0.104 ns is thin and limiting hold paths are unknown.",
+    "Metal density in pv_signoff (m2 0.9387, m3 0.9823, m4 0.9771, m5 1.0) has no stated limit; checklist says density met; needs human confirmation.",
+    "OpenLane power total differs from the OpenSTA tt total without a stated cause.",
+    "Signal integrity, reliability and foundry-certified signoff are not run; DFT is plan only.",
+    "Spec open questions (max SCK 6.25 MHz, register bus, single chip select) are unanswered."
+  ],
+  "messages": [
+    {
+      "from": "Sloane",
+      "summary": "Division 4 report for spi_master: timing, PV, power, IR clean; 16/16 checklist; DFM 0 high/2 medium/5 low; readiness 95.3% (A) and 64.1% (B); cost $0.089963; G4 decision and four open items for the human."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Content is limited to the four input files; both baselines and all checklist items are shown. Runtime checks have not yet confirmed anything.",
+    "confidence": "high"
+  }
+}

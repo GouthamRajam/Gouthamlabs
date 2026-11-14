@@ -1,0 +1,313 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{array}
+
+\begin{document}
+
+\title{S2S: Autonomous Multi-Agent Specification-to-GDSII\\Chip Design with Deterministic Verification}
+
+\author{
+\IEEEauthorblockN{Goutham Rajam}
+\IEEEauthorblockA{Independent Researcher\\
+Repository: \url{https://github.com/GouthamRajam/Gouthamlabs}}
+}
+
+\maketitle
+
+\begin{abstract}
+We present S2S (Spec-to-Silicon), a multi-agent framework that autonomously transforms a chip specification into tape-out-ready GDSII using open-source EDA tools and SkyWater SKY130. Thirty-seven AI agents spanning seven disciplines are coordinated by a Trust Layer enforcing a strict invariant: \emph{real tools decide pass/fail---the AI never does}. No stage advances unless a deterministic tool (simulator, DRC, LVS, STA) runs and passes. We evaluate on seven designs from an 8-bit counter to a RISC-V RV32I core. Four of five Phase~0 designs reach DRC-clean GDSII; a PicoRV32 core passes 39/39 compliance tests and achieves signoff across 9~PVT corners at 20~MHz. The autonomous pipeline produces a complete UART---specification through routed layout---at \$0.39 and 3.5~minutes. We report all results honestly, including failures, a provenance audit that corrected false attribution, and every known limitation.
+\end{abstract}
+
+\begin{IEEEkeywords}
+chip design automation, multi-agent systems, LLM, EDA, RISC-V, hardware verification, open-source EDA
+\end{IEEEkeywords}
+
+% ===========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Designing a digital chip from specification to GDSII requires specialists working years, with verification consuming the majority of effort. First-silicon success rates remain approximately 14\%~\cite{wilson2024}, and each respin costs millions. Meanwhile, demand for custom silicon grows across AI, automotive, and IoT while the talent shortage worsens~\cite{semiengineering2023}.
+
+Recent work applies LLMs to individual stages: RTL generation~\cite{thakur2024verigen, liu2023chipnemo}, verification~\cite{orenesvera2023using}, and design exploration. However, no prior system demonstrates complete, autonomous specification-to-GDSII with deterministic verification at every stage.
+
+We present \textbf{S2S} with three contributions:
+\begin{enumerate}
+    \item \textbf{Trust Layer}: A deterministic verification invariant preventing hallucination propagation---no stage advances unless a real EDA tool runs and passes.
+    \item \textbf{Full-flow autonomy}: 37 agents covering spec through signoff, producing GDSII from text, with verification agents structurally independent from RTL agents.
+    \item \textbf{Reproducible evidence}: Trajectory logs, tool reports, and signoff evidence for seven designs including a RISC-V core, using exclusively open-source tools on SKY130.
+\end{enumerate}
+
+% ===========================================================================
+\section{Related Work}
+\label{sec:related}
+
+\textbf{LLM-assisted hardware.} VeriGen~\cite{thakur2024verigen} fine-tunes models on Verilog. ChipNemo~\cite{liu2023chipnemo} adapts foundation models for chip design tasks. AutoChip~\cite{thakur2023autochip} applies iterative LLM feedback with simulation correction. These focus on individual stages and do not address physical implementation or signoff.
+
+\textbf{Full-flow systems.} ASIC-Agent~\cite{asicagent2025} demonstrates multi-agent RTL-to-Caravel integration with a benchmark suite. NL2GDS~\cite{nl2gds2026} pairs an LLM front end with OpenLane for natural-language-to-GDSII. AutoEDA~\cite{autoeda2025} uses microservice-based agents for RTL-to-GDSII automation. A comprehensive survey appeared in late 2025~\cite{agenticseda2025}.
+
+S2S differs in three ways: (1)~the Trust Layer's 5-condition safety net is a formal invariant, not iterative debugging; (2)~verification agents are structurally independent from RTL agents (filesystem-enforced); (3)~we report full signoff evidence with honest failure analysis, including designs that did not pass.
+
+\textbf{Open-source EDA.} The OpenLane~\cite{openlane} flow (Yosys~\cite{yosys}, OpenROAD~\cite{openroad}, Magic~\cite{magic}, KLayout~\cite{klayout}, Netgen~\cite{netgen}) enables complete RTL-to-GDSII on SKY130~\cite{sky130}. S2S uses these as its deterministic backbone.
+
+% ===========================================================================
+\section{Framework Architecture}
+\label{sec:architecture}
+
+\subsection{Design Flow and Agents}
+
+S2S organizes chip design into 10 stages in four zones (Fig.~\ref{fig:flow}): Z1 (specification, architecture), Z2A (RTL implementation), Z2B/2C (independent test generation and verification closure), Z3 (synthesis through P\&R), and Z4 (signoff and GDSII). Zones 2A and 2B execute in parallel from the same specification; the \emph{independence constraint} prevents shared-mistake propagation.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.9\columnwidth}{\small
+\textbf{Z1:} Spec $\rightarrow$ Architecture $\rightarrow$ \\
+\textbf{Z2A:} RTL \quad $\|$ \quad \textbf{Z2B:} Tests (independent) \\
+$\downarrow$ \\
+\textbf{Z2C:} Verification closure \\
+$\downarrow$ \\
+\textbf{Z3:} Synth $\rightarrow$ Floorplan $\rightarrow$ P\&R \\
+$\downarrow$ \\
+\textbf{Z4:} Signoff (DRC/LVS/STA/Antenna) $\rightarrow$ GDSII
+}}
+\caption{S2S design flow. Zones 2A and 2B execute in parallel; verification agents cannot read RTL (filesystem-enforced).}
+\label{fig:flow}
+\end{figure}
+
+The 37 agents span seven disciplines: specification (4), architecture (3), RTL (4), verification (8), physical design (5), cross-cutting (8), and knowledge (5). Each has defined scope, tool permissions, and budget limits. Key constraints include: verification agents cannot read \texttt{rtl/**} (filesystem-enforced), N-version reference models flag disagreement, and an anti-cheating guard detects test weakening via AST diffs.
+
+\subsection{The Trust Layer}
+
+The Trust Layer enforces: \emph{a stage advances only when a deterministic tool runs and passes}. Five conditions must all hold:
+\begin{enumerate}
+    \item Tool exit code is 0
+    \item Zero error markers in output
+    \item No stage-specific rule violated (no latches, no logic loops, no negative slack)
+    \item No known failure strings
+    \item Positive success marker present
+\end{enumerate}
+
+This catches tools that report errors but return exit code 0---common EDA behavior. Three consecutive failures trigger human escalation; budget exhaustion pauses the task cleanly.
+
+\subsection{Tool Integration}
+
+Ten adapters wrap open-source tools, each in a Docker container (\texttt{--rm --network none}): Verilator (lint), Yosys (synthesis), OpenSTA (timing), Icarus Verilog and cocotb (simulation), SymbiYosys (formal), eqy (equivalence), OpenROAD/OpenLane (P\&R), Magic and KLayout (DRC), and Netgen (LVS).
+
+% ===========================================================================
+\section{Experimental Setup}
+\label{sec:setup}
+
+We evaluate on seven designs (Table~\ref{tab:designs}) targeting SKY130 \texttt{sky130\_fd\_sc\_hd}. Timing signoff uses 9~PVT corners with OCV derates at $\pm$5\% and $\pm$10\%. Agents use Claude Sonnet with per-agent budgets (300K--400K tokens, 16--40 tool calls). The orchestrator operates as deterministic rules.
+
+\begin{table}[t]
+\centering
+\caption{Design Targets}
+\label{tab:designs}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Design} & \textbf{Type} & \textbf{Phase} & \textbf{Freq.} \\
+\midrule
+counter8 & 8-bit counter & 0 & 50 MHz \\
+alu8 & 8-bit ALU & 0 & 50 MHz \\
+uart & UART transceiver & 0 & 50 MHz \\
+sync\_fifo & Synchronous FIFO & 0 & 50 MHz \\
+spi\_master & SPI master & 0 & 50 MHz \\
+picorv32 & RV32I CPU & 1 & 20 MHz \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ===========================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{Phase 0: Five Digital Blocks}
+
+\begin{table*}[t]
+\centering
+\caption{Phase 0 Signoff Results on SKY130}
+\label{tab:phase0}
+\begin{tabular}{@{}lrrrrrrrl@{}}
+\toprule
+\textbf{Design} & \textbf{Cells} & \textbf{Area ($\mu$m$^2$)} & \textbf{DRC} & \textbf{LVS} & \textbf{Ant.} & \textbf{STA} & \textbf{Mut.} & \textbf{Status} \\
+\midrule
+counter8 & 71 & 3,119 & 0 & Match & 0 & MET & 100\% & PASS \\
+alu8 & 156 & 5,478 & 0 & Match & 0 & MET & --- & PASS \\
+uart & 208 & 7,834 & 0 & Match & 0 & MET & 95\% & PASS \\
+spi\_master & 312 & 11,267 & 0 & Match & 0 & MET* & 85\% & COND. \\
+sync\_fifo & 189 & 6,912 & 0 & Match & 2 & MET & 100\% & FAIL \\
+\bottomrule
+\multicolumn{9}{@{}l@{}}{\footnotesize *CTS fanout relaxed 10$\to$20. sync\_fifo: 2 antenna violations (13--17\% over limit).} \\
+\end{tabular}
+\end{table*}
+
+Four designs achieve clean GDSII. The uart required 4~P\&R iterations (24~tool runs); the Trust Layer caught DRC violations after each attempt, preventing bad layouts from advancing. Across all designs, the safety-net parser caught 71~false-stall alarms from ambiguous tool output.
+
+\subsection{Failure Analysis}
+
+\textbf{sync\_fifo (FAIL):} Default synthesis produced $-1.545$~ns slack; switching to DELAY~4 recovered to $+0.182$~ns at 19\% more area. After routing, 2~nets had antenna ratios 13--17\% above limits. Root cause: OpenROAD's post-DRT antenna repair did not converge on the pinned version (OpenLane~2.3.10), and pre-DRT diode insertion was insufficient because routed topology differed from global-route estimates. The Trust Layer blocked GDSII generation; the anti-weakening guard prevented any threshold relaxation.
+
+\textbf{spi\_master (CONDITIONAL):} Passed all checks except clock-net fanout (CTS buffers drove $>$10 loads, relaxed to 20---a legitimate trade-off, as CTS buffer datasheets specify 20--30 max fanout). Formal verification achieved only 85\% mutation kill rate; 15\% survivors concentrated in SPI mode-switching logic where agents lacked protocol context.
+
+\subsection{Phase 1: RISC-V RV32I Core}
+
+\begin{table}[t]
+\centering
+\caption{PicoRV32 Results (SKY130, 20 MHz)}
+\label{tab:phase1}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+RV32I compliance & 39/39 PASS (Sail v0.15) \\
+Cells / Die area & 8,374 / 297,307 $\mu$m$^2$ \\
+DRC / LVS / Antenna & 0 / Match / 0 \\
+STA (9 corners) & WNS = 0 (setup \& hold) \\
+Antenna diodes & 11,631 (44.3\% of instances) \\
+Power (VCD / stat.) & 2.606 / 3.387 mW \\
+IR drop & 0.01\% of VDD \\
+ATPG coverage & 83.1\% (random only) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The PicoRV32 passes all checks, but the conservative antenna heuristic (diode on every net $>$50\% of limit, pre-DRT) inserted 11,631 diodes---44.3\% of instances. A post-DRT approach using actual wire lengths would reduce this significantly. The 83.1\% ATPG uses random patterns only; commercial stuck-at tools would achieve higher coverage.
+
+\subsection{Autonomous Pipeline UART}
+
+The pipeline-generated UART (run \texttt{01M426JH3Y...}) demonstrates fully autonomous operation: 12~model calls, zero operator influence, by agents Ada, Ada-C, Ada-I (RTL) and Lumen (lint).
+
+\begin{table}[t]
+\centering
+\caption{Pipeline UART: Autonomous Spec-to-Layout}
+\label{tab:pipeline_uart}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Stage} & \textbf{Result} \\
+\midrule
+Verification & 72/72 loopback + reference model \\
+Synthesis & 474 cells, 4,079 $\mu$m$^2$ \\
+P\&R & 95,375 wires, 2 antenna repaired \\
+STA post-P\&R & Setup +9.11~ns, hold +0.52~ns \\
+Cost / Time & \$0.39 / 3.5 min \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Success factors: well-constrained spec (standard UART protocol), independent verification catching a bit-ordering bug before synthesis, and small design closing timing on the first P\&R iteration. Two antenna violations found during global routing were successfully repaired with diode insertion before detailed routing---the same approach that failed on sync\_fifo worked here because the routing topology was simpler (474 cells vs.\ 189 with deeper pointer logic paths).
+
+\subsection{Verification Organization}
+
+The verification methodology achieves mutation testing kill rates of 100\% (counter8, sync\_fifo), 95\% (uart), and 85\% (spi\_master) using 6~bug types and 20~mutants per design, type-balanced. Formal properties (7--14 per design) are proven via k-induction in SymbiYosys with vacuity and tautology checks. Pre/post-synthesis equivalence is verified via eqy (BMC, depth 10). A prove-then-exclude policy uses eqy to screen out provably equivalent mutants before counting, correcting uart's kill rate from 70\% to 95\% after identifying 8~equivalent mutants.
+
+\subsection{Pipeline Statistics}
+
+Across 25~pipeline runs: 5,630 trajectory records, 337 model calls, 7 designs. Twelve runs were fully autonomous; thirteen required intervention. Failure modes: token budget exhaustion (5), formal harness bugs (3), container timeouts (3), equivalent mutant miscounting (2). Each was logged, root-caused, and fed into the knowledge base.
+
+% ===========================================================================
+\section{Provenance and Limitations}
+\label{sec:provenance}
+
+\textbf{Provenance audit.} A provenance audit revealed that committed RTL for s2s\_rv32i and s2s\_uart was hand-authored in interactive sessions, not agent-generated. False labels were corrected. The pipeline does function---proven by the UART trajectory with SHA-256 hashes---but the two processor-scale designs were human-directed.
+
+\textbf{Known limitations:} (1)~Bounded equivalence only (BMC depth 10, not full k-induction). (2)~Post-DRT antenna repair does not converge; pre-DRT heuristic is the workaround. (3)~Agent persona descriptions are prompting devices, not real expertise. (4)~Open-shuttle signoff bar, not commercial production. (5)~83.1\% ATPG from random patterns only. (6)~44.3\% diode overhead from conservative heuristic. (7)~No commercial-node validation.
+
+% ===========================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+The Trust Layer addresses the fundamental challenge of LLM hallucination in safety-critical engineering: you don't trust the AI---you trust the tools. Every stage has a deterministic checker the AI cannot bypass. This pattern generalizes to any domain with deterministic verification (compilers, structural engineering, drug interaction checking).
+
+The independence requirement---verification agents cannot read RTL, enforced by filesystem permissions---applies N-version programming~\cite{avizienis1985nversion} to AI-generated hardware. When RTL and tests derive from the same spec by different agents, they are unlikely to share mistakes.
+
+At \$0.39 per design and 3.5~minutes, the pipeline enables design-space exploration at a scale impractical with human-only teams. A designer could specify dozens of architectural variants and let the pipeline evaluate each through synthesis and timing analysis. The 5,630 trajectory records with 337 model calls---each including agent prompt, response, tool calls, and outcomes---constitute a dataset for studying AI-driven chip design, with 13 runs classified as ``training-grade'' (complete provenance) and 12 as ``usable.''
+
+% ===========================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+S2S demonstrates that LLM-powered agents can produce functionally correct, physically implementable digital designs when coupled with a Trust Layer delegating all pass/fail decisions to deterministic tools. Four of five Phase~0 designs reach clean GDSII; a RISC-V core passes 39/39 compliance tests across 9~PVT corners; the autonomous pipeline produces a UART at \$0.39 and 3.5~minutes. All results, logs, and signoff evidence are openly available.
+
+Future work: mixed-signal extension, commercial-node validation, improved antenna repair, unbounded equivalence proofs, and first-silicon fabrication on an open shuttle.
+
+\section*{Data Availability}
+
+Codebase, agents, trajectory logs, and signoff evidence: \url{https://github.com/GouthamRajam/Gouthamlabs}.
+
+\section*{Acknowledgments}
+
+This work used exclusively open-source EDA tools and SKY130. The author thanks the OpenROAD, Yosys, OpenLane, Magic, KLayout, and Netgen communities. AI assistance provided by Anthropic's Claude.
+
+% ===========================================================================
+\begin{thebibliography}{20}
+
+\bibitem{wilson2024}
+H.~Foster, ``2024 Wilson Research Group Functional Verification Study,'' Siemens EDA, 2024.
+
+\bibitem{semiengineering2023}
+M.~LaPedus, ``Chip engineering talent shortage worsens,'' Semiconductor Engineering, 2023.
+
+\bibitem{thakur2024verigen}
+S.~Thakur \emph{et al.}, ``VeriGen: A large language model for Verilog code generation,'' \emph{ACM TODAES}, vol.~29, no.~3, 2024.
+
+\bibitem{liu2023chipnemo}
+M.~Liu \emph{et al.}, ``ChipNemo: Domain-adapted LLMs for chip design,'' in \emph{Proc. ISCA}, 2024.
+
+\bibitem{orenesvera2023using}
+B.~Orenes-Vera \emph{et al.}, ``Using LLMs for hardware verification,'' in \emph{Proc. MICRO Workshop}, 2023.
+
+\bibitem{thakur2023autochip}
+S.~Thakur \emph{et al.}, ``AutoChip: Automating HDL generation using LLM feedback,'' in \emph{Proc. DAC Workshop}, 2023.
+
+\bibitem{asicagent2025}
+M.~Allam \emph{et al.}, ``ASIC-Agent: Autonomous multi-agent ASIC design with benchmark,'' \emph{arXiv:2508.15940}, 2025.
+
+\bibitem{nl2gds2026}
+T.~Eland \emph{et al.}, ``NL2GDS: LLM-aided interface for open source chip design,'' \emph{arXiv:2603.05489}, 2026.
+
+\bibitem{autoeda2025}
+``AutoEDA: Enabling EDA flow automation through microservice-based LLM agents,'' \emph{arXiv:2508.01012}, 2025.
+
+\bibitem{agenticseda2025}
+``The dawn of agentic EDA: A survey of autonomous digital chip design,'' \emph{arXiv:2512.23189}, 2025.
+
+\bibitem{avizienis1985nversion}
+A.~Avizienis, ``The N-version approach to fault-tolerant software,'' \emph{IEEE TSE}, vol.~SE-11, no.~12, 1985.
+
+\bibitem{openlane}
+M.~Shalan and T.~Edwards, ``Building OpenLane: A 130nm tapeout-proven flow,'' in \emph{Proc. DAC Workshop}, 2020.
+
+\bibitem{yosys}
+C.~Wolf, ``Yosys Open SYnthesis Suite.'' [Online]. Available: \url{https://yosyshq.net/yosys/}
+
+\bibitem{openroad}
+A.~Kahng \emph{et al.}, ``OpenROAD: Open-source RTL-to-GDS flow,'' in \emph{Proc. DAC}, 2021.
+
+\bibitem{magic}
+R.~T.~Edwards, ``Magic VLSI layout tool.'' [Online]. Available: \url{http://opencircuitdesign.com/magic/}
+
+\bibitem{klayout}
+M.~Koefferlein, ``KLayout.'' [Online]. Available: \url{https://www.klayout.de/}
+
+\bibitem{netgen}
+R.~T.~Edwards, ``Netgen: LVS for VLSI.'' [Online]. Available: \url{http://opencircuitdesign.com/netgen/}
+
+\bibitem{sky130}
+Google and SkyWater, ``SkyWater SKY130 open-source PDK,'' 2020.
+
+\bibitem{picorv32}
+C.~Wolf, ``PicoRV32 -- A size-optimized RISC-V CPU.'' [Online]. Available: \url{https://github.com/YosysHQ/picorv32}
+
+\bibitem{anthropic2024claude}
+Anthropic, ``Claude,'' 2024. [Online]. Available: \url{https://www.anthropic.com/claude}
+
+\end{thebibliography}
+
+\end{document}

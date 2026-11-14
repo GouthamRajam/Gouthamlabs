@@ -1,0 +1,38 @@
+topic: "Behavioral Verilog models for 66+ sky130_fd_sc_hd cells"
+summary: |
+  A hand-maintained Verilog file (sky130_cells.v) provides behavioral models for the
+  sky130_fd_sc_hd standard cell library. These models enable:
+  1. Gate-level simulation of synthesized netlists without the full foundry Verilog models
+  2. Functional verification that the synthesized design matches RTL behavior
+  3. Input to DFT flows (scan insertion, fault simulation)
+
+  Cell categories covered:
+  - Combinational: and2/3/4, or2/3/4, nand2/3/4, nor2/3/4, xor2/3, xnor2/3
+  - Complex: a21o, a21oi, a22o, a22oi, a31o, a31oi, a32o, a32oi, a311o, a311oi,
+    o21a, o21ai, o22a, o22ai, o31a, o31ai, o32a, o32ai, o221a, o221ai,
+    a21bo, a21boi, nand2b, nand3b, nand4b, nand4bb, nor2b, nor3b, nor4b, nor4bb
+  - Buffers/inverters: buf, inv, clkbuf, clkinv, conb (tie cells)
+  - Sequential: dfxtp (D flip-flop), sdfxtp (scan D flip-flop), dlxtp (D latch)
+  - Multiplexers: mux2, mux4
+  - Drive strengths: _1, _2, _4 variants (functionally identical, different timing)
+
+  The models use `always @(posedge CLK)` for sequential cells and continuous assignment
+  for combinational cells. Pin names match the sky130_fd_sc_hd naming convention exactly
+  (X=output, A/B/C/D=inputs, CLK=clock, D=data, Q=output for FFs).
+
+  Validated by running 39/39 riscv-arch-test compliance tests on the synthesized netlist
+  with signature matching against RTL simulation.
+evidence:
+  - path: designs/s2s_rv32i/synth_dft/sky130_cells.v
+    note: "Behavioral cell models used for gate-level simulation"
+  - path: designs/picorv32/synth_dft/sky130_cells.v
+    note: "Original version from PicoRV32 flow"
+tags: [sky130, simulation, cell-models, phase-0, behavioral-verilog, gate-level]
+status: confirmed
+date: 2026-10-08
+related: [k004-compiled-fault-sim]
+lesson: |
+  Behavioral cell models must cover every cell type the synthesizer can emit. When Yosys
+  picks a cell not in the model file, gate-level simulation silently produces X outputs.
+  After synthesis, compare the cell list from `stat` against the model file and add any
+  missing cells before proceeding to simulation or fault analysis.

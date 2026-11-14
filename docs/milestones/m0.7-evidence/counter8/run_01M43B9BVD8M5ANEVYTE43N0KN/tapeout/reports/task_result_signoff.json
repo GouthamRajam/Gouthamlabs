@@ -1,0 +1,123 @@
+{
+  "task_id": "task_01M43B9BW6YGQPEFYWNT3242TS",
+  "status": "success",
+  "summary": "Per the tool data for counter8 at a 10.0 ns clock, all 9 corners report passed: true with setup TNS 0.0 ns, hold TNS 0.0 ns and no DRV violators. Worst setup slack is 2.0134 ns at max_ss_100C_1v60; worst hold slack is 0.114 ns at min_ff_n40C_1v95. The worst setup path in every corner starts at input port load and ends at register _133_ (second worst: load to _132_). Hold margin at the fast corners (0.114-0.1187 ns) is the thinnest margin and is flagged for watching, not for a fix now.",
+  "outputs": [
+    {
+      "path": "reports/dfm_scorecard.json",
+      "sha256": "871b56f2c1d64e698b5316eca0147f7cb197a11ea619b2c99bc617347d17cbf1"
+    },
+    {
+      "path": "reports/dfm_scorecard.md",
+      "sha256": "dfe10062991e17d2a47f806c5d7b82929d7db11a7e871e5ac4b702a89f2e0055"
+    },
+    {
+      "path": "reports/dfm_tool.json",
+      "sha256": "e5f25a60cf2b0a1979bd9b8e59866f7870314362d1150c11de8b0acb4639c941"
+    },
+    {
+      "path": "reports/ir_report.json",
+      "sha256": "37d840fe05633435fe9b8fd26f1e7829b9c6ab3663542166653a409225a7faab"
+    },
+    {
+      "path": "reports/power_report.json",
+      "sha256": "042dcdd7eeb97e85c344e12688e9b79249ed8bf7b421c24a075a353ad5d5c283"
+    },
+    {
+      "path": "reports/power_tool.json",
+      "sha256": "aba23e647b6531a2ae13d24c8124404bef1611b429d7e01ed701dc007469e691"
+    },
+    {
+      "path": "reports/pv_signoff.json",
+      "sha256": "6c35504c231eeca5f29d89dd523bebeb3d8314dee85b77f3aef3d4f14b1ecf84"
+    },
+    {
+      "path": "reports/pv_tool.json",
+      "sha256": "587cce09c3dfa1b4abbb0c2ed652cdfbb8c84be31548ee043f82e8188c5a849d"
+    },
+    {
+      "path": "reports/sta_signoff.json",
+      "sha256": "1affe6041f43c7d321fd6fbcbccd78533c4b00017b7f963a19dc25fcc712bfd9"
+    },
+    {
+      "path": "reports/sta_tool.json",
+      "sha256": "06ad5d67fe71e44d4e34b78b3f1ae6dfc5c61834f403845788205ebb304638d2"
+    }
+  ],
+  "checks_run": [
+    "chk_01M43KZ8TYMNW0EJVJN3TWWZFB",
+    "chk_01M43KZGYWG1XS26XSDZ227YR1",
+    "chk_01M43KZGYXZG1KBEXY5B2VH06C",
+    "chk_01M43KZGYXZG1KBEXY5B2VH06E",
+    "chk_01M43KZGYXZG1KBEXY5B2VH06G",
+    "chk_01M43KZGYXZG1KBEXY5B2VH06J",
+    "chk_01M43KZGYXZG1KBEXY5B2VH06M",
+    "chk_01M43KZNHXRVNT35KR2J40TJBV",
+    "chk_01M43KZNHYEDR0Z7GP1SD42AZJ",
+    "chk_01M43M1AJNK1TCKMS4NRCCZY36",
+    "chk_01M43M1AJNXZJKK2JQR8VY4MRJ",
+    "chk_01M43M5GH5XDMGJMW4NGJRJRFW",
+    "chk_01M43M5J7G9H1BPB2B0STHZ91T",
+    "chk_01M43M716P596DVJCPPQ3E00T4",
+    "chk_01M43M717D4MM8ASCJSYS67W7A"
+  ],
+  "assumptions": [
+    "Among near-limit items, I ranked layers that have near-minimum SPACING edges (bridging risk; met1 has 574, li has 58) above layers whose near-limit edges are only minimum WIDTH (met2 and met3 have 0 near-min-space edges). Isolated minimum-width wires on low-density layers are the PDK's nominal design point.",
+    "An empty drv_violators list means 0 max transition, 0 max capacitance and 0 max fanout violations (max fanout constraint is 10 per constraints.sdc); the tool data does not give separate counts per DRV type.",
+    "Clock: 100 MHz (10 ns period) from spec.yaml target_clock_mhz. I assume the power runs used this clock; the input does not show the clock the power scripts used.",
+    "Corner names follow the flow convention: prefix nom/min/max = RC extraction corner, then process (tt/ss/ff), temperature and voltage.",
+    "Corners: power figures are from three PVT corners: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95. These corner names come from the tool data. The spec has not confirmed them (spec open question: 'Which sky130A release and STA corners apply?').",
+    "Electromigration (EM): not analyzed. The open flow used here gives no EM check of the PDN straps, vias or signal wires.",
+    "IR analysis type: I assume the worst_drop_v/avg_drop_v values are static (average-current) IR drop from the OpenLane/OpenROAD IR step. Dynamic (vectorless or vector-based) IR drop was not analyzed.",
+    "IR coverage: the values are reported as one drop figure. I assume this covers VPWR. The input does not say whether VGND ground bounce was reported separately.",
+    "Input and output delays of 3.0 ns and clock uncertainty of 0.25 ns are the DEFAULT values in constraints.sdc, not customer-specified values.",
+    "Leakage: taken from the sky130_fd_sc_hd liberty data at each corner (5.328549e-10 W tt, 4.81806e-07 W ss, 9.40391e-10 W ff). It is negligible at tt/ff and below 0.5% of total even at ss_100C.",
+    "Medium items rank above low items. Within each group I ranked a direct bridge/open mechanism (line-end spacing) above a margin-only one (density near max, which is 0.5565 against 0.6 and still under the limit).",
+    "Owners are taken from the tool output (Orion for every item). No item needs a Grid action.",
+    "PDK release: not pinned (spec target_clock_note). Numbers apply to the sky130A release installed in the run environment.",
+    "Parasitics: the input does not show whether the power runs used post-route extracted parasitics (SPEF) or wire-load estimates. I assume post-route SPEF because this is the signoff stage. This is unverified.",
+    "Ranking uses only reports/dfm_tool.json. I did not re-run any tool, and I did not inspect the GDS.",
+    "Spec lists power and area targets as out of scope, so there is no power budget to compare against; power is reported for information only.",
+    "Supply voltage for the IR limit: 1.8 V nominal (limit_rule '5% of 1.8 V'), so limit_v = 0.09 V. The IR data does not name its corner. I assume it was run at nominal 1.8 V (tt). The ss corner uses 1.60 V and the ff corner 1.95 V, and their IR margins were not reported.",
+    "Switching activity: input_activity = 0.2 (20% toggle rate) as recorded in power_tool.json. This is the A.13 default. No simulation activity (VCD/SAIF) was used, so dynamic power is an estimate and may be above or below real operating power.",
+    "The near-limit 'count' field equals near_min_width_edges + near_min_space_edges (for example li: 1232 + 58 = 1290). It is not a count of distinct edges, so it can exceed edges_total.",
+    "The tool's severities are taken as fixed. The ranking orders items within and across those severities and changes none of them.",
+    "The worst_paths lists contain only setup (type max) paths; no hold (type min) path details were provided, so hold paths are not explained beyond their slack.",
+    "Voltage source locations: power_tool.json does not record where the VPWR/VGND sources (pins/pads) were placed for the IR analysis. I assume the flow default (OpenLane/OpenROAD PDN pins at the core boundary). This is unverified.",
+    "_133_ and _132_ are synthesized instance names; the tool data does not identify their cell type or which count bit they hold, so I assume they are counter flip-flops (input-to-register paths) but cannot name them.",
+    "li near-limit geometry (DFM-002, 100%) is assumed to be mostly the standard cells' own li at minimum width. That is foundry-qualified cell layout that routing changes cannot alter, so it ranks below met1 and met2.",
+    "reports/sta_tool.json is the post-route signoff STA output (OpenSTA via the flow) with propagated clocks after CTS; the data itself does not state the clock mode."
+  ],
+  "open_issues": [
+    "Activity is a default, not measured. A SAIF/VCD from the REQ-013 random simulation (>=100000 cycles) could replace the 20% default. Request it from the verification agent if more accurate power is wanted.",
+    "Corners and PDK release await G1 review (spec open question).",
+    "DFM-003: the last two met1 line-end locations ([15.14,44.157,15.25,44.258] and [15.138,44.16,15.252,44.255]) almost coincide. This is probably one feature counted twice, so the true count may be 14. The tool owner should confirm.",
+    "Dominant cells on the worst paths cannot be named: the tool data gives only startpoint, endpoint, type, slack and state per path, with no per-cell delay breakdown. A full report_checks -path_delay max -format full_clock_expanded for load -> _133_ at max_ss_100C_1v60 is needed to name them.",
+    "Dynamic IR drop is not analyzed (static only).",
+    "EM is not analyzed by the open flow. For counter8's very low currents this is probably low risk, but it is unverified and must be listed as a signoff gap.",
+    "IR drop at the low-voltage ss_100C_1v60 corner was not reported. Is a corner-specific limit wanted (5% of 1.60 V = 0.08 V)? A human must decide; I have not changed the limit.",
+    "Input/output delay (3.0 ns) and clock uncertainty (0.25 ns) are DEFAULT assumptions; if the real interface budget is tighter, setup slack on the load -> _133_ path shrinks directly. Human review needed.",
+    "Near-limit metric: the titles say '% of routing edge length'. For met1, detail.fraction (0.5271) does not equal the edge-count ratio (672+574)/3044 = 0.409, which fits a length-weighted metric. But 'count' (width + space events) can exceed edges_total (li: 1290 vs 1232). A human should confirm the definitions before G3 uses these percentages quantitatively.",
+    "No hold path details (startpoint/endpoint) are in the tool data; hold worst paths at min_ff_n40C_1v95 (0.114 ns) should be reported for completeness.",
+    "REQ-012 (no combinational input-to-count path) is not shown by this data; an STA path check from all inputs to count[*] is needed to close it.",
+    "Signoff corners are not confirmed by the spec (open question: which sky130A release and STA corners apply); the 9 corners here are the flow's configuration and need G1 confirmation.",
+    "The IR corner and the voltage source locations are not recorded in power_tool.json. Ask the flow owner to log them so the IR result can be audited.",
+    "The tool reports density_window_min = 0.0 on li, met1, met3 and met4, but it raises no item for minimum density. If minimum-density/fill rules apply at this block level (normally handled at chip-level fill), a human should decide whether a min-density check is needed. This is not promoted to an item here.",
+    "Two tool totals differ. The OpenLane flow total (0.00014227691281121224 W) and the OpenSTA tt_025C_1v80 total (0.0001466368 W) differ by about 3%. The likely causes are different activity settings or different parasitics, but the input does not show which. A human or the flow owner should confirm which number is the signoff number.",
+    "mcon has 308 single-cut connections out of 308 cuts, and via has 275 out of 350. The tool reports redundant_via_fits = 0, so no fix is actionable today. Noted for awareness only."
+  ],
+  "messages": [
+    {
+      "from": "Volta",
+      "summary": "counter8 total power from OpenSTA 2.6.0 at 20% input activity (a default, not simulation activity): 0.0001466368 W (tt_025C_1v80), 0.0001175298 W (ss_100C_1v60), 0.000169279 W (ff_n40C_1v95). The OpenLane flow total is 0.00014227691281121224 W. IR data: worst drop 5e-05 V and average drop 2.48e-05 V, against a limit of 0.09 V (5% of 1.8 V, A.13 Phase 0 default). The input does not give the IR corner, the voltage source locations or the IR tool, and the open flow does not analyze electromigration. The S2S runtime checks are the authority on pass or fail."
+    },
+    {
+      "from": "Fabian",
+      "summary": "counter8 DFM (KLayout 0.29.4 dfm.py, per reports/dfm_tool.json): 0 high, 2 medium, 5 low. Highest real yield risk: 15 met1 line ends at near-minimum spacing (DFM-003, medium), then 2 li density windows at 0.5565 against the 0.6 max (DFM-001, medium). The near-limit-geometry items (DFM-004, -005, -002, -006, -007) are low. Most of that near-limit geometry is minimum-width standard-cell/router geometry on a sparse design, and DFM-007 (met4) is a 0% no-op. Context from the tool output: worst antenna is 19.31% of the limit (flag threshold 80%), 0 long parallel runs, 0 isolated narrow lines, and redundant_via_fits = 0 on every via layer. So no redundant-via action is possible. Nothing was promoted beyond the tool severity."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All numbers are quoted directly from the provided tool data and are internally consistent (all slacks positive, TNS 0.0, passed true). Confidence is not high because the data lacks per-cell path detail, hold path endpoints and DRV breakdowns, so dominant cells and hold paths cannot be explained, and the constraints contain DEFAULT values pending review.",
+    "confidence": "medium"
+  }
+}

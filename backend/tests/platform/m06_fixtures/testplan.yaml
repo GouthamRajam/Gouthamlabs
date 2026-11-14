@@ -1,0 +1,23 @@
+# Hand-written test fixture (scripted model answer for offline plumbing tests). Not agent output.
+design: counter8
+clock: clk
+reset: {name: rst_n, active: low}
+transaction:
+  description: "one clock cycle: inputs applied, count after the rising edge"
+  fields: {rst_n: 1, en: 1, up: 1, load: 1, load_value: 8}
+  outputs: [count]
+requirements:
+  - id: REQ-001
+    tests: [{name: test_reset, kind: directed, description: "reset from random states clears count"}]
+  - id: REQ-002
+    tests: [{name: test_load, kind: directed, description: "load values incl. 0x00 and 0xFF"}]
+  - id: REQ-003
+    tests: [{name: test_random, kind: random, description: "random cycles vs the model incl. wrap"}]
+  - id: REQ-004
+    tests: [{name: test_hold, kind: directed, description: "en=0 holds"}]
+coverage_bins:
+  - {name: in_reset, expr: "not rst_n", req: REQ-001}
+  - {name: load_seen, expr: "rst_n and load", req: REQ-002}
+  - {name: wrap_up, expr: "rst_n and not load and en and up and count == 255", req: REQ-003}
+  - {name: wrap_down, expr: "rst_n and not load and en and not up and count == 0", req: REQ-003}
+  - {name: hold, expr: "rst_n and not load and not en", req: REQ-004}

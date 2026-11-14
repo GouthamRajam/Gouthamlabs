@@ -19,7 +19,9 @@ _TCL = r"""
 read_verilog {netlist}
 link_design {top}
 read_sdc {sdc}
+{post_route}
 {read_spef}
+{derate}
 puts "S2S_STA_CORNER {corner}"
 report_checks -path_delay max -group_count {paths} -digits 4
 report_checks -path_delay min -group_count {paths} -digits 4
@@ -45,6 +47,21 @@ _PATH = re.compile(
 _ERROR = re.compile(r"^Error:?\s*(?P<msg>.*)$", re.M)
 _WARNING = re.compile(r"^Warning:?\s*(?P<msg>.*)$", re.M)
 _VIOLATOR_SECTION = re.compile(r"^(?P<kind>max slew|max capacitance|max fanout)\b", re.I | re.M)
+_VIOLATOR_PIN = re.compile(r"^(?P<pin>\S+)\s+(?P<limit>-?[\d.]+)\s+(?P<value>-?[\d.]+)(?:\s+-?[\d.]+)?\s+\(VIOLATED\)", re.M)
+
+
+def violator_pins(block: str) -> list[dict]:
+    """report_check_types -violators rows: [{kind, pin, limit, value}] (OpenSTA prints Pin Limit Value Slack)."""
+    rows, kind = [], None
+    for line in block.splitlines():
+        k = _VIOLATOR_SECTION.match(line.strip())
+        if k:
+            kind = k["kind"].lower()
+            continue
+        m = _VIOLATOR_PIN.match(line.strip())
+        if m and kind:
+            rows.append({"kind": kind, "pin": m["pin"], "limit": float(m["limit"]), "value": float(m["value"])})
+    return rows
 
 
 def _num(m: re.Match | None) -> float | None:
@@ -94,6 +111,7 @@ def parse(log: str, reports: dict[str, str]) -> ParsedLog:
         "violated_paths_reported": sum(1 for p in paths if p["state"] == "VIOLATED"),
         "worst_paths": paths,
         "drv_violators": violator_kinds,
+        "drv_violator_pins": violator_pins(block),
     }
     return out
 
@@ -109,18 +127,26 @@ SPEC = ToolSpec(
 def run_opensta(
     netlist: Path, sdc: Path, top: str, workdir: Path, corner: str = "tt_025C_1v80",
     liberty: list[Path] | None = None, spef: Path | None = None, paths: int = 5,
-    timeout_s: float = 1800,
+    timeout_s: float = 1800, post_route: bool = False, tag: str | None = None,
+    derate: tuple[float, float] | None = None,
 ) -> ToolResult:
+    """post_route: the clock tree exists, so clock latencies are propagated through it.
+    derate: flat OCV derate (early, late), e.g. (0.90, 1.10), applied to cell and net delays on data and clock
+    paths (OpenSTA set_timing_derate; clock reconvergence pessimism removal stays on). SKY130 has no foundry
+    OCV/AOCV tables, so a flat derate is an engineering estimate, not a foundry signoff number."""
     libs = [str(Path(p).resolve()) for p in liberty] if liberty else [SKY130_HD_LIB.format(corner=corner)]
-    script = workdir.resolve() / ".s2s" / f"sta_{top}_{corner}.tcl"
+    name = f"sta_{top}_{tag or corner}"
+    script = workdir.resolve() / ".s2s" / f"{name}.tcl"
     script.parent.mkdir(parents=True, exist_ok=True)
     script.write_text(_TCL.format(
         read_libs="\n".join(f"read_liberty {lib}" for lib in libs),
         netlist=Path(netlist).resolve(), top=top, sdc=Path(sdc).resolve(),
-        read_spef=f"read_spef {Path(spef).resolve()}" if spef else "", corner=corner, paths=paths))
+        read_spef=f"read_spef {Path(spef).resolve()}" if spef else "", corner=tag or corner, paths=paths,
+        post_route="set_propagated_clock [all_clocks]" if post_route else "",
+        derate=(f"set_timing_derate -early {derate[0]}\nset_timing_derate -late {derate[1]}" if derate else "")))
     cmd = ["sta", "-no_init", "-exit", str(script)]
     try:
-        rec = runner.run(cmd, workdir, workdir / "logs" / f"sta_{top}_{corner}.log", SPEC.version_key,
+        rec = runner.run(cmd, workdir, workdir / "logs" / f"{name}.log", SPEC.version_key,
                          timeout_s)
     except runner.EdaUnavailable as e:
         return unavailable(SPEC, str(e), cmd)

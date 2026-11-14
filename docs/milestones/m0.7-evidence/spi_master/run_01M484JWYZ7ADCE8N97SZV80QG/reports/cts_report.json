@@ -1,0 +1,177 @@
+{
+  "iteration": 1,
+  "per_corner": {
+    "max_ff_n40C_1v95": {
+      "setup": {
+        "reported_skew_ns": 0.254916,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.004916,
+        "source_latency_ns": 0.250985,
+        "target_latency_ns": -0.246069
+      },
+      "hold": {
+        "reported_skew_ns": -0.256269,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.006269,
+        "source_latency_ns": 0.246069,
+        "target_latency_ns": -0.252338
+      }
+    },
+    "max_ss_100C_1v60": {
+      "setup": {
+        "reported_skew_ns": 0.256342,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.006342,
+        "source_latency_ns": 0.60519,
+        "target_latency_ns": -0.598848
+      },
+      "hold": {
+        "reported_skew_ns": -0.257598,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.007598,
+        "source_latency_ns": 0.598827,
+        "target_latency_ns": -0.606425
+      }
+    },
+    "max_tt_025C_1v80": {
+      "setup": {
+        "reported_skew_ns": 0.255668,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.005668,
+        "source_latency_ns": 0.35698,
+        "target_latency_ns": -0.351312
+      },
+      "hold": {
+        "reported_skew_ns": -0.257001,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.007001,
+        "source_latency_ns": 0.351312,
+        "target_latency_ns": -0.358313
+      }
+    },
+    "min_ff_n40C_1v95": {
+      "setup": {
+        "reported_skew_ns": 0.253562,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.003562,
+        "source_latency_ns": 0.239223,
+        "target_latency_ns": -0.235661
+      },
+      "hold": {
+        "reported_skew_ns": -0.253897,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.003897,
+        "source_latency_ns": 0.235725,
+        "target_latency_ns": -0.239622
+      }
+    },
+    "min_ss_100C_1v60": {
+      "setup": {
+        "reported_skew_ns": 0.255242,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.005242,
+        "source_latency_ns": 0.584593,
+        "target_latency_ns": -0.57935
+      },
+      "hold": {
+        "reported_skew_ns": -0.255615,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.005615,
+        "source_latency_ns": 0.57935,
+        "target_latency_ns": -0.584965
+      }
+    },
+    "min_tt_025C_1v80": {
+      "setup": {
+        "reported_skew_ns": 0.254346,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.004346,
+        "source_latency_ns": 0.342255,
+        "target_latency_ns": -0.337909
+      },
+      "hold": {
+        "reported_skew_ns": -0.254738,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.004738,
+        "source_latency_ns": 0.337909,
+        "target_latency_ns": -0.342647
+      }
+    },
+    "nom_ff_n40C_1v95": {
+      "setup": {
+        "reported_skew_ns": 0.254029,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.004029,
+        "source_latency_ns": 0.244615,
+        "target_latency_ns": -0.240585
+      },
+      "hold": {
+        "reported_skew_ns": -0.254648,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.004648,
+        "source_latency_ns": 0.240585,
+        "target_latency_ns": -0.245233
+      }
+    },
+    "nom_ss_100C_1v60": {
+      "setup": {
+        "reported_skew_ns": 0.255798,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.005798,
+        "source_latency_ns": 0.594413,
+        "target_latency_ns": -0.588615
+      },
+      "hold": {
+        "reported_skew_ns": -0.25641,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.00641,
+        "source_latency_ns": 0.588466,
+        "target_latency_ns": -0.594876
+      }
+    },
+    "nom_tt_025C_1v80": {
+      "setup": {
+        "reported_skew_ns": 0.254719,
+        "clock_uncertainty_ns": 0.25,
+        "tree_skew_ns": 0.004719,
+        "source_latency_ns": 0.349088,
+        "target_latency_ns": -0.34437
+      },
+      "hold": {
+        "reported_skew_ns": -0.255327,
+        "clock_uncertainty_ns": -0.25,
+        "tree_skew_ns": 0.005327,
+        "source_latency_ns": 0.34437,
+        "target_latency_ns": -0.349696
+      }
+    }
+  },
+  "corners_with_skew": 9,
+  "worst_tree_skew_ns": 0.007598,
+  "target_ns": 2.0,
+  "clock_buffers": 9,
+  "hold_ws_after_cts_by_corner": {
+    "nom_tt_025C_1v80": 0.301475,
+    "nom_ss_100C_1v60": 0.6181605402523026,
+    "nom_ff_n40C_1v95": 0.013112872270280695
+  },
+  "setup_ws_after_cts_by_corner": {
+    "nom_tt_025C_1v80": 9.76201,
+    "nom_ss_100C_1v60": 7.035543902160927,
+    "nom_ff_n40C_1v95": 9.576872010932588
+  },
+  "hold_buffers": 79,
+  "timing_repair_buffers": 178,
+  "explained_by": "Tick",
+  "explanation": "# Clock tree report: spi_master, clock clk (50 MHz), iteration 1\n\n## Skew\n- Skew target (from tool data): 2.0 ns. The spec itself gives no skew target; 2.0 ns is the value in reports/cts_tool.json.\n- Worst measured tree skew: 0.007598 ns (max_ss_100C_1v60, hold side), over 9 corners. This is well inside the 2.0 ns target.\n- \"Tree skew\" is the tool's reported skew minus the 0.25 ns clock uncertainty (for example max_ss_100C_1v60 setup: reported 0.256342 ns, uncertainty 0.25 ns, tree skew 0.006342 ns). The reported figures include the uncertainty, so I quote tree skew as the skew of the tree itself.\n\n## Per-corner skew and latency\n| Corner | Setup tree skew (ns) | Hold tree skew (ns) | Setup source latency (ns) | Hold source latency (ns) |\n|---|---|---|---|---|\n| max_ff_n40C_1v95 | 0.004916 | 0.006269 | 0.250985 | 0.246069 |\n| max_ss_100C_1v60 | 0.006342 | 0.007598 | 0.60519 | 0.598827 |\n| max_tt_025C_1v80 | 0.005668 | 0.007001 | 0.35698 | 0.351312 |\n| min_ff_n40C_1v95 | 0.003562 | 0.003897 | 0.239223 | 0.235725 |\n| min_ss_100C_1v60 | 0.005242 | 0.005615 | 0.584593 | 0.57935 |\n| min_tt_025C_1v80 | 0.004346 | 0.004738 | 0.342255 | 0.337909 |\n| nom_ff_n40C_1v95 | 0.004029 | 0.004648 | 0.244615 | 0.240585 |\n| nom_ss_100C_1v60 | 0.005798 | 0.00641 | 0.594413 | 0.588466 |\n| nom_tt_025C_1v80 | 0.004719 | 0.005327 | 0.349088 | 0.34437 |\n\nLatency is lowest in the ff corners (about 0.24 ns) and highest in the ss corners (about 0.58 to 0.61 ns).\n\n## Clock buffers\n- Clock buffers: 9.\n- Hold-fix buffers inserted: 79. Timing-repair buffers: 178. These are not clock-tree buffers.\n\n## Effect on hold timing after CTS\nWorst hold slack after CTS, only for the three nominal corners the tool reported:\n- nom_tt_025C_1v80: 0.301475 ns\n- nom_ss_100C_1v60: 0.6181605402523026 ns\n- nom_ff_n40C_1v95: 0.013112872270280695 ns (smallest margin)\n\nAll three are positive. The ff corner is only about 13 ps above zero, so hold margin there is thin. The tree skew is under 8 ps in every corner, so the clock tree itself adds very little hold stress. The 79 hold buffers show that hold fixing was needed.\n\nWorst setup slack after CTS (same three corners): nom_tt 9.76201 ns, nom_ss 7.035543902160927 ns, nom_ff 9.576872010932588 ns. All positive.\n\n## Not covered\n- Hold and setup slack were not given for the max_* and min_* corners, so REQ-021 (every evaluated corner) is not confirmed here. Only the final STA can decide it.\n- Transition and clock gating were not in the tool data. The spec (REQ-020) requires no clock gating.\n- This report is a read-out of the tool data. I ran no tool and claim no check passed.\n",
+  "assumptions": [
+    "Tree skew is the tool's reported skew minus the clock uncertainty of 0.25 ns, as given in the tool data.",
+    "The 2.0 ns skew target is taken from reports/cts_tool.json because the spec states none.",
+    "Hold buffers (79) and timing-repair buffers (178) are reported separately from the 9 clock buffers."
+  ],
+  "open_issues": [
+    "Hold slack is thin at nom_ff_n40C_1v95 (0.013112872270280695 ns); needs confirmation in final STA.",
+    "Post-CTS slack is given only for the three nominal corners; max_* and min_* corners are not covered for REQ-021.",
+    "No clock transition data in the tool output."
+  ]
+}

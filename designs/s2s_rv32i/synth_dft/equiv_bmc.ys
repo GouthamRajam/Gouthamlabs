@@ -1,0 +1,32 @@
+# Phase 1.5 Pillar A: BMC equivalence check (RTL vs gate netlist)
+# Uses Yosys built-in SAT solver
+
+# Read RTL
+read_verilog ../rtl/s2s_rv32i_alu.v
+read_verilog ../rtl/s2s_rv32i_decoder.v
+read_verilog ../rtl/s2s_rv32i_regfile.v
+read_verilog ../rtl/s2s_rv32i_csr.v
+read_verilog ../rtl/s2s_rv32i_core.v
+
+# Read gate netlist with cell models
+read_verilog sky130_cells.v
+read_verilog s2s_rv32i_gate.v
+
+# Read miter
+read_verilog -sv miter.sv
+
+# Set RESET_VECTOR parameter on RTL module
+chparam -set RESET_VECTOR 32'h80000000 s2s_rv32i_core
+
+# Elaborate
+hierarchy -top miter
+proc
+flatten
+memory
+opt
+
+# Prepare for SAT
+prep -top miter
+
+# Run BMC at depth 10
+sat -tempinduct -prove-asserts -set-init-zero -seq 10 -verify

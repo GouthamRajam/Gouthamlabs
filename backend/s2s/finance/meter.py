@@ -150,6 +150,22 @@ def task_usage(s: Session, task_id: str) -> dict:
     }
 
 
+def tool_runs_left(task_id: str, budget: dict | None) -> tuple[int, int] | None:
+    """(used, limit) of the task's tool-run budget, or None when it has no tool-run limit. Note the hard stop:
+    check_budgets raises right after the run that brings usage to the limit, so that run's result is never
+    evaluated; work of n runs can finish only if used + n < limit (see iteration_fits)."""
+    limit = (budget or {}).get("max_tool_runs")
+    if not limit:
+        return None
+    with db_session() as s:
+        return int(task_usage(s, task_id)["tool_runs"]), int(limit)
+
+
+def iteration_fits(used: int, limit: int, runs_needed: int) -> bool:
+    """True if `runs_needed` more tool runs complete AND can be evaluated before the hard stop."""
+    return used + runs_needed < limit
+
+
 def check_budgets(task: TaskRef) -> None:
     with db_session() as s:
         usage = task_usage(s, task.id)

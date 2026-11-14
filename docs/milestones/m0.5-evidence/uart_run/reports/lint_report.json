@@ -1,0 +1,21 @@
+{
+  "tools": {
+    "verilator_lint": {
+      "status": "PASS",
+      "passed": true,
+      "reasons": [],
+      "issues": []
+    },
+    "yosys_elab": {
+      "status": "PASS",
+      "passed": true,
+      "reasons": [],
+      "issues": []
+    }
+  },
+  "structure": [],
+  "ports": [],
+  "waivers": [],
+  "blocking": 0,
+  "passed": true
+}

@@ -1,0 +1,251 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 6.229,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7754,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 3.3554,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.8325,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 7.3135,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4211,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 6.2614,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7738,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 3.4176,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.8302,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 7.3382,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4196,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 6.1918,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7787,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 3.276,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.838,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 7.2822,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4233,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    }
+  },
+  "derated": {
+    "5": {
+      "early": 0.95,
+      "late": 1.05,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 6.0684,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7257,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 3.0417,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 1.732,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 7.2123,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3884,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 6.1026,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7241,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 3.1073,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 1.7299,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 7.2384,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3869,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 6.0291,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.7287,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 2.9581,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 1.7371,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 7.1792,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3904,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 2.9581,
+      "hold_ws_ns": 0.3869,
+      "passed": true,
+      "gate": false,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    },
+    "10": {
+      "early": 0.9,
+      "late": 1.1,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 5.9078,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.6759,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 2.728,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 1.6315,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 7.1111,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3556,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 5.9438,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.6745,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 2.7969,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 1.6295,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 7.1385,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3543,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 5.8664,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.6787,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 2.6401,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 1.6363,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 7.0763,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3575,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 2.6401,
+      "hold_ws_ns": 0.3543,
+      "passed": true,
+      "gate": true,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    }
+  },
+  "explained_by": "Chronos",
+  "explanation": "# alu8 signoff timing report (sta_signoff)\n\nSource: `reports/sta_tool.json` (OpenSTA results supplied by the runtime). Constraints: `constraints/constraints.sdc` - clock `clk` period 13.333333 ns, uncertainty 0.25 ns, input/output delay 4.0 ns (DEFAULT), max fanout 10. I did not run any tool in this task; every pass/fail below is as reported in the tool data.\n\n## Verdict\n\nAll 9 corners report `passed: true`. Setup and hold TNS are 0.0 ns in every corner. No DRV (max transition / max capacitance / max fanout) violators in any corner. The 10% flat-derate gate run also reports `passed: true`. No fixes are required.\n\n- Worst setup slack: **3.276 ns** at `max_ss_100C_1v60` (op[1] -> _342_)\n- Worst hold slack: **0.4196 ns** at `min_ff_n40C_1v95`\n- REQ-014 (typical corner, setup WNS >= 0.0 and hold WNS >= 0.0): `nom_tt_025C_1v80` reports setup WS 6.229 ns, hold WS 0.7754 ns, passed: true.\n\n## Per-corner results (no derate)\n\n| Corner | Setup WS (ns) | Setup TNS (ns) | Hold WS (ns) | Hold TNS (ns) | DRV violators | Passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 6.229 | 0.0 | 0.7754 | 0.0 | none | true |\n| nom_ss_100C_1v60 | 3.3554 | 0.0 | 1.8325 | 0.0 | none | true |\n| nom_ff_n40C_1v95 | 7.3135 | 0.0 | 0.4211 | 0.0 | none | true |\n| min_tt_025C_1v80 | 6.2614 | 0.0 | 0.7738 | 0.0 | none | true |\n| min_ss_100C_1v60 | 3.4176 | 0.0 | 1.8302 | 0.0 | none | true |\n| min_ff_n40C_1v95 | 7.3382 | 0.0 | 0.4196 | 0.0 | none | true |\n| max_tt_025C_1v80 | 6.1918 | 0.0 | 0.7787 | 0.0 | none | true |\n| max_ss_100C_1v60 | 3.276 | 0.0 | 1.838 | 0.0 | none | true |\n| max_ff_n40C_1v95 | 7.2822 | 0.0 | 0.4233 | 0.0 | none | true |\n\nAs expected, setup is tightest at the slow corner (ss, 100C, 1.60 V) with max RC, and hold is tightest at the fast corner (ff, -40C, 1.95 V).\n\n## Flat OCV derate runs (engineering estimate)\n\nTool caveat: \"flat derate; SKY130 has no foundry OCV tables (engineering estimate)\".\n\n| Derate | early / late | Worst setup WS (ns) | Worst hold WS (ns) | Gate | Passed |\n|---|---|---|---|---|---|\n| 5% | 0.95 / 1.05 | 2.9581 | 0.3869 | false | true |\n| 10% | 0.9 / 1.1 | 2.6401 | 0.3543 | true | true |\n\nUnder the 10% gate derate, worst setup is at max_ss_100C_1v60 (2.6401 ns) and worst hold at min_ff_n40C_1v95 (0.3543 ns); TNS is 0.0 ns in all derated corners.\n\n## Worst paths in plain words\n\nAll listed worst paths are setup (max) paths with state MET. They all start at an **input port of the opcode bus** (`op[0]` or `op[1]`) and end at an internal instance (`_342_`, `_350_` or `_351_`), which I take to be result/flag registers. In plain words: the opcode arrives 4.0 ns after the clock edge (SDC input delay), then passes through the ALU operation-select logic (the opcode steers which of add/sub/logic/shift results, and which flag logic, reaches the register) before being captured at the next edge.\n\n| Corner | Path 1 (start -> end, slack ns) | Path 2 (start -> end, slack ns) |\n|---|---|---|\n| max_ss_100C_1v60 | op[1] -> _342_, 3.276 | op[1] -> _350_, 3.4647 |\n| nom_ss_100C_1v60 | op[1] -> _342_, 3.3554 | op[1] -> _351_, 3.5267 |\n| min_ss_100C_1v60 | op[1] -> _342_, 3.4176 | op[1] -> _351_, 3.579 |\n| max_tt_025C_1v80 | op[0] -> _342_, 6.1918 | op[0] -> _350_, 6.2551 |\n| nom_tt_025C_1v80 | op[0] -> _342_, 6.229 | op[0] -> _350_, 6.2893 |\n| min_tt_025C_1v80 | op[0] -> _342_, 6.2614 | op[0] -> _350_, 6.322 |\n| max_ff_n40C_1v95 | op[0] -> _350_, 7.2822 | op[0] -> _342_, 7.2982 |\n| nom_ff_n40C_1v95 | op[1] -> _350_, 7.3135 | op[1] -> _342_, 7.3301 |\n| min_ff_n40C_1v95 | op[0] -> _350_, 7.3382 | op[0] -> _342_, 7.3556 |\n\nObservations:\n- The critical endpoint is consistently `_342_` (or `_350_` at ff), so the same logic cone limits timing in every corner; only the opcode bit (op[0] vs op[1]) changes with corner.\n- The worst paths are input-port-to-register paths, so their slack depends directly on the DEFAULT 4.0 ns input delay, not only on internal logic.\n- **Dominant cells: not available.** The tool data gives only start point, end point and slack; it has no per-cell delay breakdown. I will not guess which cells dominate.\n- **Hold paths: not available.** No min-type paths are listed, so the worst hold path (min_ff_n40C_1v95, 0.4196 ns) cannot be described by start/end point.\n\n## Fixes\n\nNone required: every corner and the 10% derate gate report passed with positive slack. For reference only, if margin is ever needed on the op[*] -> _342_ cone (e.g. if the real input delay budget turns out larger than 4.0 ns), ranked by expected effect:\n1. Confirm the real external I/O delay budget (G1 open question) - the cheapest and most decisive lever, since the worst paths start at input ports.\n2. Upsize/buffer the high-fanout opcode decode nets that feed the result mux (requires the per-cell path report to confirm).\n3. Re-place the opcode decode logic closer to the op[*] pins and the _342_ register.\n4. Register the opcode at the input (would add a pipeline stage; conflicts with REQ-009 1-cycle latency, so only with a spec change).\n\n## Open items for a human\n\n- Provide full `report_checks` output (with per-cell delays) for the max_ss_100C_1v60 setup path and the min_ff_n40C_1v95 hold path if a cell-level explanation is required.\n- Input/output delay of 4.0 ns and clock uncertainty of 0.25 ns are DEFAULT values pending G1 review.\n",
+  "assumptions": [
+    "All numbers are taken verbatim from reports/sta_tool.json; I did not run OpenSTA in this task, and pass/fail is as reported by that tool output.",
+    "Endpoints _342_, _350_ and _351_ are taken to be internal register (flop) instances of the result/flag registers, because the path starts at an input port and the endpoint is not a port name; the tool data does not state the cell type.",
+    "Corner names follow the OpenLane/OpenROAD convention: nom/min/max = nominal/min/max parasitic (RC) extraction, tt/ss/ff = process, then temperature and supply voltage.",
+    "The input-to-register worst paths include the SDC input delay of 4.0 ns and clock uncertainty of 0.25 ns (constraints/constraints.sdc); these are DEFAULT I/O budgets, not customer values.",
+    "An empty drv_violators list is read as zero max-transition, max-capacitance and max-fanout violations; the tool data does not give separate per-check counts.",
+    "The 10% derate run is the one marked gate=true in the tool data; the 5% run is informational (gate=false). Both are flat derates, an engineering estimate since SKY130 has no foundry OCV tables."
+  ],
+  "open_issues": [
+    "No per-cell delay breakdown is present in reports/sta_tool.json, so the dominant cells on the worst paths cannot be named from tool data. If needed, the runtime should emit full report_checks -path_delay max -fields {slew cap input_pins} output for the max_ss_100C_1v60 worst path.",
+    "worst_paths lists only setup (max) paths; no hold (min) path start/end points are given, so the worst hold path (min_ff_n40C_1v95, 0.4196 ns) cannot be described in words.",
+    "Setup margin depends on the DEFAULT 4.0 ns input/output delay budget (spec open_questions: no customer I/O budget). If the real external delays are larger, the op[*] -> register paths are the first to lose margin; this needs G1/human confirmation.",
+    "OCV derating is a flat engineering estimate (tool caveat: SKY130 has no foundry OCV tables)."
+  ]
+}

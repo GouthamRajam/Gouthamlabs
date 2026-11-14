@@ -1,0 +1,25 @@
+[options]
+mode bmc
+depth 20
+
+[engines]
+smtbmc z3
+
+[script]
+read_verilog picorv32.v
+read_verilog sky130_cells.v
+read_verilog picorv32_gate.v
+read_verilog -sv miter.sv
+chparam -set RESET_VECTOR 32'h80000000 picorv32
+hierarchy -top miter
+proc
+flatten
+memory
+opt
+prep -top miter
+
+[files]
+/rtl/picorv32.v
+/work/sky130_cells.v
+/work/picorv32_gate.v
+/work/miter.sv

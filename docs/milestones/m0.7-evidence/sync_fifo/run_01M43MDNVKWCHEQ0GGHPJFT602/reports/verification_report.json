@@ -1,0 +1,139 @@
+{
+  "design": "sync_fifo",
+  "coverage": {
+    "met": true,
+    "line": 1.0,
+    "toggle": 1.0,
+    "functional": 1.0,
+    "unhit_bins": []
+  },
+  "formal": {
+    "error": null,
+    "failed": [],
+    "vacuous": [],
+    "tautologies": [],
+    "proven_meaningful": 14
+  },
+  "formal_properties": {
+    "count_pop": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "count_push": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "full_decode": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "empty_decode": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "overflow_set": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "reset_values": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "underflow_set": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "count_hold_full": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "count_simul_mid": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "sticky_overflow": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "sticky_underflow": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "almost_full_decode": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "rd_data_zero_when_empty": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "never_cov_full_and_empty_never": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    }
+  },
+  "mutation": [
+    {
+      "rate": 1.0,
+      "total": 20,
+      "attempt": 1,
+      "by_type": {
+        "stuck_bit": "4/4",
+        "off_by_one": "3/3",
+        "missing_reset": "3/3",
+        "wrong_operator": "4/4",
+        "dropped_handshake": "3/3",
+        "swapped_condition": "3/3"
+      },
+      "detected": 20
+    }
+  ],
+  "bugs": [],
+  "real_rtl_bugs": [],
+  "guard": [
+    {
+      "flags": [
+        "testplan: coverage bin 'cov_full_and_empty_never' was removed"
+      ],
+      "author": "Vera",
+      "reason": "operator decision: reclassify coverage bin cov_full_and_empty_never as an illegal-state assertion ap_never_cov_full_and_empty_never (not a waiver: it is now proven never to happen). CEO decision: full and empty at the same time can never happen in a correct FIFO; it is a must-never-happen state to be proven by formal, not a coverage target and not a waiver."
+    }
+  ],
+  "anticheat_final": {
+    "flags": [
+      "testplan: coverage bin 'cov_full_and_empty_never' was removed"
+    ],
+    "unreviewed": [],
+    "approved_by_sentinel": [
+      "testplan: coverage bin 'cov_full_and_empty_never' was removed"
+    ]
+  }
+}

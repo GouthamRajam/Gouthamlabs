@@ -1,0 +1,10 @@
+{
+  "run_spend_by_agent_usd": {
+    "Grid": 0.00022,
+    "Orion": 0.00071,
+    "Sentinel": 0.0,
+    "Sienna": 0.000259,
+    "Tess": 0.0,
+    "Tick": 0.000204
+  }
+}

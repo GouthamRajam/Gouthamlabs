@@ -1,0 +1,84 @@
+{
+  "design": "counter8",
+  "coverage": {
+    "met": true,
+    "line": 0.9767,
+    "toggle": 1.0,
+    "functional": 1.0,
+    "unhit_bins": []
+  },
+  "formal": {
+    "error": null,
+    "failed": [],
+    "vacuous": [],
+    "tautologies": [],
+    "proven_meaningful": 7
+  },
+  "formal_properties": {
+    "up": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "down": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "hold": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "load": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "reset": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "overflow_wrap": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "underflow_wrap": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    }
+  },
+  "mutation": [
+    {
+      "rate": 1.0,
+      "total": 20,
+      "attempt": 1,
+      "by_type": {
+        "stuck_bit": "4/4",
+        "off_by_one": "5/5",
+        "missing_reset": "1/1",
+        "wrong_operator": "6/6",
+        "swapped_condition": "4/4"
+      },
+      "detected": 20
+    }
+  ],
+  "bugs": [],
+  "real_rtl_bugs": [],
+  "guard": [],
+  "anticheat_final": {
+    "flags": [],
+    "unreviewed": [],
+    "approved_by_sentinel": []
+  }
+}

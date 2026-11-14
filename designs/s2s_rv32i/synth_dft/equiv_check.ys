@@ -1,0 +1,36 @@
+# Phase 1.5 Pillar A: Equivalence check using Yosys equiv_* commands
+# This handles register re-encoding better than miter BMC
+
+# Read gold (RTL)
+read_verilog ../rtl/s2s_rv32i_alu.v
+read_verilog ../rtl/s2s_rv32i_decoder.v
+read_verilog ../rtl/s2s_rv32i_regfile.v
+read_verilog ../rtl/s2s_rv32i_csr.v
+read_verilog ../rtl/s2s_rv32i_core.v
+chparam -set RESET_VECTOR 32'h80000000 s2s_rv32i_core
+
+# Prep gold
+proc
+flatten s2s_rv32i_core
+rename s2s_rv32i_core gold
+
+# Read gate
+read_verilog sky130_cells.v
+read_verilog s2s_rv32i_synth.v
+chparam -set RESET_VECTOR 32'h80000000 s2s_rv32i_core
+
+# Prep gate
+proc
+flatten s2s_rv32i_core
+rename s2s_rv32i_core gate
+
+# Build equivalence circuit
+equiv_make gold gate equiv
+hierarchy -top equiv
+
+# Structural equivalence first
+equiv_simple -seq 5
+equiv_induct -seq 5
+
+# Report results
+equiv_status -assert

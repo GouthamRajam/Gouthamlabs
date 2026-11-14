@@ -1,0 +1,9 @@
+[
+  {
+    "severity": "minor",
+    "target": "constraints/constraints.sdc (I/O section, lines with set_input_delay / set_output_delay)",
+    "what": "No set_driving_cell or set_input_transition on the inputs and no set_load on count[*]. Input slew and output load default to ideal (zero), so I/O path delays and output timing are slightly optimistic.",
+    "evidence": "The SDC contains only create_clock, set_clock_uncertainty, set_max_fanout, set_input_delay and set_output_delay. REQ-011 needs setup and hold WNS >= 0 at the configured corners, and the margin there depends on realistic boundary conditions.",
+    "suggested_action": "Add a set_driving_cell (for example sky130_fd_sc_hd__buf_2 or inv_2) on the inputs and a set_load on count[*] taken from the PnR config. Record the values as DEFAULT for G1 review. Do not use these additions to loosen anything else."
+  }
+]

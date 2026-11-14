@@ -1,0 +1,69 @@
+{
+  "task_id": "task_01M426JH4HD5H16C8QH8K7JPJZ",
+  "status": "success",
+  "summary": "Wrote spec/spec.yaml and spec/spec.md for a single-clock (50 MHz, sky130A / sky130_fd_sc_hd) UART. It has a transmitter and a 16x-oversampling receiver, and supports 8N1, 8E1 and 8O1 framing. Baud comes from a 16-bit divisor input, and the design raises framing and parity error flags. Every output has a reset_value. There are 24 numbered, typed requirements with numeric acceptance criteria, including behavior on invalid input, simultaneous events and overflow. No checks were run by me; schema validation and consistency checks are pending from the runtime.",
+  "outputs": [
+    {
+      "path": "reports/sentinel_spec.json",
+      "sha256": "a9c929624662180bcab0cf881ef8e74365db1db83f64d683e9bb8ed7ff88c76f"
+    },
+    {
+      "path": "reports/standards.md",
+      "sha256": "eab5f5d827362c00d8107b5850ebf403b3f47aa596ceb355923b1be20b65547b"
+    },
+    {
+      "path": "spec/spec.md",
+      "sha256": "3882fce295242c59bc065d3dedd0e9657462fa3a59a1d24dd973d2970f8b038e"
+    },
+    {
+      "path": "spec/spec.yaml",
+      "sha256": "bfb6ccb242e629493ec1f85157afe7e025c89ebf9a1042dc0698cfc83f8b8f20"
+    }
+  ],
+  "checks_run": [
+    "chk_01M426MW5R61YC7KA0EPZTWKJ0",
+    "chk_01M426MW5S7WW2RJYPZ386VX9Y",
+    "chk_01M426QBQSZ0ZR6ENHJ6WK7JG5",
+    "chk_01M426QBRGK06VD2C07XYCPBT1"
+  ],
+  "assumptions": [
+    "Baud divisor is applied to the 16x tick generator: tick rate = fclk/divisor, baud = fclk/(16*divisor). 50 MHz / (16*115200) is about 27.1, so the integer divisor 27 gives about 0.4% error at 115200, which is within the usual ~2-3% tolerance (my own calculation, not tool-verified).",
+    "Candidate IP licences are from my general knowledge and are unverified in this task.",
+    "Control is via plain ports (baud_div, parity_mode), not a register bus, since no bus was specified.",
+    "No hardware flow control (RTS/CTS), FIFOs, or interrupts were requested and are not assumed.",
+    "No register-bus standard was requested; the baud divisor register interface is assumed to be a simple custom or yet-to-be-chosen bus.",
+    "Receiver holds a single-entry rx_data buffer; there is no FIFO. A new frame overwriting unread data is signaled by overrun_err, an RECOMMENDED addition.",
+    "Scope is the digital UART core only; no RS-232/RS-485 transceivers or level shifting on chip.",
+    "Standard versions were cited from memory and from KB entries; I did not browse the primary sources in this task, so TIA document revisions should be re-verified.",
+    "Stop-bit count is 1 only; framing is 1 start, 8 data, optional parity, 1 stop.",
+    "Synchronous active-low rst_n, following the B.1 example and the RTL standard.",
+    "Target clock 50 MHz is from the request; the choice of sky130A / sky130_fd_sc_hd is DEFAULT and needs G1 review.",
+    "The 50 MHz clock is the single clock domain; the rx input is the only asynchronous input and needs a 2-flop synchronizer (kb-pt-001, kb-pt-002).",
+    "The \u00b12% tolerance is interpreted as combined sender/receiver baud mismatch and is taken from standards.md as a rule of thumb.",
+    "baud_div and parity_mode are assumed static during a frame; changes mid-frame give undefined frame content but no hang (the next idle recovers).",
+    "baud_div is the number of clk cycles per 16x tick, i.e. baud = f_clk / (16 * baud_div); the valid range is 1..65535 and 0 is treated as 1 (RECOMMENDED, default on).",
+    "parity_mode value 3 is reserved and treated as none (RECOMMENDED, default on).",
+    "rx_valid is a one-cycle pulse, and rx_data/error flags are valid in that cycle. The error flags are pulses coincident with rx_valid and are cleared by the next frame completion."
+  ],
+  "open_issues": [
+    "Behavior on a break condition (rx low longer than a frame) and on overrun not specified.",
+    "Decision needed: register interface (APB, Wishbone, or simple custom) and whether 16550 software compatibility is desired. If it is, the register map becomes a design constraint.",
+    "Divisor width not specified; recommend 16 bits to cover low baud rates (human to confirm).",
+    "Flag to CEO: avoid GPL-licensed IP if the design is to be released under a permissive licence.",
+    "Licences of the candidate IP must be confirmed from the repository LICENSE files before any reuse; not checked here.",
+    "Primary-source citations for UART convention not re-verified; standards.md says no tools were run.",
+    "Whether a received frame with a framing error should still assert rx_valid; spec assumes yes, with frame_err high.",
+    "Whether a register bus (APB/AXI/Wishbone) is wanted; spec assumes plain ports.",
+    "Whether the receiver should majority-vote 3 samples at mid-bit, or use a single sample; not specified."
+  ],
+  "messages": [
+    {
+      "from": "Ivy",
+      "summary": "No external standard is mandatory for this UART core. The request defines an asynchronous serial framing (8N1, optional even/odd parity, 16x oversampling, framing/parity error flags), which is a de facto convention (see KB kb-pt-001) and not a formally versioned standard. Electrical-level standards (TIA/EIA-232-F, TIA-485-A) are not required because the request covers only the digital logic core with no line drivers. The only external dependency is the SKY130 PDK / sky130_fd_sc_hd library (Apache-2.0). The register-bus protocol is unspecified, so no bus standard (APB/AXI/Wishbone) is bound yet. Reusable IP candidates are listed with licence notes; none was fetched or verified in this task, so licences must be confirmed before adoption. No licensing risk blocks the project; a minor flag is raised for copyleft IP and for the 16550 register-compatibility question."
+    }
+  ],
+  "self_assessment": {
+    "reason": "The spec is complete against the checklist and I believe it is schema-valid, but I could not run the validator. Several behaviors (baud_div=0, rx_valid pulse semantics, overrun_err) are my defaults and need G1 review.",
+    "confidence": "medium"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "power_w_by_corner": {
+    "tt_025C_1v80": {
+      "internal_w": 0.0001083215,
+      "switching_w": 3.831469e-05,
+      "leakage_w": 5.328549e-10,
+      "total_w": 0.0001466368,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_tt_025C_1v80.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/power_counter8_tt_025C_1v80.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ss_100C_1v60": {
+      "internal_w": 8.727403e-05,
+      "switching_w": 2.977397e-05,
+      "leakage_w": 4.81806e-07,
+      "total_w": 0.0001175298,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_ss_100C_1v60.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/power_counter8_ss_100C_1v60.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ff_n40C_1v95": {
+      "internal_w": 0.0001237902,
+      "switching_w": 4.54878e-05,
+      "leakage_w": 9.40391e-10,
+      "total_w": 0.000169279,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_ff_n40C_1v95.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/power_counter8_ff_n40C_1v95.tcl",
+      "tool_version": "2.6.0"
+    }
+  },
+  "input_activity": 0.2,
+  "openlane_power_total_w": 0.00014227691281121224,
+  "ir": {
+    "worst_drop_v": 5e-05,
+    "avg_drop_v": 2.48e-05,
+    "limit_v": 0.09,
+    "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)"
+  },
+  "explained_by": "Volta",
+  "explanation": "# counter8 Power & IR Report (A.13)\n\nStage: signoff | PDK: sky130A (release not pinned) | Library: sky130_fd_sc_hd | Clock: clk 100 MHz (10 ns)\n\nSource of all numbers: `reports/power_tool.json` (OpenSTA `sta` tool_version 2.6.0, run `run_01M43B9BVD8M5ANEVYTE43N0KN`). I did not run any tool in this task. The S2S runtime checks are the authority on pass or fail.\n\n## 1. Power\n\nSwitching activity: **input_activity = 0.2 (20% toggle rate, default)**. No simulation activity (VCD/SAIF) was used.\n\n| Corner | Internal (W) | Switching (W) | Leakage (W) | Total (W) |\n|---|---|---|---|---|\n| tt_025C_1v80 | 0.0001083215 | 3.831469e-05 | 5.328549e-10 | 0.0001466368 |\n| ss_100C_1v60 | 8.727403e-05 | 2.977397e-05 | 4.81806e-07 | 0.0001175298 |\n| ff_n40C_1v95 | 0.0001237902 | 4.54878e-05 | 9.40391e-10 | 0.000169279 |\n\nOpenLane flow total power: 0.00014227691281121224 W.\n\nWhat the numbers say, in plain terms:\n- Total power is about 0.12 to 0.17 mW across corners. The highest is ff_n40C_1v95, which has the highest supply voltage.\n- Internal (cell) power is the largest component at every corner, followed by switching (net) power. This is expected for a small, flop-dominated design.\n- Leakage is negligible except at ss_100C_1v60, where the high temperature raises it to 4.81806e-07 W. That is still well under 1% of total.\n- The OpenLane total (0.00014227691281121224 W) and the OpenSTA tt total (0.0001466368 W) differ by about 3%. The cause is not shown in the input (open issue).\n- The spec sets no power target (\"power and area targets (none requested)\"), so no pass/fail is claimed for power.\n\nLogs and commands (per corner):\n- tt: `var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_tt_025C_1v80.log`\n- ss: `var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_ss_100C_1v60.log`\n- ff: `var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/logs/power_counter8_ff_n40C_1v95.log`\n- Command form: `sta -no_init -exit .s2s/power_counter8_<corner>.tcl`\n\n## 2. IR drop\n\n| Metric | Value |\n|---|---|\n| Worst drop | 5e-05 V |\n| Average drop | 2.48e-05 V |\n| Limit | 0.09 V |\n| Limit rule | 5% of 1.8 V (A.13 Phase 0 default) |\n\nThe reported worst drop (5e-05 V) is far below the 0.09 V limit. Because the limit is not exceeded in this data, **no PDN change is proposed to Grid**. This compares the numbers only; the runtime's own check decides pass or fail.\n\nNot recorded in the IR data (assumptions, see below):\n- Corner/voltage of the IR run (assumed nominal 1.8 V, tt).\n- Voltage source (VPWR/VGND pin) locations (assumed flow default at the core boundary).\n- Whether VGND was reported separately from VPWR.\n- Analysis type (assumed static IR, not dynamic).\n\n## 3. What the open flow does NOT analyze\n\n- **Electromigration (EM)** on PDN straps, vias and signal wires: not analyzed.\n- **Dynamic / vector-based IR drop**: not analyzed (static only).\n- **Activity from simulation**: not used; the 20% default is applied.\n- **IR at ss_100C_1v60 and ff_n40C_1v95**: not reported.\n\n## 4. Assumptions\n\n1. Activity = 0.2 (default), not simulation-derived.\n2. Clock = 100 MHz, per spec. Not confirmed from the power scripts.\n3. Corners tt_025C_1v80 / ss_100C_1v60 / ff_n40C_1v95 are taken from the tool data and await G1 review.\n4. The IR limit is based on 1.8 V nominal: 0.09 V.\n5. The IR run is assumed to be at nominal tt 1.8 V with flow-default voltage source locations.\n6. Parasitics are assumed to be post-route SPEF (signoff stage). Not confirmed in the input.\n7. The sky130A release is not pinned.\n\n## 5. Open issues for a human\n\n1. Decide which total is the signoff number: OpenLane (0.00014227691281121224 W) or OpenSTA tt (0.0001466368 W).\n2. Optionally request a SAIF/VCD from the REQ-013 random simulation to replace the 20% default.\n3. Log the IR corner and voltage source locations in the flow output.\n4. Decide whether a corner-specific IR limit applies at 1.60 V. No limit was changed.\n5. EM is an unanalyzed signoff gap.\n6. Corner and PDK release choice (spec open question, G1).\n",
+  "assumptions": [
+    "Switching activity: input_activity = 0.2 (20% toggle rate) as recorded in power_tool.json. This is the A.13 default. No simulation activity (VCD/SAIF) was used, so dynamic power is an estimate and may be above or below real operating power.",
+    "Clock: 100 MHz (10 ns period) from spec.yaml target_clock_mhz. I assume the power runs used this clock; the input does not show the clock the power scripts used.",
+    "Corners: power figures are from three PVT corners: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95. These corner names come from the tool data. The spec has not confirmed them (spec open question: 'Which sky130A release and STA corners apply?').",
+    "Supply voltage for the IR limit: 1.8 V nominal (limit_rule '5% of 1.8 V'), so limit_v = 0.09 V. The IR data does not name its corner. I assume it was run at nominal 1.8 V (tt). The ss corner uses 1.60 V and the ff corner 1.95 V, and their IR margins were not reported.",
+    "Voltage source locations: power_tool.json does not record where the VPWR/VGND sources (pins/pads) were placed for the IR analysis. I assume the flow default (OpenLane/OpenROAD PDN pins at the core boundary). This is unverified.",
+    "IR analysis type: I assume the worst_drop_v/avg_drop_v values are static (average-current) IR drop from the OpenLane/OpenROAD IR step. Dynamic (vectorless or vector-based) IR drop was not analyzed.",
+    "IR coverage: the values are reported as one drop figure. I assume this covers VPWR. The input does not say whether VGND ground bounce was reported separately.",
+    "Electromigration (EM): not analyzed. The open flow used here gives no EM check of the PDN straps, vias or signal wires.",
+    "Leakage: taken from the sky130_fd_sc_hd liberty data at each corner (5.328549e-10 W tt, 4.81806e-07 W ss, 9.40391e-10 W ff). It is negligible at tt/ff and below 0.5% of total even at ss_100C.",
+    "Parasitics: the input does not show whether the power runs used post-route extracted parasitics (SPEF) or wire-load estimates. I assume post-route SPEF because this is the signoff stage. This is unverified.",
+    "PDK release: not pinned (spec target_clock_note). Numbers apply to the sky130A release installed in the run environment.",
+    "Spec lists power and area targets as out of scope, so there is no power budget to compare against; power is reported for information only."
+  ],
+  "open_issues": [
+    "Two tool totals differ. The OpenLane flow total (0.00014227691281121224 W) and the OpenSTA tt_025C_1v80 total (0.0001466368 W) differ by about 3%. The likely causes are different activity settings or different parasitics, but the input does not show which. A human or the flow owner should confirm which number is the signoff number.",
+    "Activity is a default, not measured. A SAIF/VCD from the REQ-013 random simulation (>=100000 cycles) could replace the 20% default. Request it from the verification agent if more accurate power is wanted.",
+    "The IR corner and the voltage source locations are not recorded in power_tool.json. Ask the flow owner to log them so the IR result can be audited.",
+    "IR drop at the low-voltage ss_100C_1v60 corner was not reported. Is a corner-specific limit wanted (5% of 1.60 V = 0.08 V)? A human must decide; I have not changed the limit.",
+    "EM is not analyzed by the open flow. For counter8's very low currents this is probably low risk, but it is unverified and must be listed as a signoff gap.",
+    "Dynamic IR drop is not analyzed (static only).",
+    "Corners and PDK release await G1 review (spec open question)."
+  ]
+}

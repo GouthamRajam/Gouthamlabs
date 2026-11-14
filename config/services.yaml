@@ -1,0 +1,31 @@
+# Long-lived S2S services kept alive by the supervisor (backend/s2s/ops/supervisor.py; Phase 1 harness #2/#9).
+# One-off work (resuming a task, re-running a step) is NOT a service: it is queued in the database
+# (python -m s2s.ops.jobs) and run by the orchestrator, so it survives a restart.
+# Placeholders: {repo} = repository root, {python} = this Python interpreter, {bin} = its bin directory.
+
+infra:
+  docker: true                 # start dockerd if `docker info` fails (stale pid files removed first)
+  compose: [postgres, redis]   # `docker compose up -d` these; healthy = pg_isready / redis-cli ping
+
+env:                           # added to every service; the model API key is NEVER passed (strip_env)
+  PYTHONPATH: "{repo}/backend"
+  S2S_ARTIFACT_DIR: "{repo}/var/artifacts"
+  S2S_SECRETS_DIR: "{repo}/var/secrets"
+  S2S_REGRESS_TIMEOUT_S: "5400"
+  S2S_TOOL_SLOTS: "4"
+strip_env: [S2S_ANTHROPIC_KEY, S2S_MODEL_PROVIDER]
+require_dirs: ["{repo}/var/artifacts"]   # a launch with a wrong artifact dir once failed a whole run
+
+services:
+  - name: orchestrator
+    argv: ["{python}", "-m", "s2s.orchestrator", "--poll", "0.2", "--max-parallel", "6"]
+    cwd: "{repo}/backend"
+    needs_infra: true
+  - name: api
+    argv: ["{bin}/uvicorn", "s2s.api.app:app", "--port", "8000", "--log-level", "warning"]
+    cwd: "{repo}/backend"
+    needs_infra: true
+  - name: web
+    argv: ["npm", "run", "dev"]
+    cwd: "{repo}/web"
+    enabled: false             # the Live Office UI; enable when someone watches it

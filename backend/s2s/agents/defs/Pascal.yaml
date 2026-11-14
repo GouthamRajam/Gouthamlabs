@@ -1,0 +1,13 @@
+id: A3.3
+name: Pascal
+role: Performance & Power Modeling
+prompt: A3.3_Pascal.md
+preamble: design
+stages: [architecture]
+model_hint: default
+effort: low
+max_tokens: 8000
+tools: [fs_read, kb_search, emit_note]
+budget: {max_tokens: 200000, max_minutes: 20, max_tool_runs: 20}
+writes_to: ["reports/ppa_pascal.md"]
+reads_from: ["spec/**", "arch/**"]

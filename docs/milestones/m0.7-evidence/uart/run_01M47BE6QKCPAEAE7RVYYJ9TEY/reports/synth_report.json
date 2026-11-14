@@ -1,0 +1,33 @@
+{
+  "cells": 736,
+  "area_um2": 8363.0208,
+  "cell_classes": {},
+  "pre_layout_setup_ws_by_corner": {
+    "nom_tt_025C_1v80": 8.629124325997461,
+    "nom_ss_100C_1v60": 3.720211799472844,
+    "nom_ff_n40C_1v95": 10.648336735981962
+  },
+  "pre_layout_hold_ws_by_corner": {
+    "nom_tt_025C_1v80": 0.14747259386630626,
+    "nom_ss_100C_1v60": 0.5684750608929591,
+    "nom_ff_n40C_1v95": -0.0029198172484031937
+  },
+  "worst_corner": "nom_ss_100C_1v60",
+  "netlist": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/pnr/runs/it1/06-yosys-synthesis/uart_top.nl.v",
+  "run": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M47BE6QKCPAEAE7RVYYJ9TEY/pnr/runs/it1",
+  "explained_by": "Sienna",
+  "explanation": "# uart synthesis and pre-layout STA report (task_01M47BE6RCJKZZ2RSBZM8605G3)\n\nAll numbers below are copied from reports/synth_tool.json (OpenLane 2 / Yosys / OpenSTA run `it1`). Nothing here was re-run by me.\n\n## Synthesis\n- Cells: 736\n- Area: 8363.0208 um2\n- `cell_classes` is empty in the tool data, so no per-class breakdown is given.\n- Netlist: `.../pnr/runs/it1/06-yosys-synthesis/uart_top.nl.v`\n\n## Constraints\n50 MHz clock, 20.000 ns period, 0.25 ns uncertainty (DEFAULT). Input and output delays are 6.000 ns each (DEFAULT, 30% of the period). There are no false paths, multicycle paths or waivers. The clock is ideal, so there is no clock network delay yet.\n\n## Pre-layout setup slack per corner (ns)\n| Corner | Setup WS | Result |\n|---|---|---|\n| nom_tt_025C_1v80 | 8.629124 | met |\n| nom_ss_100C_1v60 | 3.720212 | met (worst corner) |\n| nom_ff_n40C_1v95 | 10.648337 | met |\n\nThe worst setup corner is nom_ss_100C_1v60. REQ-005 asks for setup slack >= 0 at the typical corner, and the typical-corner slack is 8.629124 ns. The downstream checks still have to confirm this.\n\n## Pre-layout hold slack per corner (ns)\n| Corner | Hold WS |\n|---|---|\n| nom_tt_025C_1v80 | 0.147473 |\n| nom_ss_100C_1v60 | 0.568475 |\n| nom_ff_n40C_1v95 | -0.002920 |\n\n**Hold is violated at the fast corner (nom_ff_n40C_1v95) by -0.002920 ns.** It is tiny, but it is negative. I have not waived or hidden it. The report lists only the setup paths, so the hold path is not visible to me (see open issues).\n\n## Worst setup paths (nom_ss_100C_1v60)\nThe tool report is cut off partway through its third path. Only the first two paths are fully readable, and only their slacks are quoted.\n\n**Path 1, slack 3.720212 ns (met).** The path starts at input port `baud_div[0]`, which arrives 6.000 ns after the clock edge because of the input delay. It ends at the D pin of flip-flop `_1296_` (dfxtp_2). Data arrives at 15.738978 ns and is required at 19.459190 ns. The 20 ns period, minus 0.25 ns uncertainty, minus 0.290811 ns setup time, leaves that required time.\n\nThe signal goes through nine gates in a row, with these cell delays:\n1. `_0645_` nor4_2, 1.551503 ns (fanout 12, output slew 1.813 ns)\n2. `_0652_` nand4_2, 1.001394 ns\n3. `_0667_` o31ai_2, 0.819235 ns\n4. `_0668_` o22a_2, 0.503756 ns\n5. `_0676_` nand4b_2, 0.216835 ns\n6. `_0768_` o41ai_2, 2.396546 ns (fanout 24, load 0.0747 pF, output slew 2.745 ns)\n7. `_0913_` nand2_2, 0.863790 ns (fanout 13)\n8. `_0916_` or4b_2, 1.842424 ns\n9. `_1076_` o211a_2, 0.543496 ns\n\nWhat dominates the delay:\n- The o41ai_2 gate `_0768_` is the largest single contributor at 2.396546 ns. It drives 24 loads with a 2.745 ns slew.\n- The or4b_2 gate `_0916_` adds 1.842424 ns.\n- The nor4_2 gate `_0645_` adds 1.551503 ns. It sees 12 loads right after the input.\n- The path is a long, mostly high-fanin chain of wide gates, and several of them drive high fanout. The 6.000 ns input delay accounts for part of the arrival time before any logic.\n- My reading, not stated by the tool: the logic looks like a control or decode of `baud_div` (for example the zero-detect of REQ-008, or the baud counter reload), fanning out to many registers. I have not checked this against the RTL.\n\n**Path 2, slack 3.797984 ns (met).** It has the same start point and the same first eight gates (through `_0916_` or4b_2). It then goes through `_1078_` (a31o_2, 0.468766 ns) to the D pin of `_1297_`. It is slightly shorter than path 1 only at the last gate.\n\n**Path 3.** It also starts at `baud_div[0]` and shares the same first eight gates (through `_0916_`). It goes through `_1080_` (a31o_2) to `_1298_`. The tool text is truncated before its slack, so I do not quote one.\n\nThe three visible paths all share the `baud_div[0]` -> ... -> `_0916_` trunk. The slow part is that trunk, not the final gate.\n\n## Not covered in this report\n- Equivalence check (eqy): no eqy data was in my inputs, so I make no statement on it. Not proven means blocking.\n- Setup paths for the tt and ff corners, hold path details, and paths 4 to 10: not in the data given.\n",
+  "assumptions": [
+    "All numbers come from reports/synth_tool.json as given; I ran no tools.",
+    "The worst_paths_report text is truncated, so only paths 1 and 2 are fully readable; the slack of path 3 is not quoted.",
+    "Statements about what the baud_div logic does (zero-detect or counter reload) are my inference from the path shape and the spec, not tool output.",
+    "Ideal clocks are assumed pre-layout, as stated in the SDC and the report (clock network delay ideal)."
+  ],
+  "open_issues": [
+    "Hold slack is negative (-0.002920 ns) at nom_ff_n40C_1v95 pre-layout. The hold path is not in the data. A human or PnR agent must decide how to handle it (for example hold repair after CTS); I have not waived or loosened anything.",
+    "No equivalence (eqy) result was provided, so RTL-to-netlist equivalence is unproven and remains blocking.",
+    "The worst paths report is truncated: paths 3 to 10, and the paths for the tt and ff corners, are not visible.",
+    "Several paths fan out from baud_div[0] through a high-fanout o41ai_2 (fanout 24, slew 2.745 ns). Timing is met with margin at 20 ns, but this may be worth a look if the clock target is tightened. This is not a fix request.",
+    "rx is constrained with the 30% default input delay and no false path, as the SDC notes; the human decision on its treatment is still open."
+  ]
+}

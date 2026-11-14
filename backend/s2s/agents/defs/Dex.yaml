@@ -1,0 +1,13 @@
+id: "A3.10"
+name: Dex
+role: Debug & Triage
+prompt: A3.10_Dex.md
+preamble: design
+stages: [verification]
+model_hint: default
+effort: medium
+max_tokens: 16000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 45, max_tool_runs: 60}
+writes_to: ["reports/bug_*.json"]
+reads_from: ["spec/**", "arch/**", "rtl/**", "tb/**", "formal/**", "reports/**"]

@@ -1,0 +1,685 @@
+{
+ "pdk_rules": {
+  "li": {
+   "layer": "67/20",
+   "density_layers": "67/0-4,6-9,11-43,45-*",
+   "fill_layers": "56/28",
+   "min_width": 0.17,
+   "min_space": 0.17,
+   "max_density": 0.6
+  },
+  "met1": {
+   "layer": "68/20",
+   "density_layers": "68/0-4,6-9,11-43,45-*",
+   "fill_layers": "36/28",
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6
+  },
+  "met2": {
+   "layer": "69/20",
+   "density_layers": "69/0-4,6-9,11-43,45-*",
+   "fill_layers": "41/28",
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6
+  },
+  "met3": {
+   "layer": "70/20",
+   "density_layers": "70/0-4,6-9,11-43,45-*",
+   "fill_layers": "34/28",
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6
+  },
+  "met4": {
+   "layer": "71/20",
+   "density_layers": "71/0-4,6-9,11-43,45-*",
+   "fill_layers": "51/28",
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6
+  },
+  "met5": {
+   "layer": "72/20",
+   "density_layers": "72/0-4,6-9,11-43,45-*",
+   "fill_layers": "59/28",
+   "min_width": 1.6,
+   "min_space": 1.6,
+   "max_density": 0.76
+  },
+  "mcon": {
+   "layer": "67/44",
+   "lower": "li",
+   "upper": "met1",
+   "min_space": 0.19
+  },
+  "via": {
+   "layer": "68/44",
+   "lower": "met1",
+   "upper": "met2",
+   "min_space": 0.17
+  },
+  "via2": {
+   "layer": "69/44",
+   "lower": "met2",
+   "upper": "met3",
+   "min_space": 0.2
+  },
+  "via3": {
+   "layer": "70/44",
+   "lower": "met3",
+   "upper": "met4",
+   "min_space": 0.2
+  },
+  "via4": {
+   "layer": "71/44",
+   "lower": "met4",
+   "upper": "met5",
+   "min_space": 0.8
+  }
+ },
+ "die_um": [
+  0.0,
+  0.0,
+  80.645,
+  91.365
+ ],
+ "dbu": 0.001,
+ "layers": {
+  "li": {
+   "shapes": 1464,
+   "min_width": 0.17,
+   "min_space": 0.17,
+   "max_density": 0.6,
+   "density_global": 0.3503,
+   "density_windows": 72,
+   "density_window_max": 0.5692,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [
+    {
+     "density": 0.5692,
+     "at": [
+      40.0,
+      40.0,
+      60.0,
+      60.0
+     ]
+    },
+    {
+     "density": 0.5639,
+     "at": [
+      30.0,
+      30.0,
+      50.0,
+      50.0
+     ]
+    },
+    {
+     "density": 0.5608,
+     "at": [
+      40.0,
+      30.0,
+      60.0,
+      50.0
+     ]
+    },
+    {
+     "density": 0.5577,
+     "at": [
+      40.0,
+      50.0,
+      60.0,
+      70.0
+     ]
+    },
+    {
+     "density": 0.5536,
+     "at": [
+      50.0,
+      40.0,
+      70.0,
+      60.0
+     ]
+    },
+    {
+     "density": 0.5523,
+     "at": [
+      20.0,
+      30.0,
+      40.0,
+      50.0
+     ]
+    },
+    {
+     "density": 0.5448,
+     "at": [
+      30.0,
+      40.0,
+      50.0,
+      60.0
+     ]
+    }
+   ],
+   "routing_shapes": 852,
+   "edges_total": 3408,
+   "near_min_width_edges": 3408,
+   "near_min_space_edges": 257,
+   "near_limit_edge_fraction": 1.0,
+   "near_min_space_hotspots": [
+    [
+     40.165,
+     27.625,
+     40.335,
+     27.625
+    ],
+    [
+     40.165,
+     59.245,
+     40.335,
+     59.245
+    ],
+    [
+     40.165,
+     27.795,
+     40.335,
+     27.795
+    ],
+    [
+     40.165,
+     59.415,
+     40.335,
+     59.415
+    ],
+    [
+     50.915,
+     44.285,
+     50.915,
+     44.455
+    ],
+    [
+     64.21,
+     44.229,
+     64.38,
+     44.511
+    ],
+    [
+     40.165,
+     26.095,
+     40.335,
+     26.095
+    ],
+    [
+     50.575,
+     44.229,
+     50.745,
+     44.511
+    ],
+    [
+     46.315,
+     44.285,
+     46.315,
+     44.455
+    ],
+    [
+     40.165,
+     31.365,
+     40.335,
+     31.365
+    ],
+    [
+     40.165,
+     31.535,
+     40.335,
+     31.535
+    ],
+    [
+     40.109,
+     25.755,
+     40.391,
+     25.925
+    ],
+    [
+     64.04,
+     44.285,
+     64.04,
+     44.455
+    ],
+    [
+     46.145,
+     44.285,
+     46.145,
+     44.455
+    ],
+    [
+     56.725,
+     63.495,
+     56.895,
+     63.495
+    ],
+    [
+     56.725,
+     63.325,
+     56.895,
+     63.325
+    ],
+    [
+     56.725,
+     64.175,
+     56.895,
+     64.175
+    ],
+    [
+     56.725,
+     64.005,
+     56.895,
+     64.005
+    ],
+    [
+     67.305,
+     62.135,
+     67.475,
+     62.135
+    ],
+    [
+     63.335,
+     64.685,
+     63.335,
+     64.855
+    ]
+   ],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met1": {
+   "shapes": 844,
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6,
+   "density_global": 0.1804,
+   "density_windows": 72,
+   "density_window_max": 0.3467,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 787,
+   "edges_total": 8940,
+   "near_min_width_edges": 1900,
+   "near_min_space_edges": 1943,
+   "near_limit_edge_fraction": 0.5165,
+   "near_min_space_hotspots": [
+    [
+     56.145,
+     65.92,
+     56.555,
+     66.06
+    ],
+    [
+     56.145,
+     60.08,
+     56.555,
+     60.22
+    ],
+    [
+     56.145,
+     65.52,
+     56.555,
+     65.66
+    ],
+    [
+     73.165,
+     75.78,
+     73.575,
+     75.92
+    ],
+    [
+     72.705,
+     70.34,
+     73.115,
+     70.48
+    ],
+    [
+     71.785,
+     67.62,
+     72.195,
+     67.76
+    ],
+    [
+     72.705,
+     76.4,
+     73.115,
+     76.54
+    ],
+    [
+     63.045,
+     64.9,
+     63.455,
+     65.04
+    ],
+    [
+     56.695,
+     63.82,
+     57.015,
+     63.96
+    ],
+    [
+     64.425,
+     73.06,
+     64.835,
+     73.2
+    ],
+    [
+     56.605,
+     62.18,
+     57.015,
+     62.32
+    ],
+    [
+     72.705,
+     62.8,
+     73.115,
+     62.94
+    ],
+    [
+     62.125,
+     63.54,
+     62.535,
+     63.68
+    ],
+    [
+     62.585,
+     61.78,
+     62.995,
+     61.92
+    ],
+    [
+     64.425,
+     61.84,
+     64.835,
+     61.98
+    ],
+    [
+     64.885,
+     62.18,
+     65.295,
+     62.32
+    ],
+    [
+     62.585,
+     62.18,
+     62.995,
+     62.32
+    ],
+    [
+     56.605,
+     61.78,
+     57.015,
+     61.92
+    ],
+    [
+     50.165,
+     66.6,
+     50.575,
+     66.74
+    ],
+    [
+     52.465,
+     61.16,
+     52.875,
+     61.3
+    ]
+   ],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 35,
+   "line_end_hotspots": [
+    [
+     16.525,
+     23.057,
+     16.63,
+     23.168
+    ],
+    [
+     25.725,
+     23.057,
+     25.83,
+     23.168
+    ],
+    [
+     15.605,
+     23.737,
+     15.71,
+     23.848
+    ],
+    [
+     22.565,
+     25.46,
+     22.7,
+     25.6
+    ],
+    [
+     23.025,
+     27.84,
+     23.16,
+     27.98
+    ],
+    [
+     59.365,
+     27.84,
+     59.5,
+     27.98
+    ],
+    [
+     59.64,
+     27.84,
+     59.775,
+     27.98
+    ],
+    [
+     63.505,
+     28.12,
+     63.64,
+     28.26
+    ],
+    [
+     28.945,
+     28.497,
+     29.05,
+     28.608
+    ],
+    [
+     26.06,
+     31.18,
+     26.195,
+     31.32
+    ],
+    [
+     47.405,
+     30.9,
+     47.54,
+     31.04
+    ],
+    [
+     59.18,
+     39.06,
+     59.315,
+     39.2
+    ],
+    [
+     29.005,
+     40.02,
+     29.14,
+     40.16
+    ],
+    [
+     29.74,
+     42.46,
+     29.875,
+     42.6
+    ],
+    [
+     26.245,
+     44.84,
+     26.38,
+     44.98
+    ],
+    [
+     45.565,
+     47.5,
+     45.7,
+     47.64
+    ],
+    [
+     48.325,
+     48.18,
+     48.46,
+     48.32
+    ],
+    [
+     49.98,
+     48.18,
+     50.115,
+     48.32
+    ],
+    [
+     59.365,
+     47.9,
+     59.5,
+     48.04
+    ],
+    [
+     24.865,
+     49.88,
+     25.0,
+     50.02
+    ]
+   ]
+  },
+  "met2": {
+   "shapes": 426,
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6,
+   "density_global": 0.0574,
+   "density_windows": 72,
+   "density_window_max": 0.1936,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 426,
+   "edges_total": 6224,
+   "near_min_width_edges": 1254,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.8109,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met3": {
+   "shapes": 82,
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6,
+   "density_global": 0.029,
+   "density_windows": 72,
+   "density_window_max": 0.1162,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 82,
+   "edges_total": 828,
+   "near_min_width_edges": 148,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.6223,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met4": {
+   "shapes": 6,
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6,
+   "density_global": 0.0333,
+   "density_windows": 72,
+   "density_window_max": 0.2063,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 6,
+   "edges_total": 56,
+   "near_min_width_edges": 8,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.3671,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met5": {
+   "shapes": 0,
+   "min_width": 1.6,
+   "min_space": 1.6,
+   "max_density": 0.76,
+   "density_global": 0.0,
+   "density_windows": 72,
+   "density_window_max": 0.0,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 0
+  }
+ },
+ "vias": {
+  "mcon": {
+   "cuts": 852,
+   "min_space": 0.19,
+   "single_cut_connections": 852,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via": {
+   "cuts": 1005,
+   "min_space": 0.17,
+   "single_cut_connections": 875,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via2": {
+   "cuts": 183,
+   "min_space": 0.2,
+   "single_cut_connections": 79,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via3": {
+   "cuts": 112,
+   "min_space": 0.2,
+   "single_cut_connections": 8,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via4": {
+   "cuts": 0,
+   "min_space": 0.8
+  }
+ }
+}

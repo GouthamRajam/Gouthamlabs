@@ -1,0 +1,105 @@
+{
+  "task_id": "task_01M47BE6RDGPYTHPHZHZJ5T8Z5",
+  "status": "success",
+  "summary": "Tool data shows all 9 corners passed with TNS 0.0 and no DRV violators. Worst setup slack 5.6705 ns (max_ss_100C_1v60); worst hold slack 0.1082 ns (min_ff_n40C_1v95), positive but thin.",
+  "outputs": [
+    {
+      "path": "reports/dfm_scorecard.json",
+      "sha256": "88f8207dff579c1279d508a20183ddc96d515833eaf922c4ea69de94b73ae9d7"
+    },
+    {
+      "path": "reports/dfm_scorecard.md",
+      "sha256": "c6cac5a10c07a4beb91e5a9c67f822203b401d8582dc4fb7231a718207adbe49"
+    },
+    {
+      "path": "reports/dfm_tool.json",
+      "sha256": "f621fbc6174f5075323d18c829bcd2d56a1fcf9754f3f47068852554ffe6881d"
+    },
+    {
+      "path": "reports/ir_report.json",
+      "sha256": "aa9cc64d2ebd12e6ed847da3da83125aa5a1c4722d62a93a353d15a9e1dce5c5"
+    },
+    {
+      "path": "reports/power_report.json",
+      "sha256": "b462da93e0c8cb10a9d145db0073155fe62c6b56007854dc78aff1d545f48146"
+    },
+    {
+      "path": "reports/power_tool.json",
+      "sha256": "807dccbc313cc4dcaaf29d934604df4e8493d95ec04ec522332e1397cc47942d"
+    },
+    {
+      "path": "reports/pv_signoff.json",
+      "sha256": "f0b82bafed94f2a0d378250663a9df9740bdde42f4a14151119dee2ad2f28582"
+    },
+    {
+      "path": "reports/pv_tool.json",
+      "sha256": "eda0feea2df358e0d9d39d59cd494fa1e70c02a11fcda6a05c0ffc192d38b428"
+    },
+    {
+      "path": "reports/sta_signoff.json",
+      "sha256": "a55d6d2710f17dd82e0fe7bf9b1a3683481b3ec22af3ddd22dec2a5d5fbb127b"
+    },
+    {
+      "path": "reports/sta_tool.json",
+      "sha256": "f2761065587b5a35170ace7e4ace2f38407df7fcdee64756e4b0eeb49a9bcbb2"
+    }
+  ],
+  "checks_run": [
+    "chk_01M47VQQX0ZVD8D7GTX94QACBR",
+    "chk_01M47VRE3MFHHW59BV11T4QGPM",
+    "chk_01M47VRE3MFHHW59BV11T4QGPP",
+    "chk_01M47VRE3ND0H0HN6YV1JBGT2Z",
+    "chk_01M47VRE3NHSX101TY1T3WRQCS",
+    "chk_01M47VRE3NKM4T317KHXSAMAR5",
+    "chk_01M47VRE3NKM4T317KHXSAMAR7",
+    "chk_01M47VRM51RD3MR79TBBSGRHRK",
+    "chk_01M47VRM52P7AH8HT1T89DR88S",
+    "chk_01M47VSVXJXYAPE6D1ZZY5XPQJ",
+    "chk_01M47VSVXJXYAPE6D1ZZY5XPQM",
+    "chk_01M47VWCH8N59DAM7ZSVXE3MD6",
+    "chk_01M47XM4GW19WNA1S12GH9ZJ3N",
+    "chk_01M47Z5CCNNVPTCNC4F5MB67RT",
+    "chk_01M47Z5CDEKWH479QN7WZV7NJG"
+  ],
+  "assumptions": [
+    "All items are assigned to Orion as in the tool output; no item was assigned to Grid.",
+    "All numbers are quoted from reports/sta_tool.json; no tool was run in this task.",
+    "DFM-005 to DFM-007 have no hotspot locations in the input, so they are ranked from layer statistics only.",
+    "IR limit is 0.09 V, i.e. 5% of 1.8 V (A.13 Phase 0 default), as stated in the tool data.",
+    "Power corners are tt_025C_1v80, ss_100C_1v60 and ff_n40C_1v95 as given in power_tool.json; all numbers are quoted from that file.",
+    "Ranking by real yield impact is my judgement: failure mechanism first (line end open/bridge, CMP density), then absolute exposure for the low items.",
+    "Severities are taken unchanged from reports/dfm_tool.json.",
+    "Switching activity is the default input activity 0.2 (20%); no simulation activity was supplied.",
+    "The 6.000 ns input and output delays and 0.25 ns uncertainty are DEFAULT values from the SDC, not from the spec.",
+    "The open flow does not analyze electromigration (EM) or transient/dynamic IR drop, so those are not covered.",
+    "The tool's passed flag and empty drv_violators lists are taken as the DRV result; limits used (max fanout 10 from the SDC) are those the tool applied.",
+    "Voltage-source locations, IR corner and PDN model are not stated in the input; they are not assumed here.",
+    "li 100% near-min-width is treated as expected for minimum-width li landing stubs under mcon; this is an inference from shape geometry, not tool-confirmed."
+  ],
+  "open_issues": [
+    "EM is not checked by the open flow.",
+    "Hold margin at fast corners is only 0.1082 to 0.1130 ns; a human should judge whether it is sufficient for signoff.",
+    "IR analysis conditions (corner, voltage source locations, current model) are not documented in the input; a human should confirm them.",
+    "No simulation-based activity is available; power at the default 0.2 activity may not represent real UART traffic.",
+    "OpenLane power total (0.0008120654383674264 W) differs from the tt STA total (0.0007882774 W); the cause is not given in the input data.",
+    "The SDC leaves clock propagation to the flow; the tool data does not say whether the clock was ideal or propagated for this run, which affects hold confidence.",
+    "The tool data gives no cell-level path detail and no hold path endpoints, so dominant cells are not named.",
+    "The tool does not report single-cut connections as DFM items because no redundant via fits; a human may want to confirm that the via-fit check is not too strict, given thousands of single-cut vias.",
+    "li density windows at 0.5999 vs 0.6 max are effectively at the limit; a human should confirm whether this limit applies as a hard rule for li in this flow.",
+    "rx is constrained with a 6 ns input delay rather than a false path (per SDC note); treatment of this asynchronous input needs a human decision."
+  ],
+  "messages": [
+    {
+      "from": "Volta",
+      "summary": "Power was reported for tt, ss and ff corners at 0.2 input activity (tt total 0.0007882774 W, ss 0.0006277686 W, ff 0.0009117265 W). Worst IR drop is 0.00087 V against the 0.09 V limit, so no limit violation appears in the tool data. EM and transient IR are not analyzed."
+    },
+    {
+      "from": "Fabian",
+      "summary": "Ranked all 7 DFM items. The two medium items (met1 line ends, li density near max) lead; the 5 low near-limit statistics are ranked by edge population and absolute exposure and are not promoted. Antenna worst case is 72.17% of limit (below the 80% flag); no redundant-via opportunities, long parallel runs or isolated narrow lines were reported."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All quoted numbers come directly from the supplied tool data; limitations in path detail are stated.",
+    "confidence": "high"
+  }
+}

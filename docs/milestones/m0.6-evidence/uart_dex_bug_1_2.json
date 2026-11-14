@@ -1,0 +1,27 @@
+{
+  "id": "BUG-002",
+  "classification": "TEST",
+  "failures": [
+    "test_rx_majority_vote",
+    "test_rx_baud_offset_random",
+    "test_reset_mid_rx_frame",
+    "test_sync_latency",
+    "test_rx_random_words",
+    "test_rx_glitch_rejection",
+    "test_rx_valid_pulse",
+    "test_rx_frame_error",
+    "test_rx_parity_error",
+    "test_rx_break",
+    "test_rx_tolerance_2pct",
+    "test_rx_back_to_back_external"
+  ],
+  "requirement": "REQ-006, REQ-014, REQ-015, REQ-016 (reference model timing of the receiver)",
+  "root_cause": "The reference model re-aligns its sample counter to the synchronized falling edge, so its rx_valid/frame cycle is exact, while the spec/arch receiver uses the free-running baud tick (REQ-006), so the DUT's sample and rx_valid cycles legitimately shift by 0..baud_div-1 clk; the cycle-by-cycle compare and the exact-cycle check in test_sync_latency are therefore too strict for baud_div>=2.",
+  "evidence": "RX-only tests fail with bare 'Test failed with RANDOM_SEED=N' and only when baud_div is 2, 3, 5, 27 or 255 is used (test_rx_random_words fails only on seed 3; tolerance and external b2b always use 27/255). At baud_div=1 hand-tracing ref_model.py and uart_rx.v gives identical edge, glitch-check (tick 8), sample (23..25 for bit 1) and rx_valid cycles, and test_overrun_always_zero gets through its div=1 external-frame section before failing on a TX start bit at cycle 27557. In ref_model.py, IDLE->RUN sets sub=0 and ticks every eff cycles from the edge. In uart_rx.v the counter advances on the shared free-running tick16 from baud_gen. test_sync_latency expects rx_valid at exactly c0 + 2 + div*k for every phase 0..2*div+1.",
+  "expected": "Per REQ-006/REQ-014/REQ-015/REQ-016 the receiver must give correct data, one 1-cycle rx_valid and the right error flags for the frame, with sampling at ticks 7,8,9 of the 16x tick; the tick phase relative to the start edge is not fixed by the spec.",
+  "actual": "Reference model predicts rx_valid and sampling at a fixed offset from the falling edge, so DUT outputs diverge from the model by up to baud_div-1 clk for baud_div>=2.",
+  "module": "tb/ref_model.py (RX path) and tb/test_uart_2.py::test_sync_latency",
+  "suggested_fix": "Make the reference model's receive timing follow REQ-006: use a free-running tick counter that starts at reset and produces one tick every max(baud_div,1) clk (restarting when baud_div changes), and count the 8-tick start check and 16-tick bit spacing in those ticks starting from the first tick after the synchronized falling edge (the edge is seen after 2 clk of synchronizer latency per REQ-005). Alternatively, for baud_div>=2 have the comparison accept rx_valid within a window of 0..baud_div-1 clk after the earliest cycle. Do not loosen data, error-flag or pulse-count checks.",
+  "bug_id": "bug_1_2",
+  "found_by": "Dex"
+}

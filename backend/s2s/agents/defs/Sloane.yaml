@@ -1,0 +1,14 @@
+id: A3.1
+name: Sloane
+role: Director of Signoff & Manufacturing (Zone 4)
+prompt: A3.1_director_template.md
+prompt_vars: {name: Sloane, division: "Signoff & Manufacturing (Division 4, Zone 4)", "human VP": "the VP Physical Design & Signoff and the Director of DFM & Yield (the CEO at first)"}
+preamble: none
+stages: [signoff, gdsii]
+model_hint: default
+effort: low
+max_tokens: 6000
+tools: [fs_read, emit_note]
+budget: {max_tokens: 100000, max_minutes: 600, max_tool_runs: 0}
+writes_to: ["reports/division4_report.md"]
+reads_from: ["reports/sta_signoff.json", "reports/power_report.json", "reports/ir_report.json", "reports/pv_signoff.json", "reports/dfm_scorecard.json", "reports/tapeout_checklist.json", "reports/tapeout_readiness.json", "reports/division_cost.json"]

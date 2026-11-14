@@ -144,7 +144,8 @@ def test_migration_roundtrip_matches_models(platform):
     cfg.attributes["database_url"] = platform.url
     eng = create_engine(platform.url)
     tables = set(inspect(eng).get_table_names()) - {"alembic_version"}
-    assert tables == set(Base.metadata.tables) and len(tables) == 23  # 22 from M0.3 + check_params (Part 27.6)
+    # 22 from M0.3 + check_params (Part 27.6) + annotations, analyses (Phase 1 trajectory record)
+    assert tables == set(Base.metadata.tables) and len(tables) == 25
     command.downgrade(cfg, "base")
     assert set(inspect(eng).get_table_names()) <= {"alembic_version"}
     command.upgrade(cfg, "head")

@@ -1,0 +1,35 @@
+{
+  "cells": 182,
+  "area_um2": 1938.1088,
+  "cell_classes": {},
+  "pre_layout_setup_ws_by_corner": {
+    "nom_tt_025C_1v80": 6.009780843078964,
+    "nom_ss_100C_1v60": 2.917003610112311,
+    "nom_ff_n40C_1v95": 7.217461055318085
+  },
+  "pre_layout_hold_ws_by_corner": {
+    "nom_tt_025C_1v80": 0.38126164415818947,
+    "nom_ss_100C_1v60": 1.0364853713124358,
+    "nom_ff_n40C_1v95": 0.1389496473876063
+  },
+  "worst_corner": "nom_ss_100C_1v60",
+  "netlist": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/pnr/runs/it1/06-yosys-synthesis/alu8_top.nl.v",
+  "run": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/pnr/runs/it1",
+  "explained_by": "Sienna",
+  "explanation": "# alu8 synthesis and pre-layout STA report (Sienna)\n\nSource of every number: `reports/synth_tool.json` (OpenLane 2 run `run_01M44DR7XRWAQ9XY53AG8SRJCM/pnr/runs/it1`, netlist `06-yosys-synthesis/alu8_top.nl.v`). Constraints: `constraints/constraints.sdc` (13.333333 ns clock, 0.25 ns uncertainty, 4.0 ns DEFAULT input/output delays, ideal clock).\n\n## Synthesis\n| Item | Value (from tool) |\n|---|---|\n| Standard cells | 182 |\n| Total cell area | 1938.1088 um^2 |\n| Cell classes (flop count) | not provided (`cell_classes` is empty) |\n\nThe flop count required by REQ-016 (exactly 12) cannot be confirmed from this data; see open issues.\n\n## Pre-layout STA (ideal clock, no wire parasitics from layout)\n| Corner | Worst setup slack (ns) | Worst hold slack (ns) |\n|---|---|---|\n| nom_tt_025C_1v80 | 6.009780843078964 | 0.38126164415818947 |\n| nom_ss_100C_1v60 | 2.917003610112311 | 1.0364853713124358 |\n| nom_ff_n40C_1v95 | 7.217461055318085 | 0.1389496473876063 |\n\nThe tool names `nom_ss_100C_1v60` as the worst corner. All worst slacks reported are positive, so the tool shows no setup or hold violations at these three corners pre-layout (setup WNS and TNS are therefore 0 at each corner). The smallest hold margin is at the fast corner (0.1389 ns), which is the one to watch after clock-tree synthesis adds real skew. This is a pre-layout result only; REQ-014 is judged on the post-route netlist.\n\n## Worst setup paths at nom_ss_100C_1v60 (plain English)\nThe tool output contains two complete paths and a third that is cut off; I do not have the worst 10.\n\n**Path 1 - slack 2.917004 ns (MET).** Starts at input port `op[0]` (the low opcode bit, launched 4.0 ns after the clock edge by the DEFAULT input delay) and ends at the D pin of flip-flop `_351_` (`sky130_fd_sc_hd__dfxtp_2`). Data arrives at 9.868275 ns; it is required by 12.785278 ns (13.333333 period - 0.25 uncertainty - 0.298055 setup time). The path goes through 12 logic cells (or3b, a21o, and3, a21o, a211o, a41o, a21oi, and2b, a21o, a21o, o31a). What dominates:\n- The 4.0 ns external input delay is the largest single part (about 40% of the 9.868 ns arrival).\n- The first gate, `_178_` (or3b_2), takes 1.179272 ns. It is driven through its inverted input C_N by `op[0]` (fanout 9) and itself drives 6 loads; it is the slowest cell on the path. It looks like an opcode decode term feeding the arithmetic/result-select logic.\n- The rest is a long chain of AND-OR cells (each roughly 0.35 to 0.64 ns), i.e. logic depth, not a single bad cell. Internal logic delay from the input pin to the flop is 9.868275 - 4.111271 = 5.757004 ns.\n\n**Path 2 - slack 2.940914 ns (MET).** Same start (`op[0]`) and the same first six cells (through `_209_`), then branches via `_211_` (and3), two nor2 gates, `_258_` (or3b_2, 0.997334 ns), `_268_` (a32o) and `_316_` (and4b) into flip-flop `_342_`. Arrival 9.848308 ns, required 12.789222 ns. Dominated again by the 4.0 ns input delay plus the two or3b_2 cells (1.179272 ns and 0.997334 ns).\n\n**Path 3 (truncated in the tool output).** Starts at `op[0]`, ends at flip-flop `_348_`, and shares Path 2's cells up to `_256_`. Slack is not shown in the data I received.\n\nNetlist instance names (`_351_`, `_342_`, `_348_`) are not mapped to RTL register names in the data, so I cannot say which result bit or flag each flop is.\n\n## Assessment\nTiming has about 2.9 ns of setup margin at the slow corner before layout. No synthesis-strategy change is needed. The opcode decode (`op[0]` through or3b `_178_`) is the common head of the worst paths; if post-route margin shrinks, upsizing or restructuring that decode would be the first lever.\n\n## Not covered by this task's data\n- Equivalence (eqy) between RTL and netlist: no result given; not proven yet, and it is blocking per my role.\n- Flop count / unreset flops (REQ-011, REQ-016).\n- Worst 10 paths (only 2 complete).\n",
+  "assumptions": [
+    "All numbers are taken verbatim from reports/synth_tool.json; this is pre-layout STA with an ideal clock and no layout parasitics.",
+    "Setup WNS/TNS per corner are taken as 0 because every reported worst slack is positive; TNS is not explicitly reported by the tool.",
+    "Only three nominal corners (nom_tt_025C_1v80, nom_ss_100C_1v60, nom_ff_n40C_1v95) were analysed; min/max RC corners are not in the data.",
+    "Interpretation of _178_ as an opcode-decode term is inferred from its connection to op[0] and its fanout; netlist instance names are not mapped to RTL names in the data.",
+    "The 4.0 ns input/output delays in constraints.sdc are DEFAULT (30% of period) values, unchanged in this task."
+  ],
+  "open_issues": [
+    "REQ-016 flop count (must be exactly 12) cannot be confirmed: cell_classes in synth_tool.json is empty. Need a cell-class or flop count from the synthesis stat report.",
+    "Equivalence check (eqy) RTL vs netlist has no result in the inputs; not proven = blocking for sign-off of synthesis.",
+    "Worst-path report is truncated: only 2 complete paths (plus 1 partial, endpoint _348_, slack not shown) are available instead of the worst 10.",
+    "I/O delay conflict for human (G1) decision: spec open_questions says assume 0 ns external I/O delay, while constraints.sdc uses a DEFAULT 4.0 ns (30% of period). The current SDC is the more conservative choice; I did not change it.",
+    "Fast-corner hold margin is the smallest (0.1389 ns at nom_ff_n40C_1v95) with an ideal clock; re-check after CTS.",
+    "Mapping of flops _351_, _342_, _348_ to RTL registers (result bits vs flags) is not in the data."
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "iteration": 8,
+  "tag": "it8",
+  "params": {
+    "FP_CORE_UTIL": 30,
+    "PL_TARGET_DENSITY_PCT": 65,
+    "MAX_FANOUT_CONSTRAINT": 6,
+    "SYNTH_STRATEGY": "DELAY 4",
+    "CTS_SINK_CLUSTERING_SIZE": 8,
+    "GRT_ANTENNA_ITERS": 15,
+    "GRT_ANTENNA_MARGIN": 30
+  },
+  "problems": [
+    "max_fanout_violations = 3"
+  ],
+  "facts": {
+    "route_drc_errors": 0,
+    "antenna_violating_nets": 0,
+    "antenna_violating_pins": 0,
+    "disconnected_pins": 0,
+    "setup_ws_by_corner": {
+      "nom_tt_025C_1v80": 3.4337460513529234,
+      "nom_ss_100C_1v60": 0.3532623182856291,
+      "nom_ff_n40C_1v95": 4.5944533922254855,
+      "min_tt_025C_1v80": 3.538123449920447,
+      "min_ss_100C_1v60": 0.5411093948296246,
+      "min_ff_n40C_1v95": 4.667745433402771,
+      "max_tt_025C_1v80": 3.3485304365985473,
+      "max_ss_100C_1v60": 0.20314150936378778,
+      "max_ff_n40C_1v95": 4.533310743994886
+    },
+    "hold_ws_by_corner": {
+      "nom_tt_025C_1v80": 0.3683208287060162,
+      "nom_ss_100C_1v60": 0.9932620562729879,
+      "nom_ff_n40C_1v95": 0.1374492780719067,
+      "min_tt_025C_1v80": 0.3654059935835769,
+      "min_ss_100C_1v60": 0.9897457578099473,
+      "min_ff_n40C_1v95": 0.13523532676473562,
+      "max_tt_025C_1v80": 0.37135079395936516,
+      "max_ss_100C_1v60": 0.9985150766625673,
+      "max_ff_n40C_1v95": 0.13964096940680448
+    },
+    "max_slew_violations": 0,
+    "max_cap_violations": 0,
+    "max_fanout_violations": 3,
+    "wirelength_um": 65798,
+    "utilization": 0.381481,
+    "cts_worst_tree_skew_ns": 0.058671,
+    "cts_target_ns": 1.0
+  },
+  "changes": [
+    {
+      "param": "GRT_ANTENNA_ITERS",
+      "value": 15,
+      "reason": "Raise antenna repair iterations from 10 to 15 (operator bound 15) because raising margin 20->30 made antenna violations worse (1->3), and more repair passes is the remaining untried antenna lever with 0 route DRC leaving room for diodes."
+    },
+    {
+      "param": "FP_CORE_UTIL",
+      "value": 30,
+      "reason": "Lower core utilization from 35 to 30 (range min 30) because 40->35 cut antenna nets 4->1 in iteration 6, so a larger core should further spread cells and shorten the long met1 routes; placed utilization 0.441 stays far under density target 0.65."
+    }
+  ],
+  "cts": {
+    "per_corner": {
+      "max_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.279108,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.029108,
+          "source_latency_ns": 0.429981,
+          "target_latency_ns": -0.400874
+        },
+        "hold": {
+          "reported_skew_ns": -0.262378,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.012378,
+          "source_latency_ns": 0.418044,
+          "target_latency_ns": -0.430422
+        }
+      },
+      "max_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.308671,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.058671,
+          "source_latency_ns": 1.038588,
+          "target_latency_ns": -0.979917
+        },
+        "hold": {
+          "reported_skew_ns": -0.277224,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.027224,
+          "source_latency_ns": 1.011778,
+          "target_latency_ns": -1.039002
+        }
+      },
+      "max_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.2881,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.0381,
+          "source_latency_ns": 0.610834,
+          "target_latency_ns": -0.572734
+        },
+        "hold": {
+          "reported_skew_ns": -0.266235,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.016235,
+          "source_latency_ns": 0.595033,
+          "target_latency_ns": -0.611268
+        }
+      },
+      "min_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.270649,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.020649,
+          "source_latency_ns": 0.398361,
+          "target_latency_ns": -0.377712
+        },
+        "hold": {
+          "reported_skew_ns": -0.258224,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.008224,
+          "source_latency_ns": 0.390367,
+          "target_latency_ns": -0.398592
+        }
+      },
+      "min_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.293077,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.043077,
+          "source_latency_ns": 0.978664,
+          "target_latency_ns": -0.935587
+        },
+        "hold": {
+          "reported_skew_ns": -0.269529,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.019529,
+          "source_latency_ns": 0.959946,
+          "target_latency_ns": -0.979475
+        }
+      },
+      "min_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.277584,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.027584,
+          "source_latency_ns": 0.571043,
+          "target_latency_ns": -0.543459
+        },
+        "hold": {
+          "reported_skew_ns": -0.261307,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.011307,
+          "source_latency_ns": 0.560393,
+          "target_latency_ns": -0.571701
+        }
+      },
+      "nom_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.273696,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.023696,
+          "source_latency_ns": 0.411812,
+          "target_latency_ns": -0.388116
+        },
+        "hold": {
+          "reported_skew_ns": -0.259884,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.009884,
+          "source_latency_ns": 0.402445,
+          "target_latency_ns": -0.412329
+        }
+      },
+      "nom_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.299036,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.049036,
+          "source_latency_ns": 1.005249,
+          "target_latency_ns": -0.956213
+        },
+        "hold": {
+          "reported_skew_ns": -0.272845,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.022845,
+          "source_latency_ns": 0.983569,
+          "target_latency_ns": -1.006413
+        }
+      },
+      "nom_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.281392,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.031392,
+          "source_latency_ns": 0.588136,
+          "target_latency_ns": -0.556744
+        },
+        "hold": {
+          "reported_skew_ns": -0.263417,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.013417,
+          "source_latency_ns": 0.575666,
+          "target_latency_ns": -0.589083
+        }
+      }
+    },
+    "corners_with_skew": 9,
+    "worst_tree_skew_ns": 0.058671,
+    "target_ns": 1.0,
+    "clock_buffers": 83,
+    "hold_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 0.352638,
+      "nom_ss_100C_1v60": 0.774587860221585,
+      "nom_ff_n40C_1v95": 0.05926791170040764
+    },
+    "setup_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 3.95299,
+      "nom_ss_100C_1v60": 0.3057905126776926,
+      "nom_ff_n40C_1v95": 4.486132925452186
+    },
+    "hold_buffers": 512,
+    "timing_repair_buffers": 697
+  }
+}

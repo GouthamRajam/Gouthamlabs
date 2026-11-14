@@ -1,0 +1,42 @@
+topic: "BMC equivalence depth 10 accepted for PicoRV32 (k-induction infeasible)"
+summary: |
+  Bounded Model Checking (SymbiYosys + z3) proved no counterexample exists between the
+  PicoRV32 RTL and its sky130_fd_sc_hd gate-level netlist for depths 0–10. The solver
+  timed out at depth 11 (exponential state space with 1527 flip-flops).
+
+  This is labeled "bounded equivalence, BMC depth 10" — NOT "proven equivalent." Full
+  unbounded equivalence via k-induction is infeasible because Yosys's register-file
+  re-encoding during synthesis prevents the induction step from converging (the register
+  file is flattened into individual flip-flops with different encoding than the RTL's
+  2D array, so the induction hypothesis cannot be established).
+
+  Depth 10 covers 2+ full instruction executions for PicoRV32's 3–5 stage pipeline,
+  which is strong evidence but not a mathematical proof of equivalence for all time.
+
+  Approaches tried and abandoned before BMC:
+  1. eqy with read_liberty — "Missing function on output GCLK"
+  2. eqy with Verilog models — UDP parse error
+  3. eqy with -DFUNCTIONAL — defines not passed through
+  4. Direct Yosys equiv_make — register file signal matching failure
+  5. equiv_opt with -map liberty — wrong file type
+  6. equiv_opt without -map — 707 unproven sequential cells
+  7. Manual equiv_make + equiv_induct — register file "failed"
+  8. sby with read_liberty -lib — blackbox can't be flattened
+
+  The miter-circuit + BMC approach succeeded where all structural approaches failed.
+evidence:
+  - path: designs/picorv32/synth_dft/equiv_sby.sby
+    note: "SymbiYosys config: depth 20, smtbmc z3"
+  - path: designs/picorv32/synth_dft/miter.sv
+    note: "Miter circuit: RTL vs gate, all outputs asserted equal"
+  - path: docs/milestones/P1.3.md
+    note: "Step 2 results"
+tags: [equivalence, bmc, symbiyosys, z3, synthesis, phase-1, limitation]
+status: confirmed
+date: 2026-10-08
+related: [k007-equiv-approaches-tried, k004-compiled-fault-sim]
+lesson: |
+  For complex sequential designs with re-encoded state (register files), structural
+  equivalence tools (eqy, equiv_make) fail on signal matching. BMC via miter circuit
+  is a pragmatic alternative that provides bounded proof. Label the result honestly
+  as bounded, not unbounded.

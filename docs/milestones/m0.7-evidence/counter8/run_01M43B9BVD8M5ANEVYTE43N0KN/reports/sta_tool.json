@@ -1,0 +1,382 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 4.3394,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3604,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 2.0569,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9341,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 5.209,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1163,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 4.3642,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3573,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 2.0982,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9291,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 5.2254,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.114,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 4.3169,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3639,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 2.0134,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.9404,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 5.1939,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1187,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "clock_rule_allowed": [],
+      "passed": true
+    }
+  },
+  "worst_paths": {
+    "nom_tt_025C_1v80": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 4.3394,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 4.4995,
+        "state": "MET"
+      }
+    ],
+    "nom_ss_100C_1v60": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 2.0569,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 2.3393,
+        "state": "MET"
+      }
+    ],
+    "nom_ff_n40C_1v95": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 5.209,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 5.3178,
+        "state": "MET"
+      }
+    ],
+    "min_tt_025C_1v80": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 4.3642,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 4.5272,
+        "state": "MET"
+      }
+    ],
+    "min_ss_100C_1v60": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 2.0982,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 2.3876,
+        "state": "MET"
+      }
+    ],
+    "min_ff_n40C_1v95": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 5.2254,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 5.3362,
+        "state": "MET"
+      }
+    ],
+    "max_tt_025C_1v80": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 4.3169,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 4.4745,
+        "state": "MET"
+      }
+    ],
+    "max_ss_100C_1v60": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 2.0134,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 2.2909,
+        "state": "MET"
+      }
+    ],
+    "max_ff_n40C_1v95": [
+      {
+        "startpoint": "load",
+        "endpoint": "_133_",
+        "type": "max",
+        "slack": 5.1939,
+        "state": "MET"
+      },
+      {
+        "startpoint": "load",
+        "endpoint": "_132_",
+        "type": "max",
+        "slack": 5.3013,
+        "state": "MET"
+      }
+    ]
+  },
+  "clock_period_ns": 10.0,
+  "derated": {
+    "5": {
+      "early": 0.95,
+      "late": 1.05,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 4.2017,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3325,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 1.7959,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8803,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 5.1198,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0998,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 4.2279,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3295,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 1.8395,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8755,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 5.1372,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0976,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 4.1778,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3357,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 1.75,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8862,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 5.1038,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.102,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 1.75,
+      "hold_ws_ns": 0.0976,
+      "passed": true,
+      "gate": false,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    },
+    "10": {
+      "early": 0.9,
+      "late": 1.1,
+      "corners": {
+        "nom_tt_025C_1v80": {
+          "setup_ws_ns": 4.064,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3045,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ss_100C_1v60": {
+          "setup_ws_ns": 1.535,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8264,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "nom_ff_n40C_1v95": {
+          "setup_ws_ns": 5.0306,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0833,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_tt_025C_1v80": {
+          "setup_ws_ns": 4.0915,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3018,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ss_100C_1v60": {
+          "setup_ws_ns": 1.5807,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.8219,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "min_ff_n40C_1v95": {
+          "setup_ws_ns": 5.0489,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0812,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_tt_025C_1v80": {
+          "setup_ws_ns": 4.0388,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.3076,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ss_100C_1v60": {
+          "setup_ws_ns": 1.4867,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.832,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        },
+        "max_ff_n40C_1v95": {
+          "setup_ws_ns": 5.0136,
+          "setup_tns_ns": 0.0,
+          "hold_ws_ns": 0.0854,
+          "hold_tns_ns": 0.0,
+          "passed": true
+        }
+      },
+      "setup_ws_ns": 1.4867,
+      "hold_ws_ns": 0.0812,
+      "passed": true,
+      "gate": true,
+      "caveat": "flat derate; SKY130 has no foundry OCV tables (engineering estimate)"
+    }
+  }
+}

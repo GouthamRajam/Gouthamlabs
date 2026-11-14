@@ -1,0 +1,22 @@
+# Synthesis of pipeline-generated UART (5-module architecture)
+# Target: sky130_fd_sc_hd, TT corner (25C, 1.80V)
+
+read_verilog ../baud_gen.v
+read_verilog ../sync2.v
+read_verilog ../uart_tx.v
+read_verilog ../uart_rx.v
+read_verilog ../uart_top.v
+
+hierarchy -check -top uart_top
+proc; opt; fsm; opt
+memory; opt
+techmap; opt
+
+synth -top uart_top
+
+dfflibmap -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+stat -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+write_verilog -noattr pipeline_uart_synth.v

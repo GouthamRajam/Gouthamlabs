@@ -1,0 +1,111 @@
+{
+  "task_id": "task_01M44DR7YNTGBGD9DFGVD61548",
+  "status": "success",
+  "summary": "Tool data (reports/sta_tool.json) reports passed=true in all 9 corners with setup TNS 0.0 ns, hold TNS 0.0 ns and no DRV violators. Worst setup slack 3.276 ns (max_ss_100C_1v60, op[1] -> _342_); worst hold slack 0.4196 ns (min_ff_n40C_1v95). Typical corner nom_tt_025C_1v80: setup 6.229 ns, hold 0.7754 ns. All worst paths are op-input to register paths. No fix needed; dominant cells cannot be named because the tool data has no per-cell breakdown.",
+  "outputs": [
+    {
+      "path": "reports/dfm_scorecard.json",
+      "sha256": "8ad0f2f2cd0b56e0342181d7f07481c35426828f336516677bd120feed7af3e5"
+    },
+    {
+      "path": "reports/dfm_scorecard.md",
+      "sha256": "1035cbe000fadf6e599c404f2eccfbd039712804bca56ea4c90c5728de3f87c5"
+    },
+    {
+      "path": "reports/dfm_tool.json",
+      "sha256": "513a136d1c3357f8023dfa74f2969560f7c91443aa536a8873341fd6d9284558"
+    },
+    {
+      "path": "reports/ir_report.json",
+      "sha256": "c8e89d139b66237e3027baa84b64a9d76b6d77abe60e433d70af6fdd52550edb"
+    },
+    {
+      "path": "reports/power_report.json",
+      "sha256": "c5e1d459afcbfdf22296105833bc028a23d1ae822807b3d83608a2105a2c9f16"
+    },
+    {
+      "path": "reports/power_tool.json",
+      "sha256": "8af59c6385bc31328a10e3413d0405c30ff61740da5f91e6c27bd32e14f232a0"
+    },
+    {
+      "path": "reports/pv_signoff.json",
+      "sha256": "c280f0fd43efe5aecf5fe2e2b4040ddc27657ed0c5249eeaea564893c5cb5926"
+    },
+    {
+      "path": "reports/pv_tool.json",
+      "sha256": "ef9a9d82c004c581e0b58dba83881ef4ad4e52431abf1580e76dd673c12cf969"
+    },
+    {
+      "path": "reports/sta_signoff.json",
+      "sha256": "bc685a094c9b8fbbf383ff73df8f1fff9beaffe448a5ab9f49427fad1ad55000"
+    },
+    {
+      "path": "reports/sta_tool.json",
+      "sha256": "8d866d6f5f3ac9de0f8b3bb68c26987b6bb4857bed8fa0d0c47fe9886662e89b"
+    }
+  ],
+  "checks_run": [
+    "chk_01M44E8F6VSWE81ZK61GHZTACH",
+    "chk_01M44E8W6HCP9XNF58QTKCK8V8",
+    "chk_01M44E8W6HCP9XNF58QTKCK8VA",
+    "chk_01M44E8W6HWR8Z48E24CBF1XC9",
+    "chk_01M44E8W6HWR8Z48E24CBF1XCB",
+    "chk_01M44E8W6HWR8Z48E24CBF1XCD",
+    "chk_01M44E8W6HWR8Z48E24CBF1XCF",
+    "chk_01M44E91KTNDCJYHSG844Y117M",
+    "chk_01M44E91KTT8NTDRXSVWR28JS1",
+    "chk_01M44EAQ21CG962YP66ANY3KCH",
+    "chk_01M44EAQ21NHDBNFRE57H982FH",
+    "chk_01M44EDQ6BEBWYS8DK1NKP5T86",
+    "chk_01M44EDTXY805T632A5APVD42M",
+    "chk_01M44EQ6MW10K8QBK60F5X9C69",
+    "chk_01M44EQ6RVETDRDVJ1CRGRESBA"
+  ],
+  "assumptions": [
+    "All items are owned by Orion (routing/placement fixes) as assigned by the tool; none needs Grid.",
+    "An empty drv_violators list means zero max transition, max capacitance and max fanout violations.",
+    "Clock frequency for power is the spec's 75 MHz (period 13.333 ns).",
+    "Electromigration, dynamic IR, ground bounce, inrush and glitch power are not analyzed by the open flow and are not reported here.",
+    "Endpoints _342_, _350_, _351_ are register instances (result or flag flops); their exact bit mapping is not in the given data.",
+    "Fix targets (0.147 um line-end gap, 0.54 li density) are derived from the tool policy (5% over min; 90% of max) and are suggestions, not new constraints.",
+    "Line-end near-minimum spacing (discrete open/bridge sites) is ranked above density margin because the li windows are still below the 0.6 limit while line ends are direct defect sites.",
+    "Low near-limit items are ordered by absolute count of near-limit edges (critical-area proxy) and actionability; li 100% min-width is treated as mostly standard-cell-intrinsic.",
+    "Power corners are those reported by the tool: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95, using sky130A / sky130_fd_sc_hd libraries.",
+    "Power numbers are assumed to use post-route parasitics from run run_01M44DR7XRWAQ9XY53AG8SRJCM; the parasitic source is not stated in the input.",
+    "Switching activity is the vectorless 0.2 input activity reported by the tool (20% default); no simulation activity (VCD/SAIF) was provided.",
+    "The 4.0 ns input/output delays and 0.25 ns uncertainty in the SDC are DEFAULT values pending customer confirmation (spec open_questions).",
+    "The 9 corners in the tool data (nom/min/max x tt/ss/ff) are the full corner set from the PDK configuration; min/max are taken to be RC extraction variants.",
+    "The IR limit of 0.09 V is the Phase 0 default (5% of 1.8 V nominal supply) as stated in the tool data; the spec gives no power or IR target (power targets are out of scope).",
+    "The IR result is assumed to be static (average-current) analysis at nominal 1.8 V; its corner and the net(s) analyzed (VPWR/VGND) are not stated in the input.",
+    "The tool report is complete and correct for the GDS at pnr/runs/it1/final/gds/alu8_top.gds; I did not re-run any tool.",
+    "Tool severities are authoritative and unchanged; ranking only orders items within and across severities.",
+    "Voltage source locations are not given; assumed to be the open flow's default PDN source placement at the macro power pins.",
+    "reports/sta_tool.json is the real OpenSTA output for the signoff (post-route) netlist of alu8 with constraints/constraints.sdc; the file itself does not state the netlist stage or whether parasitics (SPEF) were used."
+  ],
+  "open_issues": [
+    "Dominant cells on the worst paths cannot be reported: sta_tool.json gives only start, end, type, slack and state per path. A full report_checks with per-cell detail at max_ss_100C_1v60 is needed to satisfy the 'dominant cells' part of A.12.",
+    "Electromigration is not analyzed by the open flow; for this small design the risk is expected to be low, but it is unverified.",
+    "I/O delay budget (4.0 ns in/out) is a DEFAULT; if the customer gives a tighter budget the op -> register paths are the first to lose slack.",
+    "IR result gives no corner, net or voltage source locations; a human should confirm what the IR run covered, and whether ss/ff IR runs are needed.",
+    "OpenLane flow power total (0.00020245423365850002 W) does not match the OpenSTA tt_025C_1v80 total (0.0002593128 W); the corner, activity and parasitics behind the OpenLane figure should be confirmed by a human.",
+    "Power uses vectorless 0.2 activity; re-run with simulation activity from the verification testbench if a more accurate power figure is wanted.",
+    "Worst hold paths (type min) are not listed in sta_tool.json; only hold WS/TNS per corner are available.",
+    "density_window_min = 0.0 on all layers; minimum-density compliance is not covered by this report and should be confirmed by the PDK density deck / fill flow.",
+    "redundant_via_fits = 0 on all via layers despite many single-cut connections (mcon 852, via 875, via2 79, via3 8); confirm this is layout reality and not a check limitation.",
+    "sta_tool.json does not record the netlist stage or parasitics source; REQ-014 requires post-route STA, so the runtime should confirm the run used the routed netlist with extracted parasitics."
+  ],
+  "messages": [
+    {
+      "from": "Volta",
+      "summary": "Power (OpenSTA 2.6.0, input activity 0.2) totals 0.0002593128 W at tt_025C_1v80, 0.0002075033 W at ss_100C_1v60 and 0.0002985172 W at ff_n40C_1v95. Tool-reported worst static IR drop is 0.000207 V (average 4.54e-05 V) against a 0.09 V limit (5% of 1.8 V). No PDN change proposed. EM, dynamic IR and pad locations are not analyzed by the open flow. Pass/fail is left to the runtime checks."
+    },
+    {
+      "from": "Fabian",
+      "summary": "Ranked all 7 DFM items for alu8. Top risks are the two medium items: 35 met1 line ends at near-minimum spacing (DFM-003) and 7 li density windows at up to 94.9% of the 0.6 max (DFM-001). The 5 low near-limit-geometry items are ranked by absolute critical area and kept informational. No high items; antenna worst 37.33% of limit; no long parallel runs or isolated lines; no locations where a redundant via fits. All data comes from the tool report; I ran no checks myself."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All numbers are copied directly from reports/sta_tool.json and the SDC; margins are large in every corner. Confidence is limited only on path explanation detail, because the tool data has no cell-level breakdown, which is reported as an open issue rather than guessed.",
+    "confidence": "high"
+  }
+}

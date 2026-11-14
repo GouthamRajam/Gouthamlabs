@@ -1,0 +1,23 @@
+# Phase 1.5 Pillar A: Equivalence check using equiv_opt
+# Synthesizes and checks equivalence in one Yosys invocation
+
+# Read RTL
+read_verilog ../rtl/s2s_rv32i_alu.v
+read_verilog ../rtl/s2s_rv32i_decoder.v
+read_verilog ../rtl/s2s_rv32i_regfile.v
+read_verilog ../rtl/s2s_rv32i_csr.v
+read_verilog ../rtl/s2s_rv32i_core.v
+
+# Set top module and parameters
+hierarchy -top s2s_rv32i_core -chparam RESET_VECTOR 32'h80000000
+
+# Generic synth prep
+proc
+opt
+memory
+opt
+flatten
+opt
+
+# Equivalence-aware optimization and technology mapping
+equiv_opt -assert -map sky130_cells.v dfflibmap -liberty /nix/store/pi9m3br8ni97dfybd24lldfa185py07x-source/src/sta/test/sky130hd/sky130_fd_sc_hd__tt_025C_1v80.lib

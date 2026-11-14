@@ -1,0 +1,9 @@
+[
+  {
+    "severity": "minor",
+    "target": "constraints/constraints.sdc, all set_input_delay lines (miso 10.0 ns; rst_n, start, tx_data[*], word_len, cpol, cpha, clk_div[*], cs_mode, cs_force, irq_clear 6.0 ns) and set_output_delay lines",
+    "what": "The I/O delays are given without -max/-min, so the tool uses the same value as the min delay for hold analysis. A min input delay of 6-10 ns means input data is modeled as arriving at least 6 ns after the clock edge, so hold checks from input ports to internal flops (for example miso into the sync2 first flop, and rst_n and start into the control flops) have about 6-10 ns of built-in margin that a real upstream driver may not provide. The same applies to the output side: min output delay = +5/+6 ns makes the output hold requirement trivially met. This can hide input-path hold violations against REQ-021 ('worst hold slack >= 0 ns for every evaluated corner').",
+    "evidence": "e.g. 'set_input_delay 10.0 -clock [get_clocks {clk}] [get_ports {miso}]' and 'set_input_delay 6.0 -clock [get_clocks {clk}] [get_ports {start}]', with no '-min' variant anywhere in the file. The spec (REQ-022) gives only a single (max) value and nothing for hold.",
+    "suggested_action": "Do not change the spec-mandated max values. Raise to a human at G1 whether to add explicit min delays (for example 'set_input_delay -min 0.0 ...' on inputs and 'set_output_delay -min 0.0 ...' or a negative value for the external hold on outputs), so that I/O hold is checked realistically. Until then, the STA report should state that I/O hold slack is computed with min delay = max delay."
+  }
+]

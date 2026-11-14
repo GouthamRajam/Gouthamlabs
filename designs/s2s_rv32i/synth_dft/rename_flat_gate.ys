@@ -1,0 +1,4 @@
+read_verilog -lib sky130_cells.v
+read_verilog s2s_rv32i_flat_gate.v
+rename s2s_rv32i_core s2s_rv32i_core_gate
+write_verilog -noattr s2s_rv32i_flat_gate_renamed.v

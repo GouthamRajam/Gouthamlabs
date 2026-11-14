@@ -1,0 +1,19 @@
+# Compiled simulation binaries
+gate_compliance_sim
+fault_sim
+
+# Gate-level simulation work directory (large, regenerable)
+gate_sim_work/
+
+# SymbiYosys work directory (regenerable)
+equiv_sby/
+
+# Large generated files (regenerable from scripts)
+s2s_rv32i_netlist.json
+fault_sim.c
+
+# STA results directory (regenerable)
+sta_results/
+
+# Yosys/STA log files (regenerable)
+*.log

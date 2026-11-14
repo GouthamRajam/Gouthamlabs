@@ -1,0 +1,56 @@
+{
+  "task_id": "task_01M47BE6RCJKZZ2RSBZM8605G3",
+  "status": "success",
+  "summary": "Synthesis gave 736 cells and 8363.0208 um2. Setup is met at all three corners; the worst is nom_ss_100C_1v60 at 3.720212 ns (path baud_div[0] to flip-flop _1296_, dominated by a high-fanout o41ai_2 gate, 2.396546 ns). Hold is -0.002920 ns at nom_ff_n40C_1v95, which needs follow-up. No eqy data was provided.",
+  "outputs": [
+    {
+      "path": "constraints/constraints.sdc",
+      "sha256": "a89cf7b10ae5cbc12cdfcff2edc685664047edf3003825ca892133e5c11cc731"
+    },
+    {
+      "path": "reports/sentinel_constraints.json",
+      "sha256": "d8125e7945536bba8ef0187ee476c468de72840105866ce1784314fd2bd07c23"
+    },
+    {
+      "path": "reports/sta_pre.json",
+      "sha256": "4165a94214b6d8a59815992ef86fd12057204076d5b0407c7131f6d86895e270"
+    },
+    {
+      "path": "reports/synth_report.json",
+      "sha256": "ee030da31aa9d95fa5842dd87475aca13ac06d953141badfb6d67c03d0a3db76"
+    },
+    {
+      "path": "reports/synth_tool.json",
+      "sha256": "9ecc6fad35c2200321a21ca47a03d8ca9182c39f9aa8cf59197db7fb78cbd6fb"
+    }
+  ],
+  "checks_run": [
+    "chk_01M47RSQ7DQ2MW7099YMDAR1M4",
+    "chk_01M47RSQ7ZKRDCWSBXNJ7J9JZK",
+    "chk_01M47RXMHJAS76X0BF9HEGJGW7",
+    "chk_01M47SAV14YEWQZG1XYFG1XTFE",
+    "chk_01M47SAV22VCXCN81N8V18YR0K",
+    "chk_01M47SB3M08A5TSH4WW36CGK9S",
+    "chk_01M47SB3M7G5BBNVFPD2Y3J1BY",
+    "chk_01M47V2STNJZCRWZ37M1NBFYE1",
+    "chk_01M47V47AGR3VZ62TKGTNKS8GZ"
+  ],
+  "assumptions": [
+    "All numbers come from reports/synth_tool.json as given; I ran no tools.",
+    "Ideal clocks are assumed pre-layout, as stated in the SDC and the report (clock network delay ideal).",
+    "Statements about what the baud_div logic does (zero-detect or counter reload) are my inference from the path shape and the spec, not tool output.",
+    "The worst_paths_report text is truncated, so only paths 1 and 2 are fully readable; the slack of path 3 is not quoted."
+  ],
+  "open_issues": [
+    "Hold slack is negative (-0.002920 ns) at nom_ff_n40C_1v95 pre-layout. The hold path is not in the data. A human or PnR agent must decide how to handle it (for example hold repair after CTS); I have not waived or loosened anything.",
+    "No equivalence (eqy) result was provided, so RTL-to-netlist equivalence is unproven and remains blocking.",
+    "Several paths fan out from baud_div[0] through a high-fanout o41ai_2 (fanout 24, slew 2.745 ns). Timing is met with margin at 20 ns, but this may be worth a look if the clock target is tightened. This is not a fix request.",
+    "The worst paths report is truncated: paths 3 to 10, and the paths for the tt and ff corners, are not visible.",
+    "rx is constrained with the 30% default input delay and no false path, as the SDC notes; the human decision on its treatment is still open."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Quoted numbers match the tool data exactly, but the path report is truncated, there is no eqy or hold-path detail, and the functional reading of the path is an inference.",
+    "confidence": "medium"
+  }
+}

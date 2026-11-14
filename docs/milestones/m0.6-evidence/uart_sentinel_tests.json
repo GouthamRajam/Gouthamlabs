@@ -1,0 +1,72 @@
+[
+  {
+    "severity": "blocking",
+    "target": "tb/test_uart_6.py::long_div_frame (lines driving DUT from precomputed ref expectations with checkpoint sampling)",
+    "what": "The baud_div=65535 test only compares DUT outputs at 'change points' of the reference model output, and in between cycles are not sampled. The loopback rx input is also derived from the ref model's tx, not from the DUT's tx, so a DUT tx fault (e.g. wrong bit period or counter wrap at 16 bits) that is not mirrored by the model would be hidden only if the checkpoints miss it; more importantly, a DUT counter overflow bug at 16*65535 (e.g. 16-bit sub-counter truncation) shifts edges and is caught only at edges, but a DUT that holds wrong value mid-bit for a short time is not seen.",
+    "evidence": "cps built from exp changes plus i-1; Timer skips all other cycles; rx fed from ref 'prev_tx' rather than DUT tx.",
+    "suggested_action": "Also sample at least a few random mid-bit cycles and check every output at them; additionally check DUT tx edge spacing equals 16*65535 exactly independent of the model (REQ-006 acceptance). Also run the actual DUT-tx-to-rx loopback for at least one frame if budget allows."
+  },
+  {
+    "severity": "blocking",
+    "target": "tb/test_uart_2.py::test_bit_period_divisors (div 65535 branch)",
+    "what": "REQ-006 requires exact bit period for 65535 over 100 bits; the test measures only a single start-bit period of 0x01 frame and never checks the data bits, stop bit, or tx_ready timing at that divisor. A 16-bit counter bug affecting later bits would pass.",
+    "evidence": "Comment: 'one bit period only'; only tx_edges[before+1]-tx_edges[before] compared to P.",
+    "suggested_action": "Check at least one full frame at 65535 against ref (test_6 does partially) and report the reduced volume as an explicit waiver for a human to decide, not silent."
+  },
+  {
+    "severity": "major",
+    "target": "tb/test_uart_5.py::test_rx_tolerance_2pct",
+    "what": "REQ-020 requires 10,000 frames at +-2% for baud_div 1, 27, 255 in all modes; test runs 30 frames at div 1, 2 at div 27 and 1 at div 255 (only one mode/offset each), and the 255 case covers 3 of 6 mode/offset combos. No check that tolerance fails beyond the limit, so margin is unknown.",
+    "evidence": "batch(1,...,30); batch(27,...,2); batch(255,...,1) for 3 pairs. timeout_time=60 ms.",
+    "suggested_action": "Increase volume at div 1; cover all mode x offset at 27 and 255 or document the reduction to a human. Add a +-4% negative check to prove the test can fail."
+  },
+  {
+    "severity": "major",
+    "target": "tb/test_uart_5.py::test_loopback_all_modes need list",
+    "what": "Coverage gate requires 'parity_error_seen' which is not a bin in testplan.yaml; testplan bins (e.g. rx_sync_edge_high, rx_low_idle, tx_busy) are plain signal-value expressions that are hit by any traffic and do not demonstrate requirement coverage. No bins exist for cross of parity_mode x error, glitch length 7 boundary, break, baud offset sign, reset phase within frame.",
+    "evidence": "need=['tx_accept','frame_error_seen','parity_error_seen',...]; testplan coverage_bins list.",
+    "suggested_action": "Align bin names between plan and test; add crosses (mode x err type, glitch length, reset position, offset sign) tied to requirements."
+  },
+  {
+    "severity": "major",
+    "target": "tb/ref_model.py::step RX start/glitch handling vs REQ-014",
+    "what": "Model latches rx_mode (parity) at start-edge detection, and uses live baud_div each cycle for sub-counter. The spec says nothing about this; REQ-023 treats mid-frame change as undefined, but test_param_change disables checking (check_en False) so nothing verifies the DUT behavior. Also glitch rejection rule 'glitch shorter than 7 ticks' is vs the model's check at tick 8; boundary glitch of exactly 7 ticks is decided 'by reference model comparison', i.e. the test cannot fail independently of the model.",
+    "evidence": "test_4: '# boundary: 7 ticks, outcome decided by reference model comparison each cycle'; model rejects only if s != 0 at tick 8.",
+    "suggested_action": "Add explicit expectations for glitch lengths 6/7/8 ticks derived from the spec; have the model owner confirm tick alignment against REQ-014 text (re-check after 8 ticks)."
+  },
+  {
+    "severity": "major",
+    "target": "formal/formal_top.sv",
+    "what": "Formal properties are weak: ap_tx_ready_high_after_reset duplicates ap_reset_values; ap_err_flags_only_with_valid and ap_overrun_zero are trivial. Nothing proves REQ-023 (returns to idle), REQ-019 (break yields one event), REQ-016 (rx_valid single-cycle), REQ-011 (tx_ready eventually returns) or tx=1 while tx_ready=1. Reset assumption only constrains the first cycle, OK, but cover points for reset use $past(rst_n)==0 and are not checked that reachable beyond the first cycle. cp_overrun_zero and cp_err_flags_only_with_valid cover trivial conditions, not the antecedents.",
+    "evidence": "Assertions listed; no rx_valid pulse-width property ($past(rx_valid) -> !rx_valid), no tx==1 when tx_ready==1 property.",
+    "suggested_action": "Add properties: !(rx_valid && $past(rx_valid)) unless back-to-back possible, tx_ready -> tx, a bounded liveness for tx_ready returning, and covers for rx_valid with frame_err/parity_err."
+  },
+  {
+    "severity": "major",
+    "target": "tb/test_uart_4.py::test_rx_parity_error and test_rx_frame_error",
+    "what": "Volume is below acceptance (REQ-017: 1,000 frames; REQ-018: 1,000 per mode). Mode 0/3 check sends frames with mode=0 helper, never actually flipping parity bit for mode 0/3 as the testplan promises ('even with a bit that would mismatch'). The extra bit position is never driven, so a DUT wrongly checking parity in mode 3 on an 11-bit frame is not exercised.",
+    "evidence": "for mode in (0,3): send_rx_frame(b, mode=0, gap_bits=1) with no flip_parity; counts 15-20 per mode.",
+    "suggested_action": "Drive 11-bit-looking frames or stop-bit-position data in modes 0 and 3 so a misplaced parity check would fail; increase counts or document reduction."
+  },
+  {
+    "severity": "minor",
+    "target": "tb/test_uart_1.py::test_reset_values",
+    "what": "Spec requires checking outputs 'in the cycle after the reset edge', but test checks env.last after env.reset returns, which may be several cycles into reset or after release depending on the helper.",
+    "evidence": "await env.reset(rc, ...); chk(env.last == want).",
+    "suggested_action": "Confirm helper semantics; sample the first cycle after the first reset edge explicitly, including with rc=1."
+  },
+  {
+    "severity": "minor",
+    "target": "tb/test_uart_3.py::run_b2b",
+    "what": "Back-to-back counts (100/40/4 frames) are below the 1,000 in REQ-013; gap bound accepts 1..P so a DUT with a gap of a full bit period passes.",
+    "evidence": "for div, n in ((1,100),(2,40),(27,4)); chk(1 <= gap <= P).",
+    "suggested_action": "Pin the expected gap to the architecture's intent or have the spec owner state it; raise n at div=1 where cheap."
+  },
+  {
+    "severity": "minor",
+    "target": "tb/testplan.yaml::coverage_bins",
+    "what": "Several bins are tautological or not tied to their requirement: rx_low_idle (REQ-005), clk_domain_rx_active, frame_error_idle_clean, overrun_zero_idle, loopback_rx_during_tx, param_change_div_busy (compares baud_div<16, not a change).",
+    "evidence": "expr fields in testplan.yaml.",
+    "suggested_action": "Replace with bins that observe the event (e.g. baud_div changed while tx busy)."
+  }
+]

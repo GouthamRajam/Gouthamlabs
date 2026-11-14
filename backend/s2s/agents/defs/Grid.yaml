@@ -1,0 +1,13 @@
+id: A09
+name: Grid
+role: Floorplan Agent
+prompt: A09_Grid.md
+preamble: design
+stages: [floorplan]
+model_hint: default
+effort: medium
+max_tokens: 8000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 200000, max_minutes: 30, max_tool_runs: 20}
+writes_to: ["pnr/floorplan.json", "pnr/pin_order.cfg"]
+reads_from: ["spec/**", "arch/**", "reports/synth_tool.json", "reports/pnr_ranges.json", "reports/floorplan_tool.json"]

@@ -1,0 +1,94 @@
+
+=== sync_fifo (run_01M42TAASPTAT5S0GAY95XD28T) - fresh copy /home/user/Gouthamlabs/var/artifacts/acceptance_m06/run_01M42TAASPTAT5S0GAY95XD28T ===
+   $ /home/user/Gouthamlabs/var/artifacts/acceptance_m06/run_01M42TAASPTAT5S0GAY95XD28T/sim/run_regress.py /home/user/Gouthamlabs/var/artifacts/acceptance_m06/run_01M42TAASPTAT5S0GAY95XD28T/sim/regress_args.json  (1.9.2, 433.56s)
+   tests: 42 x runs: 168 (verilator seeds 1-3 + icarus seed 1), failed runs: 0
+     test_almost_full_flag_formal                 pass 4 fail 0
+     test_almost_full_ramp                        pass 4 fail 0
+     test_clock_period_smoke                      pass 4 fail 0
+     test_cora_full_empty_exclusive_stress        pass 4 fail 0
+     test_cora_full_empty_never_corners           pass 4 fail 0
+     test_empty_after_16_pops                     pass 4 fail 0
+     test_empty_flag_formal                       pass 4 fail 0
+     test_flag_consistency_random                 pass 4 fail 0
+     test_full_after_16_pushes                    pass 4 fail 0
+     test_full_capacity_storage                   pass 4 fail 0
+     test_full_empty_exclusive_formal             pass 4 fail 0
+     test_full_empty_exclusive_random             pass 4 fail 0
+     test_full_flag_formal                        pass 4 fail 0
+     test_fwft_head                               pass 4 fail 0
+     test_no_comb_input_to_output_formal          pass 4 fail 0
+     test_no_read_before_write                    pass 4 fail 0
+     test_outputs_change_on_clock_edge_only       pass 4 fail 0
+     test_overflow_protection                     pass 4 fail 0
+     test_overflow_random                         pass 4 fail 0
+     test_pointer_invariant_formal                pass 4 fail 0
+     test_pointer_wrap                            pass 4 fail 0
+     test_pointer_wrap_random                     pass 4 fail 0
+     test_pop_order                               pass 4 fail 0
+     test_push_basic                              pass 4 fail 0
+     test_random_scoreboard                       pass 4 fail 0
+     test_random_scoreboard_pop_bias              pass 4 fail 0
+     test_req021_scenario_coverage                pass 4 fail 0
+     test_reset_mid_traffic_random                pass 4 fail 0
+     test_reset_priority                          pass 4 fail 0
+     test_reset_state                             pass 4 fail 0
+     test_reset_state_formal                      pass 4 fail 0
+     test_reset_values                            pass 4 fail 0
+     test_reset_values_formal                     pass 4 fail 0
+     test_simul_push_pop_empty                    pass 4 fail 0
+     test_simul_push_pop_full                     pass 4 fail 0
+     test_simul_push_pop_mid                      pass 4 fail 0
+     test_simul_push_pop_random                   pass 4 fail 0
+     test_single_clock_formal                     pass 4 fail 0
+     test_sticky_flags                            pass 4 fail 0
+     test_sticky_flags_formal                     pass 4 fail 0
+     test_underflow_protection                    pass 4 fail 0
+     test_underflow_random                        pass 4 fail 0
+[PASS] 1. sync_fifo: regression 100% passing: 168/168 test runs passed
+[PASS] 1. sync_fifo: line coverage >= 0.95: 1.0 (79/79 lines)
+[PASS] 1. sync_fifo: toggle coverage >= 0.9: 1.0 (223/223 toggle points)
+[PASS] 1. sync_fifo: functional bins = 1.0: 35/35 bins hit; unhit: []
+     CAUGHT  wrong_operator     rtl/fifo_ctrl.v:52: operand rd_en replaced by almost_full
+     CAUGHT  off_by_one         rtl/fifo_ctrl.v:32: localparam 1'b0 -> 1'b1
+     CAUGHT  stuck_bit          rtl/fifo_ctrl.v:94: rd_ptr_q stuck (never updates)
+     CAUGHT  missing_reset      rtl/fifo_ctrl.v:91: reset assignment of underflow_q removed
+     CAUGHT  swapped_condition  rtl/fifo_mem.v:33: condition (wr_en) negated
+     CAUGHT  dropped_handshake  rtl/fifo_ctrl.v:50: empty_w forced to 1 (handshake dropped)
+     CAUGHT  wrong_operator     rtl/fifo_ctrl.v:63: operand wr_ptr_q replaced by rd_ptr_q
+     CAUGHT  stuck_bit          rtl/fifo_ctrl.v:102: rd_addr stuck at 0
+     CAUGHT  missing_reset      rtl/fifo_ctrl.v:89: reset assignment of count_q removed
+     CAUGHT  swapped_condition  rtl/fifo_ctrl.v:76: condition (wr_en & full_w) negated
+     CAUGHT  dropped_handshake  rtl/fifo_ctrl.v:103: full forced to 1 (handshake dropped)
+     CAUGHT  wrong_operator     rtl/fifo_ctrl.v:87: wr_ptr_q driven inverted
+     CAUGHT  off_by_one         rtl/fifo_ctrl.v:90: literal 1'b0 -> 1'b1
+     CAUGHT  stuck_bit          rtl/fifo_ctrl.v:96: overflow_q stuck (never updates)
+     CAUGHT  missing_reset      rtl/fifo_ctrl.v:90: reset assignment of overflow_q removed
+     CAUGHT  swapped_condition  rtl/fifo_ctrl.v:79: condition (rd_en & empty_w) negated
+     CAUGHT  dropped_handshake  rtl/fifo_ctrl.v:105: almost_full forced to 1 (handshake dropped)
+     CAUGHT  wrong_operator     rtl/fifo_mem.v:34: operand wr_data replaced by rd_data
+     CAUGHT  off_by_one         rtl/fifo_ctrl.v:80: literal 1'b1 -> 1'b0
+     CAUGHT  stuck_bit          rtl/fifo_ctrl.v:97: underflow_q stuck (never updates)
+     (screened out: proven equivalent to the original (yosys) rtl/fifo_ctrl.v:72: literal 2'b11 -> 2'b0
+[PASS] 2. sync_fifo: mutation detection >= 85% of 20: 20/20 caught = 100%; by type {'wrong_operator': '4/4', 'off_by_one': '3/3', 'stuck_bit': '4/4', 'missing_reset': '3/3', 'swapped_condition': '3/3', 'dropped_handshake': '3/3'}; 1 proven-equivalent/non-compiling mutants screened out
+     ap_reset_values                 proven     cover reached, depends on the design
+     ap_full_decode                  proven     cover reached, depends on the design
+     ap_empty_decode                 proven     cover reached, depends on the design
+     ap_almost_full_decode           proven     cover reached, depends on the design
+     ap_rd_data_zero_when_empty      proven     cover reached, depends on the design
+     ap_sticky_overflow              proven     cover reached, depends on the design
+     ap_sticky_underflow             proven     cover reached, depends on the design
+     ap_overflow_set                 proven     cover reached, depends on the design
+     ap_underflow_set                proven     cover reached, depends on the design
+     ap_count_push                   proven     cover reached, depends on the design
+     ap_count_pop                    proven     cover reached, depends on the design
+     ap_count_simul_mid              proven     cover reached, depends on the design
+     ap_count_hold_full              proven     cover reached, depends on the design
+     ap_never_cov_full_and_empty_never proven     cover reached, depends on the design
+[PASS] 3. sync_fifo: >= 3 meaningful properties proven, vacuity check passes: 14 meaningful proven (depth 30, prove PASS); vacuous []; failed []
+     weakening 'assertion removed': ["tb/test_sync_fifo.py: test 'test_req021_scenario_coverage' has fewer assertions (1 -> 0)"]
+     weakening 'test deleted': ["tb/test_sync_fifo.py: test 'test_req021_scenario_coverage' was deleted"]
+     weakening 'skip marker added': ["tb/test_sync_fifo.py: test 'test_req021_scenario_coverage' gained a 'skip' marker"]
+     weakening 'iterations reduced': ["tb/test_sync_fifo.py: test 'test_full_after_16_pushes' runs fewer iterations (loop bounds [16, 16] -> [1, 16])"]
+[PASS] 4. sync_fifo: anti-cheating guard flags weakened tests: 4/4 weakened versions flagged
+
+7/7 acceptance checks passed

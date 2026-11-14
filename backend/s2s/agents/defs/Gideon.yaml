@@ -1,0 +1,13 @@
+id: A15
+name: Gideon
+role: Tape-out Agent
+prompt: A15_Gideon.md
+preamble: design
+stages: [gdsii]
+model_hint: default
+effort: low
+max_tokens: 6000
+tools: [fs_read, fs_write, emit_note]
+budget: {max_tokens: 100000, max_minutes: 90, max_tool_runs: 30}
+writes_to: ["tapeout/release_notes.md"]
+reads_from: ["spec/spec.yaml", "reports/tapeout_checklist.json", "reports/tapeout_readiness.json", "reports/dfm_scorecard.json"]

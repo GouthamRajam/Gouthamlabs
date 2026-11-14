@@ -2,4 +2,7 @@ line: 0.95
 toggle: 0.90
 functional_bins: 1.00
 formal_min_depth: 30
+# Per-design minimum (never lower than formal_min_depth): designs whose transactions are longer than the
+# global depth need a deeper k-induction to tie properties to reachable states. CEO decision 2026-10-05.
+formal_min_depth_by_design: {spi_master: 160}
 mutation_detection: 0.85

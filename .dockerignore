@@ -11,3 +11,10 @@ web/src/generated
 docs
 demo
 .git
+# needed by the backend image at run time (backend/Dockerfile)
+!eda/versions.lock
+!docs/coding_standard.md
+!backend/tests/platform/m05_fixtures
+!backend/tests/platform/m06_fixtures
+var
+snapshots

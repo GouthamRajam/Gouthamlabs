@@ -1,0 +1,37 @@
+[
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml REQ-011 (and spec.md REQ-011); open_questions[2]",
+    "what": "The timing acceptance 'setup/hold WNS >= 0 at the corners configured in the flow' is underdetermined. It sets no corners, input delays, output delays or clock uncertainty.",
+    "evidence": "REQ-011 says 'all inputs treated as synchronous to clk' but gives no input/output delay budget. Corners are 'configured in the flow', and open question 3 admits the corners and PDK release are unknown. With zero I/O delays the check can pass trivially, and a different corner set could change the result.",
+    "suggested_action": "Pin the STA corner list (e.g. tt/ss/ff and temperature/voltage), the sky130A release, input/output delay (e.g. a stated fraction of the 10 ns period) and clock uncertainty in the spec. Keep the 10 ns target as is. If these are left to defaults, mark them 'DEFAULT - needs G1 review'."
+  },
+  {
+    "severity": "major",
+    "target": "spec/spec.yaml REQ-013 (type: test)",
+    "what": "REQ-013 mixes layout cleanliness and functional verification in one vague requirement. The random-simulation stimulus is unspecified, and the DRC and LVS tools and decks are not named.",
+    "evidence": "The text reads 'The layout is clean and the design verified against a reference model.' The acceptance says 'at least 100000 cycles ... 0 mismatches; 0 DRC and 0 LVS'. Uniformly random inputs rarely produce a reset pulse or a 0xFF/0x00 wrap, so 100000 cycles can pass without hitting REQ-001, REQ-007 or REQ-008. No coverage criterion exists, and no tool or rule deck is named for DRC and LVS.",
+    "suggested_action": "Split into a verification requirement and a physical-signoff requirement. For verification, state stimulus constraints and coverage bins (reset asserted, wrap up, wrap down, load, hold, each priority combination hit at least N times). For signoff, name the DRC and LVS tools and decks and say what counts as a violation."
+  },
+  {
+    "severity": "minor",
+    "target": "spec/spec.yaml REQ-002 acceptance",
+    "what": "One acceptance clause relies on 'netlist review', which is subjective and has no pass criterion.",
+    "evidence": "'no register is left without a reset in the synthesized netlist (checked by netlist review ...)'.",
+    "suggested_action": "Replace it with an objective check, such as a script or formal check that every sequential cell in the netlist is reset or has a reset-mux path. Alternatively, rely only on the random-initial-state simulation."
+  },
+  {
+    "severity": "minor",
+    "target": "spec/spec.yaml REQ-001 and REQ-010 acceptance",
+    "what": "The input-combination sweeps vary only load_data[0], so the data path from the other seven load_data bits is not exercised for reset and priority.",
+    "evidence": "'16 combinations of enable/load/up_down/load_data[0]' and '32 combinations of rst_n/load/enable/up_down/load_data[0]'. REQ-004 covers all load_data values only with rst_n=1.",
+    "suggested_action": "Either state that load_data[0] is a deliberate representative and why, or add a check that reset overrides load for several load_data values (e.g. 0x00, 0xFF, 0xA5, 0x5A). The formal proof in REQ-001 would cover this if it is written over all load_data bits."
+  },
+  {
+    "severity": "minor",
+    "target": "spec/spec.yaml REQ-003 acceptance and REQ-002 (power-up)",
+    "what": "The REQ-003 acceptance is a trial count ('100 of 100') with no stated stimulus. Behavior before the first reset (power-up count value) is not specified.",
+    "evidence": "REQ-003: 'pulse rst_n low for less than one clock period ... 100 of 100 trials'. REQ-002 specifies count only after a reset edge, and the random-initial-state simulation implies the pre-reset value is undefined.",
+    "suggested_action": "State the pulse widths and phase offsets to be swept. Add one sentence that count is undefined until the first reset edge, or require that the testbench never checks count before reset."
+  }
+]

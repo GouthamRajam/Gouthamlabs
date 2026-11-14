@@ -1,0 +1,110 @@
+{
+  "task_id": "task_01M43MDNWHYXH7R7VYFNE6PW47",
+  "status": "success",
+  "summary": "All 9 corners report setup and hold WNS >= 0, TNS 0.0 and no DRV violators. Tightest setup slack is 0.2429 ns at max_ss_100C_1v60 (rd_data[5] from _3261_); tightest hold slack is 0.1384 ns at min_ff_n40C_1v95. Margin is thin at slow corners; fixes ranked in the report.",
+  "outputs": [
+    {
+      "path": "reports/dfm_scorecard.json",
+      "sha256": "08ef1535344c25f07613b7fd92f010c669355b38bd13a445f538cdb473f631ee"
+    },
+    {
+      "path": "reports/dfm_scorecard.md",
+      "sha256": "c5ed11f39b9379d1ed5858fc28e3570fc87ffc107771de459a0df5524e9409bd"
+    },
+    {
+      "path": "reports/dfm_tool.json",
+      "sha256": "12a73199e47dca34101a94d8e03f6b3e3259d9480d38d8f3bf958dd6962af32f"
+    },
+    {
+      "path": "reports/ir_report.json",
+      "sha256": "46560b8e7bc9a223f45768c17fc2505c45b950e77f9a603de27388a4f728ef95"
+    },
+    {
+      "path": "reports/power_report.json",
+      "sha256": "fe06ba4bb4c2b45fc214ff144d35760689ce4433a01846d13ece1bed56adde8f"
+    },
+    {
+      "path": "reports/power_tool.json",
+      "sha256": "e9e8b1e8232cd218f0a24fa9e9e5eb31238863688e206d61e0104d948e274019"
+    },
+    {
+      "path": "reports/pv_signoff.json",
+      "sha256": "1c9234679e69b9c4eb676d48539d1f1bf7f1faad6438af9fcb490a9d4ae358a0"
+    },
+    {
+      "path": "reports/pv_tool.json",
+      "sha256": "ece828b5f7d6a52d0fe3ad3707a3b0a8c41c6d0398c60165565d37b6e92fb642"
+    },
+    {
+      "path": "reports/sta_signoff.json",
+      "sha256": "8a33547810e898cde8f8c8b30f380438616b3307847a9cd6b5efb3d1a64405ac"
+    },
+    {
+      "path": "reports/sta_tool.json",
+      "sha256": "061a0fb9925d76427214df6941931c708df2cde64aaacce78f911f19bf4186e0"
+    }
+  ],
+  "checks_run": [
+    "chk_01M46RF15D7CZB0M1SANSRPEGA",
+    "chk_01M46TD5FWZCH6NDVPCXHYAET6",
+    "chk_01M46TD5FWZCH6NDVPCXHYAET8",
+    "chk_01M46TD5FWZCH6NDVPCXHYAETA",
+    "chk_01M46TD5FX0XF889FCVN6AE65P",
+    "chk_01M46TD5FXKX1K7ARD3DM16V3G",
+    "chk_01M46TD5FXRZ67FDGMCPBK7CH5",
+    "chk_01M46W7JTWPFWZP2R8K2QVJTA8",
+    "chk_01M46W7JTXN37GWTCTEFJNDXK2",
+    "chk_01M46WAE9P2MP6T9RQ1F8ABYMK",
+    "chk_01M46WAE9Q04R1A39RVFDRVEY9",
+    "chk_01M46WEVB2SBVEQ9XN188KKS7N",
+    "chk_01M46WM1XXDNH0RCRJ02V42RH3",
+    "chk_01M46WTPNRFV5VZ61RE3NENE2P",
+    "chk_01M46WTPQ9V8K829QDY5GC5WB0"
+  ],
+  "assumptions": [
+    "Corners: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95, as given in the tool data.",
+    "DFM-002 count (35803) exceeds its edges_total (32840); I assume count includes both width and space edge hits and did not re-derive it.",
+    "Dynamic IR drop and decap effects are not covered by the data provided.",
+    "Electromigration is not analyzed by the open flow.",
+    "Hotspot lists are capped at 20 per item by policy, so locations shown are a sample, not the full set.",
+    "I/O delays (3.000 ns), clock uncertainty (0.25 ns) and max fanout 10 are DEFAULT values from constraints.sdc pending G1 review and were not changed.",
+    "IR analysis corner, voltage-source locations and current-map source are not stated in the tool data; assumed to be the tool defaults at 1.8 V.",
+    "IR limit is 5% of 1.8 V = 0.09 V (A.13 Phase 0 default).",
+    "Input activity 0.2 (20% toggle rate) default; no simulation activity was provided.",
+    "It is not stated whether clocks were ideal or propagated in the reported run; assumed to be the final flow output.",
+    "Near-limit edge fractions on li, met2, met3 and met5 are assumed to come mainly from routing at default minimum width, which is nominal and not a defect by itself.",
+    "No power budget in the spec, so no power pass/fail limit applied.",
+    "Ranking by yield impact is my engineering judgement from the tool counts and fractions; no additional tool was run.",
+    "Reported figures are taken verbatim from reports/sta_tool.json; no tool was run by me.",
+    "Severities are taken as given by the tool rules and were not changed.",
+    "The tool reports redundant_via_fits = 0 on every via layer, so single-cut connections are treated as not fixable by redundant via insertion at this layout."
+  ],
+  "open_issues": [
+    "Confirm hold figures are post-CTS with propagated clocks (min hold slack 0.1384 ns at min_ff_n40C_1v95).",
+    "DFM-001: li density max 0.5828 is under the 0.6 PDK limit but with little margin; Orion to decide whether to spread routing or accept.",
+    "DFM-002/DFM-006/DFM-007/DFM-009: very high near-limit fractions on small or default-width layers; human reviewer to confirm they are acceptable for G3 as informational.",
+    "DFM-003: 304 met1 line ends need a decision from Orion on end extension or spacing relaxation; the tool lists only 20 locations.",
+    "EM is not checked in the open flow.",
+    "No hold path list or per-cell delay breakdown was provided, so dominant cells and hold start/end points are not identified.",
+    "No simulation-based activity; power could differ from the 20% estimate.",
+    "OpenLane total (0.005682576913386583 W) and OpenSTA typical-corner total (0.005751779 W) differ slightly; the cause is not stated in the data.",
+    "Single-cut counts (mcon 8210, via 8080) cannot be reduced because no redundant via fits; flagged as an inherent limit of this layout, not a tool-reported item.",
+    "Slow-corner setup margin is 0.2429 ns (max_ss_100C_1v60); a human should decide if this is adequate.",
+    "The cell type of start point _3261_ is not given in the input.",
+    "Voltage-source locations and IR analysis corner are not documented in the tool output; a human should confirm them."
+  ],
+  "messages": [
+    {
+      "from": "Volta",
+      "summary": "Power at 20% input activity: 0.005751779 W typical, 0.004539046 W slow, 0.006683403 W fast (highest). Worst IR drop 0.00137 V against a 0.09 V limit. No PDN change proposed. EM not analyzed."
+    },
+    {
+      "from": "Fabian",
+      "summary": "9 items from the KLayout DFM run (0 high, 3 medium, 6 low); all ranked, severities unchanged. Top action: 304 met1 line ends at near-minimum spacing (DFM-003). Then 20 li density windows within 10% of the 0.6 limit (peak 0.5828, DFM-001), and one met2 line end (DFM-005). The six low items are near-limit edge statistics that mostly reflect default-width routing and are listed for information only. Worst antenna is 64.7% of limit, below the 80% flag threshold. Long parallel runs at min spacing, isolated narrow lines and redundant-via opportunities were all reported as 0 by the tool."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Numbers are quoted directly from the tool data, but path detail is limited to setup start/end points, with no cell-level breakdown or hold paths.",
+    "confidence": "medium"
+  }
+}

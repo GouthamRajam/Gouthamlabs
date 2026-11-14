@@ -1,0 +1,16 @@
+read_verilog ../rtl/s2s_uart_tx.v
+read_verilog ../rtl/s2s_uart_rx.v
+read_verilog ../rtl/s2s_uart.v
+
+hierarchy -check -top s2s_uart
+proc; opt; fsm; opt
+memory; opt
+techmap; opt
+
+synth -top s2s_uart
+dfflibmap -liberty /opt/pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+abc -liberty /opt/pdk/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+stat
+
+write_verilog -noattr s2s_uart_synth.v

@@ -1,0 +1,12 @@
+   9 : F =   19. O =   0.  And =   25331. Var =   10750. Conf =   2504.    0 MB     0.22 sec
+  10 : F =   20. O =   0.  And =   28045. Var =   11936. Conf =   3486.    0 MB     0.29 sec
+No output failed in 19 frames.  Time =     0.29 sec
+Reached limit on the number of timeframes (20).
+Original miter:       Latches =   244. Nodes =   3524.
+Sequential cleanup:   Latches =   244. Nodes =   3524. Time =     0.00 sec
+Forward retiming:     Latches =   633. Nodes =   3524. Time =     0.00 sec
+Latch-corr (I= 17):   Latches =   471. Nodes =   2767. Time =     0.04 sec
+Fraiging:             Latches =   471. Nodes =   2458. Time =     0.01 sec
+Min-reg retiming:     Latches =   175. Nodes =   2451. Time =     0.00 sec
+K-step (K= 1,I= 25):  Latches =     0. Nodes =      0. Time =     0.10 sec
+Networks are equivalent.  Time =     0.15 sec

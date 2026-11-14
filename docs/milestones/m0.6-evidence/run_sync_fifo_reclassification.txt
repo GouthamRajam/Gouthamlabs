@@ -1,0 +1,123 @@
+model access: provider=anthropic model=claude-sonnet-5-5 key_saved=True
+spend caps: per design $8.00, daily $15.00; before this run: today $9.2000, design sync_fifo $1.6451
+design sync_fifo: verification run run_01M42TAASPTAT5S0GAY95XD28T (from M0.5 run run_01M42TAASPTAT5S0GAY95XD28T: test_build -> verification)
+
+06:41:21  stage.changed   Atlas                 Run run_01M42TAASPTAT5S0GAY95XD28T entered stage verification
+06:41:21  handoff         Rhea      -> Rex      Rhea assigned 'Close verification: regression, coverage, formal (Zone 2C)' to Rex
+06:41:21  task.started    Rex                   Rex started: Close verification: regression, coverage, formal (Zone 2C)
+06:41:22  plan            Rex                   Rex: verification continues from run run_01M42AZ79THSA5AXR1TNEE09AH (its files and reviewed baseline)
+06:41:22  plan            Rex                   Rex: plan - regression (Verilator 3 seeds + Icarus), formal (prove/cover/free-stub), Dex triage of every failure, Cora coverage closure, Myra mutation testing, anti-cheatin
+06:41:22  handoff         Rhea      -> Rex      Rhea assigned 'Run the regression and track per-test/per-seed results' to Rex
+06:41:22  handoff         Rhea      -> Cora     Rhea assigned 'Close coverage to the targets in coverage_targets.yaml' to Cora
+06:41:22  handoff         Rhea      -> Myra     Rhea assigned 'Mutation-test the regression (20 screened mutants)' to Myra
+06:41:22  tool_call       Vera      -> Sage     Vera -> Sage: kb_search 'Operator decision: coverage bin 'cov_full_and_empty_never' (full and empty) can '
+06:41:22  tool_result     Sage      -> Vera     Sage: 4 knowledge entries for Vera: kb-fc-006; kb-fc-002; kb-fc-003; kb-fc-004
+06:41:22  tool_call       Vera                  Vera: model call (medium effort) - Operator decision: coverage bin 'cov_full_and_empty_never' (full and empty) can never be hit by a correct design; it is 
+06:41:56  tool_result     Vera                  Vera: model answered (14519 in / 6909 out tokens, $0.0981, 34491 ms)
+06:41:56  plan            Vera                  Vera: Edit tb/testplan.yaml only: remove cov_full_and_empty_never from coverage_bins and add a top-level illegal_states list with that entry (same expr, REQ-017, assertion 
+06:41:56  tool_call       Euclid    -> Sage     Euclid -> Sage: kb_search 'Add ONE property to formal/formal_top.sv: ap_never_cov_full_and_empty_never asse'
+06:41:56  tool_result     Sage      -> Euclid   Sage: 4 knowledge entries for Euclid: kb-fc-006; kb-fc-003; kb-fc-002; kb-fc-004
+06:41:56  tool_call       Euclid                Euclid: model call (medium effort) - Add ONE property to formal/formal_top.sv: ap_never_cov_full_and_empty_never asserting that the illegal state never happe
+06:42:12  tool_result     Euclid                Euclid: model answered (15469 in / 2782 out tokens, $0.0588, 15381 ms)
+06:42:12  plan            Euclid                Euclid: Append one labelled assert/cover pair, ap_never_cov_full_and_empty_never and cp_never_cov_full_and_empty_never, to formal_top.sv in its own always block. Every exis
+06:42:12  tool_call       Sentinel              Sentinel: model call (medium effort) - The anti-cheating guard flagged this verification change as weakening. Approve ONLY if each flagged change is a correcti
+06:42:30  tool_result     Sentinel              Sentinel: model answered (21720 in / 2137 out tokens, $0.0648, 17820 ms)
+06:42:30  plan            Sentinel              Sentinel: Compare the before/after testplan and formal harness, confirm that the only removed item is the cov_full_and_empty_never bin, and check that the spec (REQ-017) ma
+06:42:30  handoff         Nadia     -> Vera     Nadia assigned 'Reclassify bin cov_full_and_empty_never as an illegal state (operator decision)' to Vera
+06:42:30  check.passed    Vera                  testplan_schema: passed
+06:42:30  check.passed    Vera                  testplan_trace: passed
+06:42:30  check.passed    Euclid                formal_properties_static: passed
+06:42:30  finding         Sentinel  -> Vera     Anti-cheating guard: Vera's change weakens verification (1 flag(s)); Sentinel review required
+06:42:30  check.passed    Sentinel              anti_cheat_guard: passed
+06:42:30  tool_call       Rex                   Rex: regression main_r1: test_cora_1, test_cora_2, test_sync_fifo x seeds [1, 2, 3] (verilator, icarus)
+06:49:43  tool_result     Rex                   Rex: main_r1: 168/168 test runs passed; line 1.0, toggle 1.0 (PASS)
+06:49:43  tool_call       Euclid                Euclid: SymbiYosys prove + cover + free-stub check
+06:49:47  tool_result     Euclid                Euclid: 14 meaningful properties proven; failed []; vacuous []; tautologies []
+06:49:47  tool_call       Rex                   Rex: regression cov_0: test_cora_1, test_cora_2, test_sync_fifo x seeds [1, 2, 3] (verilator, icarus)
+06:56:53  tool_result     Rex                   Rex: cov_0: 168/168 test runs passed; line 1.0, toggle 1.0 (PASS)
+07:00:15  tool_result     Cora                  Cora: line 1.0, toggle 1.0, functional 1.0 (0 bin(s) unhit) - targets met
+07:00:35  tool_call       Euclid                Euclid: SymbiYosys prove + cover + free-stub check
+07:00:38  tool_result     Euclid                Euclid: 14 meaningful properties proven; failed []; vacuous []; tautologies []
+07:00:38  check.passed    Cora                  coverage_line: passed
+07:00:38  check.passed    Cora                  coverage_toggle: passed
+07:00:38  check.passed    Cora                  coverage_functional: passed
+07:00:38  check.passed    Rex                   regression_100pct: passed
+07:00:38  check.passed    Vera                  requirements_traced: passed
+07:00:38  check.passed    Euclid                formal_3_meaningful: passed
+07:00:38  check.passed    Euclid                formal_vacuity: passed
+07:00:38  check.passed    Euclid                illegal_states_never_happen: passed
+07:00:38  tool_call       Myra                  Myra: mutation run 1: 20 screened mutants of the final RTL
+07:17:31  tool_result     Myra                  Myra: 20/20 injected bugs caught (100%); by type {'wrong_operator': '4/4', 'off_by_one': '3/3', 'stuck_bit': '4/4', 'missing_reset': '3/3', 'swapped_condition': '3/3', 'dro
+07:17:31  check.passed    Myra                  mutation_detection: passed
+07:17:31  check.passed    Sentinel              anti_cheat_final: passed
+07:17:31  check.passed    Rex                   task_result_schema: passed
+07:17:31  task.completed  Rex                   Rex completed: Close verification: regression, coverage, formal (Zone 2C)
+07:17:31  gate.requested  Atlas                 G2 requested after verification
+07:17:31  gate.decided    Atlas                 G2 auto-approved: all verification checks passed
+07:17:31  stage.changed   Atlas                 Run run_01M42TAASPTAT5S0GAY95XD28T complete: all 1 stages done
+07:17:31  manager.checkin Rhea      -> Rex      Rhea spot-checked Rex's 'Close verification: regression, coverage, formal (Zone 2C)': all output hashes match
+
+=== run run_01M42TAASPTAT5S0GAY95XD28T: completed in 36.1 min ===
+  verification  Rex    completed
+
+=== checks (Trust Layer records, in order) ===
+  verification  testplan_schema            PASS  jsonschema
+  verification  testplan_trace             PASS  s2s.agents.m06
+  verification  formal_properties_static   PASS  yosys
+  verification  anti_cheat_guard           PASS  s2s.verify.guard
+  verification  coverage_line              PASS  verilator_coverage
+  verification  coverage_toggle            PASS  verilator_coverage
+  verification  coverage_functional        PASS  vcd bins
+  verification  regression_100pct          PASS  cocotb_regress
+  verification  requirements_traced        PASS  cocotb_regress
+  verification  formal_3_meaningful        PASS  sby
+  verification  formal_vacuity             PASS  sby
+  verification  illegal_states_never_happen PASS  vcd + sby
+  verification  mutation_detection         PASS  mutation
+  verification  anti_cheat_final           PASS  s2s.verify.guard
+  verification  task_result_schema         PASS  jsonschema
+
+=== metered spend, this run ===
+  Vera      llm        1 record(s)  $0.098128
+  Sentinel  llm        1 record(s)  $0.064810
+  Euclid    llm        1 record(s)  $0.058758
+  Rex       compute    2 record(s)  $0.011930
+  Myra      compute    1 record(s)  $0.002596
+  TOTAL this run: $0.236222
+  TOTAL for the design (all its runs: run_01M42AZ79THSA5AXR1TNEE09AH, run_01M42TAASPTAT5S0GAY95XD28T, run_01M42AND5685JZEERXXPT73EV2): $1.881346
+  spent today (all work): $9.7909
+
+=== verification report ===
+{
+ "coverage": {
+  "met": true,
+  "line": 1.0,
+  "toggle": 1.0,
+  "functional": 1.0,
+  "unhit_bins": []
+ },
+ "formal": {
+  "error": null,
+  "failed": [],
+  "vacuous": [],
+  "tautologies": [],
+  "proven_meaningful": 14
+ },
+ "mutation": [
+  {
+   "rate": 1.0,
+   "total": 20,
+   "attempt": 1,
+   "by_type": {
+    "stuck_bit": "4/4",
+    "off_by_one": "3/3",
+    "missing_reset": "3/3",
+    "wrong_operator": "4/4",
+    "dropped_handshake": "3/3",
+    "swapped_condition": "3/3"
+   },
+   "detected": 20
+  }
+ ]
+}
+real RTL bugs found: 0

@@ -1,0 +1,6 @@
+# Export synthesized netlist as JSON — keep sky130 cells as instances
+read_verilog -lib sky130_cells.v
+read_verilog s2s_rv32i_synth.v
+hierarchy -top s2s_rv32i_core
+flatten
+write_json s2s_rv32i_netlist.json

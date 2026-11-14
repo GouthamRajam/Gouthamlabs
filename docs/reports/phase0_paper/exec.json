@@ -1,0 +1,85 @@
+{
+ "designs": {
+  "alu8": {
+   "runs": 3,
+   "tasks": 11,
+   "checks": 101,
+   "failed": 2,
+   "events": 847,
+   "agents": 38,
+   "findings": 0,
+   "llm_calls": 44,
+   "mtok": 0.54,
+   "cpu_h": 2.3,
+   "usd": 0.11,
+   "gates": 4
+  },
+  "counter8": {
+   "runs": 4,
+   "tasks": 13,
+   "checks": 108,
+   "failed": 2,
+   "events": 883,
+   "agents": 38,
+   "findings": 0,
+   "llm_calls": 42,
+   "mtok": 0.49,
+   "cpu_h": 0.5,
+   "usd": 1.66,
+   "gates": 4
+  },
+  "spi_master": {
+   "runs": 3,
+   "tasks": 11,
+   "checks": 139,
+   "failed": 5,
+   "events": 1231,
+   "agents": 38,
+   "findings": 0,
+   "llm_calls": 57,
+   "mtok": 1.12,
+   "cpu_h": 10.3,
+   "usd": 0.51,
+   "gates": 4
+  },
+  "sync_fifo": {
+   "runs": 4,
+   "tasks": 12,
+   "checks": 178,
+   "failed": 18,
+   "events": 1269,
+   "agents": 38,
+   "findings": 0,
+   "llm_calls": 50,
+   "mtok": 0.69,
+   "cpu_h": 4.7,
+   "usd": 2.06,
+   "gates": 5
+  },
+  "uart": {
+   "runs": 3,
+   "tasks": 11,
+   "checks": 222,
+   "failed": 16,
+   "events": 2524,
+   "agents": 39,
+   "findings": 0,
+   "llm_calls": 90,
+   "mtok": 2.44,
+   "cpu_h": 40.1,
+   "usd": 9.19,
+   "gates": 4
+  }
+ },
+ "failed_by_stage": {
+  "verification": 10,
+  "place_route": 8,
+  "synthesis": 6,
+  "test_build": 3,
+  "signoff": 3,
+  "architecture": 2,
+  "floorplan": 2,
+  "spec": 1
+ },
+ "ceo_decisions": 20
+}

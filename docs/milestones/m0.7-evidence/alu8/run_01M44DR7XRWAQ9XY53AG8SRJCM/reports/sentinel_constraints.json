@@ -1,0 +1,16 @@
+[
+  {
+    "severity": "major",
+    "target": "constraints/constraints.sdc, lines 'set_input_delay 4.0 -clock [get_clocks {clk}] [get_ports {rst_n}]' / '{a[*]}' / '{b[*]}' / '{op[*]}'",
+    "what": "Input delays are set without -max/-min, so 4.0 ns is also used as the minimum input delay for hold analysis. A 4.0 ns minimum arrival adds 4 ns of artificial hold margin on every input-to-register path (a, b, op, rst_n -> result/flag flops), so hold checks for those paths are optimistic and could hide a real hold violation after CTS (clock insertion delay vs. a short input-to-flop path).",
+    "evidence": "spec/spec.yaml open_questions: 'assume inputs arrive and outputs leave with 0 ns external delay unless the customer states one'. REQ-014 acceptance requires 'hold WNS >= 0.0 ns, as decided by the real STA tool'. The SDC sets only 'set_input_delay 4.0 ...' with no '-min' value, so the hold-case external arrival is 4.0 ns instead of the spec-assumed 0 ns.",
+    "suggested_action": "Synthesis owner (Sienna) to split the constraint: keep 'set_input_delay -max 4.0' (or the G1-approved budget) for setup and add 'set_input_delay -min 0.0' on rst_n, a[*], b[*], op[*] so hold is checked against the spec's 0 ns assumption; record the choice in docs/DECISIONS.md. Re-run STA and report input-path hold slack."
+  },
+  {
+    "severity": "minor",
+    "target": "constraints/constraints.sdc, comments and values 'Input delays: DEFAULT 30% of period = 4.0 ns' and 'Output delays: DEFAULT 30% of period = 4.0 ns'",
+    "what": "The I/O delay budget (4.0 ns in, 4.0 ns out) contradicts the spec's written assumption of 0 ns external delay. For setup this is stricter than the spec (not a loosening), but the deviation is not recorded as a decision and the spec acceptance (REQ-014) was written with 0 ns in mind, so the two artifacts disagree on what is being signed off.",
+    "evidence": "spec/spec.yaml open_questions last item: '0 ns external delay unless the customer states one'; REQ-014 note: 'Input/output delay budget is an assumption; see open_questions.' SDC uses 4.0 ns on all inputs and outputs, citing only 'DEFAULT 30% of period'.",
+    "suggested_action": "Record the 4.0 ns (max) budget as a DEFAULT in docs/DECISIONS.md and raise it for G1 review so the spec open_question and the SDC agree; do not lower the setup budget without that human decision."
+  }
+]

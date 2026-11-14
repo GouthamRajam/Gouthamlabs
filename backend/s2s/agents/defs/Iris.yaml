@@ -1,0 +1,13 @@
+id: A01
+name: Iris
+role: Spec Agent
+prompt: A01_Iris.md
+preamble: design        # A.0 + A3 additions are prepended
+stages: [spec]
+model_hint: default
+effort: medium
+max_tokens: 24000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 30, max_tool_runs: 40}
+writes_to: ["spec/**"]
+reads_from: ["request.md", "spec/**", "reports/standards.md", "reports/sentinel_spec*.json"]

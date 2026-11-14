@@ -1,0 +1,134 @@
+SBY  3:43:11 [props_cover] Removing directory '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/formal/props_cover'.
+SBY  3:43:11 [props_cover] Copy '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/rtl/fifo_ctrl.v' to '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/formal/props_cover/src/fifo_ctrl.v'.
+SBY  3:43:11 [props_cover] Copy '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/rtl/fifo_mem.v' to '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/formal/props_cover/src/fifo_mem.v'.
+SBY  3:43:11 [props_cover] Copy '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/rtl/sync_fifo.v' to '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/formal/props_cover/src/sync_fifo.v'.
+SBY  3:43:11 [props_cover] Copy '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/formal/formal_top.sv' to '/home/user/Gouthamlabs/var/artifacts/runs/run_01M42AZ79THSA5AXR1TNEE09AH/formal/props_cover/src/formal_top.sv'.
+SBY  3:43:11 [props_cover] engine_0: smtbmc yices
+SBY  3:43:11 [props_cover] base: starting process "cd props_cover/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  3:43:11 [props_cover] base: finished (returncode=0)
+SBY  3:43:11 [props_cover] prep: starting process "cd props_cover/model; yosys -ql design_prep.log design_prep.ys"
+SBY  3:43:12 [props_cover] prep: finished (returncode=0)
+SBY  3:43:12 [props_cover] smt2: starting process "cd props_cover/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  3:43:12 [props_cover] smt2: finished (returncode=0)
+SBY  3:43:12 [props_cover] engine_0: starting process "cd props_cover; yosys-smtbmc -s yices --presat --unroll -c --noprogress -t 30  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Solver: yices
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 1..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at formal_top: cp_reset_values
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at formal_top: cp_empty_decode
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace1.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace1_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace1.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace1.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 3 at formal_top: cp_count_push
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace2.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace2_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace2.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace2.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 3 at formal_top: cp_fwft_first
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace3.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace3_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace3.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace3.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 3 at formal_top: cp_underflow_set
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace4.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace4_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace4.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace4.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top: cp_sticky_underflow
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace5.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace5_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace5.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace5.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top: cp_count_pop
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace6.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace6_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace6.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace6.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at formal_top: cp_count_simul_mid
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace7.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace7_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace7.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace7.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 5..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 6..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 7..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 8..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 9..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 10..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 11..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 12..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 13..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 14..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 14 at formal_top: cp_almost_full_decode
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace8.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace8_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace8.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace8.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 14..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 15..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 16..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 17..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 18..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 18 at formal_top: cp_full_decode
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 18 at formal_top: cp_count_le_16
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace9.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace9_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace9.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace9.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 18..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 19..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 19 at formal_top: cp_overflow_set
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 19 at formal_top: cp_count_simul_full
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace10.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace10_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace10.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace10.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 19..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 19 at formal_top: cp_count_hold_full
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace11.vcd
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace11_tb.v
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace11.smtc
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace11.yw
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 19..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Checking cover reachability in step 20..
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Reached cover statement in step 20 at formal_top: cp_sticky_overflow
+SBY  3:43:12 [props_cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace12.vcd
+SBY  3:43:13 [props_cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace12_tb.v
+SBY  3:43:13 [props_cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace12.smtc
+SBY  3:43:13 [props_cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace12.yw
+SBY  3:43:13 [props_cover] engine_0: ##   0:00:00  Status: passed
+SBY  3:43:13 [props_cover] engine_0: finished (returncode=0)
+SBY  3:43:13 [props_cover] engine_0: Status returned by engine: pass
+SBY  3:43:13 [props_cover] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  3:43:13 [props_cover] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  3:43:13 [props_cover] summary: engine_0 (smtbmc yices) returned pass
+SBY  3:43:13 [props_cover] summary: cover trace: props_cover/engine_0/trace0.vcd
+SBY  3:43:13 [props_cover] summary:   reached cover statement formal_top.cp_reset_values at formal_top.sv:56.5-56.37 in step 2
+SBY  3:43:13 [props_cover] summary: cover trace: props_cover/engine_0/trace1.vcd
+SBY  3:43:13 [props_cover] summary:   reached cover statement formal_top.cp_empty_decode at formal_top.sv:68.5-68.61 in step 2
+SBY  3:43:13 [props_cover] summary: cover trace: props_cover/engine_0/trace10.vcd
+SBY  3:43:13 [props_cover] summary:   reached cover statement formal_top.cp_count_simul_full at formal_top.sv:106.5-106.82 in step 19
+SBY  3:43:13 [props_cover] summary:   reached cover statement formal_top.cp_overflow_set at formal_top.sv:86.5-86.79 in step 19
+SBY  3:43:13 [props_cover] summary: cover trace: props_cover/engine_0/trace11.vcd
+SBY  3:43:13 [props_cover] summary:   reached cover statement formal_top.cp_count_hold_full at formal_top.sv:110.5-110.82 in step 19
+SBY  3:43:13 [props_cover] summary: cover trace: props_cover/engine_0/trace12.vcd
+SBY  3:43:13 [props_cover] summary:   reached cover statement formal_top.cp_sticky_overflow at formal_top.sv:80.5-80.65 in step 20
+SBY  3:43:13 [props_cover] summary: and 8 further traces
+SBY  3:43:13 [props_cover] summary: see props_cover/PASS for a complete summary
+SBY  3:43:13 [props_cover] DONE (PASS, rc=0)

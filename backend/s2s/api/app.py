@@ -438,3 +438,14 @@ def get_spend_caps(s: Session = Depends(db)) -> dict:
 def put_spend_caps(body: SpendCapsIn, s: Session = Depends(db)) -> dict:
     save_spend_caps(body.per_design_usd, body.daily_usd)
     return _caps_view(s)
+
+
+# --- project view (web /projects) ------------------------------------------------------------------
+from s2s.api.projects import router as projects_router  # noqa: E402
+
+app.include_router(projects_router)
+
+# --- live mirror of a remote run (personal use; disabled unless S2S_MIRROR_TOKEN is set) -----------
+from s2s.api.mirror import router as mirror_router  # noqa: E402
+
+app.include_router(mirror_router)

@@ -1,0 +1,672 @@
+{
+  "iterations": [
+    {
+      "iteration": 1,
+      "tag": "it1",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 55.0,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "SYNTH_STRATEGY": "DELAY 4"
+      },
+      "problems": [
+        "antenna_violating_nets = 3",
+        "antenna_violating_pins = 3",
+        "max_fanout_violations = 39"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 3,
+        "antenna_violating_pins": 3,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.765638574211583,
+          "nom_ss_100C_1v60": 0.9813283796660871,
+          "nom_ff_n40C_1v95": 4.812141044069305,
+          "min_tt_025C_1v80": 3.8428896708066516,
+          "min_ss_100C_1v60": 1.1070717989021892,
+          "min_ff_n40C_1v95": 4.867779206388135,
+          "max_tt_025C_1v80": 3.6947084215636847,
+          "max_ss_100C_1v60": 0.8662324436264814,
+          "max_ff_n40C_1v95": 4.760433959547247
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.37581661069107053,
+          "nom_ss_100C_1v60": 1.0068124396940714,
+          "nom_ff_n40C_1v95": 0.14318391322318957,
+          "min_tt_025C_1v80": 0.3722200431010795,
+          "min_ss_100C_1v60": 1.0000317523794022,
+          "min_ff_n40C_1v95": 0.14015700108324464,
+          "max_tt_025C_1v80": 0.37925452740635573,
+          "max_ss_100C_1v60": 1.01257394224331,
+          "max_ff_n40C_1v95": 0.14547924388036726
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 39,
+        "wirelength_um": 67649,
+        "utilization": 0.568138,
+        "cts_worst_tree_skew_ns": 0.039446,
+        "cts_target_ns": 1.0
+      },
+      "changes": []
+    },
+    {
+      "iteration": 1,
+      "tag": "it1",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 55.0,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "SYNTH_STRATEGY": "DELAY 4"
+      },
+      "problems": [
+        "placement failed: ['[GPL-0302] Use a higher -density or re-floorplan with a larger core area.', 'The following error was encountered while running the flow: OpenROAD.GlobalPlacement failed with the following errors: [GPL-0302] Use a higher -density or re-floorplan with a larger core area.', 'OpenLane will now quit.']"
+      ],
+      "facts": {},
+      "changes": []
+    },
+    {
+      "iteration": 2,
+      "tag": "it2",
+      "params": {
+        "FP_CORE_UTIL": 40,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "SYNTH_STRATEGY": "DELAY 4"
+      },
+      "problems": [
+        "antenna_violating_nets = 2",
+        "antenna_violating_pins = 2",
+        "max_fanout_violations = 34"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 2,
+        "antenna_violating_pins": 2,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.5752768424456924,
+          "nom_ss_100C_1v60": 0.5916098889343957,
+          "nom_ff_n40C_1v95": 4.765800777800068,
+          "min_tt_025C_1v80": 3.6582380382625055,
+          "min_ss_100C_1v60": 0.7339733473191833,
+          "min_ff_n40C_1v95": 4.822205882206,
+          "max_tt_025C_1v80": 3.481427245029226,
+          "max_ss_100C_1v60": 0.43124349756233876,
+          "max_ff_n40C_1v95": 4.7033964720886035
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.334466186435983,
+          "nom_ss_100C_1v60": 0.9263641227422643,
+          "nom_ff_n40C_1v95": 0.11989864995766164,
+          "min_tt_025C_1v80": 0.32821296609523115,
+          "min_ss_100C_1v60": 0.914655377326514,
+          "min_ff_n40C_1v95": 0.11564521889657373,
+          "max_tt_025C_1v80": 0.3400574917907332,
+          "max_ss_100C_1v60": 0.9363964313434177,
+          "max_ff_n40C_1v95": 0.12400514299728473
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 34,
+        "wirelength_um": 65882,
+        "utilization": 0.500815,
+        "cts_worst_tree_skew_ns": 0.054766,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "PL_TARGET_DENSITY_PCT",
+          "value": 65,
+          "reason": "Raise placement target density from 55 to 65 because GPL-0302 says the density is too low and the earlier run reached 0.568 utilization, above the 0.55 target."
+        },
+        {
+          "param": "FP_CORE_UTIL",
+          "value": 40,
+          "reason": "Lower core utilization from 45 to 40 to re-floorplan with a larger core area, the second remedy GPL-0302 names, giving placement headroom below the new 0.65 density."
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "tag": "it3",
+      "params": {
+        "FP_CORE_UTIL": 40,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 8,
+        "SYNTH_STRATEGY": "DELAY 4"
+      },
+      "problems": [
+        "antenna_violating_nets = 3",
+        "antenna_violating_pins = 3",
+        "max_fanout_violations = 35"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 3,
+        "antenna_violating_pins": 3,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.881633790926569,
+          "nom_ss_100C_1v60": 1.1338290627308223,
+          "nom_ff_n40C_1v95": 4.970014318546753,
+          "min_tt_025C_1v80": 3.956468153973283,
+          "min_ss_100C_1v60": 1.260093398624811,
+          "min_ff_n40C_1v95": 5.017186808018786,
+          "max_tt_025C_1v80": 3.8054760419970735,
+          "max_ss_100C_1v60": 1.0056245010241252,
+          "max_ff_n40C_1v95": 4.919164770313168
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.33309322909375044,
+          "nom_ss_100C_1v60": 0.923485314357993,
+          "nom_ff_n40C_1v95": 0.11920842428373127,
+          "min_tt_025C_1v80": 0.32697950827998806,
+          "min_ss_100C_1v60": 0.9126766267737617,
+          "min_ff_n40C_1v95": 0.1150979899522593,
+          "max_tt_025C_1v80": 0.33945086591292145,
+          "max_ss_100C_1v60": 0.9347627381164777,
+          "max_ff_n40C_1v95": 0.12361600981614818
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 35,
+        "wirelength_um": 65860,
+        "utilization": 0.515197,
+        "cts_worst_tree_skew_ns": 0.048276,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "MAX_FANOUT_CONSTRAINT",
+          "value": 8,
+          "reason": "Lower the resizer fanout target from 10 to 8 (range 6-20) because 34 max-fanout violations remain at a target equal to the likely STA limit, and hold buffers and antenna diodes added after repair_design push nets back over it; 8 leaves margin while setup slack (0.431 ns worst) can absorb the extra buffering."
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "tag": "it4",
+      "params": {
+        "FP_CORE_UTIL": 40,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 8,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 10,
+        "GRT_ANTENNA_ITERS": 5
+      },
+      "problems": [
+        "antenna_violating_nets = 3",
+        "antenna_violating_pins = 3",
+        "max_fanout_violations = 5"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 3,
+        "antenna_violating_pins": 3,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.9002207012413073,
+          "nom_ss_100C_1v60": 1.164111506806944,
+          "nom_ff_n40C_1v95": 4.9637531045999985,
+          "min_tt_025C_1v80": 3.9503530453807003,
+          "min_ss_100C_1v60": 1.264522744529126,
+          "min_ff_n40C_1v95": 4.997055355388507,
+          "max_tt_025C_1v80": 3.83422238145288,
+          "max_ss_100C_1v60": 1.041643245586114,
+          "max_ff_n40C_1v95": 4.919086166520802
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3880629261105478,
+          "nom_ss_100C_1v60": 1.0281441544702188,
+          "nom_ff_n40C_1v95": 0.15036172732499858,
+          "min_tt_025C_1v80": 0.3827769320962044,
+          "min_ss_100C_1v60": 1.0188352672123708,
+          "min_ff_n40C_1v95": 0.1469551188998933,
+          "max_tt_025C_1v80": 0.39280363407092483,
+          "max_ss_100C_1v60": 1.0363721285607213,
+          "max_ff_n40C_1v95": 0.1536006365574914
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 5,
+        "wirelength_um": 66550,
+        "utilization": 0.515636,
+        "cts_worst_tree_skew_ns": 0.039556,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "CTS_SINK_CLUSTERING_SIZE",
+          "value": 10,
+          "reason": "Lower max flops per clock-tree leaf buffer from the default 25 to 10. Lowering the resizer target 10->8 left max-fanout violations at 35, which suggests most are on clock leaf nets the resizer does not touch; skew (0.048 ns vs 1.0 ns target) and setup slack (worst 1.006 ns) leave room for the extra clock buffers."
+        },
+        {
+          "param": "GRT_ANTENNA_ITERS",
+          "value": 5,
+          "reason": "Raise antenna repair iterations from the default 3 to 5, because 3 antenna nets/pins remain after the current repair passes with 0 route DRC errors; the resizer fanout target of 8 keeps a margin of 2 for any extra diode loads."
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "tag": "it5",
+      "params": {
+        "FP_CORE_UTIL": 40,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 8,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 8,
+        "GRT_ANTENNA_ITERS": 5,
+        "GRT_ANTENNA_MARGIN": 20
+      },
+      "problems": [
+        "antenna_violating_nets = 4",
+        "antenna_violating_pins = 4"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 4,
+        "antenna_violating_pins": 4,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.8322959224060664,
+          "nom_ss_100C_1v60": 0.9992935650694517,
+          "nom_ff_n40C_1v95": 4.926372338392879,
+          "min_tt_025C_1v80": 3.8974593544563634,
+          "min_ss_100C_1v60": 1.1176579977859933,
+          "min_ff_n40C_1v95": 4.974116370694152,
+          "max_tt_025C_1v80": 3.7686761444928663,
+          "max_ss_100C_1v60": 0.8892922205893308,
+          "max_ff_n40C_1v95": 4.87987131182513
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3711387413556645,
+          "nom_ss_100C_1v60": 0.9766808749312633,
+          "nom_ff_n40C_1v95": 0.13465406948375405,
+          "min_tt_025C_1v80": 0.3639478821329472,
+          "min_ss_100C_1v60": 0.9688888854348616,
+          "min_ff_n40C_1v95": 0.12969303775790897,
+          "max_tt_025C_1v80": 0.3793300780853182,
+          "max_ss_100C_1v60": 0.9847226646152705,
+          "max_ff_n40C_1v95": 0.14045237592729992
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 0,
+        "wirelength_um": 63365,
+        "utilization": 0.52144,
+        "cts_worst_tree_skew_ns": 0.043069,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "CTS_SINK_CLUSTERING_SIZE",
+          "value": 8,
+          "reason": "Lower max flops per clock leaf buffer from 10 to 8 because lowering it 25->10 cut max-fanout violations 35->5, the rest are likely leaf nets at the limit, and skew (0.040 ns vs 1.0 ns) and setup slack (1.042 ns worst) leave room for more clock buffers."
+        },
+        {
+          "param": "GRT_ANTENNA_MARGIN",
+          "value": 20,
+          "reason": "Raise antenna repair over-fix margin from the default 10% to 20% because raising repair iterations 3->5 left antenna violations at 3 nets/3 pins, so each pass under-fixes rather than runs out of passes; route DRC is 0, so there is room for the extra diodes."
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "tag": "it5",
+      "params": {
+        "FP_CORE_UTIL": 40,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 8,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 8,
+        "GRT_ANTENNA_ITERS": 5,
+        "GRT_ANTENNA_MARGIN": 20
+      },
+      "problems": [
+        "placement failed: ['[GPL-0302] Use a higher -density or re-floorplan with a larger core area.', 'The following error was encountered while running the flow: OpenROAD.GlobalPlacement failed with the following errors: [GPL-0302] Use a higher -density or re-floorplan with a larger core area.', 'OpenLane will now quit.']"
+      ],
+      "facts": {},
+      "changes": [
+        {
+          "param": "CTS_SINK_CLUSTERING_SIZE",
+          "value": 8,
+          "reason": "Lower max flops per clock leaf buffer from 10 to 8 because lowering it 25->10 cut max-fanout violations 35->5, the rest are likely leaf nets at the limit, and skew (0.040 ns vs 1.0 ns) and setup slack (1.042 ns worst) leave room for more clock buffers."
+        },
+        {
+          "param": "GRT_ANTENNA_MARGIN",
+          "value": 20,
+          "reason": "Raise antenna repair over-fix margin from the default 10% to 20% because raising repair iterations 3->5 left antenna violations at 3 nets/3 pins, so each pass under-fixes rather than runs out of passes; route DRC is 0, so there is room for the extra diodes."
+        }
+      ]
+    },
+    {
+      "iteration": 6,
+      "tag": "it6",
+      "params": {
+        "FP_CORE_UTIL": 35,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 8,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 8,
+        "GRT_ANTENNA_ITERS": 10,
+        "GRT_ANTENNA_MARGIN": 20
+      },
+      "problems": [
+        "antenna_violating_nets = 1",
+        "antenna_violating_pins = 1",
+        "max_fanout_violations = 2"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 1,
+        "antenna_violating_pins": 1,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.901699074262709,
+          "nom_ss_100C_1v60": 1.1854162431628301,
+          "nom_ff_n40C_1v95": 4.96259802853251,
+          "min_tt_025C_1v80": 3.949120253699291,
+          "min_ss_100C_1v60": 1.264695051147421,
+          "min_ff_n40C_1v95": 5.000732414150059,
+          "max_tt_025C_1v80": 3.8486974696573264,
+          "max_ss_100C_1v60": 1.1149406158340678,
+          "max_ff_n40C_1v95": 4.919719437751958
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3757789741294713,
+          "nom_ss_100C_1v60": 0.9962888573906272,
+          "nom_ff_n40C_1v95": 0.13823342861637675,
+          "min_tt_025C_1v80": 0.36982656872574926,
+          "min_ss_100C_1v60": 0.9853049766081553,
+          "min_ff_n40C_1v95": 0.1339923210312107,
+          "max_tt_025C_1v80": 0.3812552603756173,
+          "max_ss_100C_1v60": 1.0063694606947176,
+          "max_ff_n40C_1v95": 0.14229162695306277
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 2,
+        "wirelength_um": 67837,
+        "utilization": 0.458412,
+        "cts_worst_tree_skew_ns": 0.038769,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "FP_CORE_UTIL",
+          "value": 35,
+          "reason": "Lower core utilization from 40 to 35 (range 30-65) because GPL-0302 asks for a larger core area and the operator guidance asks to spread cells to shorten the long met1 routes behind the antenna violations."
+        },
+        {
+          "param": "GRT_ANTENNA_ITERS",
+          "value": 10,
+          "reason": "Raise antenna repair iterations from 5 to 10 (operator bound 15) because raising the over-fix margin 10->20 left 4 antenna nets/pins, so more repair passes are the next untried lever."
+        }
+      ]
+    },
+    {
+      "iteration": 7,
+      "tag": "it7",
+      "params": {
+        "FP_CORE_UTIL": 35,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 6,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 8,
+        "GRT_ANTENNA_ITERS": 10,
+        "GRT_ANTENNA_MARGIN": 30
+      },
+      "problems": [
+        "antenna_violating_nets = 3",
+        "antenna_violating_pins = 3",
+        "max_fanout_violations = 2"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 3,
+        "antenna_violating_pins": 3,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.5055426220737433,
+          "nom_ss_100C_1v60": 0.5711173917662972,
+          "nom_ff_n40C_1v95": 4.704615052914896,
+          "min_tt_025C_1v80": 3.584781684072929,
+          "min_ss_100C_1v60": 0.7162715068247076,
+          "min_ff_n40C_1v95": 4.76644426308334,
+          "max_tt_025C_1v80": 3.4365065099594223,
+          "max_ss_100C_1v60": 0.4181610731593695,
+          "max_ff_n40C_1v95": 4.644397442534577
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.38161219708812916,
+          "nom_ss_100C_1v60": 1.01663380591458,
+          "nom_ff_n40C_1v95": 0.14495088872800524,
+          "min_tt_025C_1v80": 0.3767505303257983,
+          "min_ss_100C_1v60": 1.0027990943688487,
+          "min_ff_n40C_1v95": 0.14074458663564554,
+          "max_tt_025C_1v80": 0.38559634354697836,
+          "max_ss_100C_1v60": 1.0235056425421487,
+          "max_ff_n40C_1v95": 0.1475284380860243
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 2,
+        "wirelength_um": 67679,
+        "utilization": 0.4411,
+        "cts_worst_tree_skew_ns": 0.040514,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "GRT_ANTENNA_MARGIN",
+          "value": 30,
+          "reason": "Raise antenna over-fix margin from 20 to 30 (operator bound 30) because doubling repair passes 5->10 left 1 antenna net/pin with 0 route DRC, so the last net is under-fixed per pass and a larger margin is the untried lever."
+        },
+        {
+          "param": "MAX_FANOUT_CONSTRAINT",
+          "value": 6,
+          "reason": "Lower the resizer fanout target from 8 to 6 (range minimum 6) because max-fanout violations went 0->2 when antenna repair added more diodes, and each diode is a load; a margin of about 4 below the STA limit absorbs those loads while setup slack (worst 1.115 ns) covers the extra buffers."
+        }
+      ]
+    },
+    {
+      "iteration": 8,
+      "tag": "it8",
+      "params": {
+        "FP_CORE_UTIL": 30,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 6,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 8,
+        "GRT_ANTENNA_ITERS": 15,
+        "GRT_ANTENNA_MARGIN": 30
+      },
+      "problems": [
+        "max_fanout_violations = 3"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.4337460513529234,
+          "nom_ss_100C_1v60": 0.3532623182856291,
+          "nom_ff_n40C_1v95": 4.5944533922254855,
+          "min_tt_025C_1v80": 3.538123449920447,
+          "min_ss_100C_1v60": 0.5411093948296246,
+          "min_ff_n40C_1v95": 4.667745433402771,
+          "max_tt_025C_1v80": 3.3485304365985473,
+          "max_ss_100C_1v60": 0.20314150936378778,
+          "max_ff_n40C_1v95": 4.533310743994886
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3683208287060162,
+          "nom_ss_100C_1v60": 0.9932620562729879,
+          "nom_ff_n40C_1v95": 0.1374492780719067,
+          "min_tt_025C_1v80": 0.3654059935835769,
+          "min_ss_100C_1v60": 0.9897457578099473,
+          "min_ff_n40C_1v95": 0.13523532676473562,
+          "max_tt_025C_1v80": 0.37135079395936516,
+          "max_ss_100C_1v60": 0.9985150766625673,
+          "max_ff_n40C_1v95": 0.13964096940680448
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 3,
+        "wirelength_um": 65798,
+        "utilization": 0.381481,
+        "cts_worst_tree_skew_ns": 0.058671,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "GRT_ANTENNA_ITERS",
+          "value": 15,
+          "reason": "Raise antenna repair iterations from 10 to 15 (operator bound 15) because raising margin 20->30 made antenna violations worse (1->3), and more repair passes is the remaining untried antenna lever with 0 route DRC leaving room for diodes."
+        },
+        {
+          "param": "FP_CORE_UTIL",
+          "value": 30,
+          "reason": "Lower core utilization from 35 to 30 (range min 30) because 40->35 cut antenna nets 4->1 in iteration 6, so a larger core should further spread cells and shorten the long met1 routes; placed utilization 0.441 stays far under density target 0.65."
+        }
+      ]
+    },
+    {
+      "iteration": 9,
+      "tag": "it9",
+      "params": {
+        "FP_CORE_UTIL": 30,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 6,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 6,
+        "GRT_ANTENNA_ITERS": 15,
+        "GRT_ANTENNA_MARGIN": 30
+      },
+      "problems": [
+        "antenna_violating_nets = 2",
+        "antenna_violating_pins = 2",
+        "max_fanout_violations = 5"
+      ],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 2,
+        "antenna_violating_pins": 2,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.4530719261337515,
+          "nom_ss_100C_1v60": 0.3949445327010095,
+          "nom_ff_n40C_1v95": 4.601933186998533,
+          "min_tt_025C_1v80": 3.54859529582948,
+          "min_ss_100C_1v60": 0.5628759839768168,
+          "min_ff_n40C_1v95": 4.669249563599072,
+          "max_tt_025C_1v80": 3.372952013161916,
+          "max_ss_100C_1v60": 0.25676261843443227,
+          "max_ff_n40C_1v95": 4.543920479607478
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3674122221569658,
+          "nom_ss_100C_1v60": 0.9913756762784968,
+          "nom_ff_n40C_1v95": 0.13668339069670826,
+          "min_tt_025C_1v80": 0.3646376082065024,
+          "min_ss_100C_1v60": 0.9864669360585905,
+          "min_ff_n40C_1v95": 0.1345337768156338,
+          "max_tt_025C_1v80": 0.370704644140759,
+          "max_ss_100C_1v60": 0.9970385910203605,
+          "max_ff_n40C_1v95": 0.13910939460758
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 5,
+        "wirelength_um": 66043,
+        "utilization": 0.385051,
+        "cts_worst_tree_skew_ns": 0.070754,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "CTS_SINK_CLUSTERING_SIZE",
+          "value": 6,
+          "reason": "CEO decision: one extra iteration; iteration 8 was clean except 3 clock leaf buffers over the fanout limit (clkbuf_3_0__f_clk 12, clkbuf_3_4__f_clk 11, clkbuf_3_5__f_clk 11 vs 10), so fewer flops per leaf buffer"
+        }
+      ]
+    },
+    {
+      "iteration": 10,
+      "tag": "it10",
+      "params": {
+        "FP_CORE_UTIL": 30,
+        "PL_TARGET_DENSITY_PCT": 65,
+        "MAX_FANOUT_CONSTRAINT": 6,
+        "SYNTH_STRATEGY": "DELAY 4",
+        "CTS_SINK_CLUSTERING_SIZE": 9,
+        "GRT_ANTENNA_ITERS": 15,
+        "GRT_ANTENNA_MARGIN": 30
+      },
+      "problems": [],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 3.446966587504062,
+          "nom_ss_100C_1v60": 0.37514481471987016,
+          "nom_ff_n40C_1v95": 4.603886291398691,
+          "min_tt_025C_1v80": 3.546139926518777,
+          "min_ss_100C_1v60": 0.5519558299977607,
+          "min_ff_n40C_1v95": 4.671610341905403,
+          "max_tt_025C_1v80": 3.369394636445803,
+          "max_ss_100C_1v60": 0.24286306986222908,
+          "max_ff_n40C_1v95": 4.548638927595582
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3735724058056228,
+          "nom_ss_100C_1v60": 1.0023965274887343,
+          "nom_ff_n40C_1v95": 0.14113616230750536,
+          "min_tt_025C_1v80": 0.3696957844497496,
+          "min_ss_100C_1v60": 0.9972547514493685,
+          "min_ff_n40C_1v95": 0.13843709903600443,
+          "max_tt_025C_1v80": 0.37719811675083453,
+          "max_ss_100C_1v60": 1.0087289067333807,
+          "max_ff_n40C_1v95": 0.14375184782749886
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 0,
+        "wirelength_um": 65447,
+        "utilization": 0.380144,
+        "cts_worst_tree_skew_ns": 0.062196,
+        "cts_target_ns": 1.0
+      },
+      "changes": [
+        {
+          "param": "CTS_SINK_CLUSTERING_SIZE",
+          "value": 9,
+          "reason": "CEO decision D1, experiment PNR-SYNCFIFO-0011: the violators were LEVEL-3 H-tree buffers; 531 sinks in clusters of 8 gave 68 clusters over 8 level-3 buffers (up to 12 each). Clusters of 9 give 62 clusters and no buffer above 10 (screened post-CTS and fully routed clean in the experiment)"
+        }
+      ]
+    }
+  ],
+  "explained_by": "Orion",
+  "explanation": "# Place and route summary: sync_fifo (sky130A, sky130_fd_sc_hd, clk 100 MHz)\n\nAll numbers are copied from reports/pnr_iterations.json, reports/cts_report.json and reports/floorplan_report.json. Nothing here is a check result; the S2S runtime runs the real checks.\n\n## Final state (iteration 10, tag it10)\nParameters: FP_CORE_UTIL 30, PL_TARGET_DENSITY_PCT 65, MAX_FANOUT_CONSTRAINT 6, SYNTH_STRATEGY \"DELAY 4\", CTS_SINK_CLUSTERING_SIZE 9, GRT_ANTENNA_ITERS 15, GRT_ANTENNA_MARGIN 30.\n\n| Item | Iteration 10 value |\n|---|---|\n| Problems listed by the tool data | none (empty list) |\n| Route DRC errors | 0 |\n| Antenna violating nets / pins | 0 / 0 |\n| Disconnected pins | 0 |\n| Max slew / max cap / max fanout violations | 0 / 0 / 0 |\n| Wirelength | 65447 um |\n| Placed utilization | 0.380144 |\n| Worst CTS tree skew | 0.062196 ns (target 1.0 ns) |\n| Worst setup slack | 0.24286306986222908 ns (max_ss_100C_1v60) |\n| Worst hold slack | 0.13843709903600443 ns (min_ff_n40C_1v95) |\n\nSetup slack is positive in all 9 corners, from 0.24286306986222908 ns (max_ss_100C_1v60) to 4.671610341905403 ns (min_ff_n40C_1v95). Examples: nom_tt 3.446966587504062 ns, nom_ss 0.37514481471987016 ns, nom_ff 4.603886291398691 ns.\nHold slack is positive in all 9 corners, from 0.13843709903600443 ns (min_ff_n40C_1v95) to 1.0087289067333807 ns (max_ss_100C_1v60). Examples: nom_tt 0.3735724058056228 ns, nom_ss 1.0023965274887343 ns, nom_ff 0.14113616230750536 ns.\n\nClock tree (cts_report.json, iteration 10): 74 clock buffers, 9 corners with skew data, worst tree skew 0.062196 ns at max_ss_100C_1v60 (setup analysis). The tool's reported_skew_ns also includes 0.25 ns of clock uncertainty, so tree_skew_ns is the physical figure. Hold buffers: 512. Timing repair buffers: 697.\n\nFloorplan (floorplan_report.json): die area 66020.3 um2, core area 57585.2 um2, floorplan utilization 0.469972, power grid violations 0, 79 pins. Note that this floorplan report records a 45% core utilization choice (the it1 value), while the final run used FP_CORE_UTIL 30, so it describes the first floorplan and not the final one.\n\n## Iteration table\nThe file holds 12 records for 10 iteration numbers: iterations 1 and 5 each appear twice, once with results and once as a placement failure (GPL-0302) with identical parameters. They are listed as separate rows below, in the file order.\n\n| Iter | What changed (reason in brief) | Result from the tool data |\n|---|---|---|\n| 1 (ran) | Baseline: FP_CORE_UTIL 45, density 55, fanout 10 | 3 antenna nets/pins, 39 max-fanout violations, DRC 0, utilization 0.568138, wirelength 67649 um |\n| 1 (failed) | Same parameters | Placement failed: GPL-0302 (use a higher density or a larger core area) |\n| 2 | Density 55 to 65; FP_CORE_UTIL 45 to 40 (the two remedies GPL-0302 names) | 2 antenna nets/pins, 34 fanout violations, DRC 0, wirelength 65882 um |\n| 3 | MAX_FANOUT_CONSTRAINT 10 to 8 (leave margin below the STA limit) | 3 antenna, 35 fanout violations, DRC 0 |\n| 4 | CTS_SINK_CLUSTERING_SIZE 25 (default) to 10; GRT_ANTENNA_ITERS 3 to 5 | 3 antenna, fanout violations 35 to 5, DRC 0 |\n| 5 (ran) | CTS_SINK_CLUSTERING_SIZE 10 to 8; GRT_ANTENNA_MARGIN 10 to 20 | 4 antenna, 0 fanout violations, DRC 0 |\n| 5 (failed) | Same parameters | Placement failed: GPL-0302 |\n| 6 | FP_CORE_UTIL 40 to 35; GRT_ANTENNA_ITERS 5 to 10 | 1 antenna net/pin, 2 fanout violations, DRC 0 |\n| 7 | GRT_ANTENNA_MARGIN 20 to 30; MAX_FANOUT_CONSTRAINT 8 to 6 | 3 antenna, 2 fanout violations, DRC 0 (antenna got worse) |\n| 8 | GRT_ANTENNA_ITERS 10 to 15; FP_CORE_UTIL 35 to 30 | 0 antenna, 3 fanout violations (3 clock leaf buffers with 12, 11, 11 against a limit of 10), DRC 0 |\n| 9 | CTS_SINK_CLUSTERING_SIZE 8 to 6 (CEO-approved extra iteration) | 2 antenna, 5 fanout violations, DRC 0 (worse than iteration 8) |\n| 10 | CTS_SINK_CLUSTERING_SIZE 6 to 9 (CEO decision D1, experiment PNR-SYNCFIFO-0011: level-3 H-tree buffers were the violators; clusters of 9 give 62 clusters and no buffer above 10) | No problems listed: 0 antenna, 0 fanout, DRC 0 |\n\nIterations 1 to 8 are the default 8-iteration budget. Iterations 9 and 10 were extra, recorded as CEO decisions.\n\n## Observations\n- Antenna violations did not fall monotonically with the repair settings: raising margin 20 to 30 (iteration 7) raised antenna nets from 1 to 3. They reached 0 in iteration 8 with a larger core (utilization 30) and 15 repair iterations, and stayed 0 in iteration 10. Which lever caused the fix is not separated by the data, because two parameters changed together.\n- Setup slack at the worst corner fell from 1.115 ns (iteration 6, 1.1149406158340678) to 0.24286306986222908 ns (iteration 10) as utilization dropped and buffering rose. It is still positive.\n- Placement failed twice with GPL-0302 and the data does not show how those runs were resolved.\n\n## Not available in the input data\n- No global-routing congestion or overflow report was given, so congestion cannot be stated. The only routing facts are DRC errors, antenna counts, wirelength and fanout/slew/cap counts.\n- The pass or fail of each real check is decided by the runtime after this report.\n",
+  "assumptions": [
+    "Every number quoted comes from reports/pnr_iterations.json, reports/cts_report.json and reports/floorplan_report.json; none were recomputed except taking minimum slacks across the per-corner values.",
+    "Iteration 10 is treated as the final state because it is the last record and lists no problems.",
+    "The duplicate iteration 1 and 5 records are reported as separate rows in file order; their relative timing is not stated in the data.",
+    "tree_skew_ns is the physical skew; reported_skew_ns includes 0.25 ns clock uncertainty.",
+    "Iterations 9 and 10 exceed the default 8-iteration budget and are described by the input as CEO decisions."
+  ],
+  "open_issues": [
+    "No global-routing congestion or overflow figure was in the inputs, so final congestion is not reported.",
+    "floorplan_report.json records FP_CORE_UTIL 45 and utilization 0.469972, which does not match the final run (FP_CORE_UTIL 30, placed utilization 0.380144); a floorplan report for the final run is needed.",
+    "The CTS report counts 512 hold buffers and 697 timing repair buffers against 74 clock buffers; the data gives no cause, and Chronos and Orion should confirm this is expected.",
+    "Worst setup slack fell to 0.24286306986222908 ns at max_ss_100C_1v60 in the final run; hold slack is thin at the ff corners (0.13843709903600443 ns at min_ff_n40C_1v95).",
+    "Antenna results were non-monotonic across iterations 6 to 9 and the clean result may be sensitive to parameters; the runtime's real checks decide pass or fail.",
+    "The two GPL-0302 placement-failure records (iterations 1 and 5) are not explained further in the data."
+  ]
+}

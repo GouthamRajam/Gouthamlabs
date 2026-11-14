@@ -86,7 +86,7 @@ def test_test_connection_reaches_the_real_api(platform):
     assert r["ok"] is False and "not wired yet" in r["error"]
 
 
-def test_gateway_sends_the_stored_key(platform):
+def test_gateway_sends_the_stored_key(platform, monkeypatch):
     """The agents' gateway reads the key from the secret: with the fake key saved, a gateway
     call reaches the real API and is refused (401) for that key; nothing is metered."""
     import anthropic
@@ -96,6 +96,7 @@ def test_gateway_sends_the_stored_key(platform):
     from s2s.models import access
     from s2s.models.gateway import ModelGateway
     from s2s.orchestrator.engine import create_run
+    monkeypatch.setenv("S2S_MODEL_PROVIDER", "anthropic")  # this test is about the API path
     _client().put("/settings/model-access", json={"provider": "anthropic", "api_key": FAKE_KEY})
     sdk_client, model = access.client()
     assert sdk_client.api_key == FAKE_KEY and model == "claude-sonnet-5-5"

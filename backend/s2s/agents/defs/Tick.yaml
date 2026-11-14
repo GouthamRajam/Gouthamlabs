@@ -1,0 +1,13 @@
+id: A3.14
+name: Tick
+role: Clock Tree
+prompt: A3.14_Tick.md
+preamble: design
+stages: [place_route]
+model_hint: default
+effort: low
+max_tokens: 6000
+tools: [fs_read, emit_note]
+budget: {max_tokens: 100000, max_minutes: 20, max_tool_runs: 10}
+writes_to: ["reports/cts_report.json"]
+reads_from: ["spec/**", "reports/cts_tool.json"]

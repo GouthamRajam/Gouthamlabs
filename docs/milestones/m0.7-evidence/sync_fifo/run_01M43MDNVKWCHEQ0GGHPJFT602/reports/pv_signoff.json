@@ -1,0 +1,93 @@
+{
+  "magic_drc": {
+    "violations": 0,
+    "by_rule": {}
+  },
+  "klayout_drc": {
+    "violations": 0,
+    "by_rule": {}
+  },
+  "openlane": {
+    "magic_drc": 0,
+    "klayout_drc": 0,
+    "lvs_errors": 0
+  },
+  "lvs": {
+    "verdict": "Circuits match uniquely",
+    "counts": {
+      "devices": {
+        "layout": 2828,
+        "schematic": 2828
+      },
+      "nets": {
+        "layout": 2835,
+        "schematic": 2835
+      }
+    }
+  },
+  "antenna": {
+    "net_violations": 0,
+    "pin_violations": 0,
+    "nets_checked": 2777,
+    "worst": [
+      {
+        "net": "net28",
+        "pin": "fanout145/A",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 258.81,
+        "required": 400.0,
+        "pct_of_limit": 64.7
+      },
+      {
+        "net": "net113",
+        "pin": "fanout109/A",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 236.01,
+        "required": 400.0,
+        "pct_of_limit": 59.0
+      },
+      {
+        "net": "net5",
+        "pin": "fanout126/A",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 232.89,
+        "required": 400.0,
+        "pct_of_limit": 58.22
+      },
+      {
+        "net": "net42",
+        "pin": "output42/A",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 217.36,
+        "required": 400.0,
+        "pct_of_limit": 54.34
+      },
+      {
+        "net": "net138",
+        "pin": "_1942_/A0",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 204.28,
+        "required": 400.0,
+        "pct_of_limit": 51.07
+      }
+    ],
+    "command": "openroad -exit -no_splash /home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/.s2s/antenna.tcl",
+    "tool_version": "edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6"
+  },
+  "density": {
+    "li1": 0.539953552996034,
+    "m1": 0.7744449108601137,
+    "m2": 0.9540895568311335,
+    "m3": 0.9858235133687488,
+    "m4": 0.9798037537522258,
+    "m5": 0.9806151983811167
+  },
+  "gds": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M43MDNVKWCHEQ0GGHPJFT602/pnr/runs/it10/final/gds/sync_fifo.gds",
+  "gds_sha256": "60a9bff2e9ba88eed16c1db7b86b59da7f4ece142db670055e8f4304d3e60f3f",
+  "verdict": "clean on the final streamed GDS"
+}

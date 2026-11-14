@@ -1,0 +1,14 @@
+id: A13
+name: Calla
+role: Physical Verification Agent
+prompt: A13_Calla.md
+preamble: design
+stages: [signoff]
+model_hint: default
+effort: medium
+max_tokens: 8000
+tools: [fs_read, emit_note]
+budget: {max_tokens: 150000, max_minutes: 60, max_tool_runs: 20}
+writes_to: ["reports/pv_signoff.json"]
+reads_from: ["reports/pv_tool.json"]
+runtime: rules_with_model_on_violation   # Phase 0: the comparison is deterministic; a model call only classifies violations/differences

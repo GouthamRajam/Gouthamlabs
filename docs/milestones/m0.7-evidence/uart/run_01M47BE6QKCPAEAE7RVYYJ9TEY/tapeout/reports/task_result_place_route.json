@@ -1,0 +1,109 @@
+{
+  "task_id": "task_01M47BE6RDGPYTHPHZHZJ5T8Z4",
+  "status": "success",
+  "summary": "Three place-and-route iterations were run for uart. Iteration 1 (density 55%) had 3 max-fanout violations. Iteration 2 (density 60%) had 1. Iteration 3 (CTS_DISTANCE_BETWEEN_BUFFERS 0 to 25) shows 0 max-fanout, slew and cap violations, 0 route DRC errors, 0 antenna violating nets/pins and 0 disconnected pins in the iteration data, with positive setup and hold slack on all 9 corners. Two things stay open for a human: the CTS report shows a hold slack of -0.002920 ns at nom_ff_n40C_1v95 right after CTS (before the final iteration-3 numbers), and no congestion/overflow figure is present in the inputs. The runtime still has to run the real checks.",
+  "outputs": [
+    {
+      "path": "reports/cts_report.json",
+      "sha256": "ad6d918d65068b22af1384054d6d941153fa7197e431d3fd2491003231423492"
+    },
+    {
+      "path": "reports/cts_tool.json",
+      "sha256": "53e688f29d7586f597b9018cd5f0b2760eeba5ec76bb6d1b82ec850dc1e0f32c"
+    },
+    {
+      "path": "reports/division3_report.md",
+      "sha256": "b9a3af2e6d64214c2eba6e25bef1dd8126fb033de6ec858967eba65671c9fcc6"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "381bcfbc6c397fff2465329b830863fc58a4cdc7d147b2476011c9b988d71c5c"
+    },
+    {
+      "path": "reports/pnr_iteration_1.json",
+      "sha256": "9fb17f2306901840ca26f86af585527db6b4b919a207fea8e5d3548ccba16dba"
+    },
+    {
+      "path": "reports/pnr_iteration_2.json",
+      "sha256": "e7f6cbc35ac07bf4b812bd8973d33f70555824d322afb135c241ab1ff7daf3b6"
+    },
+    {
+      "path": "reports/pnr_iteration_3.json",
+      "sha256": "32f5fc136e591d6de0325081cb8335f71aa76f8dbc1d69845068376792751b90"
+    },
+    {
+      "path": "reports/pnr_iterations.json",
+      "sha256": "8e78f7ec4f019d0943bde46adb6825b78f6366be4b57f8c5f22a8704390bb844"
+    },
+    {
+      "path": "reports/pnr_report.json",
+      "sha256": "33f6699cded4997b36c11eb9a1e46f8e93d62acc8f4122253e54e72f84b0bda8"
+    }
+  ],
+  "checks_run": [
+    "chk_01M47V7RYYRN7TDV0DKGF1C67N",
+    "chk_01M47V84SW2H5NGWE9YYKR00QX",
+    "chk_01M47VA1BA888K1VWZ121YQFAP",
+    "chk_01M47VBV58WJC9YPTPFTCDW9F2",
+    "chk_01M47VC40X56V16C4BB7PX4CCN",
+    "chk_01M47VCFCJCYH3SJHWJ8SZH98E",
+    "chk_01M47VEFRXR9BGEZD0YB9V0R4W",
+    "chk_01M47VGQ6C4DTJDR0KF7VNMCMN",
+    "chk_01M47VH2ZE8VM5MYV0FKCDB5ZX",
+    "chk_01M47VK2ZE1WAMHHTDTKAW9V5W",
+    "chk_01M47VK3KH4X4969V38050SQ7Y",
+    "chk_01M47VK3KJTJ36H0QWBAHZN8SH",
+    "chk_01M47VK3KJTJ36H0QWBAHZN8SK",
+    "chk_01M47VK3KJTJ36H0QWBAHZN8SN",
+    "chk_01M47VK3KJW6YTGTXSAGYK1B3F",
+    "chk_01M47VK3KJW6YTGTXSAGYK1B3H",
+    "chk_01M47VK3KJZGQW1WMK84007JXK",
+    "chk_01M47VQ0AFM4GY8KKXG7RCD63S"
+  ],
+  "assumptions": [
+    "Escaped defects are reported as none in the inputs; no explicit escaped-defect field exists.",
+    "Hold/setup slack was only supplied for the three nom_* corners, so nothing is claimed for min_* and max_* corners.",
+    "Iteration 3 in pnr_report.json is the final post-route state.",
+    "Latency quoted is source_latency_ns from the setup view; no separate per-clock-pin latency was supplied.",
+    "No budget figure is in the inputs, so spend versus budget and a weekly forecast are not stated.",
+    "Only one clock (clk) exists per the spec, so tool metrics are attributed to clk.",
+    "Placement density is quoted in percent as PL_TARGET_DENSITY_PCT; utilization values are the fractions given by the tools (floorplan 0.469189, iteration 3 final 0.503243).",
+    "The 'changes' field of iterations 1 and 2 is not consistent with each record's 'params'. Iteration 1 params show PL_TARGET_DENSITY_PCT 55.0 but its change lists 60, and iteration 2 params already show 60 with a change that again lists 60. I read iteration 1's change as the one that produced iteration 2's setup, and iteration 2's entry as a restatement of that change. Iteration 3's change (CTS_DISTANCE_BETWEEN_BUFFERS 25) matches iteration 3's params.",
+    "The CTS report (cts_report.json, marked iteration 3) is read as post-CTS data. Its hold slack after CTS (-0.002920 ns at nom_ff) comes from an earlier flow point than the iteration 3 post-route hold slack (+0.11045037419512992 ns at nom_ff); I do not reconcile the two.",
+    "The final state is iteration 3, the last record in pnr_iterations.json, and its 'facts' are post-route values (DRC and antenna are route-stage fields).",
+    "The iteration table follows each iteration's params, because the changes fields of iterations 1 and 2 disagree with them.",
+    "The reported 'worst' figures below are the minimum over the 9 corners listed in the tool data; I computed no new values.",
+    "Tree skew (reported skew minus 0.25 ns uncertainty) is taken as the physical skew; the tool gives both values."
+  ],
+  "open_issues": [
+    "172 timing repair buffers and 80 hold buffers are large for a small UART; Orion should review area impact.",
+    "172 timing-repair and 80 hold buffers: area impact unreviewed.",
+    "DFT is plan only; scan pins need G1 approval and a spec update.",
+    "Hold -0.002920 ns at nom_ff_n40C_1v95 after CTS versus +0.11045037419512992 ns in the iteration 3 record: same netlist stage not confirmed; Chronos to re-run STA.",
+    "Hold violation -0.002920 ns at nom_ff_n40C_1v95 after CTS (80 hold buffers already inserted); needs hold repair and STA re-run, coordinate with Chronos and Orion.",
+    "Hold/setup slack for min_* and max_* corners not provided; request from Chronos.",
+    "Inconsistent 'changes' vs 'params' bookkeeping in pnr_iterations.json (iterations 1 and 2) should be fixed so the iteration table is unambiguous.",
+    "No budget figure available to compare spend against.",
+    "No congestion or overflow data; no min/max corner slack after CTS.",
+    "No congestion or routing-overflow figure appears in any input file, so none is reported and none is claimed to be clean.",
+    "No eqy result: equivalence unproven and blocking.",
+    "Spec target_clock_note says the PDK and library choice is a DEFAULT needing G1 review; that is still pending for a human.",
+    "The CTS report notes 172 timing-repair buffers and 80 hold buffers, which is large for a small UART. Area impact has not been reviewed.",
+    "The recorded experiment PNR-UART-0013 predicted 0 independent fanout violators at 60% density. Iteration 2 reproduced only part of that (1 violator remained), and the zero was reached only after the CTS buffer-distance change in iteration 3. This is for human review.",
+    "cts_report.json shows hold slack -0.002920 ns at nom_ff_n40C_1v95 after CTS, with 80 hold buffers already inserted. Iteration 3 facts show hold slack +0.11045037419512992 ns at that corner, but I cannot confirm from the inputs that the two refer to the same netlist stage. Chronos should re-run STA to confirm."
+  ],
+  "messages": [
+    {
+      "from": "Tick",
+      "summary": "CTS report written. Worst tree skew 0.039857 ns (max_ss_100C_1v60) vs 2.0 ns target; 39 clock buffers; latency 0.410445 to 1.110034 ns. Hold WS after CTS is -0.002920 ns at nom_ff_n40C_1v95 (violated), positive at tt (0.312645) and ss (0.568475)."
+    },
+    {
+      "from": "Mason",
+      "summary": "Division 3 report written for uart place_route: iteration 3 clean on route DRC, antenna and DRV, all 9 corners positive on setup and hold, but the post-CTS hold violation of -0.002920 ns at nom_ff is unreconciled, eqy is missing, and DFT is plan only. Four decisions are listed for the human VP."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All figures are copied from the supplied tool data and the iteration 3 record shows no problems. Confidence is not high because of the post-CTS hold violation in the CTS report, the missing congestion/overflow data, and the inconsistent 'changes' fields. I ran no tools, so nothing is claimed as a passed check.",
+    "confidence": "medium"
+  }
+}

@@ -1,0 +1,14 @@
+# Hand-written test fixture (scripted model answer for offline plumbing tests). Not agent output.
+design: counter8
+top: counter8
+modules:
+  - name: counter8
+    kind: datapath
+    ports_from_spec: true
+    params: {WIDTH: 8}
+    implements: [REQ-001, REQ-002, REQ-003, REQ-004]
+connections: []
+cdc: []
+state_machines: []
+ppa_estimate: {cells: 60, critical_path_levels: 8, slack_margin_pct: 60}
+rationale: ["One register with a priority mux: reset > load > count > hold."]

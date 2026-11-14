@@ -1,0 +1,113 @@
+{
+  "die_area_um2": 3119.04,
+  "core_area_um2": 1506.44,
+  "utilization": 0.484219,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "count[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "count[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "enable",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "load_data[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "up_down",
+      "direction": "INPUT",
+      "side": "W"
+    }
+  ]
+}

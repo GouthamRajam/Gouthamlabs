@@ -1,0 +1,76 @@
+{
+  "task_id": "task_01M47BE6RDGPYTHPHZHZJ5T8Z6",
+  "status": "success",
+  "summary": "Wrote tapeout/release_notes.md covering package description, 16/16 checklist items as recorded, Baseline A 95.3% and Baseline B 64.1%, DFM summary, known limits and open items. No checks were run or claimed.",
+  "outputs": [
+    {
+      "path": "reports/division4_report.md",
+      "sha256": "f049944a2ea5c5479edc64f2cbaf0845f1094254aefd5a943f4bc812b29da724"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "3df5485dee74b5a448bc5132ffb24a0a02174ad32d4a62f826694ceeb2246ffa"
+    },
+    {
+      "path": "reports/proof_manifest.json",
+      "sha256": "5ac934055d1100eb87564103e1d75d4a7a702dbf722a35deb3da1298119755aa"
+    },
+    {
+      "path": "reports/proof_reproduce.json",
+      "sha256": "4eb2d4476b4505784301374b38d17448d6c63b0d36a9a02108b8e119c147d361"
+    },
+    {
+      "path": "reports/tapeout_checklist.json",
+      "sha256": "95f7c8bcfec553d26a75914691bd87e89c2e3de26a468ce4799a3695d446dab8"
+    },
+    {
+      "path": "reports/tapeout_readiness.json",
+      "sha256": "a3b37279b183ffc4b69b0904126759487dc6fd04d3cbb9e3dbcf07108c12f375"
+    },
+    {
+      "path": "tapeout/release_notes.md",
+      "sha256": "5ceb7da45311950bba27567fc68204c2cc8e61ad0945c56db442ca69f9ddd67a"
+    }
+  ],
+  "checks_run": [
+    "chk_01M47Z5EF49365H5YPPF8VZ5KX",
+    "chk_01M47Z62MVCPKMEYK7Z88GPNJB",
+    "chk_01M47Z62MWDF23DX5MQ18AY902",
+    "chk_01M47Z62MWDF23DX5MQ18AY904",
+    "chk_01M47Z62NBSR581CTXHD328MXN",
+    "chk_01M47ZAE9NEXN720Q9JHNCNSDC",
+    "chk_01M47ZAE9X0BG4BZF2E5VQ8G9X",
+    "chk_01M47ZAEB6GSKKQN2FGACZY65C",
+    "chk_01M47ZAEBE62NPH4GTEG2H16V3",
+    "chk_01M47ZAECC70R6X8HDSJXZ7G84",
+    "chk_01M47ZBQZXS6FVGS4W9ETNQYNW",
+    "chk_01M47ZD1J7043ZKSPC9RHP5760"
+  ],
+  "assumptions": [
+    "All numbers are quoted from the eight input reports; the only derived figure is the sum of per-agent spend (USD 0.187512).",
+    "Checklist and readiness data are taken as recorded; nothing was independently re-verified in this task.",
+    "No budget was supplied, so spend vs budget and a weekly forecast are not stated.",
+    "Reported 95.3% / 64.1% are used as given; row sums imply 95.36% / 64.15%, which looks like truncation."
+  ],
+  "open_issues": [
+    "Hold margin 0.1082 to 0.1130 ns at fast corners needs human judgement.",
+    "No cost budget in inputs.",
+    "OpenLane power total differs from tt STA total; cause not given.",
+    "Readiness percentages differ by 0.1 point from rounded row sums (truncation vs rounding); a human may want to confirm the convention.",
+    "SI, reliability, foundry-certified signoff not run; DFT plan only; EM not analyzed.",
+    "Spec open questions on register bus and rx_valid on framing error remain unanswered.",
+    "Two medium DFM items (DFM-001, DFM-003) remain open suggestions.",
+    "Two medium DFM items open (DFM-003, DFM-001).",
+    "rx constraint treatment needs a human decision."
+  ],
+  "messages": [
+    {
+      "from": "Sloane",
+      "summary": "Division 4 report for uart: all 9 STA corners, DRC, LVS, antenna, power and IR are clean in the open flow; checklist 16 of 16; readiness 95.3% (Baseline A) and 64.1% (Baseline B); 2 medium DFM items open; G4 decisions listed for the human."
+    }
+  ],
+  "self_assessment": {
+    "reason": "Every statement traces to the provided checklist, readiness and DFM files; no claims beyond them.",
+    "confidence": "high"
+  }
+}

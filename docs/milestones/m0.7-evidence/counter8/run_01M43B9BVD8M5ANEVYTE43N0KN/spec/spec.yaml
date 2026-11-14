@@ -1,0 +1,77 @@
+design: counter8
+version: 1
+summary: "8-bit up/down counter with synchronous reset, enable and load."
+pdk: sky130A
+std_cell_library: sky130_fd_sc_hd
+target_clock_mhz: 100
+target_clock_note: "Stated in request (100 MHz, 10 ns period). PDK release not pinned: DEFAULT - needs G1 review"
+clocks:
+  - {name: clk, freq_mhz: 100}
+resets:
+  - {name: rst_n, active: low, type: synchronous}
+interfaces:
+  - {name: clk, dir: in, width: 1, description: "Rising-edge clock"}
+  - {name: rst_n, dir: in, width: 1, clock_domain: clk, description: "Synchronous active-low reset"}
+  - {name: enable, dir: in, width: 1, clock_domain: clk, description: "1 = count step allowed when load is 0"}
+  - {name: load, dir: in, width: 1, clock_domain: clk, description: "1 = load load_data into count on next rising edge (DEFAULT - needs G1 review)"}
+  - {name: up_down, dir: in, width: 1, clock_domain: clk, values: {0: down, 1: up}, description: "Count direction (DEFAULT - needs G1 review)"}
+  - {name: load_data, dir: in, width: 8, clock_domain: clk, description: "Value loaded when load=1"}
+  - {name: count, dir: out, width: 8, clock_domain: clk, reset_value: 0, description: "Registered counter value, 8'h00 after reset"}
+requirements:
+  - id: REQ-001
+    type: reset
+    text: "Reset is synchronous and active low: if rst_n is 0 at a rising clk edge, count becomes 8'h00 after that edge, regardless of enable, load, up_down and load_data."
+    acceptance: "Directed test: for 256 different prior count values and all 16 combinations of enable/load/up_down/load_data[0], count == 8'h00 after the edge with rst_n=0. Formal property proves it."
+  - id: REQ-002
+    type: reset
+    text: "The only output, count, has reset value 8'h00. Every state element of the design is reset by rst_n."
+    acceptance: "Count reads 8'h00 in the first cycle after reset deassertion and after every reset pulse of 1 or more cycles; no register is left without a reset in the synthesized netlist (checked by netlist review and by simulation starting from random initial state)."
+  - id: REQ-003
+    type: reset
+    text: "Reset is synchronous only: a change of rst_n between clk rising edges has no effect on count until the next rising edge."
+    acceptance: "Simulation: pulse rst_n low for less than one clock period, not spanning a rising edge; count unchanged in 100 of 100 trials."
+  - id: REQ-004
+    type: functional
+    text: "When rst_n=1, load=1: count takes the value of load_data at the next rising clk edge, regardless of enable and up_down."
+    acceptance: "For all 256 load_data values and all 4 combinations of enable/up_down, count == load_data after the edge (1024 cases, 0 mismatches)."
+  - id: REQ-005
+    type: functional
+    text: "When rst_n=1, load=0, enable=1, up_down=1: count increments by 1 at each rising clk edge."
+    acceptance: "From each of the 255 start values 0x00..0xFE, count == start+1 after one edge (0 mismatches)."
+  - id: REQ-006
+    type: functional
+    text: "When rst_n=1, load=0, enable=1, up_down=0: count decrements by 1 at each rising clk edge."
+    acceptance: "From each of the 255 start values 0x01..0xFF, count == start-1 after one edge (0 mismatches)."
+  - id: REQ-007
+    type: functional
+    text: "Overflow: counting up from 8'hFF wraps to 8'h00 (no saturation). DEFAULT - needs G1 review."
+    acceptance: "Load 8'hFF, then one up-count edge gives count == 8'h00; repeated over a full 256-step up sequence."
+  - id: REQ-008
+    type: functional
+    text: "Underflow: counting down from 8'h00 wraps to 8'hFF (no saturation). DEFAULT - needs G1 review."
+    acceptance: "After reset (count 8'h00), one down-count edge gives count == 8'hFF; repeated over a full 256-step down sequence."
+  - id: REQ-009
+    type: functional
+    text: "Hold: when rst_n=1, load=0 and enable=0, count keeps its value at the rising clk edge, for either up_down value."
+    acceptance: "For all 256 count values and both up_down values, count is unchanged after the edge (512 cases, 0 mismatches)."
+  - id: REQ-010
+    type: functional
+    text: "Control priority is reset > load > enable. If rst_n=0, REQ-001 applies. If rst_n=1 and load=1, REQ-004 applies and enable and up_down are ignored. Only when rst_n=1 and load=0 do enable and up_down decide the step. DEFAULT - needs G1 review."
+    acceptance: "Exhaustive check of all 32 combinations of rst_n/load/enable/up_down/load_data[0] against a reference model for 256 start values, 0 mismatches."
+  - id: REQ-011
+    type: clock
+    text: "The design meets timing at a 100 MHz clock (10 ns period) on sky130_fd_sc_hd, with all inputs treated as synchronous to clk."
+    acceptance: "STA with a 10 ns clk constraint reports setup WNS >= 0 ns and hold WNS >= 0 ns at the corners configured in the flow."
+  - id: REQ-012
+    type: interface
+    text: "count is a registered output: it changes only after a rising clk edge, with no combinational path from any input to count."
+    acceptance: "STA path report shows 0 input-to-count combinational paths; in simulation, changes of inputs between edges cause 0 changes on count."
+  - id: REQ-013
+    type: test
+    text: "The layout is clean and the design verified against a reference model."
+    acceptance: "Random simulation of at least 100000 cycles matches the reference model with 0 mismatches; final GDS has 0 DRC violations and 0 LVS mismatches."
+out_of_scope: ["carry, overflow or terminal-count output flags", "saturating count mode", "asynchronous reset", "multiple clock domains or input synchronizers", "step sizes other than 1", "low-power modes or clock gating", "scan/DFT insertion", "power and area targets (none requested)"]
+open_questions:
+  - "Is it acceptable that load works while enable=0 (default: yes)?"
+  - "Does the customer need a carry/overflow flag (not included)?"
+  - "Which sky130A release and STA corners apply?"

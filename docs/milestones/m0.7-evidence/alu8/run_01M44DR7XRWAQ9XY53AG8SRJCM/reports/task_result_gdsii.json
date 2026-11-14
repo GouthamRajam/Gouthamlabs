@@ -1,0 +1,84 @@
+{
+  "task_id": "task_01M44DR7YNTGBGD9DFGVD61549",
+  "status": "success",
+  "summary": "Wrote tapeout/release_notes.md for alu8 (sky130A, 75 MHz). It shows the 16/16 checklist items marked done, each with its evidence link. Readiness is Baseline A (open SKY130 shuttle) 95.3% and Baseline B (commercial production) 64.1%, with the per-check breakdown. DFM has 0 high, 2 medium and 5 low items. The notes also list known limits and open items. I ran no tools and make no new pass/fail claim.",
+  "outputs": [
+    {
+      "path": "reports/division4_report.md",
+      "sha256": "f2aa211df344c2774506abfcc4a9f9c146ab19c529f43f9b044a077ebb67d47b"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "771932bb838636fcde1becab2feabb4dcbfa87d8e347eaf6716d38c89d586f56"
+    },
+    {
+      "path": "reports/proof_manifest.json",
+      "sha256": "6323d5c93674fe7db0d10ff64b1c4ee14ff94283ee60c5d3f0fca61431de3434"
+    },
+    {
+      "path": "reports/proof_reproduce.json",
+      "sha256": "6079290adda93a0616302eba65112e11361e95528a27df90006a827998a4879d"
+    },
+    {
+      "path": "reports/tapeout_checklist.json",
+      "sha256": "c1e0e7807c117e9f8e217f89dd8b4754de277541018ffccdb94ebc44d5ca23e7"
+    },
+    {
+      "path": "reports/tapeout_readiness.json",
+      "sha256": "a3b37279b183ffc4b69b0904126759487dc6fd04d3cbb9e3dbcf07108c12f375"
+    },
+    {
+      "path": "tapeout/release_notes.md",
+      "sha256": "be2db1f77281242642fd1cda59ed7526153af36991e54a6cffee02399de141c8"
+    }
+  ],
+  "checks_run": [
+    "chk_01M44EQAB3BF51FAW5QDC78Q5Z",
+    "chk_01M44EQQ4GAEVBZY5GWKYSCZTG",
+    "chk_01M44EQQ4GAEVBZY5GWKYSCZTJ",
+    "chk_01M44EQQ4GAEVBZY5GWKYSCZTM",
+    "chk_01M44EQQ4YV8QYHEJ9SAW3H2XA",
+    "chk_01M44ETHBMHJCRXZHSXHWWGWNZ",
+    "chk_01M44ETHBT80NH0J3QB7JCQZ5W",
+    "chk_01M44ETHC1DWDAGMWC36X8H0FV",
+    "chk_01M44ETHC9PBXFRNKS8S1AJH77",
+    "chk_01M44ETHESZDT8RDXRNEWQZ2AP",
+    "chk_01M44EYTZ9CQ0TG8E11SPVQ5M5",
+    "chk_01M44F0GAP0G7PMEBF2CW1XAEN"
+  ],
+  "assumptions": [
+    "Checklist 'done' flags and readiness results are taken as recorded in the input reports. I did not re-verify them in this task.",
+    "G4 here means submission to an open SKY130 shuttle (Baseline A); commercial production (Baseline B) is out of Phase 0 scope.",
+    "No division budget or forecast was provided in the inputs; cost is reported as run spend by agent only, without totals I computed.",
+    "No escaped defects exist beyond what the inputs report (the inputs list none).",
+    "Package contents are listed from checklist item 15 and the role description. I did not inspect the tapeout directory.",
+    "Score totals 92.5/97 (A) and 68.0/106 (B) were summed by hand from the rows. They match the reported 95.3% and 64.1%.",
+    "The 9 STA corners are the PDK typical/slow/fast corners, as stated in the readiness assumptions.",
+    "The report files supplied are the current results for run run_01M44DR7XRWAQ9XY53AG8SRJCM; their pass/fail values are as recorded and are re-verified by the runtime, not by me."
+  ],
+  "open_issues": [
+    "Baseline B is 64.1%: the package is not production-signoff-ready. Closing the gaps needs Phase 1 commercial tools.",
+    "DFM medium items DFM-003 (35 met1 near-minimum line ends) and DFM-001 (7 li windows near max density) remain open (owner: Orion).",
+    "Division budget and weekly forecast are missing; need Penny to supply them so spend vs budget can be reported.",
+    "G4 is a human decision; no gate has been approved by this report.",
+    "I/O delays of 4.0 ns are DEFAULT values pending customer confirmation.",
+    "IR/EM row: EM was not analyzed, so it earns only 2 of 4 points even under Baseline A.",
+    "Medium DFM items DFM-003 (35 met1 line ends) and DFM-001 (7 li windows near max density 0.6) need a fix-or-accept decision before G4.",
+    "OpenLane power figure 0.00020245423365850002 W does not match OpenSTA tt total 0.0002593128 W; basis of the OpenLane figure unknown.",
+    "STA input does not record netlist stage or parasitics source (REQ-014 requires post-route); runtime should confirm.",
+    "pv_signoff layer density values (m3 0.9709549895759344, m4 0.9667335964672477, m5 1.0) conflict with DFM-006's stated met3 density of 2.9%; Fabian/Orion to clarify what each measures.",
+    "spec.yaml still lists six 'DEFAULT - needs G1 review' open questions. G1 is recorded as approved, but the inputs do not show that each default was explicitly confirmed.",
+    "tapeout_readiness gaps list says 'fix and re-run the check (this phase)' for signal integrity, reliability and foundry signoff, while row notes say they are out of open-flow scope; wording to be corrected by the owner.",
+    "tapeout_readiness.json is inconsistent for signal integrity, reliability and foundry signoff: the gaps say 'fix and re-run the check (this phase)', but the rows say 'out of open-flow scope'. A human should decide which is right."
+  ],
+  "messages": [
+    {
+      "from": "Sloane",
+      "summary": "One-page Division 4 report for alu8 written to reports/division4_report.md: open-flow signoff clean in the supplied reports (9 STA corners pass, DRC 0/0, LVS match, antenna 0, IR 0.000207 V vs 0.09 V), checklist 16/16 done, readiness 95.3% (A) / 64.1% (B); risks are two medium DFM items, unexplained layer density figures, power cross-check mismatch and Phase 1-only gaps; G4 left to the human with a recommendation to hold briefly (Option B). No budget data was supplied, so spend vs budget could not be reported."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All content is taken directly from the four input files. Both baselines are shown and the arithmetic was cross-checked. No tool results are claimed beyond what the inputs record.",
+    "confidence": "high"
+  }
+}

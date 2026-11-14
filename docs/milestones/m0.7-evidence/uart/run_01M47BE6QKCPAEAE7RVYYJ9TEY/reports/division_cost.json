@@ -1,0 +1,18 @@
+{
+  "run_spend_by_agent_usd": {
+    "Orion": 0.009525,
+    "Proof": 0.001985,
+    "Sienna": 0.127171,
+    "Grid": 0.000148,
+    "Volta": 8.6e-05,
+    "Calla": 0.00195,
+    "Tick": 0.00163,
+    "Sentinel": 0.0,
+    "Tess": 0.0,
+    "Chronos": 0.00024,
+    "Rex": 0.044168,
+    "Mason": 0.0,
+    "Fabian": 0.000298,
+    "Gideon": 0.000311
+  }
+}

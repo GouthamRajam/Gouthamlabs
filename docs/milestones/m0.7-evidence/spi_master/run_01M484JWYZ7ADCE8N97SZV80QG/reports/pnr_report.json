@@ -1,0 +1,131 @@
+{
+  "iterations": [
+    {
+      "iteration": 1,
+      "tag": "it1",
+      "params": {
+        "FP_CORE_UTIL": 45,
+        "PL_TARGET_DENSITY_PCT": 55.0,
+        "MAX_FANOUT_CONSTRAINT": 10,
+        "CTS_SINK_CLUSTERING_SIZE": 25,
+        "GRT_ANTENNA_ITERS": 3,
+        "GRT_ANTENNA_MARGIN": 10,
+        "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50,
+        "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
+        "CTS_CLK_MAX_WIRE_LENGTH": 0
+      },
+      "problems": [],
+      "facts": {
+        "route_drc_errors": 0,
+        "antenna_violating_nets": 0,
+        "antenna_violating_pins": 0,
+        "disconnected_pins": 0,
+        "setup_ws_by_corner": {
+          "nom_tt_025C_1v80": 9.78789255128037,
+          "nom_ss_100C_1v60": 8.95489485688059,
+          "nom_ff_n40C_1v95": 9.793775845298855,
+          "min_tt_025C_1v80": 9.781701059341533,
+          "min_ss_100C_1v60": 8.97158372985875,
+          "min_ff_n40C_1v95": 9.788961918127933,
+          "max_tt_025C_1v80": 9.79547226612846,
+          "max_ss_100C_1v60": 8.938063875351261,
+          "max_ff_n40C_1v95": 9.799866973073428
+        },
+        "hold_ws_by_corner": {
+          "nom_tt_025C_1v80": 0.3158691175802822,
+          "nom_ss_100C_1v60": 0.8633399794986211,
+          "nom_ff_n40C_1v95": 0.10580808750866945,
+          "min_tt_025C_1v80": 0.31303449607364064,
+          "min_ss_100C_1v60": 0.8583364262297303,
+          "min_ff_n40C_1v95": 0.1040085824683123,
+          "max_tt_025C_1v80": 0.31906844736082773,
+          "max_ss_100C_1v60": 0.8687554255212969,
+          "max_ff_n40C_1v95": 0.10757589568077712
+        },
+        "max_slew_violations": 0,
+        "max_cap_violations": 0,
+        "max_fanout_violations": 8,
+        "wirelength_um": 13351,
+        "utilization": 0.559855,
+        "cts_worst_tree_skew_ns": 0.007598,
+        "cts_target_ns": 2.0,
+        "independent_drv_pins": [],
+        "clock_rule_allowed": [
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_5__f_clk/X",
+            "limit": 10.0,
+            "value": 17.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_7__f_clk/X",
+            "limit": 10.0,
+            "value": 17.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_4__f_clk/X",
+            "limit": 10.0,
+            "value": 14.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_6__f_clk/X",
+            "limit": 10.0,
+            "value": 14.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_1__f_clk/X",
+            "limit": 10.0,
+            "value": 13.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_0__f_clk/X",
+            "limit": 10.0,
+            "value": 12.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_2__f_clk/X",
+            "limit": 10.0,
+            "value": 12.0,
+            "rule": "clock-tree net, limit 20"
+          },
+          {
+            "kind": "max fanout",
+            "pin": "clkbuf_3_3__f_clk/X",
+            "limit": 10.0,
+            "value": 11.0,
+            "rule": "clock-tree net, limit 20"
+          }
+        ],
+        "independent_drv_log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/sta_spi_master_pnr_it1_drv.log",
+        "openlane_unpropagated_clocks": {}
+      },
+      "changes": []
+    }
+  ],
+  "explained_by": "Orion",
+  "explanation": "# Place and route summary: spi_master (sky130A, sky130_fd_sc_hd, clk 50 MHz)\n\n## Iteration table\n| Iter | Parameters changed | What changed | Result |\n|---|---|---|---|\n| 1 (it1) | none (first run, starting values) | Nothing; no changes were needed | route DRC 0, antenna 0, setup and hold positive in all 9 corners |\n\nStarting parameters for it1: FP_CORE_UTIL 45, PL_TARGET_DENSITY_PCT 55.0, MAX_FANOUT_CONSTRAINT 10, CTS_SINK_CLUSTERING_SIZE 25, GRT_ANTENNA_ITERS 3, GRT_ANTENNA_MARGIN 10, CTS_SINK_CLUSTERING_MAX_DIAMETER 50, CTS_DISTANCE_BETWEEN_BUFFERS 0, CTS_CLK_MAX_WIRE_LENGTH 0. The iteration log lists no problems and no changes, so the iteration budget (default 8) was not used beyond 1 run.\n\n## Final state (iteration 1, from reports/pnr_iterations.json)\n- Routing DRC errors: 0.\n- Antenna: 0 violating nets, 0 violating pins.\n- Disconnected pins: 0.\n- Max slew violations: 0. Max cap violations: 0.\n- Max fanout violations: 8 reported at limit 10. All 8 are clock-tree buffer outputs (clkbuf_3_0 to clkbuf_3_7 __f_clk/X) with fanout 11 to 17. The tool data marks them as allowed under the clock-tree net rule (limit 20). The independent DRV check lists no other violating pins (independent_drv_pins is empty).\n- Wirelength: 13351 um. Utilization after routing: 0.559855 (floorplan utilization was 0.479564 on a 12061.6 um2 core, 16277.3 um2 die; power grid violations 0).\n- Congestion / routing overflow: the input files contain no congestion or overflow figure, so I cannot quote one. See open issues.\n\n## Timing (independent STA, 9 corners)\n- Worst setup slack: 8.938063875351261 ns (max_ss_100C_1v60). Best corner: 9.799866973073428 ns (max_ff_n40C_1v95). All 9 corners are positive.\n- Worst hold slack: 0.1040085824683123 ns (min_ff_n40C_1v95). All 9 corners are positive (largest 0.8687554255212969 ns at max_ss_100C_1v60).\n- Setup slack by corner (ns): nom_tt 9.788, nom_ss 8.955, nom_ff 9.794, min_tt 9.782, min_ss 8.972, min_ff 9.789, max_tt 9.795, max_ss 8.938, max_ff 9.800.\n- Hold slack by corner (ns): nom_tt 0.316, nom_ss 0.863, nom_ff 0.106, min_tt 0.313, min_ss 0.858, min_ff 0.104, max_tt 0.319, max_ss 0.869, max_ff 0.108.\n- REQ-021 asks for setup and hold slack of at least 0 ns in every evaluated corner. The numbers above are positive in all 9 corners; the runtime checks make the final decision.\n\n## Clock tree (reports/cts_report.json)\n- 9 clock buffers; worst tree skew 0.007598 ns (max_ss_100C_1v60, hold side) against a 2.0 ns target from the tool data (the spec states no skew target).\n- Tree skew is the reported skew minus the 0.25 ns clock uncertainty.\n- 79 hold buffers and 178 timing-repair buffers were inserted (reported separately from the clock buffers).\n- Post-CTS hold slack (3 nominal corners only): nom_tt 0.301475 ns, nom_ss 0.6181605402523026 ns, nom_ff 0.013112872270280695 ns. The nom_ff margin is thin (about 13 ps) at the CTS stage; the later final STA shows 0.10580808750866945 ns at nom_ff.\n- Post-CTS setup slack (3 nominal corners): nom_tt 9.76201 ns, nom_ss 7.035543902160927 ns, nom_ff 9.576872010932588 ns.\n\n## Notes\n- No parameter was changed, so no pnr_ranges.yaml limit was touched and no waiver or rule change was made.\n- I ran no tool in this task; every figure is quoted from the input files.\n",
+  "assumptions": [
+    "The data in reports/pnr_iterations.json iteration 1 is the final state, since it is the only iteration.",
+    "The 8 max-fanout entries on clkbuf_3_*__f_clk/X are allowed because the tool data labels them 'clock-tree net, limit 20' and all values (11 to 17) are within 20.",
+    "Slack values are quoted from the independent STA data (setup_ws_by_corner, hold_ws_by_corner); post-CTS values come from cts_report.json.",
+    "Final decision on pass or fail belongs to the runtime checks, not to this summary."
+  ],
+  "open_issues": [
+    "No congestion or routing overflow figure is present in the input files, so congestion state is not quoted.",
+    "Hold slack is the thinnest margin: 0.1040085824683123 ns at min_ff_n40C_1v95 in final STA, and 0.013112872270280695 ns at nom_ff_n40C_1v95 right after CTS.",
+    "Maximum fanout limit 10 is exceeded on 8 clock-tree buffer outputs (11 to 17); allowed by the clock-tree rule (limit 20) in the tool data, but a human may want to confirm that rule is acceptable.",
+    "PDK and library choice, and the IO delay and area values, are marked DEFAULT - needs G1 review in the spec."
+  ]
+}

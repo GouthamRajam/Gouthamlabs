@@ -1,0 +1,342 @@
+{
+  "design": "uart",
+  "coverage": {
+    "met": true,
+    "line": 0.9528,
+    "toggle": 0.9149,
+    "functional": 1.0,
+    "unhit_bins": []
+  },
+  "formal": {
+    "error": null,
+    "failed": [],
+    "vacuous": [],
+    "tautologies": [],
+    "proven_meaningful": 5
+  },
+  "formal_properties": {
+    "overrun_zero": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "reset_values": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "err_flags_only_with_valid": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "tx_ready_high_after_reset": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    },
+    "tx_ready_drops_after_accept": {
+      "counts": true,
+      "status": "proven",
+      "cover_reached": true,
+      "depends_on_design": true
+    }
+  },
+  "mutation": [
+    {
+      "rate": 0.7,
+      "total": 20,
+      "attempt": 1,
+      "by_type": {
+        "stuck_bit": "4/4",
+        "off_by_one": "2/4",
+        "missing_reset": "0/3",
+        "wrong_operator": "3/4",
+        "dropped_handshake": "2/2",
+        "swapped_condition": "3/3"
+      },
+      "detected": 14
+    },
+    {
+      "rate": 0.7,
+      "total": 20,
+      "attempt": 2,
+      "by_type": {
+        "stuck_bit": "4/4",
+        "off_by_one": "2/4",
+        "missing_reset": "0/3",
+        "wrong_operator": "3/4",
+        "dropped_handshake": "2/2",
+        "swapped_condition": "3/3"
+      },
+      "detected": 14
+    },
+    {
+      "rate": 0.95,
+      "total": 20,
+      "attempt": 1,
+      "by_type": {
+        "stuck_bit": "4/4",
+        "off_by_one": "3/4",
+        "missing_reset": "2/2",
+        "wrong_operator": "3/3",
+        "dropped_handshake": "2/2",
+        "swapped_condition": "5/5"
+      },
+      "detected": 19
+    }
+  ],
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "actual": "tx stays 1 for 1..baud_div extra clks after the accept before the start bit, so the frame (and tx_ready low) is longer than the spec frame time by the tick-phase wait.",
+      "bug_id": "bug_1_1",
+      "module": "uart_tx",
+      "evidence": "Every tx-related test fails at the first cycle after accept with 'tx mismatch: expected 0 actual 1' and tx_ready=0 on both sides (e.g. cycle 5 with baud_div=1, parity 0, tx_data=181). The reference drives tx=0 on the edge after the accept. rtl/uart_tx.v ST_IDLE sets only state_q<=ST_START and tx_q stays 1; ST_START sets tx_q<=0 only on the next tick16 (if tx_q ... tx_q<=0). Even at baud_div=1 this is one cycle late.",
+      "expected": "On the clk edge after tx_valid&tx_ready, tx=0 (start bit), tx_ready=0, and tx_ready stays low for exactly 10 or 11 bit periods of 16*baud_div clks, with every bit exactly 16*baud_div clks.",
+      "failures": [
+        "test_tx_random_words",
+        "test_tx_directed_patterns",
+        "test_reset_mid_tx_frame",
+        "test_reset_random_every",
+        "test_bit_period_divisors",
+        "test_bit_period_random_divisors",
+        "test_baud_115200_error",
+        "test_baud_div_zero",
+        "test_parity_all_256",
+        "test_parity_mode3_as_none",
+        "test_tx_ready_timing",
+        "test_tx_valid_ignored_when_busy",
+        "test_tx_back_to_back",
+        "test_loopback_back_to_back",
+        "test_overrun_always_zero",
+        "test_param_change_mid_frame",
+        "test_loopback_all_modes",
+        "test_divisor_edges_loopback",
+        "test_reset_values (truncated message, uses tx_send)",
+        "(all failures repeat on verilator seeds 1-3 and icarus seed 1)"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Ada-C",
+      "root_cause": "uart_tx accepts in ST_IDLE but keeps tx_q=1 until the next free-running tick16 (the 'aligned start' branch in ST_START), so the start bit begins 1..baud_div clks late and tx_ready stays low for the frame time plus that delay.",
+      "requirement": "REQ-011, REQ-006, REQ-001, REQ-013",
+      "suggested_fix": "Make the start bit begin on the clk edge after the accept (tx_q<=0 at accept) and time each bit as exactly 16*max(baud_div,1) clks from that edge, for example with a per-bit clk counter in uart_tx or a restart/phase-sync input to baud_gen. Do not rely on the phase of the free-running tick16 for the first bit. Keep tx_ready low until the stop bit has lasted 16*baud_div clks, keep the latched parity and parity_mode, and keep the REQ-023 recovery to IDLE. If baud_gen is re-phased by tx, make sure rx sampling is not disturbed.",
+      "classification": "DESIGN"
+    },
+    {
+      "id": "BUG-002",
+      "actual": "The testbench flags a mismatch whenever the free-running tick16 phase differs from the ref's edge-aligned phase, even though the DUT output is within one tick (1/16 bit) of the ideal and correct per spec.",
+      "bug_id": "bug_1_2",
+      "module": "tb/ref_model.py (RefModel rx path), tb/test_uart_2.py::test_sync_latency, UartEnv per-cycle rx comparison",
+      "evidence": "ref_model.py RX 'RUN' counts sub-ticks from the cycle after the edge. test_sync_latency hard-codes exp_cycle = c0 + 2 + div*k for every phase. uart_rx.v counts tick16 pulses that start at an arbitrary phase after the edge, and baud_gen free-runs from reset. rtl/uart_rx.v tick counts (START check at the 8th tick, samples at ticks 7/8/9, parity, stop, WAIT_HIGH) match the spec and the ref when the phase is aligned (baud_div=1). RX failures have only 'Test failed with RANDOM_SEED' (consistent with a per-cycle RefModel mismatch); test_rx_random_words fails only on seed 3, which fits a phase-dependent mismatch.",
+      "expected": "The spec only requires rx data, frame_err, parity_err, glitch rejection and the 1-cycle rx_valid pulse, with sampling at ticks 7,8,9 of a 16x tick; it gives no cycle-exact rx_valid latency from the start edge.",
+      "failures": [
+        "test_rx_majority_vote",
+        "test_rx_baud_offset_random",
+        "test_reset_mid_rx_frame",
+        "test_sync_latency",
+        "test_rx_glitch_rejection",
+        "test_rx_valid_pulse",
+        "test_rx_frame_error",
+        "test_rx_parity_error",
+        "test_rx_break",
+        "test_rx_tolerance_2pct",
+        "test_rx_back_to_back_external",
+        "test_rx_random_words (seed 3 only)",
+        "(all failures repeat on verilator seeds 1-3 and icarus seed 1)"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Theo",
+      "root_cause": "RefModel starts its own receive sub-tick counter on the synchronized falling edge, while the architecture shares one free-running tick16 with TX, so rx_valid and sample instants differ from the reference by up to baud_div-1 clks.",
+      "requirement": "REQ-002, REQ-005, REQ-014, REQ-006 (spec does not fix rx tick phase)",
+      "suggested_fix": "Using ports and spec requirements only: compare rx outputs (rx_valid pulse count and width, rx_data, frame_err, parity_err) event-wise, and accept rx_valid up to baud_div-1 clks later than the edge-aligned prediction (one tick of phase uncertainty). Alternatively model the free-running tick from the observed tx bit timing, or from baud_div count since reset. In test_sync_latency, keep the 2-clk synchronizer latency check (a 1-clk low pulse is seen and then rejected as a glitch) and check rx_valid timing within the [expected, expected+baud_div-1] window instead of exact equality. Do not loosen the data, error-flag, glitch-rejection or +-2% checks.",
+      "classification": "TEST"
+    },
+    {
+      "id": "BUG-001",
+      "actual": "After accept tx stays 1 (start bit not yet driven) for 1..baud_div cycles until tick16. The start bit and the whole frame are delayed by this amount, and tx_ready is low for frame time plus the delay.",
+      "bug_id": "bug_2_1",
+      "module": "uart_tx",
+      "evidence": "Every tx test fails at the first frame with 'tx mismatch: expected 0 actual 1' while tx_ready=0 (cycle 3-23, e.g. baud_div=1 cycle 5/11, baud_div=3 cycle 4, baud_div=27 cycle 6), with tx_valid=1 in the accepted cycle. RefModel.step sets tx=bits[0]=0 and tx_ready=0 in the accept step. In uart_tx.v ST_IDLE sets state_q<=ST_START but leaves tx_q=1. ST_START only sets tx_q<=0 on tick16 ('aligned start: first tick after accept'). The RTL is consistent with the first failing cycle being one cycle too late at baud_div=1. test_overrun_always_zero passes its baud_div=1 external-rx phases and only fails at cycle 27557, the first tx_send.",
+      "expected": "The cycle after an accepted handshake tx=0 and tx_ready=0. The frame (10 or 11 bit periods of 16*baud_div clk cycles) then occupies exactly tx_ready=0, and tx_ready returns to 1 right after the stop bit.",
+      "failures": [
+        "test_tx_random_words",
+        "test_tx_directed_patterns",
+        "test_reset_values",
+        "test_reset_mid_tx_frame",
+        "test_reset_random_every",
+        "test_bit_period_divisors",
+        "test_bit_period_random_divisors",
+        "test_baud_115200_error",
+        "test_baud_div_zero",
+        "test_parity_all_256",
+        "test_parity_mode3_as_none",
+        "test_tx_ready_timing",
+        "test_tx_valid_ignored_when_busy",
+        "test_tx_back_to_back",
+        "test_loopback_back_to_back",
+        "test_overrun_always_zero",
+        "test_param_change_mid_frame",
+        "test_loopback_all_modes",
+        "test_divisor_edges_loopback"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Ada-C",
+      "root_cause": "uart_tx accepts the byte in IDLE but stays in START with tx=1 until the next free-running tick16 before driving the start bit, so the whole frame starts 1..baud_div cycles late and tx_ready stays low longer than one frame time.",
+      "requirement": "REQ-011 (tx_ready low exactly one frame time from the edge after accept), REQ-001/REQ-006/REQ-013 (frame/bit timing vs reference)",
+      "suggested_fix": "In uart_tx, drive tx_q<=0 at the accept edge (IDLE with tx_valid) so the start bit begins in the next cycle, and make each bit exactly 16*baud_div clk cycles measured from accept. This needs a tx phase that restarts on accept. Do it via a local clk-cycle divider in uart_tx fed with baud_div, or via a tick that restarts at accept. Keep tx_ready=(state==IDLE) low until the end of the stop bit. Do not change uart_rx's shared tick, or re-check rx timing if baud_gen is changed. See open_issues about the possible architecture impact.",
+      "classification": "DESIGN"
+    },
+    {
+      "id": "BUG-002",
+      "actual": "The reference predicts rx_valid and other outputs at edge-aligned cycles, which differ from the (spec-compliant) DUT for baud_div>1, so the per-cycle compare fails.",
+      "bug_id": "bug_2_2",
+      "module": "tb/ref_model.py, tb/test_uart_1.py, tb/test_uart_2.py, tb/test_uart_4.py, tb/test_uart_5.py",
+      "evidence": "RefModel RUN state increments sub every clk from the cycle after the falling edge and advances k every eff cycles. uart_rx.v counts only tick16 pulses from the free-running baud_gen. For baud_div=1 the two are cycle-identical: DUT cnt=k-1 at edge+k, sample/decision at k=16n+9, rx_valid visible in the same cycle. The rx-only tests draw baud_div from {1,2,3} (or 27/255) and fail; tests restricted to baud_div=1 pass, and test_overrun_always_zero passes its baud_div=1 external-rx phases. test_rx_random_words and test_rx_parity_error fail only for some seeds, which matches random baud_div draws. rx_noise_frame injects one-clk noise at positions computed from edge-aligned ticks, so a free-running DUT sample can land on or miss it.",
+      "expected": "Per the spec, rx_data/frame_err/parity_err/rx_valid are correct and rx_valid is a one-cycle pulse per frame, with the exact cycle only constrained to the tick-sampling window of baud_div cycles. The reference should not fix the rx_valid cycle to edge-aligned ticks.",
+      "failures": [
+        "test_rx_majority_vote",
+        "test_rx_baud_offset_random",
+        "test_reset_mid_rx_frame",
+        "test_sync_latency",
+        "test_rx_glitch_rejection",
+        "test_rx_random_words",
+        "test_rx_valid_pulse",
+        "test_rx_frame_error",
+        "test_rx_parity_error",
+        "test_rx_break",
+        "test_rx_tolerance_2pct",
+        "test_rx_back_to_back_external"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Theo",
+      "root_cause": "RefModel (and test_sync_latency's exact cycle formula c0+2+div*k) places the receiver's tick counter at the detected falling edge (edge-aligned ticks), whereas the spec only requires tick16 every baud_div cycles and the DUT correctly uses the shared free-running tick16, so for baud_div>1 sample points and rx_valid timing legitimately differ by up to baud_div-1 clk cycles.",
+      "requirement": "REQ-002, REQ-014, REQ-015, REQ-016, REQ-020 (reception checked by reference model); REQ-006 (tick spacing only constrained to baud_div clk cycles)",
+      "suggested_fix": "Describe the reference in terms of ports and spec only: model the receiver on the shared 16x tick (tick every baud_div clk cycles, free-running from reset or from the last baud_div change, with baud_div=0 treated as 1) rather than aligned to the rx falling edge, or compare rx outputs frame-level (rx_valid within baud_div-1 cycles of the nominal cycle, data/frame_err/parity_err exact, exactly one 1-cycle pulse). Make test_sync_latency accept rx_valid in [exp, exp+baud_div-1]. Make the noise injection tests (REQ-002) place noise relative to bit centers with a margin, or drive a multi-clk wide noise of at least baud_div clk cycles on the 7/8/9 sample ticks, so the outcome does not depend on tick phase.",
+      "classification": "TEST"
+    },
+    {
+      "id": "BUG-001",
+      "actual": "The test expects 0x00 before the first rx_valid of the div=65535 frame, so it flags the correct DUT output as a mismatch.",
+      "bug_id": "bug_3_1",
+      "module": "tb/test_uart_6.py (long_div_frame)",
+      "evidence": "Failure at cycle 16496: 'div=65535 rx_data at offset 0 expected 0x00 actual 0x70 (events so far [])', with rx_valid=0 and inputs tx_valid=0, baud_div=65535, parity_mode=0, rst_n=1. rx_data is 0 only after reset (REQ-003). Small_div_loopback frames were received earlier without a reset, so a held 0x70 is correct. RefModel never clears rx_data outside reset(), so its exp[i]['rx_data'] already predicts the held value.",
+      "expected": "With rx_valid=0 and no reset since the last received frame, rx_data equals the byte of the last completed frame (here 0x70); after the new frame's rx_valid it equals the new byte.",
+      "failures": [
+        "verilator seed 1: test_divisor_edges_loopback",
+        "verilator seed 2: test_divisor_edges_loopback",
+        "verilator seed 3: test_divisor_edges_loopback",
+        "icarus seed 1: test_divisor_edges_loopback"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Theo",
+      "root_cause": "long_div_frame in tb/test_uart_6.py hard-codes the expected pre-event rx_data as 0 (want_data = byte if dev else 0) although the spec requires rx_data to hold its previous value until the next frame completes, and no reset occurs between the earlier loopback frames and the div=65535 frame.",
+      "requirement": "REQ-016",
+      "suggested_fix": "Change the expected rx_data while rx_valid=0 to the rx_data value observed on the rx_data port just before the long frame starts, e.g. captured from env.last['rx_data'] before the first step. Before the new frame's rx_valid it is that held value, and afterwards it is the transmitted byte. Alternatively, apply a checked reset (rst_n low, REQ-003) before the div=65535 frame so that 0 is the correct expected value. Do not loosen the rx_data hold check (REQ-016); keep it, with the correct expected value.}",
+      "classification": "TEST"
+    }
+  ],
+  "real_rtl_bugs": [
+    {
+      "id": "BUG-001",
+      "actual": "tx stays 1 for 1..baud_div extra clks after the accept before the start bit, so the frame (and tx_ready low) is longer than the spec frame time by the tick-phase wait.",
+      "bug_id": "bug_1_1",
+      "module": "uart_tx",
+      "evidence": "Every tx-related test fails at the first cycle after accept with 'tx mismatch: expected 0 actual 1' and tx_ready=0 on both sides (e.g. cycle 5 with baud_div=1, parity 0, tx_data=181). The reference drives tx=0 on the edge after the accept. rtl/uart_tx.v ST_IDLE sets only state_q<=ST_START and tx_q stays 1; ST_START sets tx_q<=0 only on the next tick16 (if tx_q ... tx_q<=0). Even at baud_div=1 this is one cycle late.",
+      "expected": "On the clk edge after tx_valid&tx_ready, tx=0 (start bit), tx_ready=0, and tx_ready stays low for exactly 10 or 11 bit periods of 16*baud_div clks, with every bit exactly 16*baud_div clks.",
+      "failures": [
+        "test_tx_random_words",
+        "test_tx_directed_patterns",
+        "test_reset_mid_tx_frame",
+        "test_reset_random_every",
+        "test_bit_period_divisors",
+        "test_bit_period_random_divisors",
+        "test_baud_115200_error",
+        "test_baud_div_zero",
+        "test_parity_all_256",
+        "test_parity_mode3_as_none",
+        "test_tx_ready_timing",
+        "test_tx_valid_ignored_when_busy",
+        "test_tx_back_to_back",
+        "test_loopback_back_to_back",
+        "test_overrun_always_zero",
+        "test_param_change_mid_frame",
+        "test_loopback_all_modes",
+        "test_divisor_edges_loopback",
+        "test_reset_values (truncated message, uses tx_send)",
+        "(all failures repeat on verilator seeds 1-3 and icarus seed 1)"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Ada-C",
+      "root_cause": "uart_tx accepts in ST_IDLE but keeps tx_q=1 until the next free-running tick16 (the 'aligned start' branch in ST_START), so the start bit begins 1..baud_div clks late and tx_ready stays low for the frame time plus that delay.",
+      "requirement": "REQ-011, REQ-006, REQ-001, REQ-013",
+      "suggested_fix": "Make the start bit begin on the clk edge after the accept (tx_q<=0 at accept) and time each bit as exactly 16*max(baud_div,1) clks from that edge, for example with a per-bit clk counter in uart_tx or a restart/phase-sync input to baud_gen. Do not rely on the phase of the free-running tick16 for the first bit. Keep tx_ready low until the stop bit has lasted 16*baud_div clks, keep the latched parity and parity_mode, and keep the REQ-023 recovery to IDLE. If baud_gen is re-phased by tx, make sure rx sampling is not disturbed.",
+      "classification": "DESIGN"
+    },
+    {
+      "id": "BUG-001",
+      "actual": "After accept tx stays 1 (start bit not yet driven) for 1..baud_div cycles until tick16. The start bit and the whole frame are delayed by this amount, and tx_ready is low for frame time plus the delay.",
+      "bug_id": "bug_2_1",
+      "module": "uart_tx",
+      "evidence": "Every tx test fails at the first frame with 'tx mismatch: expected 0 actual 1' while tx_ready=0 (cycle 3-23, e.g. baud_div=1 cycle 5/11, baud_div=3 cycle 4, baud_div=27 cycle 6), with tx_valid=1 in the accepted cycle. RefModel.step sets tx=bits[0]=0 and tx_ready=0 in the accept step. In uart_tx.v ST_IDLE sets state_q<=ST_START but leaves tx_q=1. ST_START only sets tx_q<=0 on tick16 ('aligned start: first tick after accept'). The RTL is consistent with the first failing cycle being one cycle too late at baud_div=1. test_overrun_always_zero passes its baud_div=1 external-rx phases and only fails at cycle 27557, the first tx_send.",
+      "expected": "The cycle after an accepted handshake tx=0 and tx_ready=0. The frame (10 or 11 bit periods of 16*baud_div clk cycles) then occupies exactly tx_ready=0, and tx_ready returns to 1 right after the stop bit.",
+      "failures": [
+        "test_tx_random_words",
+        "test_tx_directed_patterns",
+        "test_reset_values",
+        "test_reset_mid_tx_frame",
+        "test_reset_random_every",
+        "test_bit_period_divisors",
+        "test_bit_period_random_divisors",
+        "test_baud_115200_error",
+        "test_baud_div_zero",
+        "test_parity_all_256",
+        "test_parity_mode3_as_none",
+        "test_tx_ready_timing",
+        "test_tx_valid_ignored_when_busy",
+        "test_tx_back_to_back",
+        "test_loopback_back_to_back",
+        "test_overrun_always_zero",
+        "test_param_change_mid_frame",
+        "test_loopback_all_modes",
+        "test_divisor_edges_loopback"
+      ],
+      "found_by": "Dex",
+      "routed_to": "Ada-C",
+      "root_cause": "uart_tx accepts the byte in IDLE but stays in START with tx=1 until the next free-running tick16 before driving the start bit, so the whole frame starts 1..baud_div cycles late and tx_ready stays low longer than one frame time.",
+      "requirement": "REQ-011 (tx_ready low exactly one frame time from the edge after accept), REQ-001/REQ-006/REQ-013 (frame/bit timing vs reference)",
+      "suggested_fix": "In uart_tx, drive tx_q<=0 at the accept edge (IDLE with tx_valid) so the start bit begins in the next cycle, and make each bit exactly 16*baud_div clk cycles measured from accept. This needs a tx phase that restarts on accept. Do it via a local clk-cycle divider in uart_tx fed with baud_div, or via a tick that restarts at accept. Keep tx_ready=(state==IDLE) low until the end of the stop bit. Do not change uart_rx's shared tick, or re-check rx timing if baud_gen is changed. See open_issues about the possible architecture impact.",
+      "classification": "DESIGN"
+    }
+  ],
+  "guard": [
+    {
+      "flags": [],
+      "author": "Theo",
+      "reason": "Bug report from Dex (Appendix B.7):\n{\n  \"id\": \"BUG-002\",\n  \"classification\": \"TEST\",\n  \"failures\": [\n    \"test_rx_majority_vote\",\n    \"test_rx_baud_offset_random\",\n    \"test_reset_mid_rx_frame\",\n    \"test_sync_latency\",\n    \"test_rx_glitch_rejection\",\n    \"test_rx_random_words\",\n    \"test_rx_valid_p"
+    },
+    {
+      "flags": [],
+      "author": "Theo",
+      "reason": "Bug report from Dex (Appendix B.7):\n{\n  \"id\": \"BUG-001\",\n  \"classification\": \"TEST\",\n  \"failures\": [\n    \"verilator seed 1: test_divisor_edges_loopback\",\n    \"verilator seed 2: test_divisor_edges_loopback\",\n    \"verilator seed 3: test_divisor_edges_loopback\",\n    \"icarus seed 1: test_divisor_edges_l"
+    },
+    {
+      "flags": [],
+      "author": "Theo",
+      "reason": "Myra's mutation run missed these injected bugs (type and requirements only; you may not see the RTL). Add or strengthen tests for the behavior of those requirements:\n[\n  {\n    \"bug_type\": \"missing_reset\",\n    \"requirements\": [],\n    \"what\": \"a realistic bug of this type in the logic implementing the"
+    }
+  ],
+  "anticheat_final": {
+    "flags": [
+      "tb/test_uart_2.py: test 'test_bit_period_divisors' runs fewer iterations (loop bounds [16, 9, 1, 1] -> [9, 1, 1, 1])"
+    ],
+    "unreviewed": [],
+    "approved_by_sentinel": [
+      "tb/test_uart_2.py: test 'test_bit_period_divisors' runs fewer iterations (loop bounds [16, 9, 1, 1] -> [9, 1, 1, 1])"
+    ]
+  }
+}

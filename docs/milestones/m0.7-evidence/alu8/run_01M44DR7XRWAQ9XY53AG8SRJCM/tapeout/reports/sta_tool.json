@@ -1,0 +1,223 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 6.229,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7754,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 3.3554,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.8325,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 7.3135,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4211,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 6.2614,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7738,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 3.4176,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.8302,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 7.3382,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4196,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 6.1918,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.7787,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 3.276,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 1.838,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 7.2822,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.4233,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    }
+  },
+  "worst_paths": {
+    "nom_tt_025C_1v80": [
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 6.229,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 6.2893,
+        "state": "MET"
+      }
+    ],
+    "nom_ss_100C_1v60": [
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 3.3554,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_351_",
+        "type": "max",
+        "slack": 3.5267,
+        "state": "MET"
+      }
+    ],
+    "nom_ff_n40C_1v95": [
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 7.3135,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 7.3301,
+        "state": "MET"
+      }
+    ],
+    "min_tt_025C_1v80": [
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 6.2614,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 6.322,
+        "state": "MET"
+      }
+    ],
+    "min_ss_100C_1v60": [
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 3.4176,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_351_",
+        "type": "max",
+        "slack": 3.579,
+        "state": "MET"
+      }
+    ],
+    "min_ff_n40C_1v95": [
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 7.3382,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 7.3556,
+        "state": "MET"
+      }
+    ],
+    "max_tt_025C_1v80": [
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 6.1918,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 6.2551,
+        "state": "MET"
+      }
+    ],
+    "max_ss_100C_1v60": [
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 3.276,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[1]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 3.4647,
+        "state": "MET"
+      }
+    ],
+    "max_ff_n40C_1v95": [
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_350_",
+        "type": "max",
+        "slack": 7.2822,
+        "state": "MET"
+      },
+      {
+        "startpoint": "op[0]",
+        "endpoint": "_342_",
+        "type": "max",
+        "slack": 7.2982,
+        "state": "MET"
+      }
+    ]
+  },
+  "clock_period_ns": 13.333333
+}

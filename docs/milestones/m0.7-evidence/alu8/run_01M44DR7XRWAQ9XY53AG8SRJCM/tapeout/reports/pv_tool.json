@@ -1,0 +1,92 @@
+{
+  "magic_drc": {
+    "violations": 0,
+    "by_rule": {}
+  },
+  "klayout_drc": {
+    "violations": 0,
+    "by_rule": {}
+  },
+  "openlane": {
+    "magic_drc": 0,
+    "klayout_drc": 0,
+    "lvs_errors": 0
+  },
+  "lvs": {
+    "verdict": "Circuits match uniquely",
+    "counts": {
+      "devices": {
+        "layout": 243,
+        "schematic": 243
+      },
+      "nets": {
+        "layout": 261,
+        "schematic": 261
+      }
+    }
+  },
+  "antenna": {
+    "net_violations": 0,
+    "pin_violations": 0,
+    "nets_checked": 247,
+    "worst": [
+      {
+        "net": "net13",
+        "pin": "_274_/A",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 149.31,
+        "required": 400.0,
+        "pct_of_limit": 37.33
+      },
+      {
+        "net": "net18",
+        "pin": "_172_/B",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 116.83,
+        "required": 400.0,
+        "pct_of_limit": 29.21
+      },
+      {
+        "net": "net2",
+        "pin": "_309_/A1",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 96.81,
+        "required": 400.0,
+        "pct_of_limit": 24.2
+      },
+      {
+        "net": "net5",
+        "pin": "_274_/B",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 93.17,
+        "required": 400.0,
+        "pct_of_limit": 23.29
+      },
+      {
+        "net": "net41",
+        "pin": "_271_/A1",
+        "layer": "met1",
+        "check": "Side area",
+        "ratio": 77.29,
+        "required": 400.0,
+        "pct_of_limit": 19.32
+      }
+    ],
+    "command": "openroad -exit -no_splash /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/antenna.tcl",
+    "tool_version": "edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6"
+  },
+  "density": {
+    "li1": 0.6496583697485241,
+    "m1": 0.8196111939753021,
+    "m2": 0.9425714155976005,
+    "m3": 0.9709549895759344,
+    "m4": 0.9667335964672477,
+    "m5": 1.0
+  },
+  "gds": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/pnr/runs/it1/final/gds/alu8_top.gds",
+  "gds_sha256": "1ca961c967d9d3e01dbc9c6043c2db848d238930de5b4d37ae25aaa900a75768"
+}

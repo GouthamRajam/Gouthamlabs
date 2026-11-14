@@ -1,0 +1,13 @@
+id: "A3.11"
+name: Cora
+role: Coverage Closure
+prompt: A3.11_Cora.md
+preamble: design
+stages: [verification]
+model_hint: default
+effort: medium
+max_tokens: 64000
+tools: [fs_read, fs_write, kb_search, emit_note]
+budget: {max_tokens: 400000, max_minutes: 45, max_tool_runs: 60}
+writes_to: ["tb/test_cora_*.py", "reports/coverage*.json"]
+reads_from: ["spec/**", "arch/**", "rtl/**", "tb/**", "reports/coverage*.json"]

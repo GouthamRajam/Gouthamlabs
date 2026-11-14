@@ -1,0 +1,223 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 9.7478,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3268,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 5.8282,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8566,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 11.2368,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1105,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 9.8393,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3235,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 5.9923,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8513,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 11.2886,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1082,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 9.6639,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3297,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 5.6705,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8618,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 11.1848,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.113,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [],
+      "passed": true
+    }
+  },
+  "worst_paths": {
+    "nom_tt_025C_1v80": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 9.7478,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1272_",
+        "type": "max",
+        "slack": 9.7609,
+        "state": "MET"
+      }
+    ],
+    "nom_ss_100C_1v60": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 5.8282,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1232_",
+        "type": "max",
+        "slack": 5.9289,
+        "state": "MET"
+      }
+    ],
+    "nom_ff_n40C_1v95": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1272_",
+        "type": "max",
+        "slack": 11.2368,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 11.2417,
+        "state": "MET"
+      }
+    ],
+    "min_tt_025C_1v80": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 9.8393,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1272_",
+        "type": "max",
+        "slack": 9.8413,
+        "state": "MET"
+      }
+    ],
+    "min_ss_100C_1v60": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 5.9923,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1232_",
+        "type": "max",
+        "slack": 6.09,
+        "state": "MET"
+      }
+    ],
+    "min_ff_n40C_1v95": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1272_",
+        "type": "max",
+        "slack": 11.2886,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 11.3004,
+        "state": "MET"
+      }
+    ],
+    "max_tt_025C_1v80": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 9.6639,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1272_",
+        "type": "max",
+        "slack": 9.6882,
+        "state": "MET"
+      }
+    ],
+    "max_ss_100C_1v60": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 5.6705,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1232_",
+        "type": "max",
+        "slack": 5.7783,
+        "state": "MET"
+      }
+    ],
+    "max_ff_n40C_1v95": [
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1235_",
+        "type": "max",
+        "slack": 11.1848,
+        "state": "MET"
+      },
+      {
+        "startpoint": "baud_div[0]",
+        "endpoint": "_1272_",
+        "type": "max",
+        "slack": 11.1871,
+        "state": "MET"
+      }
+    ]
+  },
+  "clock_period_ns": 20.0
+}

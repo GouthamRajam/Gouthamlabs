@@ -1,0 +1,407 @@
+{
+  "die_area_um2": 66020.3,
+  "core_area_um2": 57585.2,
+  "utilization": 0.469972,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "almost_full",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "count[0]",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "count[1]",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "count[2]",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "count[3]",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "count[4]",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "empty",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "full",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "overflow",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "rd_data[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[10]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[11]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[12]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[13]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[14]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[15]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[16]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[17]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[18]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[19]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[20]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[21]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[22]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[23]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[24]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[25]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[26]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[27]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[28]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[29]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[30]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[31]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[8]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_data[9]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rd_en",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "underflow",
+      "direction": "OUTPUT",
+      "side": "N"
+    },
+    {
+      "name": "wr_data[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[10]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[11]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[12]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[13]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[14]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[15]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[16]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[17]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[18]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[19]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[20]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[21]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[22]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[23]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[24]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[25]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[26]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[27]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[28]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[29]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[30]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[31]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[8]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_data[9]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "wr_en",
+      "direction": "INPUT",
+      "side": "W"
+    }
+  ],
+  "choices": {
+    "core_utilization_pct": 45,
+    "reasons": {
+      "utilization": "Synthesized std-cell area is 26,049.984 um2 (1,960 cells, reports/synth_tool.json). 45% is the pnr_ranges default and inside the allowed 30-65% range; it gives a core of about 57,900 um2 (~240 x 240 um). The design is dominated by 512 flops feeding a 16:1 read mux whose select nets have fanout 128, so it is routing-heavy; 45% leaves room for buffering/resizing of those high-fanout nets and for routing without a needlessly large die.",
+      "pins": "Data flow per arch.yaml: producer side on West (wr_en, wr_data[31:0], plus rd_en so all data/handshake inputs share one edge), consumer data on East (rd_data[31:0]), so the wr_data -> fifo_mem -> rd_data path runs left to right across the storage array. Status outputs (full, almost_full, empty, overflow, underflow, count[4:0]) come from fifo_ctrl and are placed on North, away from the 32-bit buses. 79 pins total; one pattern per port, bus ports use prefix.* patterns.",
+      "power_grid": "Default SKY130 PDN from the PDK/OpenLane configuration (met4/met5 straps at default pitch and width; met1 rails on every std-cell row). pnr_ranges.yaml defines no strap ranges, so straps are not changed. Connectivity and no-unpowered-row checks are left to the runtime's real PDN run.",
+      "clock_reset": "clk and rst_n are placed alone on the South edge, central to the core, so the CTS root is near the centre of the flop array and the synchronous reset net (fanout to fifo_ctrl only) has a short entry; keeping them off the bus edges avoids crowding with the 32-bit buses."
+    }
+  }
+}

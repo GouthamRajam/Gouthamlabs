@@ -1,0 +1,57 @@
+design: counter8
+top: counter8
+modules:
+  - name: counter8
+    kind: interface
+    ports_from_spec: true
+    instances: [cnt_ctrl, cnt_dp]
+    implements: [REQ-011, REQ-012, REQ-013]
+    description: "Top level; wires inputs to control decoder and datapath. No logic of its own, count driven directly by flops."
+  - name: cnt_ctrl
+    kind: control
+    ports:
+      - {name: load, dir: in, width: 1}
+      - {name: enable, dir: in, width: 1}
+      - {name: up_down, dir: in, width: 1}
+      - {name: op, dir: out, width: 2}
+    implements: [REQ-004, REQ-005, REQ-006, REQ-009, REQ-010]
+    max_logic_depth: 2
+    description: "Combinational decoder, priority load > enable. op: 00 hold, 01 up, 10 down, 11 load. Every case has a default (hold)."
+  - name: cnt_dp
+    kind: datapath
+    params: {W: 8}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: op, dir: in, width: 2}
+      - {name: load_data, dir: in, width: W}
+      - {name: count, dir: out, width: W}
+    implements: [REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008, REQ-009, REQ-012]
+    max_logic_depth: 10
+    description: "W-bit register with synchronous active-low reset to 0 (highest priority), next-state mux of hold, count+1, count-1 and load_data. Modulo-2^W wrap gives REQ-007/008. Output is the register Q."
+connections:
+  - {from: counter8.load, to: [cnt_ctrl.load]}
+  - {from: counter8.enable, to: [cnt_ctrl.enable]}
+  - {from: counter8.up_down, to: [cnt_ctrl.up_down]}
+  - {from: cnt_ctrl.op, to: [cnt_dp.op]}
+  - {from: counter8.clk, to: [cnt_dp.clk]}
+  - {from: counter8.rst_n, to: [cnt_dp.rst_n]}
+  - {from: counter8.load_data, to: [cnt_dp.load_data]}
+  - {from: cnt_dp.count, to: [counter8.count]}
+cdc: []
+state_machines: []
+ppa_estimate:
+  cells: 70
+  critical_path_levels: 10
+  slack_margin_pct: 60
+rationale:
+  - "Single clock domain and all inputs synchronous to clk, so no synchronizers; spec puts CDC out of scope."
+  - "Control decode is split from the datapath so the priority rule (REQ-010) lives in one tiny, exhaustively testable block."
+  - "Reset sits only in the datapath register, the only state element, so REQ-002 is met by construction; reset is in the next-state logic, synchronous only (REQ-003)."
+  - "Plain +1/-1 modulo 256 gives wrap on overflow/underflow with no extra logic; count is the flop output, so no input-to-count combinational path (REQ-012)."
+  - "About 10 gate levels is roughly 2 ns versus a 10 ns period; the estimate is by hand and needs tool confirmation."
+verification_hooks:
+  - "Assertion: rst_n==0 at a clk edge implies count==0 next cycle (REQ-001, formal)."
+  - "Assertion: count changes only on posedge clk (REQ-012)."
+  - "Cover/assert that cnt_ctrl.op matches the reference priority table for all 8 load/enable/up_down combinations."
+  - "cnt_ctrl.op and cnt_dp.count are observable for the testbench and reference-model compare."

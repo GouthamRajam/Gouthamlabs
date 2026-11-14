@@ -1,0 +1,630 @@
+{
+  "corners": {
+    "nom_tt_025C_1v80": {
+      "setup_ws_ns": 9.7879,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3159,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "nom_ss_100C_1v60": {
+      "setup_ws_ns": 8.9549,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8633,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "nom_ff_n40C_1v95": {
+      "setup_ws_ns": 9.7938,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1058,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "min_tt_025C_1v80": {
+      "setup_ws_ns": 9.7817,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.313,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "min_ss_100C_1v60": {
+      "setup_ws_ns": 8.9716,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8583,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "min_ff_n40C_1v95": {
+      "setup_ws_ns": 9.789,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.104,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "max_tt_025C_1v80": {
+      "setup_ws_ns": 9.7955,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.3191,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "max_ss_100C_1v60": {
+      "setup_ws_ns": 8.9381,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.8688,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    },
+    "max_ff_n40C_1v95": {
+      "setup_ws_ns": 9.7999,
+      "setup_tns_ns": 0.0,
+      "hold_ws_ns": 0.1076,
+      "hold_tns_ns": 0.0,
+      "drv_violators": [
+        "max fanout"
+      ],
+      "clock_rule_allowed": [
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_5__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_7__f_clk/X",
+          "limit": 10.0,
+          "value": 17.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_4__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_6__f_clk/X",
+          "limit": 10.0,
+          "value": 14.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_1__f_clk/X",
+          "limit": 10.0,
+          "value": 13.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_0__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_2__f_clk/X",
+          "limit": 10.0,
+          "value": 12.0,
+          "rule": "clock-tree net, limit 20"
+        },
+        {
+          "kind": "max fanout",
+          "pin": "clkbuf_3_3__f_clk/X",
+          "limit": 10.0,
+          "value": 11.0,
+          "rule": "clock-tree net, limit 20"
+        }
+      ],
+      "passed": true
+    }
+  },
+  "explained_by": "Chronos",
+  "explanation": "# Signoff timing report: spi_master (sky130_fd_sc_hd, clk 50 MHz, 20.0 ns period)\n\nSource: reports/sta_tool.json (OpenSTA results as provided). 9 corners (min/nom/max x tt/ss/ff). I did not run any tool myself; every number below is quoted from that file.\n\n## Per-corner results\n\n| Corner | Setup WNS (ns) | Setup TNS | Hold WNS (ns) | Hold TNS | DRV violators | Tool passed |\n|---|---|---|---|---|---|---|\n| nom_tt_025C_1v80 | 9.7879 | 0.0 | 0.3159 | 0.0 | max fanout (clock-tree only) | true |\n| nom_ss_100C_1v60 | 8.9549 | 0.0 | 0.8633 | 0.0 | max fanout (clock-tree only) | true |\n| nom_ff_n40C_1v95 | 9.7938 | 0.0 | 0.1058 | 0.0 | max fanout (clock-tree only) | true |\n| min_tt_025C_1v80 | 9.7817 | 0.0 | 0.313 | 0.0 | max fanout (clock-tree only) | true |\n| min_ss_100C_1v60 | 8.9716 | 0.0 | 0.8583 | 0.0 | max fanout (clock-tree only) | true |\n| min_ff_n40C_1v95 | 9.789 | 0.0 | 0.104 | 0.0 | max fanout (clock-tree only) | true |\n| max_tt_025C_1v80 | 9.7955 | 0.0 | 0.3191 | 0.0 | max fanout (clock-tree only) | true |\n| max_ss_100C_1v60 | 8.9381 | 0.0 | 0.8688 | 0.0 | max fanout (clock-tree only) | true |\n| max_ff_n40C_1v95 | 9.7999 | 0.0 | 0.1076 | 0.0 | max fanout (clock-tree only) | true |\n\nWorst setup slack over all corners: 8.9381 ns (max_ss_100C_1v60). Worst hold slack over all corners: 0.104 ns (min_ff_n40C_1v95). Setup and hold TNS are 0.0 in every corner, so REQ-021 (setup and hold slack >= 0 in every evaluated corner) is met according to the tool data.\n\n## Design rule violations\n\nThe only DRV category listed in any corner is max fanout, and it is the same in all 9 corners: 8 clock-tree buffer outputs (clkbuf_3_0 .. clkbuf_3_7 __f_clk/X) exceed the SDC default limit of 10 (values 17, 17, 14, 14, 13, 12, 12, 11). The tool classifies all of them under the rule \"clock-tree net, limit 20\", so they are within that rule and are not counted as failures (the tool reports clock_rule_allowed). The data lists no max transition or max capacitance violators, and no max fanout violators on non-clock nets. Note that the data does not state transition or capacitance limits, so \"no violators\" means none were reported by the tool, nothing more.\n\n## Worst paths in plain words\n\nThe tool data gives start point, end point, slack and state only. It does not give per-cell delays, so I cannot name the dominant cells in a path and I do not guess them.\n\n- miso to _764_ (setup, 9.7879 ns in nom_tt, 9.7938 in nom_ff, 9.7817 in min_tt, 9.789 in min_ff, 9.7955 in max_tt, 9.7999 in max_ff): the asynchronous MISO input, constrained with a 10.0 ns input delay, goes into the first flop of the 2-flop synchronizer (_764_ is presumably that flop; the instance name alone does not prove it). About half of the 20 ns period is used by the input delay and the rest is left as slack. It is the worst setup path in the tt and ff corners.\n- clk_div[6] to _813_ (setup, 8.9549 ns in nom_ss, 8.9716 in min_ss, 8.9381 in max_ss; 11.6193 in nom_tt): the clock-divider input (6.0 ns input delay) feeds logic ending at register _813_. It is the worst setup path in all three slow (ss, 100C, 1.60 V) corners. Also in ss: clk_div[6] to _812_ at 9.2624 (nom) and 9.281 (min), and start to _819_ at 9.2184 (max_ss).\n- start to _818_ (setup, 12.4111 ns nom_ff, 12.4424 min_ff, 12.3856 max_ff): second-worst path in the ff corners.\n\nNo hold path is listed in worst_paths (only type \"max\" entries are present), so I cannot name the start and end of the limiting hold paths. Hold data is limited to the per-corner WNS numbers above.\n\n## Margin assessment and ranked fixes\n\n- Setup: thin margin? No. The worst setup slack is 8.9381 ns on a 20 ns period, roughly 45 percent of the period. No setup fix is needed.\n- Hold: the smallest slack is 0.104 ns (min_ff_n40C_1v95), 0.1058 ns (nom_ff) and 0.1076 ns (max_ff). It is positive in every corner and TNS is 0.0, so hold passes, but it is the thinnest margin in the design, and it is on the fast corner as expected. The data does not say which paths limit it.\n- Max fanout on clock buffers: values of 17 against the SDC limit of 10 are only accepted through the clock-tree rule of limit 20. This is a decision for the human reviewer, not something I waive.\n\nRanked suggestions (none required for a pass; each is a suggestion, not a verified result):\n1. Hold margin: if a larger hold margin is wanted (for example against on-chip variation not modelled here), re-run CTS with hold repair enabled and a hold slack margin, and look at the hold paths in the ff corners first. Expected effect: raises the 0.104 ns floor at a small area cost. Needs a hold path report to target specific nets.\n2. Clock buffer fanout: if the 10-fanout limit should also apply to clock nets, re-run CTS with a lower sink cluster size so that the leaf buffers drive at most 10 sinks. Expected effect: removes the clock_rule_allowed entries. Only if the reviewer decides the clock-tree exception is not wanted.\n3. Setup: no action. If extra margin on clk_div paths were ever wanted for faster clocks, registering clk_div after latching would shorten that path, but there is no timing need at 50 MHz.\n\n## Constraint notes for the reviewer\n\n- The IO delays (10.0 ns on miso, 5.0 ns on sck/mosi/cs_n) and the other values in the SDC are marked DEFAULT / placeholder (G1 review). Slack numbers depend on them.\n- Clock uncertainty is 0.25 ns and the clock is ideal in the SDC; the flow handles latency.\n- REQ-022 (setup slack >= 0 on all IO paths) is consistent with the tool data: the worst IO-related setup paths shown are 9.7879 ns (miso) and 12.4111 ns (start), but the data shows only top paths, not a per-IO table, so I cannot confirm every output path individually.\n",
+  "assumptions": [
+    "All numbers are taken from reports/sta_tool.json as given; I ran no tool.",
+    "Instance names such as _764_ are not resolved to cell types; the synchronizer identification of _764_ is inferred from the spec, not from the data.",
+    "The tool's classification of the clock buffer fanout entries under 'clock-tree net, limit 20' is accepted as given, without any waiver added by me.",
+    "Absence of max transition/capacitance entries in drv_violators is read as none reported by the tool."
+  ],
+  "open_issues": [
+    "Clock-tree buffers exceed the SDC max fanout of 10 (up to 17); reviewer to confirm the clock-tree limit of 20 is acceptable.",
+    "Hold slack is only 0.104 ns at min_ff_n40C_1v95; the data has no hold path list, so limiting hold paths are unknown.",
+    "worst_paths lists only setup (max) paths and no cell-level delay breakdown, so dominant cells cannot be named.",
+    "IO delay values and other SDC numbers are DEFAULT placeholders pending G1 review."
+  ]
+}

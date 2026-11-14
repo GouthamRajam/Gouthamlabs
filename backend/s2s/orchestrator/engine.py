@@ -15,29 +15,53 @@ heartbeat watchdog.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import logging
 import os
 import signal
 import threading
 import time
+from pathlib import Path
 from concurrent.futures import Future, ThreadPoolExecutor
 
 from sqlalchemy import select, text
 
+from s2s.agents import management as mgmt
 from s2s.agents.dummy import DummyAgent
+from s2s.agents.m05 import DesignAgent
+from s2s.agents import m06  # noqa: F401  (registers test_build/verification)
+from s2s.agents import m07  # noqa: F401  (registers synthesis..gdsii)
 from s2s.agents.runtime import Agent, run_task
 from s2s.config import management
 from s2s.db.models import Design, Gate, Run, Task
 from s2s.db.session import engine, session as db_session
 from s2s.events.bus import emit, utcnow
 from s2s.ids import new_id
+from s2s.models.gateway import ModelGateway
 from s2s.orchestrator import flow, watchdog
 from s2s.org import sync_org
 
 log = logging.getLogger("s2s.orchestrator")
 
 ADVISORY_LOCK_KEY = 0x5325_0003  # one orchestrator per database
-AGENTS: dict[str, type[Agent]] = {"dummy": DummyAgent}
+AGENTS: dict[str, type[Agent]] = {"dummy": DummyAgent, "s2s": DesignAgent}
+# The gateway each agent kind uses: the dummy agent never makes a real call; the M0.5 design
+# agents use the model saved in Settings -> Model access.
+GATEWAYS = {"dummy": ModelGateway, "s2s": ModelGateway.from_settings}
+
+
+SRC = Path(__file__).resolve().parents[1]  # backend/s2s
+STALE_CHECK_S = 60
+
+
+def code_fingerprint(root: Path = SRC) -> str:
+    """Hash of every .py file under `root` (path + content). The orchestrator imports the agents and tool
+    adapters once at start, so a fix committed later is not used until it restarts (uart signoff 2026-10-06
+    ran the old LEC; lesson s2s-ops-003)."""
+    h = hashlib.sha256()
+    for f in sorted(root.rglob("*.py")):
+        h.update(str(f.relative_to(root)).encode() + b"\0" + f.read_bytes() + b"\0")
+    return h.hexdigest()[:16]
 
 
 class AlreadyRunning(RuntimeError):
@@ -55,6 +79,9 @@ class Orchestrator:
         self.stop = threading.Event()
         self._lock_conn = None
         self._last_watchdog = 0.0
+        self.code_fp = code_fingerprint()
+        self._last_stale_check = time.monotonic()
+        self.stale_code = False
 
     # --- lifecycle -----------------------------------------------------------------------
     def start(self) -> int:
@@ -65,8 +92,8 @@ class Orchestrator:
         with db_session() as s:
             n_units = sync_org(s)
         recovered = self.recover()
-        log.info("orchestrator %s started (pid %d): %d org units, recovered %d in-flight task(s)",
-                 self.instance, os.getpid(), n_units, len(recovered))
+        log.info("orchestrator %s started (pid %d, code %s): %d org units, recovered %d in-flight task(s)",
+                 self.instance, os.getpid(), self.code_fp, n_units, len(recovered))
         return len(recovered)
 
     def recover(self) -> list[str]:
@@ -97,9 +124,16 @@ class Orchestrator:
             for run in s.scalars(select(Run).where(Run.status.in_(("pending", "running")))).all():
                 self._advance_run(s, run)
         self._assign()
+        if not self.stale_code and time.monotonic() - self._last_stale_check >= STALE_CHECK_S:
+            self._last_stale_check = time.monotonic()
+            if code_fingerprint() != self.code_fp:
+                self.stale_code = True
+                log.warning("code changed since this orchestrator started (code %s): restart it before the next "
+                            "stage that needs the change", self.code_fp)
         if time.monotonic() - self._last_watchdog >= self.watchdog_s:
             self._last_watchdog = time.monotonic()
             watchdog.tick()
+            mgmt.tick(inflight=set(self.inflight))
 
     def _reap(self) -> None:
         for tid, fut in list(self.inflight.items()):
@@ -182,13 +216,14 @@ class Orchestrator:
                          detail={"from": run.current_stage, "to": t.stage},
                          **{**base, "agent_id": "Atlas", "team": "program_office", "task_id": None})
                     run.current_stage = t.stage
+                mgmt.on_assign(s, t, run)
                 emit(s, "task.started", (f"{t.agent_id} resumed: {t.title} (from step {resumed_from})"
                                          if resumed_from else f"{t.agent_id} started: {t.title}"),
                      status="working", detail={"attempt": t.attempts, "resumed_from_step": resumed_from,
                                                "orchestrator": self.instance}, **base)
                 started.append((t.id, run.agent_kind))
         for tid, kind in started:
-            self.inflight[tid] = self.pool.submit(run_task, tid, AGENTS[kind]())
+            self.inflight[tid] = self.pool.submit(run_task, tid, AGENTS[kind](), GATEWAYS[kind]())
 
 
 def _stage_checks_ok(s, task_id: str) -> bool:
@@ -201,13 +236,18 @@ def _stage_checks_ok(s, task_id: str) -> bool:
 
 
 def create_run(s, design: Design, from_stage: str | None = None, to_stage: str | None = None,
-               agent_kind: str = "dummy", dummy: dict | None = None) -> Run:
+               agent_kind: str = "dummy", dummy: dict | None = None, inputs: dict | None = None) -> Run:
+    """agent_kind "s2s" runs the real M0.5 agents (spec, architecture, rtl only)."""
     """Create a run and its tasks (status pending). The orchestrator picks it up."""
     from s2s.finance.meter import ensure_run_budget, task_budget
     from s2s.org import load_org
     if agent_kind not in AGENTS:
         raise ValueError(f"unknown agent kind {agent_kind!r}")
     stages = flow.select_stages(from_stage, to_stage)
+    if agent_kind == "s2s":
+        unbuilt = [st.name for st in stages if st.name not in DesignAgent.STAGES]
+        if unbuilt:
+            raise ValueError(f"stages {unbuilt} have no agents yet (built: {', '.join(DesignAgent.STAGES)})")
     run = Run(id=new_id("run"), design_id=design.id, status="pending",
               stages=[st.name for st in stages], agent_kind=agent_kind)
     s.add(run)
@@ -225,7 +265,8 @@ def create_run(s, design: Design, from_stage: str | None = None, to_stage: str |
         lead = org.by_id(st.team_id).manager_agent_id
         s.add(Task(id=tid, run_id=run.id, agent_id=lead, stage=st.name, status="pending", title=st.title,
                    seq=i, team_id=st.team_id, depends_on=[ids[d] for d in st.depends_on if d in ids],
-                   inputs={"design_id": design.id, "design_name": design.name, "dummy": dummy or {}},
+                   inputs={"design_id": design.id, "design_name": design.name, "dummy": dummy or {},
+                           "request_text": design.request_text, **(inputs or {})},
                    budget=task_budget(lead), expected_step_seconds=expected))
     ensure_run_budget(s, run.id)
     s.flush()

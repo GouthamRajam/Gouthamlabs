@@ -1,0 +1,13 @@
+id: A17
+name: Sage
+role: Knowledge Agent
+prompt: A17_Sage.md
+preamble: design
+stages: [spec, architecture, rtl]
+model_hint: default
+effort: low
+max_tokens: 8000
+tools: [kb_search, kb_write, emit_note]
+budget: {max_tokens: 200000, max_minutes: 20, max_tool_runs: 20}
+writes_to: ["reports/retrospective.md", "knowledge/**"]
+reads_from: ["reports/**"]

@@ -1,0 +1,4 @@
+read_verilog -lib sky130_cells.v
+read_verilog picorv32_synth.v
+rename picorv32 picorv32_gate
+write_verilog -noattr picorv32_gate.v

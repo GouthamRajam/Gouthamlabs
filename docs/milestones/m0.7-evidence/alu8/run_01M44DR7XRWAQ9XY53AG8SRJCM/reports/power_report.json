@@ -1,0 +1,57 @@
+{
+  "power_w_by_corner": {
+    "tt_025C_1v80": {
+      "internal_w": 0.0001549827,
+      "switching_w": 0.0001043285,
+      "leakage_w": 1.669712e-09,
+      "total_w": 0.0002593128,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_tt_025C_1v80.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/power_alu8_top_tt_025C_1v80.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ss_100C_1v60": {
+      "internal_w": 0.0001246476,
+      "switching_w": 8.138097e-05,
+      "leakage_w": 1.474694e-06,
+      "total_w": 0.0002075033,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_ss_100C_1v60.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/power_alu8_top_ss_100C_1v60.tcl",
+      "tool_version": "2.6.0"
+    },
+    "ff_n40C_1v95": {
+      "internal_w": 0.0001744706,
+      "switching_w": 0.0001240441,
+      "leakage_w": 2.484409e-09,
+      "total_w": 0.0002985172,
+      "log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_ff_n40C_1v95.log",
+      "command": "sta -no_init -exit /home/user/Gouthamlabs/var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/.s2s/power_alu8_top_ff_n40C_1v95.tcl",
+      "tool_version": "2.6.0"
+    }
+  },
+  "input_activity": 0.2,
+  "openlane_power_total_w": 0.00020245423365850002,
+  "ir": {
+    "worst_drop_v": 0.000207,
+    "avg_drop_v": 4.54e-05,
+    "limit_v": 0.09,
+    "limit_rule": "5% of 1.8 V (A.13 Phase 0 default)"
+  },
+  "explained_by": "Volta",
+  "explanation": "# alu8 Power and IR Report (A.13) - signoff stage\n\nSource of every number: `reports/power_tool.json` (sha256:8af59c6385bc). No numbers in this report were computed or estimated by Volta; they are quoted from that file. Pass/fail is decided by the S2S runtime checks, not by this report.\n\n## 1. Total power by corner (OpenSTA `sta`, tool_version 2.6.0)\n\n| Corner | Internal (W) | Switching (W) | Leakage (W) | Total (W) |\n|---|---|---|---|---|\n| tt_025C_1v80 | 0.0001549827 | 0.0001043285 | 1.669712e-09 | 0.0002593128 |\n| ss_100C_1v60 | 0.0001246476 | 8.138097e-05 | 1.474694e-06 | 0.0002075033 |\n| ff_n40C_1v95 | 0.0001744706 | 0.0001240441 | 2.484409e-09 | 0.0002985172 |\n\n- Highest total power is at ff_n40C_1v95: 0.0002985172 W.\n- Leakage is largest at ss_100C_1v60 (1.474694e-06 W), as expected from the high temperature, but it is still small next to dynamic power at every corner.\n- ss_100C_1v60 shows lower total power than tt_025C_1v80 because its supply is lower (1.60 V vs 1.80 V); dynamic power scales with supply voltage squared.\n- OpenLane's own flow power figure: 0.00020245423365850002 W. This does not match the tt_025C_1v80 OpenSTA total (0.0002593128 W). The corner, activity and parasitics behind the OpenLane figure are not stated in the input, so the two numbers should not be compared directly (see open issues).\n\nLogs and commands (per corner, as given by the tool):\n- tt_025C_1v80: log `var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_tt_025C_1v80.log`\n- ss_100C_1v60: log `var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_ss_100C_1v60.log`\n- ff_n40C_1v95: log `var/artifacts/runs/run_01M44DR7XRWAQ9XY53AG8SRJCM/logs/power_alu8_top_ff_n40C_1v95.log`\n- Command form: `sta -no_init -exit <run>/.s2s/power_alu8_top_<corner>.tcl`\n\n## 2. Switching activity\n\n- Input activity used by the tool: 0.2 (the 20% default toggle rate). This is a vectorless estimate, not simulation activity (no VCD/SAIF was given to this task). Real activity of the exhaustive testbench may differ; power numbers should be read as an estimate.\n- Clock: 75 MHz from spec (target_clock_mhz: 75).\n\n## 3. IR drop\n\n| Item | Value |\n|---|---|\n| Worst drop | 0.000207 V |\n| Average drop | 4.54e-05 V |\n| Limit | 0.09 V |\n| Limit rule | 5% of 1.8 V (A.13 Phase 0 default) |\n\n- In the tool data, worst drop (0.000207 V) is below the limit (0.09 V). The runtime check decides pass/fail; Volta did not run the IR tool in this task.\n- The input does not state which corner, which net (VPWR, VGND or both), or which current source (the per-corner power above or the OpenLane figure) the IR analysis used.\n- No PDN change is proposed to Grid, because the reported worst drop is below the limit.\n\n## 4. What the open flow does NOT analyze (or was not given to this task)\n\n- Electromigration (EM) on power straps, vias and signal wires: not analyzed.\n- Dynamic (transient / vectored) IR drop and simultaneous switching noise: not analyzed; the IR figure is assumed to be static (average-current) analysis.\n- Ground bounce and package / bond-wire inductance: not modeled.\n- Voltage source (pad / bump) locations: not given in the input; the open flow is assumed to use its default PDN source placement at the macro power pins.\n- IR drop at ss and ff corners: only one IR result is given.\n- Power-up / inrush current and reset-time power: not analyzed.\n- Glitch power: vectorless analysis with a fixed toggle rate does not capture glitches in the combinational ALU.\n- Self-heating and temperature gradients: not analyzed.\n\n## 5. Conclusion\n\nFrom the given tool data, total power is in the sub-milliwatt range at all three corners (worst 0.0002985172 W at ff_n40C_1v95) and static IR drop is 0.000207 V against a 0.09 V limit. The spec puts power targets out of scope, so there is no power limit to check against. Remaining items for human review are listed under open issues.\n",
+  "assumptions": [
+    "Switching activity is the vectorless 0.2 input activity reported by the tool (20% default); no simulation activity (VCD/SAIF) was provided.",
+    "Clock frequency for power is the spec's 75 MHz (period 13.333 ns).",
+    "Power corners are those reported by the tool: tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95, using sky130A / sky130_fd_sc_hd libraries.",
+    "The IR limit of 0.09 V is the Phase 0 default (5% of 1.8 V nominal supply) as stated in the tool data; the spec gives no power or IR target (power targets are out of scope).",
+    "The IR result is assumed to be static (average-current) analysis at nominal 1.8 V; its corner and the net(s) analyzed (VPWR/VGND) are not stated in the input.",
+    "Voltage source locations are not given; assumed to be the open flow's default PDN source placement at the macro power pins.",
+    "Power numbers are assumed to use post-route parasitics from run run_01M44DR7XRWAQ9XY53AG8SRJCM; the parasitic source is not stated in the input.",
+    "Electromigration, dynamic IR, ground bounce, inrush and glitch power are not analyzed by the open flow and are not reported here."
+  ],
+  "open_issues": [
+    "OpenLane flow power total (0.00020245423365850002 W) does not match the OpenSTA tt_025C_1v80 total (0.0002593128 W); the corner, activity and parasitics behind the OpenLane figure should be confirmed by a human.",
+    "IR result gives no corner, net or voltage source locations; a human should confirm what the IR run covered, and whether ss/ff IR runs are needed.",
+    "Power uses vectorless 0.2 activity; re-run with simulation activity from the verification testbench if a more accurate power figure is wanted.",
+    "Electromigration is not analyzed by the open flow; for this small design the risk is expected to be low, but it is unverified."
+  ]
+}

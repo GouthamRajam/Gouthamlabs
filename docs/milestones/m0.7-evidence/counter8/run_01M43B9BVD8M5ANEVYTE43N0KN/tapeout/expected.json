@@ -1,0 +1,45 @@
+{
+  "sta": {
+    "nom_tt_025C_1v80": {
+      "setup": 4.3394,
+      "hold": 0.3604
+    },
+    "nom_ss_100C_1v60": {
+      "setup": 2.0569,
+      "hold": 0.9341
+    },
+    "nom_ff_n40C_1v95": {
+      "setup": 5.209,
+      "hold": 0.1163
+    },
+    "min_tt_025C_1v80": {
+      "setup": 4.3642,
+      "hold": 0.3573
+    },
+    "min_ss_100C_1v60": {
+      "setup": 2.0982,
+      "hold": 0.9291
+    },
+    "min_ff_n40C_1v95": {
+      "setup": 5.2254,
+      "hold": 0.114
+    },
+    "max_tt_025C_1v80": {
+      "setup": 4.3169,
+      "hold": 0.3639
+    },
+    "max_ss_100C_1v60": {
+      "setup": 2.0134,
+      "hold": 0.9404
+    },
+    "max_ff_n40C_1v95": {
+      "setup": 5.1939,
+      "hold": 0.1187
+    }
+  },
+  "flow_metrics": {
+    "design__instance__count": 112,
+    "route__wirelength": 1563
+  },
+  "gds_sha256": "fb37109e105b00c8d4afa1d807be790cb8a3b89f36fdab5aa3ad1fbb7dff98cb"
+}

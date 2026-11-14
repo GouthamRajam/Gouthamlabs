@@ -1,0 +1,114 @@
+[
+  {
+    "n": 1,
+    "item": "Spec approved at G1",
+    "evidence_kind": "gate record",
+    "done": true,
+    "evidence": "gate gate_01M43CJMXHCYT6W84TZCSA35Y1"
+  },
+  {
+    "n": 2,
+    "item": "RTL frozen at G2; no changes since",
+    "evidence_kind": "hash comparison",
+    "done": true,
+    "evidence": "checks rtl_frozen_at_g2, constraints_not_loosened"
+  },
+  {
+    "n": 3,
+    "item": "Regression 100% passing on frozen RTL",
+    "evidence_kind": "packet stage 4",
+    "done": true,
+    "evidence": "M0.6 check regression_100pct"
+  },
+  {
+    "n": 4,
+    "item": "Equivalence RTL vs final netlist proven",
+    "evidence_kind": "eqy report",
+    "done": true,
+    "evidence": "check eqy_rtl_vs_final"
+  },
+  {
+    "n": 5,
+    "item": "Setup and hold met at all corners",
+    "evidence_kind": "STA reports",
+    "done": true,
+    "evidence": "check sta_all_corners (9 corners)"
+  },
+  {
+    "n": 6,
+    "item": "Zero DRC (Magic and KLayout) on final GDS",
+    "evidence_kind": "DRC reports",
+    "done": true,
+    "evidence": "checks drc_magic_final_gds, drc_klayout_final_gds, package_drc_*"
+  },
+  {
+    "n": 7,
+    "item": "LVS clean on final GDS",
+    "evidence_kind": "Netgen report",
+    "done": true,
+    "evidence": "checks lvs_final_gds, package_lvs"
+  },
+  {
+    "n": 8,
+    "item": "Antenna clean",
+    "evidence_kind": "report",
+    "done": true,
+    "evidence": "check antenna_final"
+  },
+  {
+    "n": 9,
+    "item": "Density rules met",
+    "evidence_kind": "report",
+    "done": true,
+    "evidence": "check density_rules"
+  },
+  {
+    "n": 10,
+    "item": "DFM scorecard: zero high-severity open items",
+    "evidence_kind": "Fabian report",
+    "done": true,
+    "evidence": "check dfm_no_high_severity"
+  },
+  {
+    "n": 11,
+    "item": "Power and IR within limits",
+    "evidence_kind": "Volta reports",
+    "done": true,
+    "evidence": "checks power_estimated, ir_drop_within_limit"
+  },
+  {
+    "n": 12,
+    "item": "Pin list matches spec",
+    "evidence_kind": "comparison report",
+    "done": true,
+    "evidence": "check pins_match_spec"
+  },
+  {
+    "n": 13,
+    "item": "All Sentinel findings closed or human-overruled",
+    "evidence_kind": "findings list",
+    "done": true,
+    "evidence": "all Sentinel reviews passed"
+  },
+  {
+    "n": 14,
+    "item": "reproduce.sh re-runs cleanly in a fresh container",
+    "evidence_kind": "CI log",
+    "done": true,
+    "evidence": "check reproduce_clean_container"
+  },
+  {
+    "n": 15,
+    "item": "versions.lock and hashes recorded",
+    "evidence_kind": "manifest",
+    "done": true,
+    "evidence": "tapeout/versions.lock, MANIFEST.sha256"
+  },
+  {
+    "n": 16,
+    "item": "G3 approved",
+    "evidence_kind": "gate record",
+    "done": true,
+    "evidence": "gate gate_01M48RVBQACX41SHEYXGWPKCZQ (approved)"
+  }
+]

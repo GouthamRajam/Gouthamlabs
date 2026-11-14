@@ -1,0 +1,740 @@
+[
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "spec",
+  "check": "spec_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M425BDSP0H3XMWZ7J90FQWWW"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "spec",
+  "check": "spec_consistency",
+  "passed": true,
+  "tool": "s2s.design.checks",
+  "command": "",
+  "id": "chk_01M425BDSPZPEV7H11JMV4QRX5"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "spec",
+  "check": "sentinel_spec_review",
+  "passed": true,
+  "tool": "sentinel",
+  "command": "",
+  "id": "chk_01M425CAGWHF4WFJ8EKKQNGPJ6"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "spec",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M425CAHGK3FGNJJ8AKCXW9F5"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "architecture",
+  "check": "arch_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M425D05TS29X84KMM5SFT22X"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "architecture",
+  "check": "arch_consistency",
+  "passed": true,
+  "tool": "s2s.design.checks",
+  "command": "",
+  "id": "chk_01M425D05VSD0JEADCYRACY76P"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "architecture",
+  "check": "sentinel_arch_review",
+  "passed": true,
+  "tool": "sentinel",
+  "command": "",
+  "id": "chk_01M425E4ABY7K0EPZWFM8Q5JVK"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "architecture",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M425E4AY84G1MTJZ5DARVVWQ"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "rtl",
+  "check": "rtl_structure",
+  "passed": true,
+  "tool": "s2s.design.checks",
+  "command": "",
+  "id": "chk_01M425F56P74MBZCW9MKD6M0DP"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "rtl",
+  "check": "verilator_lint",
+  "passed": true,
+  "tool": "verilator_lint",
+  "command": "verilator --lint-only -Wall --top-module counter8 /home/user/Gouthamlabs/var/artifacts/runs/run_01M4259SBHGKA8S31TY5Q7B51W/rtl/cnt_ctrl.v /home/user/Gouthamlabs/var/artifacts/runs/run_01M4259SBHGKA8S31TY5Q7B51W/rtl/cnt_dp.v /home/user/Gouthamlabs/var/artifacts/runs/run_01M4259SBHGKA8S31TY5Q7B51W/rtl/counter8.v",
+  "id": "chk_01M425F5H5R773BMK75D6QQT45"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "rtl",
+  "check": "yosys_elab",
+  "passed": true,
+  "tool": "yosys_elab",
+  "command": "yosys -p 'read_verilog -sv /home/user/Gouthamlabs/var/artifacts/runs/run_01M4259SBHGKA8S31TY5Q7B51W/rtl/cnt_ctrl.v /home/user/Gouthamlabs/var/artifacts/runs/run_01M4259SBHGKA8S31TY5Q7B51W/rtl/cnt_dp.v /home/user/Gouthamlabs/var/artifacts/runs/run_01M4259SBHGKA8S31TY5Q7B51W/rtl/counter8.v; hierarchy -check -top counter8; proc; check -assert'",
+  "id": "chk_01M425F5SZ3F1686PHBMAB8SX1"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "rtl",
+  "check": "rtl_ports_match_arch",
+  "passed": true,
+  "tool": "yosys",
+  "command": "",
+  "id": "chk_01M425F6297TD10X2XNE9FCRNV"
+ },
+ {
+  "run": "run_01M4259SBHGKA8S31TY5Q7B51W",
+  "stage": "rtl",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M425G4WTWHV13V8W60BCR8AC"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "dut_port_list",
+  "passed": true,
+  "tool": "yosys",
+  "command": "",
+  "id": "chk_01M42AMT4V1ZKMPC7JQVH2E23C"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "testplan_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M42ANY1JQRP1HDMDD4VQC35T"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "testplan_trace",
+  "passed": true,
+  "tool": "s2s.agents.m06",
+  "command": "",
+  "id": "chk_01M42ANY1XZQQTW81SKVT6Z481"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "ref_model_a_static",
+  "passed": true,
+  "tool": "python ast",
+  "command": "",
+  "id": "chk_01M42AP85NAWE03QYP8EPYTSPR"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "ref_model_b_static",
+  "passed": true,
+  "tool": "python ast",
+  "command": "",
+  "id": "chk_01M42APHY4FSQX90FJ030PAXFW"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "nversion_agreement",
+  "passed": true,
+  "tool": "nversion",
+  "command": "",
+  "id": "chk_01M42APJ6QWC608JGJHNPDC9ZY"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "testbench_static",
+  "passed": true,
+  "tool": "python ast",
+  "command": "",
+  "id": "chk_01M42ASGYSJC1GDCJ7CBRRYDJ2"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "formal_properties_static",
+  "passed": true,
+  "tool": "yosys",
+  "command": "",
+  "id": "chk_01M42AT5WXNRWCNXZJ5AYVNCR8"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "sentinel_tests_review",
+  "passed": true,
+  "tool": "sentinel",
+  "command": "",
+  "id": "chk_01M42AWNW4XJJWVCMGK6Z87MQ7"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "test_build",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M42AWNX3BDPEYS9GFA7YD886"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "coverage_line",
+  "passed": true,
+  "tool": "verilator_coverage",
+  "command": "",
+  "id": "chk_01M42GSHDT0HC045YRVYDWFAX6"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "coverage_toggle",
+  "passed": true,
+  "tool": "verilator_coverage",
+  "command": "",
+  "id": "chk_01M42GSHDTEV5MDDT64PN0JEPT"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "coverage_functional",
+  "passed": true,
+  "tool": "vcd bins",
+  "command": "",
+  "id": "chk_01M42GSHDTXXZGTAVAFZVESCGD"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "regression_100pct",
+  "passed": true,
+  "tool": "cocotb_regress",
+  "command": "",
+  "id": "chk_01M42GSHDTZKH3CVYE41236XNR"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "requirements_traced",
+  "passed": true,
+  "tool": "cocotb_regress",
+  "command": "",
+  "id": "chk_01M42GSHE68WMJ7PQRHK9X61K5"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "formal_3_meaningful",
+  "passed": true,
+  "tool": "sby",
+  "command": "",
+  "id": "chk_01M42GSKTJGRVTVAWJBDCAVDDT"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "formal_vacuity",
+  "passed": true,
+  "tool": "sby",
+  "command": "",
+  "id": "chk_01M42GSKTJZJQ57AJF9SYC2BTV"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "mutation_detection",
+  "passed": true,
+  "tool": "mutation",
+  "command": "",
+  "id": "chk_01M42GY7A1ZYX1MFSH08HJ92KG"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "anti_cheat_final",
+  "passed": true,
+  "tool": "s2s.verify.guard",
+  "command": "",
+  "id": "chk_01M42GY7DX8GFFMJ87BB3T7QK7"
+ },
+ {
+  "run": "run_01M42AMRGN6GWFF42K2CR5PYRT",
+  "stage": "verification",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M42GY7EBF5K595GQAMMGAGE2"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "rtl_frozen_at_g2",
+  "passed": true,
+  "tool": "sha256 vs artifact store + gate record",
+  "command": "",
+  "id": "chk_01M43B9C41V1G2CXJ4G3AJ68W8"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "sdc_guard",
+  "passed": true,
+  "tool": "s2s.physical.flow.sdc_problems",
+  "command": "",
+  "id": "chk_01M43BAVM5KP3KTZW45E9XJCV1"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "sentinel_constraints_review",
+  "passed": true,
+  "tool": "sentinel",
+  "command": "",
+  "id": "chk_01M43BBXD6JDBFBF4XR2WF76TT"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "config_guard_synthesis",
+  "passed": true,
+  "tool": "s2s.physical.flow.config_guard",
+  "command": "",
+  "id": "chk_01M43BBXECS1T4QSZ2M1PRNEN7"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "openlane_synthesis",
+  "passed": true,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from Verilator.Lint --to OpenROAD.STAPrePNR --overwrite config.json",
+  "id": "chk_01M43BC10SW15VTSD1XGY491DX"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "sta_pre_layout",
+  "passed": true,
+  "tool": "opensta (OpenROAD.STAPrePNR)",
+  "command": "",
+  "id": "chk_01M43BC10XWR9NH8NJ4KD47J6H"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "eqy_rtl_vs_synth",
+  "passed": true,
+  "tool": "eqy yosys-0.46",
+  "command": "{eqy,-f,synth.eqy}",
+  "id": "chk_01M43BC2N6FY38ED3G51FN12P9"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "synthesis",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M43BD6BYC2MB5KH66SS1XBMB"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "dft",
+  "check": "dft_plan_complete",
+  "passed": true,
+  "tool": "s2s section check",
+  "command": "",
+  "id": "chk_01M43BPZG0GPZ1EC13ESZ5WQKE"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "dft",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M43BPZGJ35BZHFE17R24P7A7"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "floorplan_plan",
+  "passed": true,
+  "tool": "s2s.physical.flow (ranges + pin file)",
+  "command": "",
+  "id": "chk_01M43BQVMV2N835223M4AJDWSF"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "config_guard_floorplan",
+  "passed": true,
+  "tool": "s2s.physical.flow.config_guard",
+  "command": "",
+  "id": "chk_01M43BQVNGF63R5WAH6W7SEZ6M"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "openlane_floorplan",
+  "passed": false,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from OpenROAD.Floorplan --to Odb.ApplyDEFTemplate config.json",
+  "id": "chk_01M43BR0AY38NS5M6M9BDERMDZ"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "utilization_in_range",
+  "passed": true,
+  "tool": "openroad (floorplan metrics)",
+  "command": "",
+  "id": "chk_01M43BR0AZS3W8NKFZ35MZQ4T9"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "pdn_connected",
+  "passed": true,
+  "tool": "openroad pdn (GeneratePDN check)",
+  "command": "",
+  "id": "chk_01M43BR0AZYKQEV8MH7GKJT5PF"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "pins_per_plan",
+  "passed": false,
+  "tool": "DEF pins vs pin_order.cfg",
+  "command": "",
+  "id": "chk_01M43BR0B8J7SH99EXDA0VR0C4"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "floorplan_plan",
+  "passed": true,
+  "tool": "s2s.physical.flow (ranges + pin file)",
+  "command": "",
+  "id": "chk_01M43KSBX0Z9QTCM685GPXEAG9"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "config_guard_floorplan",
+  "passed": true,
+  "tool": "s2s.physical.flow.config_guard",
+  "command": "",
+  "id": "chk_01M43KSBY0ER0EVWDQVD561DED"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "openlane_floorplan",
+  "passed": true,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from OpenROAD.Floorplan --to Odb.ApplyDEFTemplate config.json",
+  "id": "chk_01M43KSGW6B5ZYFWRDM1HYWW20"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "utilization_in_range",
+  "passed": true,
+  "tool": "openroad (floorplan metrics)",
+  "command": "",
+  "id": "chk_01M43KSGW7PZAXERAJMEVGMZD7"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "pdn_connected",
+  "passed": true,
+  "tool": "openroad pdn (GeneratePDN check)",
+  "command": "",
+  "id": "chk_01M43KSGW7PZAXERAJMEVGMZD9"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "pins_per_plan",
+  "passed": true,
+  "tool": "DEF pins vs pin_order.cfg",
+  "command": "",
+  "id": "chk_01M43KSGWFSEFF0KKEQ3X8KFAP"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "floorplan",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M43KSGXBZ7CENBEAB3SZHHN9"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "openlane_placement",
+  "passed": true,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from OpenROAD.GlobalPlacement --to OpenROAD.DetailedPlacement config.json",
+  "id": "chk_01M43KSQ4SY8GCN69ZAB65DYCM"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "openlane_cts",
+  "passed": true,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from OpenROAD.CTS --to OpenROAD.STAMidPNR-2 config.json",
+  "id": "chk_01M43KT0D7ENY23QDGMJ75J89F"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "openlane_routing",
+  "passed": true,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from OpenROAD.GlobalRouting --to OpenROAD.STAPostPNR config.json",
+  "id": "chk_01M43KTHHX9GNF6FN24MVFXQX5"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "pnr_params_in_range",
+  "passed": true,
+  "tool": "s2s.physical.flow.config_guard",
+  "command": "",
+  "id": "chk_01M43KTHJH19NVJSZ5W41WVFA7"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "route_drc_zero",
+  "passed": true,
+  "tool": "openroad detailed routing",
+  "command": "",
+  "id": "chk_01M43KTHJH6HHHXZP7YEW2F05B"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "antenna_clean_after_route",
+  "passed": true,
+  "tool": "openroad check_antennas",
+  "command": "",
+  "id": "chk_01M43KTHJHKA1DEG2HZEM02JDW"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "no_disconnected_pins",
+  "passed": true,
+  "tool": "odb",
+  "command": "",
+  "id": "chk_01M43KTHJJ9NKMJ2RBQ7YCZJD8"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "cts_skew_target",
+  "passed": true,
+  "tool": "openroad report_clock_skew (minus SDC uncertainty)",
+  "command": "",
+  "id": "chk_01M43KTHJJXZS02AKV6Q2M7QJM"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "post_route_timing_all_corners",
+  "passed": true,
+  "tool": "opensta (OpenROAD.STAPostPNR)",
+  "command": "",
+  "id": "chk_01M43KTHJJXZS02AKV6Q2M7QJP"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "drv_clean",
+  "passed": true,
+  "tool": "opensta report_check_types",
+  "command": "",
+  "id": "chk_01M43KTHJJZXHXJQWME0V9NT6A"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "place_route",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M43KYVYSE7Z8CZYDSDTCT6VC"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "openlane_signoff_steps",
+  "passed": true,
+  "tool": "openlane 2.3.10",
+  "command": "openlane --manual-pdk --pdk-root /opt/pdk --pdk sky130A --scl sky130_fd_sc_hd --run-tag it1 --log-level VERBOSE -j 4 --from OpenROAD.IRDropReport config.json",
+  "id": "chk_01M43KZ8TYMNW0EJVJN3TWWZFB"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "drc_magic_final_gds",
+  "passed": true,
+  "tool": "magic 8.3.489",
+  "command": "{magic,-dnull,-noconsole,-rcfile,/opt/pdk/sky130A/libs.tech/magic/sky130A.magicrc,/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/magic_drc_counter8.tcl}",
+  "id": "chk_01M43KZGYWG1XS26XSDZ227YR1"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "drc_klayout_final_gds",
+  "passed": true,
+  "tool": "klayout 0.29.4",
+  "command": "{klayout,-b,-zz,-r,/opt/pdk/sky130A/libs.tech/klayout/drc/sky130A_mr.drc,-rd,feol=true,-rd,beol=true,-rd,floating_metal=false,-rd,offgrid=true,-rd,seal=true,-rd,input=/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/pnr/runs/it1/final/gds/counter8.gds,-rd,topcell=counter8,-rd,top_cell=counter8,-rd,report=/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/reports/klayout_drc_counter8.lyrdb,-rd,threads=4}",
+  "id": "chk_01M43KZGYXZG1KBEXY5B2VH06C"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "drc_tools_agree",
+  "passed": true,
+  "tool": "magic vs klayout vs openlane",
+  "command": "",
+  "id": "chk_01M43KZGYXZG1KBEXY5B2VH06E"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "lvs_final_gds",
+  "passed": true,
+  "tool": "netgen 1.5.278",
+  "command": "{netgen,-batch,source,/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/.s2s/lvs_counter8.tcl}",
+  "id": "chk_01M43KZGYXZG1KBEXY5B2VH06G"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "antenna_final",
+  "passed": true,
+  "tool": "openroad edf00dff99f6c40d67a30c0e22a8191c5d2ed9d6",
+  "command": "",
+  "id": "chk_01M43KZGYXZG1KBEXY5B2VH06J"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "density_rules",
+  "passed": true,
+  "tool": "klayout 0.29.4 (PDK met_min_ca_density.lydrc)",
+  "command": "{klayout,-b,-zz,-r,/opt/pdk/sky130A/libs.tech/klayout/drc/met_min_ca_density.lydrc,-rd,input=/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/pnr/runs/it1/final/gds/counter8.gds,-rd,topcell=counter8,-rd,top_cell=counter8,-rd,report=/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/reports/density_counter8.lyrdb,-rd,threads=4}",
+  "id": "chk_01M43KZGYXZG1KBEXY5B2VH06M"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "sta_all_corners",
+  "passed": true,
+  "tool": "opensta (9 corners, propagated clocks, SPEF)",
+  "command": "",
+  "id": "chk_01M43KZNHXRVNT35KR2J40TJBV"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "sta_matches_openlane",
+  "passed": true,
+  "tool": "opensta vs OpenLane STAPostPNR",
+  "command": "",
+  "id": "chk_01M43KZNHYEDR0Z7GP1SD42AZJ"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "power_estimated",
+  "passed": true,
+  "tool": "opensta report_power",
+  "command": "",
+  "id": "chk_01M43M1AJNK1TCKMS4NRCCZY36"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "ir_drop_within_limit",
+  "passed": true,
+  "tool": "openroad psm (OpenROAD.IRDropReport)",
+  "command": "",
+  "id": "chk_01M43M1AJNXZJKK2JQR8VY4MRJ"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "dfm_no_high_severity",
+  "passed": true,
+  "tool": "klayout DFM script + openroad antenna (rule-based severity)",
+  "command": "",
+  "id": "chk_01M43M5GH5XDMGJMW4NGJRJRFW"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "eqy_rtl_vs_final",
+  "passed": true,
+  "tool": "eqy yosys-0.46",
+  "command": "{eqy,-f,final.eqy}",
+  "id": "chk_01M43M5J7G9H1BPB2B0STHZ91T"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "gls_final_netlist",
+  "passed": true,
+  "tool": "cocotb 1.9.2 + icarus",
+  "command": "{/opt/cocotb/bin/python3,/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/signoff/gls/run_regress.py,/home/user/Gouthamlabs/var/artifacts/runs/run_01M43B9BVD8M5ANEVYTE43N0KN/signoff/gls/regress_args.json}",
+  "id": "chk_01M43M716P596DVJCPPQ3E00T4"
+ },
+ {
+  "run": "run_01M43B9BVD8M5ANEVYTE43N0KN",
+  "stage": "signoff",
+  "check": "task_result_schema",
+  "passed": true,
+  "tool": "jsonschema",
+  "command": "",
+  "id": "chk_01M43M717D4MM8ASCJSYS67W7A"
+ }
+]

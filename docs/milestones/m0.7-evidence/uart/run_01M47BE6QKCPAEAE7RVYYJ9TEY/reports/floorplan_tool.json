@@ -1,0 +1,228 @@
+{
+  "die_area_um2": 23296.2,
+  "core_area_um2": 18517.8,
+  "utilization": 0.469189,
+  "power_grid_violations": 0,
+  "pins": [
+    {
+      "name": "baud_div[0]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[10]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[11]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[12]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[13]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[14]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[15]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[1]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[2]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[3]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[4]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[5]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[6]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[7]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[8]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "baud_div[9]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "clk",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "frame_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "overrun_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "parity_err",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "parity_mode[0]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "parity_mode[1]",
+      "direction": "INPUT",
+      "side": "N"
+    },
+    {
+      "name": "rst_n",
+      "direction": "INPUT",
+      "side": "S"
+    },
+    {
+      "name": "rx",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "rx_data[0]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[1]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[2]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[3]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[4]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[5]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[6]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_data[7]",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "rx_valid",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx_data[0]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[1]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[2]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[3]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[4]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[5]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[6]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_data[7]",
+      "direction": "INPUT",
+      "side": "W"
+    },
+    {
+      "name": "tx_ready",
+      "direction": "OUTPUT",
+      "side": "E"
+    },
+    {
+      "name": "tx_valid",
+      "direction": "INPUT",
+      "side": "W"
+    }
+  ]
+}

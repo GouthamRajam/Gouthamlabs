@@ -1,0 +1,72 @@
+# Tool knowledge, checklists and design patterns seed (MASTER_SPEC Part 18.3). owner: Sage.
+entries:
+  - id: kb-tk-001
+    kind: tool_knowledge
+    title: "Verilator -Wall warnings that block Phase 0 RTL"
+    symptom: "verilator --lint-only -Wall reports WIDTH*, UNUSED*, CASEINCOMPLETE, LATCH, BLKSEQ, DECLFILENAME"
+    lesson: "Under -Wall every warning fails the S2S lint check. Common fixes: size every constant (8'd1, not 1); use every input bit or drop the port in the architecture; give every case a default; name the file after the module."
+    tags: [verilator, lint, width, unused, case, declfilename, blkseq]
+    source: {title: "Verilator manual: Errors and Warnings", url: "https://verilator.org/guide/latest/warnings.html"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-tk-002
+    kind: tool_knowledge
+    title: "Yosys elaboration: hierarchy -check, proc, check -assert"
+    symptom: "Yosys reports a missing module, a latch inferred by proc, or 'Found and reported N problems' from check -assert"
+    lesson: "Every instantiated module must be read; combinational always blocks must assign every output on every path (default assignments at the top) or proc infers a latch; check -assert fails on logic loops and multiple drivers."
+    tags: [yosys, elaboration, latch, logic_loop, multiple_drivers, hierarchy]
+    source: {title: "Yosys command reference (passes)", url: "https://yosyshq.readthedocs.io/projects/yosys/en/latest/cmd/index_passes.html"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-tk-003
+    kind: tool_knowledge
+    title: "SKY130 PDK and the sky130_fd_sc_hd standard-cell library"
+    symptom: "Choosing the Phase 0 process, library and a realistic clock target"
+    lesson: "Phase 0 targets sky130A with sky130_fd_sc_hd (high density). PDK rules stay inside the tools, never in prompts; agents pick structures, the tools check them."
+    tags: [sky130, pdk, standard_cells, clock_target]
+    source: {title: "SkyWater SKY130 PDK documentation", url: "https://skywater-pdk.readthedocs.io/en/main/"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-pt-001
+    kind: design_pattern
+    title: "UART framing: 8N1, parity, 16x oversampling"
+    symptom: "Designing or specifying a UART transmitter/receiver"
+    lesson: "A frame is start bit (0), data LSB first, optional parity, stop bit (1); idle line is high. Receivers usually oversample 16x and sample near the bit center; the async rx input needs a synchronizer."
+    tags: [uart, serial, protocol, 8n1, parity, oversampling, interface]
+    source: {title: "Universal asynchronous receiver-transmitter", url: "https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-pt-002
+    kind: design_pattern
+    title: "Clock domain crossing structures"
+    symptom: "Signals move between clock domains, or an input is asynchronous to the design clock"
+    lesson: "Single-bit level: 2-flop synchronizer. Pulse: toggle + synchronizer + edge detect. Multi-bit: handshake or async FIFO with Gray pointers. Record every crossing in arch.yaml cdc."
+    tags: [cdc, synchronizer, sync2, handshake, async_fifo]
+    source: {title: "Clock domain crossing", url: "https://en.wikipedia.org/wiki/Clock_domain_crossing"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-ck-001
+    kind: checklist
+    title: "Spec checklist (G1)"
+    symptom: "Reviewing a specification before architecture"
+    lesson: "Every output has a reset value; reset type and active level stated; every requirement typed, testable and with a numeric acceptance criterion; behavior on overflow, underflow, invalid input and simultaneous controls stated; out-of-scope list present; defaults marked 'DEFAULT - needs G1 review'."
+    tags: [spec, checklist, g1, reset, overflow, acceptance]
+    source: {title: "S2S MASTER_SPEC Appendix A.2 (Iris quality bar) and Appendix B.1", url: "docs/MASTER_SPEC.md"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-ck-002
+    kind: checklist
+    title: "RTL checklist (Appendix D)"
+    symptom: "Writing or reviewing Phase 0 RTL"
+    lesson: "One module per file named after it; non-blocking in sequential, blocking in combinational with defaults at the top; every case has a default; synchronous active-low rst_n; parameters for widths; no initial/delays/system tasks; header with REQ IDs and // REQ-### trace comments."
+    tags: [rtl, checklist, coding_standard, reset, latch]
+    source: {title: "S2S MASTER_SPEC Appendix D (RTL coding standard)", url: "docs/MASTER_SPEC.md"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage

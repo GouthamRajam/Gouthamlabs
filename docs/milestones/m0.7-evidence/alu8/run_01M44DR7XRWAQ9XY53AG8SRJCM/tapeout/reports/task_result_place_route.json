@@ -1,0 +1,91 @@
+{
+  "task_id": "task_01M44DR7YNTGBGD9DFGVD61547",
+  "status": "success",
+  "summary": "One P&R iteration (it1: FP_CORE_UTIL 40, PL_TARGET_DENSITY_PCT 55.0, MAX_FANOUT_CONSTRAINT 10) reported no problems and made no changes. Its data shows 0 route DRC errors, 0 antenna violating nets/pins, 0 disconnected pins, 0 slew/cap/fanout violations, wirelength 5485 um and utilization 0.460397. Worst setup slack is 3.2760435291814916 ns (max_ss_100C_1v60) and worst hold slack is 0.4195979793496291 ns (min_ff_n40C_1v95); all 9 corners are positive for both. Tree skew is 0.0 ns against a 1.3333 ns target. No congestion/overflow figure is in the input data. Final sign-off depends on the runtime's real checks.",
+  "outputs": [
+    {
+      "path": "reports/cts_report.json",
+      "sha256": "62c05a929675abd1ac9aa9a261372379a49a635435e694e4975f1da69d2643c8"
+    },
+    {
+      "path": "reports/cts_tool.json",
+      "sha256": "428a83932eab43447b22d129cfd4e617fc3aec8b0a0e3cc3d61e0c9e3caedcfb"
+    },
+    {
+      "path": "reports/division3_report.md",
+      "sha256": "eacf456c5405c8ebd182499971f669c1cd38893d9535fae88f1788f095ed518c"
+    },
+    {
+      "path": "reports/division_cost.json",
+      "sha256": "f46aabb775f3363bfdd1b36132fc886560714ab6a6eb63d1fda2e8299673d664"
+    },
+    {
+      "path": "reports/pnr_iteration_1.json",
+      "sha256": "b6b4c691067fd3dc5f2df60e37150b55953b656f37ceb469d0811572edf554c4"
+    },
+    {
+      "path": "reports/pnr_iterations.json",
+      "sha256": "ea8d8f8bc7117598094f67db8b1659f18f0df3b57cb53a4f3fe76ebe43420cf6"
+    },
+    {
+      "path": "reports/pnr_report.json",
+      "sha256": "954be6f34dfd5f2d1d589498c0e9afc281a385a1d136a4dafd92b11df6aa185f"
+    }
+  ],
+  "checks_run": [
+    "chk_01M44E1YMVZZ6WK5Z29VJRA86G",
+    "chk_01M44E2D0TAFMT1M6WX09VXBY3",
+    "chk_01M44E3K4VMK9V8AFZM1XQ7WD8",
+    "chk_01M44E3K5G2MT74N0ZT2MV6GD6",
+    "chk_01M44E3K5GKEKW30PZ79N0VQE3",
+    "chk_01M44E3K5GX7YADYNPKZQ7E8N9",
+    "chk_01M44E3K5GX7YADYNPKZQ7E8NB",
+    "chk_01M44E3K5HDH430MX07DXFA91H",
+    "chk_01M44E3K5HMX1RDSYR8ZMEX36X",
+    "chk_01M44E3K5HRHDANSA5GYKSV78Z",
+    "chk_01M44E7C0BZN96Y5N9EF2RPT4C"
+  ],
+  "assumptions": [
+    "'Delivered yesterday' is taken as the it1 run results contained in the input reports; the inputs carry no dates.",
+    "Absence of defect data is reported as 'none reported', not as zero escaped defects.",
+    "Default iteration budget of 8 applies; only 1 was used.",
+    "Iteration 1 is the final state, since pnr_iterations.json holds only one entry.",
+    "Slack values in pnr_report.json are treated as post-route worst slacks as stated by Orion; they are not sign-off STA.",
+    "The rise in utilization from 0.428079 (floorplan) to 0.460397 (P&R facts) is attributed to buffers added by CTS, hold fixing and repair; the data does not break this down.",
+    "Total spend 0.001393 USD is the arithmetic sum of run_spend_by_agent_usd; no budget or forecast data was supplied.",
+    "`hold_ws_after_cts_by_corner` / `setup_ws_after_cts_by_corner` are worst slacks in ns (positive = met).",
+    "`reported_skew_ns` (+/-0.25 ns) is the tool's skew including clock uncertainty; `tree_skew_ns` is the skew of the built tree alone.",
+    "`source_latency_ns` is the clock insertion latency; the negative `target_latency_ns` is reported as given and not interpreted further.",
+    "`target_ns` = 1.3333 ns in cts_tool.json is the skew target (it equals 10% of the 13.333 ns period); the file does not label it further.",
+    "setup_ws_by_corner / hold_ws_by_corner in pnr_iterations.json are post-route worst slacks in ns (positive = met); the file does not label the stage explicitly."
+  ],
+  "open_issues": [
+    "53 timing-repair buffers for a 12-flop design; cause unidentified.",
+    "53 timing-repair buffers is large for a 12-flop design; the driver (e.g. 0 ns I/O delay assumption, slew/cap repair) is not identified in the data. Chronos/Orion should confirm.",
+    "53 timing-repair buffers is large relative to a 12-flop design; Orion/Chronos may want to confirm what drove this repair (e.g. max transition/cap or 0 ns I/O delay assumption from spec open_questions).",
+    "DFT: no scan, no ATPG/fault simulation; coverage unknown.",
+    "Equivalence check (RTL vs netlist) has no result; blocking for sign-off.",
+    "I/O delay conflict: SDC 4.0 ns DEFAULT vs spec open_questions 0 ns; needs human decision.",
+    "No congestion or global-routing overflow numbers are present in the input data; congestion cannot be reported. The runtime should supply the GRT overflow/congestion report if it is required.",
+    "No division budget or weekly forecast in division_cost.json; spend vs budget cannot be reported.",
+    "Post-CTS hold and setup slack are reported only for the 3 nominal corners; the min_* and max_* corners (6 of 9) have skew/latency data but no slack data. Chronos should confirm hold at min_ff_n40C_1v95 and max_ff_n40C_1v95 in post-route STA.",
+    "REQ-016 flop count (exactly 12) not confirmed: cell_classes empty.",
+    "Sign-off post-route STA (REQ-014) not yet run by the runtime; no congestion/overflow data reported.",
+    "Tightest hold margin is 0.1389496473876063 ns at nom_ff_n40C_1v95; post-route parasitics could reduce it - to be confirmed by real post-route STA (REQ-014).",
+    "Tightest hold slack is 0.4195979793496291 ns at min_ff_n40C_1v95; sign-off post-route STA (REQ-014) must be confirmed by the real STA run."
+  ],
+  "messages": [
+    {
+      "from": "Tick",
+      "summary": "alu8 CTS (iteration 1) for clk at 75 MHz: worst tree skew is 0.0 ns in all 9 corners against a 1.3333 ns target; reported skew equals the 0.25 ns clock uncertainty. Source latency ranges 0.159133-0.411331 ns. 3 clock buffers, 8 hold buffers and 53 timing-repair buffers were inserted. Post-CTS hold worst slack is positive in the 3 nominal corners given (tightest 0.1389496473876063 ns at nom_ff_n40C_1v95); setup worst slack is positive (tightest 2.917003610112311 ns at nom_ss_100C_1v60). Final pass/fail is decided by the runtime's real checks."
+    },
+    {
+      "from": "Mason",
+      "summary": "Wrote the one-page Division 3 report for alu8 at place_route. Physical results as reported are clean (0 DRC/antenna/disconnects, positive setup and hold at all 9 corners, tightest setup 3.276 ns max_ss, tightest hold 0.4196 ns min_ff). Gate readiness is NOT READY: equivalence unproven, REQ-016 flop count unconfirmed, I/O delay conflict (4.0 ns SDC vs 0 ns spec) undecided, sign-off STA pending, DFT coverage unknown. Division spend totals 0.001393 USD; no budget given. Two human decisions requested (I/O delay, Phase 0 DFT approach)."
+    }
+  ],
+  "self_assessment": {
+    "reason": "All numbers are copied directly from the three input reports; the only gap (congestion) is stated explicitly rather than estimated.",
+    "confidence": "high"
+  }
+}

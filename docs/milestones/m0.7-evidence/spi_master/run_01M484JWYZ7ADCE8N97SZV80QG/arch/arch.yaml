@@ -1,0 +1,130 @@
+design: spi_master
+top: spi_master
+modules:
+  - name: spi_master
+    kind: interface
+    ports_from_spec: true
+    instances: [sync2, spi_ctrl, spi_clkgen, spi_shift]
+    implements: [REQ-020, REQ-021, REQ-022, REQ-023, REQ-024, REQ-025]
+    description: 'Top level, wiring only. All spec I/O. Single clock clk, synchronous active-low rst_n, no clock gating, no SCK-clocked flops.'
+  - name: sync2
+    kind: interface
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: d, dir: in, width: 1}
+      - {name: q, dir: out, width: 1}
+    implements: [REQ-011, REQ-020]
+    max_logic_depth: 2
+    description: '2-flop synchronizer for the asynchronous miso input, reset to 0. Only CDC in the design.'
+  - name: spi_ctrl
+    kind: control
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: start, dir: in, width: 1}
+      - {name: cs_mode, dir: in, width: 1}
+      - {name: cs_force, dir: in, width: 1}
+      - {name: irq_clear, dir: in, width: 1}
+      - {name: cs_rise_stb, dir: in, width: 1}
+      - {name: end_stb, dir: in, width: 1}
+      - {name: start_acc, dir: out, width: 1}
+      - {name: busy, dir: out, width: 1}
+      - {name: cs_n, dir: out, width: 1}
+      - {name: done, dir: out, width: 1}
+      - {name: irq, dir: out, width: 1}
+      - {name: start_err, dir: out, width: 1}
+    implements: [REQ-001, REQ-008, REQ-009, REQ-010, REQ-012, REQ-013, REQ-014, REQ-015, REQ-016, REQ-018, REQ-019]
+    max_logic_depth: 4
+    description: 'start_acc = start & ~busy (combinational). Registered: busy (set on start_acc, cleared on end_stb), cs_n (auto: low from start_acc to cs_rise_stb; manual: ~cs_force), done <= cs_rise_stb, irq <= cs_rise_stb | (irq & ~irq_clear) (set wins), start_err <= start & busy. Effective cs_mode register updates only while busy=0. Reset values busy=0, cs_n=1, done=0, irq=0, start_err=0; reset aborts any transfer.'
+  - name: spi_clkgen
+    kind: datapath
+    params: {DIV_W: 16, CNT_W: 6}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: start_acc, dir: in, width: 1}
+      - {name: clk_div, dir: in, width: DIV_W}
+      - {name: word_len, dir: in, width: 1}
+      - {name: cpol, dir: in, width: 1}
+      - {name: sck, dir: out, width: 1}
+      - {name: edge_stb, dir: out, width: 1}
+      - {name: lead_edge, dir: out, width: 1}
+      - {name: cs_rise_stb, dir: out, width: 1}
+      - {name: end_stb, dir: out, width: 1}
+      - {name: edge_cnt, dir: out, width: CNT_W}
+    implements: [REQ-001, REQ-002, REQ-003, REQ-005, REQ-006, REQ-007, REQ-009, REQ-010, REQ-014, REQ-016, REQ-018, REQ-019]
+    max_logic_depth: 12
+    description: 'On start_acc latches N = (clk_div < 4) ? 4 : clk_div, word_len and cpol, clears the half-period counter and tick counter and sets running. While running, the half-period counter counts 0..N-1 and a tick is asserted at N-1; tick counter j (0..2W+1) gives edge_stb for j<2W (lead_edge = ~j[0]), cs_rise_stb at j=2W, end_stb at j=2W+1 (running cleared). sck is a register: toggles on edge_stb, follows live cpol when not running (1 clk latency), 0 in reset. edge_cnt is the tick count exported as a verification hook.'
+  - name: spi_shift
+    kind: datapath
+    params: {DATA_W: 16}
+    ports:
+      - {name: clk, dir: in, width: 1}
+      - {name: rst_n, dir: in, width: 1}
+      - {name: start_acc, dir: in, width: 1}
+      - {name: tx_data, dir: in, width: DATA_W}
+      - {name: word_len, dir: in, width: 1}
+      - {name: cpha, dir: in, width: 1}
+      - {name: edge_stb, dir: in, width: 1}
+      - {name: lead_edge, dir: in, width: 1}
+      - {name: cs_rise_stb, dir: in, width: 1}
+      - {name: miso_s, dir: in, width: 1}
+      - {name: mosi, dir: out, width: 1}
+      - {name: rx_data, dir: out, width: DATA_W}
+    implements: [REQ-001, REQ-002, REQ-003, REQ-004, REQ-007, REQ-011, REQ-012, REQ-017, REQ-018, REQ-019]
+    max_logic_depth: 6
+    description: 'On start_acc latches cpha, word_len and the TX word left-aligned (8-bit: tx_data[7:0] in bits [15:8]); for cpha=0 mosi <= MSB on start_acc (visible with cs_n fall). Shift edge = trailing (cpha=0) or leading (cpha=1); mosi updates on shift-edge strobes (cpha=1: MSB at first leading edge). Sample-edge strobes pass a 2-flop delay pipeline, then shift miso_s into a 16-bit RX register. On cs_rise_stb rx_data <= RX register right-aligned (8-bit: upper byte 0) and mosi <= 0. mosi=0 when idle, rx_data changes only at completion or reset.'
+connections:
+  - {from: spi_master.miso, to: [sync2.d]}
+  - {from: sync2.q, to: [spi_shift.miso_s]}
+  - {from: spi_master.start, to: [spi_ctrl.start]}
+  - {from: spi_master.cs_mode, to: [spi_ctrl.cs_mode]}
+  - {from: spi_master.cs_force, to: [spi_ctrl.cs_force]}
+  - {from: spi_master.irq_clear, to: [spi_ctrl.irq_clear]}
+  - {from: spi_master.clk_div, to: [spi_clkgen.clk_div]}
+  - {from: spi_master.cpol, to: [spi_clkgen.cpol]}
+  - {from: spi_master.word_len, to: [spi_clkgen.word_len, spi_shift.word_len]}
+  - {from: spi_master.tx_data, to: [spi_shift.tx_data]}
+  - {from: spi_master.cpha, to: [spi_shift.cpha]}
+  - {from: spi_master.clk, to: [sync2.clk, spi_ctrl.clk, spi_clkgen.clk, spi_shift.clk]}
+  - {from: spi_master.rst_n, to: [sync2.rst_n, spi_ctrl.rst_n, spi_clkgen.rst_n, spi_shift.rst_n]}
+  - {from: spi_ctrl.start_acc, to: [spi_clkgen.start_acc, spi_shift.start_acc]}
+  - {from: spi_clkgen.edge_stb, to: [spi_shift.edge_stb]}
+  - {from: spi_clkgen.lead_edge, to: [spi_shift.lead_edge]}
+  - {from: spi_clkgen.cs_rise_stb, to: [spi_ctrl.cs_rise_stb, spi_shift.cs_rise_stb]}
+  - {from: spi_clkgen.end_stb, to: [spi_ctrl.end_stb]}
+  - {from: spi_clkgen.sck, to: [spi_master.sck]}
+  - {from: spi_shift.mosi, to: [spi_master.mosi]}
+  - {from: spi_shift.rx_data, to: [spi_master.rx_data]}
+  - {from: spi_ctrl.cs_n, to: [spi_master.cs_n]}
+  - {from: spi_ctrl.busy, to: [spi_master.busy]}
+  - {from: spi_ctrl.done, to: [spi_master.done]}
+  - {from: spi_ctrl.irq, to: [spi_master.irq]}
+  - {from: spi_ctrl.start_err, to: [spi_master.start_err]}
+cdc:
+  - {signal: miso, from: async, to: clk, synchronizer: sync2}
+state_machines:
+  - module: spi_ctrl
+    states: [IDLE, ACTIVE, RECOVER]
+ppa_estimate:
+  cells: 480
+  critical_path_levels: 12
+  slack_margin_pct: 55
+rationale:
+  - 'One tick generator (half-period counter + tick counter) drives SCK edges, CS rise, done and busy fall, so every timing in REQ-009/012/014 is j*N cycles from one origin and cannot drift.'
+  - 'All outputs are registered and all control strobes are decoded one cycle early, so outputs are glitch-free, IO paths are flop-to-pad, and spec cycle numbers map directly to register updates.'
+  - 'SCK is a clk-domain register, not a clock; no flop is clocked by SCK (REQ-020), and 50% duty for odd N comes for free because each half period is exactly N clk cycles.'
+  - 'N is clamped to >=4 once at latch time, so the per-cycle path is only a 16-bit equality compare plus tick decode.'
+  - 'MISO capture uses the sample strobe delayed by 2 flops to match the 2-flop synchronizer latency (REQ-011); N>=4 guarantees the captured bit is stable and lands before rx_data is loaded.'
+  - 'The FSM is in spi_ctrl only (IDLE -> ACTIVE on start_acc, ACTIVE -> RECOVER on cs_rise_stb, RECOVER -> IDLE on end_stb, any -> IDLE on reset); busy = state != IDLE.'
+  - 'Estimate: about 105 flops (clkgen 42, shift 53, ctrl 8, sync 2) plus about 375 logic cells; area roughly 4,000 um2 against the 20,000 um2 budget; about 12 levels at roughly 0.5 ns each is about 6 ns of a 20 ns period.'
+verification_hooks:
+  - 'spi_clkgen.edge_cnt: tick count per transfer; equals 2W+2 at end_stb, SCK edge count equals 2W (REQ-003, REQ-025).'
+  - 'Assertion: busy==0 && rst_n==1 (after the 1-cycle reset release latency) implies sck == $past(cpol) (REQ-002, REQ-007, REQ-025).'
+  - 'Assertion: effective cs_mode==0 && busy==0 implies cs_n==1 (REQ-008, REQ-025).'
+  - 'Assertion: done is a single-cycle pulse and rx_data changes only when done==1 or on reset (REQ-012).'
+  - 'Assertion: start_err == $past(start && busy) (REQ-015).'
+  - 'Assertion: busy high duration equals (2W+2)N clk cycles (REQ-014).'
+  - 'Assertion: mosi==0 whenever busy==0 (REQ-017).'
+  - 'Cover points: 4 modes x 2 word lengths x N in {4,5,7,100}, clk_div 0..3, back-to-back, manual CS, irq_clear coincident with done, reset mid-transfer (REQ-024).'

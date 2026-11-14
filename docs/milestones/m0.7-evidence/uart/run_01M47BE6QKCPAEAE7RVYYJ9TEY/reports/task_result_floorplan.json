@@ -1,0 +1,54 @@
+{
+  "task_id": "task_01M47BE6RDGPYTHPHZHZJ5T8Z3",
+  "status": "success",
+  "summary": "Wrote pnr/floorplan.json (core_utilization_pct=45 with reasons for utilization, pins, power grid and clock/reset) and pnr/pin_order.cfg (45 pins: North baud_div[15:0], parity_mode[1:0]; South clk, rst_n; East tx, tx_ready, rx_data[7:0], rx_valid, frame_err, parity_err, overrun_err; West rx, tx_data[7:0], tx_valid). No tool was run by me; floorplan/PDN/pin-order checks are pending in the runtime.",
+  "outputs": [
+    {
+      "path": "pnr/floorplan.json",
+      "sha256": "178230f2a2df11f6cd411aa4b4d1cd981642c492093ea12e866629e26d534722"
+    },
+    {
+      "path": "pnr/pin_order.cfg",
+      "sha256": "d43fc7928f0088f9f7f06a0b095a973875d9244dff964f7db1c84f4b41dea2a1"
+    },
+    {
+      "path": "reports/floorplan_report.json",
+      "sha256": "3477cad7c03ebfcdbc5349c30fbf20a6e88d15a3702c29f030cac29a600d370f"
+    },
+    {
+      "path": "reports/floorplan_tool.json",
+      "sha256": "2625cb8682b76a12805d1badd18968926841e59fd43d2dc9f18bded4063ddcdf"
+    },
+    {
+      "path": "reports/pnr_ranges.json",
+      "sha256": "fc92fdddd8bcbfad412d867bd29d7ede519c349c6760255b964d5d8df3dfbbc1"
+    }
+  ],
+  "checks_run": [
+    "chk_01M47V7ARDNBA2XN79DC5ZMDR7",
+    "chk_01M47V7ASB1FDQRZ11QGWDNQ7V",
+    "chk_01M47V7G612PB8JJYK3FB1YRNZ",
+    "chk_01M47V7G64FGBWFWCGZQFEX43M",
+    "chk_01M47V7G64YWYARDBEXR0S9N9G",
+    "chk_01M47V7G6MCEJNWCX36GFTY8DP",
+    "chk_01M47V7G81VENPXFZR9B0P0FPV"
+  ],
+  "assumptions": [
+    "Bus bits are named like tx_data[0] in the netlist, so the prefix 'tx_data.*' covers all bits.",
+    "Default SKY130 PDN (no strap overrides) because pnr_ranges.yaml defines no strap ranges.",
+    "OpenLane matches each pin_order pattern against the whole pin name (an exact name like 'tx' does not match 'tx_data[0]' or 'tx_ready'); if it used prefix matching the parser would report overlaps.",
+    "Order of pins within a side is not functionally significant for this small block.",
+    "Synthesized area 8363.02 um^2 is the standard-cell area before tap/fill/CTS/resizer buffers; 45% leaves headroom for those.",
+    "Top-level port list equals spec.yaml interfaces (arch.yaml uart_top ports_from_spec: true): 45 pins total; overrun_err remains a real output port even though driven constant 0."
+  ],
+  "open_issues": [
+    "If CTS shows leaf-fanout problems later, utilization (30-65%) is the sanctioned flop-spread knob per lesson s2s-cts-003, to be screened with recorded experiments.",
+    "PDN connectivity and 'no unpowered rows' are not yet confirmed; they need the runtime's real floorplan/PDN run.",
+    "Pre-layout hold slack at nom_ff_n40C_1v95 is -0.003 ns (ideal clock); expected to be fixed by post-CTS hold repair, but should be tracked by the timing owner, not the floorplan."
+  ],
+  "messages": [],
+  "self_assessment": {
+    "reason": "Choices are standard and within the allowed ranges, but no real floorplan, PDN or pin-order parser run has confirmed them yet; pin-pattern matching semantics are assumed full-match.",
+    "confidence": "medium"
+  }
+}

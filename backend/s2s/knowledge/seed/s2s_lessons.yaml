@@ -1,0 +1,292 @@
+# S2S's own engineering lessons (CEO decision D5, 2026-10-05): every closed failure becomes a permanent,
+# searchable record so no future run rediscovers it. Same fields as the other seed files, plus:
+#   wrong_assumption - what an agent believed that was false
+#   evidence         - runs, experiments, commits that show it
+#   regression_test  - the test that fails if the mistake comes back (path in backend/tests)
+# Agents receive matching entries in `relevant_knowledge` (keyword search, s2s.knowledge.kb). owner: Sage.
+entries:
+  - id: s2s-cts-001
+    kind: s2s_lesson
+    title: "Clock-tree fanout: find the violating tree LEVEL before choosing a knob"
+    symptom: "max fanout violations on clkbuf_<level>_* clock buffers after CTS"
+    root_cause: "OpenROAD CTS clusters flip-flops into leaf clusters (CTS_SINK_CLUSTERING_SIZE) and spreads the clusters over an H-tree; the H-tree stops splitting at up to 15 clusters per branch, so with 531 sinks in clusters of 8 (68 clusters) the 8 level-3 buffers drove up to 12 leaf buffers each."
+    wrong_assumption: "Smaller leaf clusters lower all clock fanout (iteration 9: cluster 6 raised level-3 fanout to 16)."
+    lesson: "Name the level of each violating clock buffer first. Upper-level fanout = clusters / branches: LARGER clusters (fewer clusters) lower it, as long as leaf fanout stays within the limit. Choose cluster size between sinks/(branches x limit) and the limit (sync_fifo: 9 or 10). Cluster diameter and buffer distance do not change branching."
+    evidence: "sync_fifo experiments PNR-SYNCFIFO-0010..0013 (cluster 10: 0 violators, 9: 0, buffer distance 50: 1, diameter 25: 8 up to 19); 0011 routed clean"
+    regression_test: "tests/test_m07_guards.py::test_params_must_stay_inside_pnr_ranges"
+    tags: [cts, clock_tree, fanout, max_fanout, clkbuf, h_tree, cluster, sink_clustering, orion, place_route]
+    source: {title: "S2S sync_fifo M0.7 run_01M43MDNVKWCHEQ0GGHPJFT602", url: "run:run_01M43MDNVKWCHEQ0GGHPJFT602"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-cts-002
+    kind: s2s_lesson
+    title: "MAX_FANOUT_CONSTRAINT does not repair clock nets; OpenROAD CTS has no fanout limit"
+    symptom: "Lowering the resizer fanout target does not change clock-buffer fanout violations"
+    root_cause: "repair_design skips clock nets; TritonCTS has no max-fanout option (installed OpenROAD 'help clock_tree_synthesis'). OpenLane 2.3.10 reports max fanout in STA but has no checker that fails on it."
+    wrong_assumption: "The resizer's fanout target governs every net."
+    lesson: "Fix clock-tree fanout with CTS clustering/branching settings, not MAX_FANOUT_CONSTRAINT. Commercial CTS enforces clock fanout as a CTS rule (Innovus CCOpt max_fanout, typical 8-20)."
+    evidence: "sync_fifo iterations 2-3 (target 10 -> 8: violations 34 -> 35)"
+    regression_test: "tests/test_m07_guards.py"
+    tags: [cts, max_fanout, resizer, repair_design, clock_net, openroad, openlane, orion]
+    source: {title: "OpenROAD CTS documentation", url: "https://openroad.readthedocs.io/en/latest/main/src/cts/README.html"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-pnr-001
+    kind: s2s_lesson
+    title: "OpenLane resumes from the most recently modified state_out.json"
+    symptom: "Re-running placement on a run tag that already went further fails with GPL-0302 or uses a routed state"
+    root_cause: "OpenLane picks the newest state_out.json in the run folder; later stages' folders from an earlier attempt win."
+    wrong_assumption: "Re-running a stage on an existing tag starts from the previous stage."
+    lesson: "Before re-running a stage on a tag, remove that stage's and later step folders (flow.clear_from); forks keep state-file timestamps (flow.fork)."
+    evidence: "sync_fifo it5 (GlobalPlacement steps 38 and 66); commits c4ad50f, aea81be"
+    regression_test: "tests/test_clear_from.py"
+    tags: [openlane, resume, state_out, gpl_0302, placement, fork, place_route]
+    source: {title: "S2S commit c4ad50f", url: "commit:c4ad50f"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-001
+    kind: s2s_lesson
+    title: "One runner per task; outside runners keep the task 'paused'"
+    symptom: "Two runs of the same place-and-route iteration on one run folder; results interleaved and invalid"
+    root_cause: "An operator marked a task 'running' under an outside runner; the stall watchdog saw no orchestrator worker and reassigned it."
+    wrong_assumption: "The dashboard status of a task can be edited without consequences."
+    lesson: "run_task holds an exclusive per-task lock and refuses a second runner. Never mark an outside-run task 'running'. Invalid experiments are recorded as invalid and never used as evidence."
+    evidence: "sync_fifo iteration 8 first attempt (reports/pnr_iteration_8_invalid.json); commit d07aa94"
+    regression_test: "tests/test_run_lock_disk.py::test_second_runner_is_refused"
+    tags: [orchestrator, watchdog, concurrency, run_lock, invalid_experiment, operations]
+    source: {title: "S2S DECISIONS 2026-10-05", url: "docs/DECISIONS.md"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-mut-001
+    kind: s2s_lesson
+    title: "A mutation score stuck at the same value across test rounds points to equivalent mutants"
+    symptom: "The same mutants survive every test-improvement round (uart: 14/20 seven times)"
+    root_cause: "Mutants such as removed resets of registers that are reloaded before use may be unobservable at the outputs; a 25-step bounded screen cannot decide them for a UART frame (~160 cycles), so they stay 'unknown' and count as missed."
+    wrong_assumption: "Every surviving mutant is a test weakness that more tests can fix."
+    lesson: "When the same survivors repeat, stop writing tests for them and decide equivalence with an unbounded proof (prove-then-exclude, D2). Use ABC dprove (latch correspondence + induction) on the SymbiYosys miter: it proved 5 of 6 uart survivors equivalent in < 1 s where plain PDR timed out. Validate with caught mutants (none may come out equivalent) and never trust a hand-built AIGER that lost its latches. Never suppress a mutant class; bounded 'no difference found' is not a proof (GateTruth 2026)."
+    evidence: "uart mutation rounds 2026-10-04 15:16 .. 2026-10-05 16:08; scratch_uart_equiv results"
+    regression_test: "tests/test_mutation_timeouts.py"
+    tags: [mutation, equivalent_mutant, missing_reset, mutation_score, theo, myra, uart, verification]
+    source: {title: "GateTruth: auditing RTL benchmarks via mutation testing", url: "https://arxiv.org/pdf/2608.12635"}
+    date: "2026-10-05"
+    confidence: medium
+    owner: Sage
+  - id: s2s-mut-002
+    kind: s2s_lesson
+    title: "A timed-out mutant simulation is never a caught bug; verdicts survive restarts"
+    symptom: "Mutation runs lost to container restarts; timeouts counted as catches"
+    root_cause: "Verdicts were held in memory only; a timeout used to count as detected."
+    lesson: "Timeouts are retried at 2x and then count as NOT caught; each non-timeout verdict is cached by RTL+testbench hash so a restart re-runs only unfinished mutants."
+    evidence: "commits 4ad31d0, 10b2f67"
+    regression_test: "tests/test_mutation_cache.py"
+    tags: [mutation, timeout, cache, restart, myra, verification]
+    source: {title: "S2S commit 10b2f67", url: "commit:10b2f67"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-fv-001
+    kind: s2s_lesson
+    title: "Deep clock dividers: k-induction will not close; prove each property alone with PDR"
+    symptom: "k-induction fails from an unreachable state; deeper depth only makes the base case slower (spi_master depth 160: ~1 min/step)"
+    root_cause: "Port-level properties cannot tie the state to a hidden 16-bit divider counter, so they are not k-inductive; the joint PDR run gets stuck on the hardest properties."
+    wrong_assumption: "A larger depth or a longer timeout will close the proof."
+    lesson: "Prove each property alone with ABC PDR (other assertions removed, assumptions kept); check with RTL broken on purpose that the assumptions are not vacuous. Properties that still do not close stay bounded and are not counted (D3). Induction-STEP counterexamples are not design failures."
+    evidence: "spi_master: 9/12 proven alone, real flow 9 meaningful proven (2026-10-05 16:49); negative controls fail at frames 2 and 88; commits 26ded26, b18ad24"
+    regression_test: "tests/test_formal_pdr.py"
+    tags: [formal, pdr, ic3, k_induction, induction, counter, divider, euclid, sby, spi_master]
+    source: {title: "S2S commit 26ded26", url: "commit:26ded26"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-eq-001
+    kind: s2s_lesson
+    title: "eqy can fail on a partition where Yosys LEC proves every point"
+    symptom: "eqy reports an error/FAIL without a counterexample on a counter partition"
+    root_cause: "eqy's partitioning with abc pdr could not prove one partition (sync_fifo count logic)."
+    lesson: "Fall back to Yosys sequential equivalence with register correspondence (equiv_make/simple/induct, bit-level names); pass only if every $equiv point is proven; keep a negative test that a real RTL change fails."
+    evidence: "sync_fifo 562/562 points; commit fe35a64"
+    regression_test: "tests/platform/test_lec_fallback.py"
+    tags: [equivalence, eqy, lec, yosys, synthesis, netlist, sienna]
+    source: {title: "S2S commit fe35a64", url: "commit:fe35a64"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-forbid-001
+    kind: forbidden_method
+    title: "Forbidden shortcuts (never use to reach PASS)"
+    symptom: "Pressure to make a blocked design pass"
+    lesson: "Never: suppress a mutant class or exclude a mutant on suspicion; shrink a counter or add an assumption without a written soundness argument; waive a violation or change set_max_fanout/SDC silently; count a timeout as a catch; count a bounded result as a proof; claim production readiness from SKY130 results."
+    tags: [forbidden, waiver, mutation, formal, sdc, policy, verification, place_route]
+    source: {title: "S2S action plan 2026-10-05", url: "docs/reports/S2S_action_plan_2026-10-05.pdf"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-002
+    kind: s2s_lesson
+    title: "EDA tools run in a container that mounts only the runner's work folder"
+    symptom: "A tool fails with FileNotFoundError for a file that exists on the host (sby copy_src)"
+    root_cause: "runner.run mounts only `workdir` into the s2s-eda container; the D2 equivalence proof referenced the original RTL outside its eq/ folder, so every proof failed (safely: counted as undecided)."
+    wrong_assumption: "A unit test with a fake runner proves the tool sees the same files as the host."
+    lesson: "Copy every input into the folder passed to runner.run (or pass a parent folder as workdir). Unit tests that fake the runner must assert that every file the tool reads is inside workdir, and a new tool integration needs one real-tool run before use."
+    evidence: "uart mutation run 2026-10-05 20:49 (22 proofs, all sby FileNotFoundError); fixed and re-checked with the real tools"
+    regression_test: "tests/test_mutation_equiv.py::test_only_proven_equivalent_mutants_are_screened_out"
+    tags: [runner, docker, container, mount, workdir, sby, mutation, tooling, operations]
+    source: {title: "S2S mutation_run fix 2026-10-05", url: "docs/DECISIONS.md"}
+    date: "2026-10-05"
+    confidence: high
+    owner: Sage
+  - id: s2s-eq-002
+    kind: s2s_lesson
+    title: "Synthesis re-encoded an FSM: give the LEC the state mapping from the synthesis log, then prove it"
+    symptom: "RTL vs netlist LEC leaves every point of one FSM's fan-out unproven (state register widths differ, e.g. 3-bit RTL state vs 5 netlist flops; one state bit missing by name); eqy times out proving partitions"
+    root_cause: "OpenLane's Yosys synthesis always runs `fsm`; fsm_recode re-encodes FSMs ('auto' -> one-hot for small FSMs) and fsm_opt can merge a state bit with an identical FSM output (uart: IDLE bit == tx_ready). Name-based register correspondence cannot pair a binary register with one-hot flops."
+    wrong_assumption: "An unproven point after synthesis means the netlist differs from the RTL; or: an unbounded no-correspondence proof (PDR/dprove from reset) will settle it (it stays UNDECIDED: real differences need counterexamples hundreds of cycles deep)."
+    lesson: "Read the 'Recoding FSM' map (old -> new codes) and the FSM output list from the synthesis log; give equiv_make -encfile the map (Yosys' own fsm_recode -encfile format, the open-source counterpart of Formality SVF FSM guidance) and a named alias of the new state flops in the checker's copy of the netlist only (a merged bit is found through non-inverting buffers: place and route inserts output buffers, dfxtp .Q(net42) -> buf_1 -> tx_ready). The map is a correspondence hypothesis equiv_induct must prove; a wrong map leaves points unproven, it cannot pass anything. Always confirm with known-bad RTL (caught mutants) that the check still fails. Never trust FSM guidance without the proof, and never change the signed-off netlist."
+    evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY synth: 105 proven / 19 unproven without map; 125/125 with map; caught mutants tx_L153_stuck_bit_2, tx_L56_dropped_handshake_3, rx_L113_swapped_condition_2 all fail (2, 1, 3 unproven). PDR/dprove from reset: control mutant UNDECIDED (scratch_uart_synth_eq)."
+    regression_test: "tests/platform/test_lec_fallback.py::test_lec_with_fsm_map_still_rejects_real_bugs (synthesized and routed netlist)"
+    tags: [equivalence, lec, fsm, fsm_recode, one_hot, encoding, encfile, eqy, yosys, synthesis, netlist, sienna, uart]
+    source: {title: "Yosys fsm_recode -encfile / equiv_make -encfile", url: "https://yosyshq.readthedocs.io/projects/yosys/en/0.40/cmd/fsm_recode.html"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-pnr-002
+    kind: s2s_lesson
+    title: "OpenLane's post-route DRV count can miss clock-buffer fanout; check with an independent STA run"
+    symptom: "Place and route reports max_fanout_violations = 0, but signoff STA on the same routed netlist and SDC fails max fanout on clock buffers (clkbuf_0_clk 16 vs 10, three leaf buffers 11)"
+    root_cause: "Root cause found later (lesson s2s-sdc-001): an SDC comment containing 'set_propagated_clock' made OpenLane leave the clock ideal after CTS, and OpenSTA skips fanout/slew/cap checks on ideal clock nets. OpenLane's post-route STA therefore listed no violators while S2S's propagated-clock OpenSTA on the same netlist and SDC reported clkbuf_0_clk 16 vs 10."
+    wrong_assumption: "The OpenLane metric is the same as running report_check_types ourselves."
+    lesson: "Every place-and-route iteration also runs S2S's own OpenSTA report_check_types on the routed netlist with the reviewed SDC; a violator from EITHER tool is a problem for Orion. Fix clock-tree fanout with the tree-shape knobs (lesson s2s-cts-001); count each violating buffer's level first."
+    evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY it1 (CTS_SINK_CLUSTERING_SIZE 25): pnr_iteration_1 max_fanout_violations 0; signoff sta_all_corners FAILED; logs/sta_uart_top_*.log"
+    regression_test: "tests/test_pnr_independent_drv.py"
+    tags: [cts, clock_tree, fanout, max_fanout, drv, sta, opensta, openlane, signoff, orion, chronos, place_route, uart]
+    source: {title: "S2S DECISIONS 2026-10-06", url: "docs/DECISIONS.md"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-003
+    kind: s2s_lesson
+    title: "A long-running orchestrator keeps the code it started with"
+    symptom: "A fix is committed and tested, but the next stage run by the orchestrator behaves as before"
+    root_cause: "The orchestrator imports the agents and tool adapters once at start; uart's signoff (03:32) ran the LEC without the FSM map committed at 02:15 because the orchestrator had started at 01:25."
+    lesson: "The orchestrator logs its code fingerprint at start and warns once when the source changes. After changing agent or tool code, restart the orchestrator (or run the task in a fresh runner) before the stage that needs the change, at a point where no worker is mid-step; check the process start time against the commit time."
+    evidence: "uart eqy_rtl_vs_final 03:32: 105/19 again; orchestrator pid 1130 started 01:25:54"
+    regression_test: "tests/test_orchestrator_code_fingerprint.py"
+    tags: [orchestrator, restart, stale_code, deployment, operations]
+    source: {title: "S2S DECISIONS 2026-10-06", url: "docs/DECISIONS.md"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-cts-003
+    kind: s2s_lesson
+    title: "Small clock trees (~100-200 sinks): clustering knobs do nothing; the H-tree stop rule and placement set leaf fanout"
+    symptom: "Leaf clock buffers stay 1-2 over the fanout limit whatever CTS_SINK_CLUSTERING_SIZE / MAX_DIAMETER / buffer distance / max wire length is set to"
+    root_cause: "On uart (125 sinks) TritonCTS prints the clustering settings but never reports 'sinks after clustering'; the H-tree stops splitting at <= 15 sinks per branch (CTS-0032), so each leaf buffer drives whatever flops fall in its region. Which leaf gets 11 or 12 depends on where the flops are placed."
+    wrong_assumption: "Lowering the cluster size caps the flops per leaf buffer (iterations 2-3: size 10 and 9 gave bit-identical trees); the extra load is an antenna diode (it was a flop)."
+    lesson: "Diagnose before iterating: the P&R loop now gives Orion the CTS log facts and each violator's level and loads, requires a diagnosis, and refuses clustering knobs when clustering was not applied and any knob that left the problems identical. Check the CTS log for 'sinks after clustering' before tuning clustering. If clustering is not applied, change the flop spread instead: placement density / core utilization inside pnr_ranges.yaml, screened with recorded CTS-only experiments and scored by the independent STA check, then route the best to confirm."
+    evidence: "uart reports/experiments/PNR-UART-0001..0016: CTS knobs 0001-0006 no change; density 60 % (0013) and 65 % (0014) 0 violators after CTS and after routing; util 30/40 %, density 70/80 % still 11-12; util 55 % and density 45 % failed placement (GPL-0302)"
+    regression_test: "tests/test_pnr_diagnosis.py"
+    tags: [cts, clock_tree, fanout, max_fanout, sink_clustering, h_tree, placement, density, utilization, orion, tick, place_route, uart]
+    source: {title: "S2S uart M0.7 experiments 2026-10-06", url: "run:run_01M47BE6QKCPAEAE7RVYYJ9TEY"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-sdc-001
+    kind: s2s_lesson
+    title: "Never write 'propagated_clock' in an SDC, not even in a comment: OpenLane then leaves the clock ideal after CTS"
+    symptom: "OpenLane's post-route STA shows 'clock network delay (ideal)' and lists the clock in unpropagated.rpt; its timing differs from an independent propagated-clock STA by the clock latency (uart: ~1 ns setup at ss); clock-buffer fanout violators are not reported"
+    root_cause: "OpenLane 2.3.10 io.tcl propagates clocks only if the raw SDC text does not contain 'set_propagated_clock' or 'unset_propagated_clock'. uart's SDC had the comment '# set_propagated_clock is intentionally not set ...' - copied from S2S's own SDC contract line 'Do not set set_propagated_clock'. So every OpenLane timing step and repair after CTS (resizer, hold repair, post-route STA) used an ideal clock, and OpenSTA skips slew/cap/fanout checks on ideal clock nets."
+    wrong_assumption: "A comment cannot change what a tool does; OpenLane's max-fanout count of 0 was a real measurement; the instruction text given to an agent is harmless."
+    lesson: "The SDC guard refuses the text 'propagated_clock' anywhere; the P&R loop fails an iteration whose post-route STA left a clock unpropagated (unpropagated.rpt); signoff compares OpenLane STA with S2S's own STA (sta_matches_openlane). Write agent instructions so that echoing them into a file is harmless."
+    evidence: "uart run_01M47BE6QKCPAEAE7RVYYJ9TEY: constraints.sdc line 36; it4/54-openroad-stapostpnr/*/unpropagated.rpt = clk at 9 corners vs sync_fifo it10 empty; worst path data arrival identical (14.7561 ns), capture clock 0 (ideal) vs 0.9366 ns (propagated)"
+    regression_test: "tests/test_propagated_clock_guards.py"
+    tags: [sdc, constraints, propagated_clock, ideal_clock, openlane, sta, cts, fanout, signoff, sienna, chronos, orion, uart]
+    source: {title: "OpenLane 2.3.10 scripts/openroad/common/io.tcl", url: "https://github.com/efabless/openlane2/blob/main/openlane/scripts/openroad/common/io.tcl"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-eq-003
+    kind: s2s_lesson
+    title: "Synthesis merged identical registers: run Yosys opt on the RTL side so the merged register keeps a matching name"
+    symptom: "LEC proves most points but leaves outputs unproven that depend on a register present in the RTL but missing by name in the netlist (spi_master: rx_data[15:8] via u_spi_shift.wl_q; netlist has only u_spi_clkgen.wl_q)"
+    root_cause: "Two RTL registers with the same D, enable, reset and init (spi_master: both wl_q latch word_len on start_acc) are merged into one flop by synthesis (Yosys opt_merge); OpenLane's quiet log does not record the merge, so name-based register correspondence has nothing to pair the removed register with."
+    wrong_assumption: "Unproven points after synthesis mean the netlist differs from the RTL; a single opt_merge on the RTL side is enough (the two registers still had different mux cells in front; the full `opt` loop is needed)."
+    lesson: "Run Yosys `opt` (opt_expr/opt_merge/opt_dff to a fixpoint) on the RTL side before equiv_make: it makes the same equivalence-preserving merges as synthesis, and registers that differ are never merged, so a wrong merge still fails. Confirm with caught mutants that the check still fails."
+    evidence: "spi_master run_01M484JWYZ7ADCE8N97SZV80QG synth: 95/8 without opt, 103/0 with opt; caught mutants spi_shift_L59_stuck_bit_2 (1 unproven), L86_wrong_operator_2 (15), L90_swapped_condition_1 (17), spi_clkgen_L87_off_by_one_2 (1)"
+    regression_test: "tests/platform/test_lec_fallback.py::test_lec_with_register_merge_still_rejects_real_bugs"
+    tags: [equivalence, lec, register_merging, opt_merge, yosys, synthesis, netlist, sienna, spi_master]
+    source: {title: "Synopsys Formality SVF guidance (register merging) / Yosys opt_merge", url: "https://yosyshq.readthedocs.io/projects/yosys/en/stable/cmd/opt_merge.html"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-cts-004
+    kind: s2s_lesson
+    title: "OpenLane 2.3.10 CTS cannot meet a clock fanout of 10 on small designs: the clock-tree rule (limit 20) applies to clock nets"
+    symptom: "Every leaf clock buffer of a small design (~100 sinks) drives 11-18 flops; no parameter in pnr_ranges.yaml changes it"
+    root_cause: "The installed TritonCTS stops the H-tree when a region has <= 15 sinks (fixed numMaxLeafSinks; newer OpenROAD derives this from max fanout) and skips sink clustering below a minimum sink count, so 104 sinks split 52 -> 26 -> 13 into 8 leaves (average 13 > 10). Placement spread cannot change the count per leaf."
+    wrong_assumption: "A larger core or lower density lets the H-tree split deeper (spi_master iteration 2: still 3 levels, 8 leaves, up to 18)."
+    lesson: "Read the CTS log's 'Sinks per sub-region' and stop criterion: if sinks/leaves on average exceed the limit, no placement or CTS knob in range can fix it - escalate. CEO decision 2026-10-06: clock-tree nets (every load a flop clock pin or a CTS clock buffer/load) use config/signoff.yaml cts.clock_max_fanout = 20; data nets keep the SDC 10; clock slew/cap/skew stay enforced; OpenLane's and S2S's raw fanout counts must agree."
+    evidence: "spi_master run_01M484JWYZ7ADCE8N97SZV80QG iterations 1-2 (CTS log: sinks per sub-region 52/26/13, stop at 15); OpenROAD master HTreeBuilder/TritonCTS (getMaxFanout vs numMaxLeafSinks_)"
+    regression_test: "tests/test_pnr_independent_drv.py::test_clock_tree_fanout_above_the_clock_rule_and_data_fanout_are_problems"
+    tags: [cts, clock_tree, fanout, max_fanout, h_tree, clock_rule, openroad, openlane, orion, chronos, place_route, spi_master]
+    source: {title: "OpenROAD cts/src/HTreeBuilder.cpp (master)", url: "https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/cts/src/HTreeBuilder.cpp"}
+    date: "2026-10-06"
+    confidence: high
+    owner: Sage
+  - id: s2s-mut-003
+    kind: s2s_lesson
+    title: "A 'stuck' mutant of an indexed register must hold its element, not the whole array"
+    symptom: "Mutation run stops with a harness error: one mutant's regression exits 1 with no success marker (C++ build of the Verilator model fails)"
+    root_cause: "The stuck_bit mutation wrote the bare register name on the right-hand side, so `mem_q[wr_addr] <= wr_data;` became `mem_q[wr_addr] <= mem_q;` (array assigned to an element). Verilator lints it with -Wno-fatal, so the compile screen passed, and clang++ then rejected the generated model."
+    wrong_assumption: "A mutant that passes the Verilator lint screen will build and simulate."
+    lesson: "Mutants keep the full indexed target (`x[i] <= x[i];`). A mutant run that cannot build is a harness bug to fix at the generator, never a mutant to drop or a check to relax."
+    evidence: "sync_fifo change #2 run_01M4A93ZB1F1BAFC6ZQFSFB6RA mutation/logs/regress_fifo_mem_L76_stuck_bit_3/regress.log (clang: assigning VlUnpacked<IData,16> to unsigned int); after the fix 20/20 caught"
+    regression_test: "tests/test_mutate_stuck_index.py"
+    tags: [mutation, mutant, stuck_bit, verilator, harness, myra, verification]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-004
+    kind: s2s_lesson
+    title: "Resuming a task after a blocked step: checkpoint 'step' counts COMPLETED steps"
+    symptom: "After a fix, a resumed verification task completes in seconds with 'mutation {}' and no mutation report; G2 stays pending"
+    root_cause: "The step that set state.blocked (myra, index 7) had completed, so the checkpoint was step 8 (stop_if_blocked). Clearing 'blocked' and resuming at 8 skipped the mutation step entirely."
+    lesson: "To re-run a step that blocked, set the checkpoint step to THAT step's index (checkpoint step - 1 when the following stop_if_blocked raised), clear state.blocked, and check afterwards that the step's report exists. The auto-gate rule (every check's last record must pass) is the safety net: it kept G2 pending."
+    evidence: "sync_fifo change #2 task_01M4A93ZC3FH415R3F4HJA5KR4, operator events 05:42:57 and 05:44:53 2026-10-07"
+    regression_test: "tests/test_gate_auto_last_check.py"
+    tags: [operations, resume, checkpoint, blocked, gate, g2, operator]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage
+  - id: s2s-ops-005
+    kind: s2s_lesson
+    title: "A tool result with status ERROR and no log is an infrastructure refusal, not a design fact"
+    symptom: "P&R iteration lists 'independent DRV check did not run cleanly (ERROR)'; the check took 0 s and wrote no log"
+    root_cause: "The disk-headroom guard (S2S_MIN_FREE_GB, default 2) refused to start OpenSTA: 1.7 GB free on the run disk. Simulation waveform dumps (dump.vcd, up to 320 MB each) in finished verification runs filled the disk."
+    lesson: "On ERROR with no log, read the tool's 'reasons' (tool could not be run: ...) before diagnosing the design; no P&R parameter acts on it. Free space without deleting evidence (gzip finished runs' VCDs, remove test scratch and package caches), then re-run the check."
+    evidence: "sync_fifo change #2 run_01M4AFNT5QK68FGT27TVRBYWZN pnr iteration 3 (06:25:38); 34 VCDs gzipped, free space 1.7 -> 5.0 GB"
+    regression_test: "tests/test_run_lock_disk.py"
+    tags: [operations, disk, headroom, error, vcd, orion, place_route, infrastructure]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage
+  - id: s2s-ant-001
+    kind: s2s_lesson
+    title: "A marginal antenna violation that survives repair; heuristic diode insertion fixes it but floods the design with diodes"
+    symptom: "One net stays ~3% over the antenna side-area ratio after detailed routing (sync_fifo net34, met1, 410.75 vs 400) through repair iterations 3->6 and margin 10->20%"
+    root_cause: "OpenROAD antenna repair runs on the global-route estimate, which passes after repair; detailed routing makes the wire longer, so repair never targets the net."
+    wrong_assumption: "OpenLane's heuristic diode inserter (RUN_HEURISTIC_DIODE_INSERTION, threshold 90 um on SKY130) adds a few diodes on the long nets only."
+    lesson: "On a 34k um2 design the heuristic inserter added about 2,550 diodes (instance count 4,307 -> 6,858), on clock nets too: antenna 0, but clock buffers drove up to 25 loads (13 of them diodes), 18 max-slew and 1 max-cap violations, 236 problems. Prefer a placement change (it reroutes the net) with antenna margin raised; use heuristic insertion only with a much higher HEURISTIC_ANTENNA_THRESHOLD, and never on clock nets. Count diodes in the netlist after any diode setting. Root cause (it5, check_antennas -verbose on the global route): the global-route model ties the gate's met1 piece to the driver's diffusion (allowed ratio 2,736); the detailed route splits it across layers, so the allowed ratio drops to 400. Global-route repair and margins cannot see this; the fix is repair on the detailed route (diode or layer jump at the gate, incremental re-route), a flow step OpenLane 2.3.10 lacks."
+    evidence: "sync_fifo change #2 run_01M4AFNT5QK68FGT27TVRBYWZN reports/pnr_iteration_3.json and pnr_iteration_4.json; grep -c diode final/nl (it3 26, it4 2577)"
+    regression_test: "tests/test_m07_guards.py::test_heuristic_diode_switch_is_written_as_a_boolean"
+    tags: [antenna, diode, heuristic_diode_insertion, global_routing, detailed_routing, fanout, slew, clock_tree, orion, place_route, sync_fifo]
+    source: {title: "S2S DECISIONS 2026-10-07", url: "docs/DECISIONS.md"}
+    date: "2026-10-07"
+    confidence: high
+    owner: Sage

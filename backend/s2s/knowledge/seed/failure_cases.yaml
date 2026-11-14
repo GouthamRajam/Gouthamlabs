@@ -1,0 +1,86 @@
+# Failure-case library seed (MASTER_SPEC Part 18.3), organized by symptom.
+# Every entry: source (URL checked reachable 2026-10-04), date, confidence, owner. Summaries are
+# short paraphrases of public material; follow the source for the full account.
+# owner: Sage (Knowledge & Methodology). Entries older than 12 months are reviewed by Sage.
+entries:
+  - id: kb-fc-001
+    kind: failure_case
+    title: "Pentium FDIV: missing lookup-table entries gave wrong division results"
+    symptom: "Rare wrong results from a datapath operation that passes most tests"
+    root_cause: "Five entries of the SRT division lookup table were missing, so a small set of operand pairs produced wrong quotients."
+    lesson: "Random tests can miss rare operand combinations. Check datapath tables and corner operands exhaustively or formally where the input space allows."
+    tags: [datapath, arithmetic, lookup_table, verification_gap, corner_case]
+    source: {title: "Pentium FDIV bug", url: "https://en.wikipedia.org/wiki/Pentium_FDIV_bug", published: "1994"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-fc-002
+    kind: failure_case
+    title: "Metastability: an asynchronous input sampled by one flop"
+    symptom: "Intermittent wrong state or glitches that depend on input timing; not reproducible in RTL simulation"
+    root_cause: "An asynchronous signal drives synchronous logic without a synchronizer; the capturing flop can go metastable and different fan-out flops may see different values."
+    lesson: "Every asynchronous input passes through a 2-flop synchronizer (sync2) before use; list every crossing in arch.yaml cdc."
+    tags: [cdc, metastability, async_input, synchronizer, reset]
+    source: {title: "Metastability (electronics)", url: "https://en.wikipedia.org/wiki/Metastability_(electronics)"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-fc-003
+    kind: failure_case
+    title: "Multi-bit value crossing clock domains bit by bit"
+    symptom: "Occasional corrupted multi-bit values (counters, pointers) in the receiving clock domain"
+    root_cause: "Bits of a multi-bit bus are synchronized independently and can be captured on different cycles."
+    lesson: "Cross multi-bit values with Gray code (one bit changes at a time), a handshake, or an asynchronous FIFO; never a per-bit sync2 on a binary bus."
+    tags: [cdc, multi_bit, gray_code, fifo, pointer]
+    source: {title: "Cummings, Clock Domain Crossing (CDC) Design & Verification Techniques Using SystemVerilog, SNUG Boston 2008",
+             url: "http://www.sunburst-design.com/papers/CummingsSNUG2008Boston_CDC.pdf", published: "2008"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-fc-004
+    kind: failure_case
+    title: "Reset not applied to every state element / unclear reset style"
+    symptom: "Outputs are X or wrong after reset in gate-level simulation or silicon; behavior differs between simulators"
+    root_cause: "Some registers are left without reset, or reset style (synchronous vs asynchronous, active level) is mixed or unspecified."
+    lesson: "Specify reset type, active level and the value of every output after reset in the spec; reset every state element (or document the exemption)."
+    tags: [reset, synchronous_reset, asynchronous_reset, spec, x_propagation]
+    source: {title: "Cummings & Mills, Synchronous Resets? Asynchronous Resets? I am so confused! SNUG San Jose 2002",
+             url: "http://www.sunburst-design.com/papers/CummingsSNUG2002SJ_Resets.pdf", published: "2002"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-fc-005
+    kind: failure_case
+    title: "Blocking assignments in sequential logic: simulation/synthesis mismatch"
+    symptom: "RTL simulation passes but the synthesized netlist behaves differently (races between always blocks)"
+    root_cause: "Blocking (=) assignments in clocked always blocks create order-dependent simulation races."
+    lesson: "Non-blocking (<=) in sequential blocks, blocking (=) in combinational blocks; never mix in one block."
+    tags: [rtl, coding_style, nonblocking, race, sim_synth_mismatch]
+    source: {title: "Cummings, Nonblocking Assignments in Verilog Synthesis, Coding Styles That Kill! SNUG San Jose 2000",
+             url: "http://www.sunburst-design.com/papers/CummingsSNUG2000SJ_NBA.pdf", published: "2000"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-fc-006
+    kind: failure_case
+    title: "FIFO full/empty generation errors"
+    symptom: "FIFO overflows, underflows, or reports full/empty one entry early or late"
+    root_cause: "Pointer comparison without an extra wrap bit cannot tell full from empty; asynchronous FIFOs compare unsynchronized binary pointers."
+    lesson: "Use N+1-bit pointers (the MSB tells wrap) and define behavior on write-when-full and read-when-empty in the spec."
+    tags: [fifo, overflow, underflow, pointer, off_by_one]
+    source: {title: "Cummings, Simulation and Synthesis Techniques for Asynchronous FIFO Design, SNUG San Jose 2002",
+             url: "http://www.sunburst-design.com/papers/CummingsSNUG2002SJ_FIFO1.pdf", published: "2002"}
+    date: "2026-10-04"
+    confidence: high
+    owner: Sage
+  - id: kb-fc-007
+    kind: failure_case
+    title: "Counter wrap and priority of control inputs left unspecified"
+    symptom: "Counter tests disagree with RTL at the wrap point (255->0 / 0->255) or when load, enable and reset are asserted together"
+    root_cause: "The spec did not say what happens on overflow/underflow or which of reset, load and enable wins when several are active in the same cycle."
+    lesson: "For counters, specify wrap (or saturate) on overflow and underflow, and the priority order of reset, load, enable and direction, each with a testable acceptance criterion."
+    tags: [counter, overflow, underflow, wrap, priority, spec, up_down, load, enable]
+    source: {title: "Counter (digital)", url: "https://en.wikipedia.org/wiki/Counter_(digital)"}
+    date: "2026-10-04"
+    confidence: medium
+    owner: Sage

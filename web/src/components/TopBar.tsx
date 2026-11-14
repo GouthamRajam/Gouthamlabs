@@ -49,6 +49,7 @@ export function TopBar() {
           <p className="muted" style={{ margin: "4px 0 0" }}>The AI design team at work. Real tools decide pass/fail; humans approve at four gates.</p>
         </div>
         <div className="mono muted" style={{ display: "flex", flexWrap: "wrap", gap: "8px 18px", fontSize: 12.5 }}>
+          <a href="/projects" className="btn" style={{ textDecoration: "none" }} data-testid="projects-link">Projects →</a>
           <span>Run <b data-testid="run-id" style={{ color: "var(--fg)" }}>{run.id ?? "—"}</b></span>
           {spend !== undefined && <span>Run spend <b style={{ color: "var(--fg)" }} data-testid="run-spend">${spend.toFixed(2)}</b></span>}
           <Clock />

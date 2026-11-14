@@ -1,0 +1,33 @@
+[options]
+mode bmc
+depth 10
+
+[engines]
+smtbmc z3
+
+[script]
+read_verilog s2s_rv32i_alu.v
+read_verilog s2s_rv32i_decoder.v
+read_verilog s2s_rv32i_regfile.v
+read_verilog s2s_rv32i_csr.v
+read_verilog s2s_rv32i_core.v
+read_verilog sky130_cells.v
+read_verilog s2s_rv32i_flat_gate_renamed.v
+read_verilog -sv miter.sv
+chparam -set RESET_VECTOR 32'h80000000 s2s_rv32i_core
+hierarchy -top miter
+proc
+flatten
+memory
+opt
+prep -top miter
+
+[files]
+../rtl/s2s_rv32i_alu.v
+../rtl/s2s_rv32i_decoder.v
+../rtl/s2s_rv32i_regfile.v
+../rtl/s2s_rv32i_csr.v
+../rtl/s2s_rv32i_core.v
+sky130_cells.v
+s2s_rv32i_flat_gate_renamed.v
+miter.sv

@@ -1,0 +1,610 @@
+{
+ "pdk_rules": {
+  "li": {
+   "layer": "67/20",
+   "density_layers": "67/0-4,6-9,11-43,45-*",
+   "fill_layers": "56/28",
+   "min_width": 0.17,
+   "min_space": 0.17,
+   "max_density": 0.6
+  },
+  "met1": {
+   "layer": "68/20",
+   "density_layers": "68/0-4,6-9,11-43,45-*",
+   "fill_layers": "36/28",
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6
+  },
+  "met2": {
+   "layer": "69/20",
+   "density_layers": "69/0-4,6-9,11-43,45-*",
+   "fill_layers": "41/28",
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6
+  },
+  "met3": {
+   "layer": "70/20",
+   "density_layers": "70/0-4,6-9,11-43,45-*",
+   "fill_layers": "34/28",
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6
+  },
+  "met4": {
+   "layer": "71/20",
+   "density_layers": "71/0-4,6-9,11-43,45-*",
+   "fill_layers": "51/28",
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6
+  },
+  "met5": {
+   "layer": "72/20",
+   "density_layers": "72/0-4,6-9,11-43,45-*",
+   "fill_layers": "59/28",
+   "min_width": 1.6,
+   "min_space": 1.6,
+   "max_density": 0.76
+  },
+  "mcon": {
+   "layer": "67/44",
+   "lower": "li",
+   "upper": "met1",
+   "min_space": 0.19
+  },
+  "via": {
+   "layer": "68/44",
+   "lower": "met1",
+   "upper": "met2",
+   "min_space": 0.17
+  },
+  "via2": {
+   "layer": "69/44",
+   "lower": "met2",
+   "upper": "met3",
+   "min_space": 0.2
+  },
+  "via3": {
+   "layer": "70/44",
+   "lower": "met3",
+   "upper": "met4",
+   "min_space": 0.2
+  },
+  "via4": {
+   "layer": "71/44",
+   "lower": "met4",
+   "upper": "met5",
+   "min_space": 0.8
+  }
+ },
+ "die_um": [
+  0.0,
+  0.0,
+  50.745,
+  61.465
+ ],
+ "dbu": 0.001,
+ "layers": {
+  "li": {
+   "shapes": 512,
+   "min_width": 0.17,
+   "min_space": 0.17,
+   "max_density": 0.6,
+   "density_global": 0.2797,
+   "density_windows": 30,
+   "density_window_max": 0.5565,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [
+    {
+     "density": 0.5565,
+     "at": [
+      10.0,
+      10.0,
+      30.0,
+      30.0
+     ]
+    },
+    {
+     "density": 0.5541,
+     "at": [
+      20.0,
+      10.0,
+      40.0,
+      30.0
+     ]
+    }
+   ],
+   "routing_shapes": 308,
+   "edges_total": 1232,
+   "near_min_width_edges": 1232,
+   "near_min_space_edges": 58,
+   "near_limit_edge_fraction": 1.0,
+   "near_min_space_hotspots": [
+    [
+     35.565,
+     44.625,
+     35.735,
+     44.625
+    ],
+    [
+     37.115,
+     44.625,
+     37.115,
+     44.795
+    ],
+    [
+     38.035,
+     44.625,
+     38.035,
+     44.795
+    ],
+    [
+     42.175,
+     47.005,
+     42.175,
+     47.175
+    ],
+    [
+     42.465,
+     47.685,
+     42.635,
+     47.685
+    ],
+    [
+     36.485,
+     44.115,
+     36.655,
+     44.115
+    ],
+    [
+     36.025,
+     41.225,
+     36.195,
+     41.225
+    ],
+    [
+     37.405,
+     44.115,
+     37.575,
+     44.115
+    ],
+    [
+     37.405,
+     43.945,
+     37.405,
+     44.115
+    ],
+    [
+     35.735,
+     44.625,
+     35.735,
+     44.795
+    ],
+    [
+     35.565,
+     42.415,
+     35.735,
+     42.415
+    ],
+    [
+     42.465,
+     42.415,
+     42.635,
+     42.415
+    ],
+    [
+     37.575,
+     43.945,
+     37.575,
+     44.115
+    ],
+    [
+     41.085,
+     47.685,
+     41.085,
+     47.855
+    ],
+    [
+     36.485,
+     42.245,
+     36.655,
+     42.245
+    ],
+    [
+     36.485,
+     43.945,
+     36.485,
+     44.115
+    ],
+    [
+     42.635,
+     47.685,
+     42.635,
+     47.855
+    ],
+    [
+     36.655,
+     43.945,
+     36.655,
+     44.115
+    ],
+    [
+     42.465,
+     47.685,
+     42.465,
+     47.855
+    ],
+    [
+     37.405,
+     43.945,
+     37.575,
+     43.945
+    ]
+   ],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met1": {
+   "shapes": 286,
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6,
+   "density_global": 0.1426,
+   "density_windows": 30,
+   "density_window_max": 0.309,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 270,
+   "edges_total": 3044,
+   "near_min_width_edges": 672,
+   "near_min_space_edges": 574,
+   "near_limit_edge_fraction": 0.5271,
+   "near_min_space_hotspots": [
+    [
+     23.945,
+     30.16,
+     24.355,
+     30.3
+    ],
+    [
+     23.945,
+     32.88,
+     24.355,
+     33.02
+    ],
+    [
+     23.945,
+     30.56,
+     24.355,
+     30.7
+    ],
+    [
+     35.35,
+     29.28,
+     35.49,
+     29.54
+    ],
+    [
+     23.945,
+     14.86,
+     24.355,
+     15.0
+    ],
+    [
+     33.145,
+     30.84,
+     33.555,
+     30.98
+    ],
+    [
+     33.145,
+     31.86,
+     33.555,
+     32.0
+    ],
+    [
+     32.685,
+     37.7,
+     33.095,
+     37.84
+    ],
+    [
+     34.525,
+     33.62,
+     34.935,
+     33.76
+    ],
+    [
+     43.265,
+     32.88,
+     43.675,
+     33.02
+    ],
+    [
+     38.665,
+     36.28,
+     39.075,
+     36.42
+    ],
+    [
+     28.545,
+     37.02,
+     28.955,
+     37.16
+    ],
+    [
+     35.905,
+     37.02,
+     36.315,
+     37.16
+    ],
+    [
+     30.385,
+     33.22,
+     30.795,
+     33.36
+    ],
+    [
+     39.585,
+     36.62,
+     39.995,
+     36.76
+    ],
+    [
+     40.045,
+     34.3,
+     40.455,
+     34.44
+    ],
+    [
+     32.225,
+     31.58,
+     32.635,
+     31.72
+    ],
+    [
+     35.445,
+     30.56,
+     35.855,
+     30.7
+    ],
+    [
+     43.265,
+     46.48,
+     43.675,
+     46.62
+    ],
+    [
+     35.445,
+     30.16,
+     35.855,
+     30.3
+    ]
+   ],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 15,
+   "line_end_hotspots": [
+    [
+     18.885,
+     12.14,
+     19.02,
+     12.28
+    ],
+    [
+     27.44,
+     14.58,
+     27.575,
+     14.72
+    ],
+    [
+     33.145,
+     15.26,
+     33.28,
+     15.4
+    ],
+    [
+     42.345,
+     16.9,
+     42.48,
+     17.04
+    ],
+    [
+     30.2,
+     17.24,
+     30.335,
+     17.38
+    ],
+    [
+     29.74,
+     17.64,
+     29.875,
+     17.78
+    ],
+    [
+     20.725,
+     20.64,
+     20.86,
+     20.78
+    ],
+    [
+     38.205,
+     25.8,
+     38.34,
+     25.94
+    ],
+    [
+     36.64,
+     26.42,
+     36.775,
+     26.56
+    ],
+    [
+     31.305,
+     28.12,
+     31.44,
+     28.26
+    ],
+    [
+     26.245,
+     31.52,
+     26.38,
+     31.66
+    ],
+    [
+     28.365,
+     33.56,
+     28.495,
+     33.7
+    ],
+    [
+     29.74,
+     42.46,
+     29.875,
+     42.6
+    ],
+    [
+     15.14,
+     44.157,
+     15.25,
+     44.258
+    ],
+    [
+     15.138,
+     44.16,
+     15.252,
+     44.255
+    ]
+   ]
+  },
+  "met2": {
+   "shapes": 146,
+   "min_width": 0.14,
+   "min_space": 0.14,
+   "max_density": 0.6,
+   "density_global": 0.0369,
+   "density_windows": 30,
+   "density_window_max": 0.0937,
+   "density_window_min": 0.0024,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 146,
+   "edges_total": 1966,
+   "near_min_width_edges": 374,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.7489,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met3": {
+   "shapes": 36,
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6,
+   "density_global": 0.0226,
+   "density_windows": 30,
+   "density_window_max": 0.048,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 36,
+   "edges_total": 312,
+   "near_min_width_edges": 42,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.2613,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met4": {
+   "shapes": 2,
+   "min_width": 0.3,
+   "min_space": 0.3,
+   "max_density": 0.6,
+   "density_global": 0.0396,
+   "density_windows": 30,
+   "density_window_max": 0.16,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 2,
+   "edges_total": 8,
+   "near_min_width_edges": 0,
+   "near_min_space_edges": 0,
+   "near_limit_edge_fraction": 0.0,
+   "near_min_space_hotspots": [],
+   "long_parallel_runs": 0,
+   "long_parallel_run_list": [],
+   "isolated_narrow_lines": 0,
+   "isolated_narrow_line_list": [],
+   "line_end_near_limit": 0,
+   "line_end_hotspots": []
+  },
+  "met5": {
+   "shapes": 0,
+   "min_width": 1.6,
+   "min_space": 1.6,
+   "max_density": 0.76,
+   "density_global": 0.0,
+   "density_windows": 30,
+   "density_window_max": 0.0,
+   "density_window_min": 0.0,
+   "density_over_max": [],
+   "density_near_max": [],
+   "routing_shapes": 0
+  }
+ },
+ "vias": {
+  "mcon": {
+   "cuts": 308,
+   "min_space": 0.19,
+   "single_cut_connections": 308,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via": {
+   "cuts": 350,
+   "min_space": 0.17,
+   "single_cut_connections": 275,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via2": {
+   "cuts": 83,
+   "min_space": 0.2,
+   "single_cut_connections": 23,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via3": {
+   "cuts": 60,
+   "min_space": 0.2,
+   "single_cut_connections": 0,
+   "redundant_via_fits": 0,
+   "redundant_via_fit_list": []
+  },
+  "via4": {
+   "cuts": 0,
+   "min_space": 0.8
+  }
+ }
+}

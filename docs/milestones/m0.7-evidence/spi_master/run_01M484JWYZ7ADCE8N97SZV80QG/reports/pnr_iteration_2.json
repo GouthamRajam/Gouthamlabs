@@ -1,0 +1,372 @@
+{
+  "iteration": 2,
+  "tag": "it2",
+  "params": {
+    "FP_CORE_UTIL": 30,
+    "PL_TARGET_DENSITY_PCT": 40.0,
+    "MAX_FANOUT_CONSTRAINT": 10,
+    "CTS_SINK_CLUSTERING_SIZE": 25,
+    "GRT_ANTENNA_ITERS": 3,
+    "GRT_ANTENNA_MARGIN": 10,
+    "CTS_SINK_CLUSTERING_MAX_DIAMETER": 50,
+    "CTS_DISTANCE_BETWEEN_BUFFERS": 0,
+    "CTS_CLK_MAX_WIRE_LENGTH": 0
+  },
+  "problems": [
+    "max_fanout_violations = 7",
+    "independent STA: max fanout clkbuf_3_5__f_clk/X 18 (limit 10)",
+    "independent STA: max fanout clkbuf_3_7__f_clk/X 18 (limit 10)",
+    "independent STA: max fanout clkbuf_3_0__f_clk/X 15 (limit 10)",
+    "independent STA: max fanout clkbuf_3_3__f_clk/X 13 (limit 10)",
+    "independent STA: max fanout clkbuf_3_4__f_clk/X 13 (limit 10)",
+    "independent STA: max fanout clkbuf_3_6__f_clk/X 13 (limit 10)",
+    "independent STA: max fanout clkbuf_3_2__f_clk/X 11 (limit 10)"
+  ],
+  "facts": {
+    "route_drc_errors": 0,
+    "antenna_violating_nets": 0,
+    "antenna_violating_pins": 0,
+    "disconnected_pins": 0,
+    "setup_ws_by_corner": {
+      "nom_tt_025C_1v80": 9.788291343402094,
+      "nom_ss_100C_1v60": 8.918286805920465,
+      "nom_ff_n40C_1v95": 9.793782062547969,
+      "min_tt_025C_1v80": 9.782521736224547,
+      "min_ss_100C_1v60": 8.9392655807871,
+      "min_ff_n40C_1v95": 9.789358933892768,
+      "max_tt_025C_1v80": 9.794945576310683,
+      "max_ss_100C_1v60": 8.898949384819854,
+      "max_ff_n40C_1v95": 9.798860666895447
+    },
+    "hold_ws_by_corner": {
+      "nom_tt_025C_1v80": 0.31886660880924245,
+      "nom_ss_100C_1v60": 0.8528931136083482,
+      "nom_ff_n40C_1v95": 0.10577528041736393,
+      "min_tt_025C_1v80": 0.31620301716438154,
+      "min_ss_100C_1v60": 0.8452451200423128,
+      "min_ff_n40C_1v95": 0.10424023050895179,
+      "max_tt_025C_1v80": 0.32164433138426274,
+      "max_ss_100C_1v60": 0.862156204165135,
+      "max_ff_n40C_1v95": 0.10774426100722322
+    },
+    "max_slew_violations": 0,
+    "max_cap_violations": 0,
+    "max_fanout_violations": 7,
+    "wirelength_um": 14951,
+    "utilization": 0.37027,
+    "cts_worst_tree_skew_ns": 0.007191,
+    "cts_target_ns": 2.0,
+    "independent_drv_pins": [
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_5__f_clk/X",
+        "limit": 10.0,
+        "value": 18.0
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_7__f_clk/X",
+        "limit": 10.0,
+        "value": 18.0
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_0__f_clk/X",
+        "limit": 10.0,
+        "value": 15.0
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_3__f_clk/X",
+        "limit": 10.0,
+        "value": 13.0
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_4__f_clk/X",
+        "limit": 10.0,
+        "value": 13.0
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_6__f_clk/X",
+        "limit": 10.0,
+        "value": 13.0
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_2__f_clk/X",
+        "limit": 10.0,
+        "value": 11.0
+      }
+    ],
+    "independent_drv_log": "/home/user/Gouthamlabs/var/artifacts/runs/run_01M484JWYZ7ADCE8N97SZV80QG/logs/sta_spi_master_pnr_it2_drv.log",
+    "openlane_unpropagated_clocks": {}
+  },
+  "changes": [
+    {
+      "param": "FP_CORE_UTIL",
+      "value": 30,
+      "reason": "Lower core utilization from 45 to 30 (range 30-65). All 8 violators are level-3 leaf buffers of a 3-level H-tree that stopped at 8 leaves for 104 sinks with clustering not applied. A larger core gives TritonCTS a bigger sink region to subdivide into more leaves."
+    },
+    {
+      "param": "PL_TARGET_DENSITY_PCT",
+      "value": 40.0,
+      "reason": "Lower placement density from 55 to 40 (range 40-80; stays above the new util of 30). Without this, global placement would re-pack the flops at 55% local density and undo the spread from the larger core. Wider flop spread lets the H-tree split more evenly and deeper than 13 sinks per leaf."
+    }
+  ],
+  "diagnosis": {
+    "cts": {
+      "sinks": 104,
+      "clustering_applied": false,
+      "sinks_after_clustering": null,
+      "htree_stop_max_sinks": 15,
+      "levels": 3,
+      "buffers": 9
+    },
+    "violators": [
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_5__f_clk/X",
+        "limit": 10.0,
+        "value": 18.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_1": 17,
+          "clkbuf_4": 1
+        }
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_7__f_clk/X",
+        "limit": 10.0,
+        "value": 18.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_1": 18
+        }
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_0__f_clk/X",
+        "limit": 10.0,
+        "value": 15.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_1": 14,
+          "bufinv_16": 1
+        }
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_3__f_clk/X",
+        "limit": 10.0,
+        "value": 13.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_1": 12,
+          "clkinv_4": 1
+        }
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_4__f_clk/X",
+        "limit": 10.0,
+        "value": 13.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_2": 1,
+          "dfxtp_1": 11,
+          "clkinv_4": 1
+        }
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_6__f_clk/X",
+        "limit": 10.0,
+        "value": 13.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_1": 11,
+          "dfxtp_2": 1,
+          "clkinv_4": 1
+        }
+      },
+      {
+        "kind": "max fanout",
+        "pin": "clkbuf_3_2__f_clk/X",
+        "limit": 10.0,
+        "value": 11.0,
+        "clock_tree_level": 3,
+        "loads_by_cell": {
+          "dfxtp_1": 10,
+          "inv_6": 1
+        }
+      }
+    ]
+  },
+  "cts": {
+    "per_corner": {
+      "max_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.255387,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.005387,
+          "source_latency_ns": 0.250058,
+          "target_latency_ns": -0.244671
+        },
+        "hold": {
+          "reported_skew_ns": -0.255034,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.005034,
+          "source_latency_ns": 0.244711,
+          "target_latency_ns": -0.249745
+        }
+      },
+      "max_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.257191,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.007191,
+          "source_latency_ns": 0.602632,
+          "target_latency_ns": -0.595441
+        },
+        "hold": {
+          "reported_skew_ns": -0.256651,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.006651,
+          "source_latency_ns": 0.595441,
+          "target_latency_ns": -0.602092
+        }
+      },
+      "max_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.256265,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.006265,
+          "source_latency_ns": 0.355648,
+          "target_latency_ns": -0.349383
+        },
+        "hold": {
+          "reported_skew_ns": -0.255824,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.005824,
+          "source_latency_ns": 0.349515,
+          "target_latency_ns": -0.355339
+        }
+      },
+      "min_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.253368,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.003368,
+          "source_latency_ns": 0.238626,
+          "target_latency_ns": -0.235257
+        },
+        "hold": {
+          "reported_skew_ns": -0.253176,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.003176,
+          "source_latency_ns": 0.235373,
+          "target_latency_ns": -0.238549
+        }
+      },
+      "min_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.254396,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.004396,
+          "source_latency_ns": 0.582939,
+          "target_latency_ns": -0.578543
+        },
+        "hold": {
+          "reported_skew_ns": -0.254187,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.004187,
+          "source_latency_ns": 0.578543,
+          "target_latency_ns": -0.58273
+        }
+      },
+      "min_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.25399,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.00399,
+          "source_latency_ns": 0.341338,
+          "target_latency_ns": -0.337349
+        },
+        "hold": {
+          "reported_skew_ns": -0.253769,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.003769,
+          "source_latency_ns": 0.337349,
+          "target_latency_ns": -0.341118
+        }
+      },
+      "nom_ff_n40C_1v95": {
+        "setup": {
+          "reported_skew_ns": 0.253844,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.003844,
+          "source_latency_ns": 0.243667,
+          "target_latency_ns": -0.239823
+        },
+        "hold": {
+          "reported_skew_ns": -0.253668,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.003668,
+          "source_latency_ns": 0.239867,
+          "target_latency_ns": -0.243535
+        }
+      },
+      "nom_ss_100C_1v60": {
+        "setup": {
+          "reported_skew_ns": 0.255047,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.005047,
+          "source_latency_ns": 0.592095,
+          "target_latency_ns": -0.587049
+        },
+        "hold": {
+          "reported_skew_ns": -0.254832,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.004832,
+          "source_latency_ns": 0.587138,
+          "target_latency_ns": -0.59197
+        }
+      },
+      "nom_tt_025C_1v80": {
+        "setup": {
+          "reported_skew_ns": 0.254494,
+          "clock_uncertainty_ns": 0.25,
+          "tree_skew_ns": 0.004494,
+          "source_latency_ns": 0.347726,
+          "target_latency_ns": -0.343232
+        },
+        "hold": {
+          "reported_skew_ns": -0.2543,
+          "clock_uncertainty_ns": -0.25,
+          "tree_skew_ns": 0.0043,
+          "source_latency_ns": 0.343296,
+          "target_latency_ns": -0.347595
+        }
+      }
+    },
+    "corners_with_skew": 9,
+    "worst_tree_skew_ns": 0.007191,
+    "target_ns": 2.0,
+    "clock_buffers": 10,
+    "hold_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 0.29931,
+      "nom_ss_100C_1v60": 0.6181605402523026,
+      "nom_ff_n40C_1v95": 0.013112872270280695
+    },
+    "setup_ws_after_cts_by_corner": {
+      "nom_tt_025C_1v80": 9.76381,
+      "nom_ss_100C_1v60": 7.035543902160927,
+      "nom_ff_n40C_1v95": 9.576872010932588
+    },
+    "hold_buffers": 73,
+    "timing_repair_buffers": 172
+  }
+}
