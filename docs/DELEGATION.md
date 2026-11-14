@@ -26,7 +26,7 @@ or reverse any of them.
 - The ceiling is a limit, not a target: as few runs as possible; stop when clean.
 
 ## Still the CEO's (the analyzer stops and asks)
-These stay human under CLAUDE.md and PHASE_GATES.md, whatever the delegation:
+These stay human under the project rules and PHASE_GATES.md, whatever the delegation:
 - Marking any phase gate PASSED (PHASE_GATES.md: "A gate is marked PASSED by a HUMAN").
 - Raising a budget, tool-run budget or spend cap beyond a ceiling the CEO set.
 - Anything toward real silicon (G4, fabrication).

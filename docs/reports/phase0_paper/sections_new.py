@@ -21,7 +21,7 @@ def sec_tools():
             ["LVS", "Magic extraction + Netgen", "8.3.489 + 1.5.278", "Layout vs schematic on the streamed GDS"],
             ["DFM", "KLayout scripts (S2S)", "0.29.4", "Near-minimum spacing, line ends, via redundancy, density windows"],
             ["Orchestration", "S2S orchestrator (Python), PostgreSQL 16, Redis 7", "this repo", "Tasks, checkpoints, checks, events, budgets, gates"],
-            ["Agent reasoning", "Claude models via Claude Code bridge / API", "-", "Spec, architecture, RTL, tests, constraints, P&amp;R decisions, reports; never pass/fail"]]
+            ["Agent reasoning", "Claude models via coding-agent bridge / API", "-", "Spec, architecture, RTL, tests, constraints, P&amp;R decisions, reports; never pass/fail"]]
     out.append(KeepTogether([P("3.1 Tools used", h2), table(rows, [24, 52, 28, 72]),
                              P("Table 3. Tools and versions (from each package's versions.lock). All are open source except the "
                                "language models, which write and decide but never mark a check passed.", cap)]))
@@ -56,7 +56,7 @@ def sec_teams():
     out.append(KeepTogether([table(rows, [18, 10, 11, 14, 14, 14, 14, 14, 16, 13, 14]),
                              P("Table 5. Execution record per block over all its runs (spec through GDSII), from the orchestrator "
                                "database, queried on 2026-10-06, before the derated check and the sync_fifo design-change runs "
-                               "of 2026-10-07 (not included). Spend includes early paid model calls; model calls through the Claude Code bridge are "
+                               "of 2026-10-07 (not included). Spend includes early paid model calls; model calls through the coding-agent bridge are "
                                "metered at $0 and EDA compute at a nominal rate.", cap)]))
     out.append(P(
         "<b>Stage sequence per block.</b> spec -> architecture (G1) -> RTL -> test build -> verification: regression, coverage, "

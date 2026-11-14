@@ -107,7 +107,7 @@ table([["Point", "OpenAI", "Gemini", "Claude", "My assessment (with evidence)"],
         "AGREE, with a correction to Claude: compute does NOT unblock sync_fifo (policy) or the spi_master SCK "
         "properties (method). It does stop losing work (about 6 container restarts, 3 lost uart runs) and lets long proofs finish."],
        ["DFT, I/O ring, package, silicon validation, production flow", "Sections 35-39, 60", "-", "'behind the phase gates'",
-        "AGREE AS ROADMAP ONLY. CLAUDE.md forbids building beyond the current phase; record them, do not build now."]],
+        "AGREE AS ROADMAP ONLY. Project rules forbid building beyond the current phase; record them, do not build now."]],
       [33, 25, 22, 22, 68])
 
 # ---------------------------------------------------------------- part 2
@@ -274,6 +274,6 @@ def footer(c, d):
 
 
 doc = SimpleDocTemplate(str(OUT), pagesize=A4, leftMargin=15 * mm, rightMargin=15 * mm, topMargin=15 * mm,
-                        bottomMargin=17 * mm, title="S2S - What To Do Now", author="S2S (Claude Code)")
+                        bottomMargin=17 * mm, title="S2S - What To Do Now", author="S2S")
 doc.build(story, onFirstPage=footer, onLaterPages=footer)
 print(OUT)

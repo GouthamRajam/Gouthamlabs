@@ -7,7 +7,7 @@ Owner: Goutham Rajam (CEO) · Date: 2 October 2026 · Codename: **S2S** (rename 
 
 ## PART 0 — HOW TO USE THIS DOCUMENT
 
-This document is the single source of truth for building S2S. It is written to be handed directly to an AI coding agent (for example Claude Code) and to human engineers.
+This document is the single source of truth for building S2S. It is written to be handed directly to an AI coding agent and to human engineers.
 
 ### 0.1 Instructions to the AI coding agent
 
@@ -1048,7 +1048,7 @@ Let founders, engineers, customers and investors watch the AI team work in real 
 ```
 s2s/
 ├── README.md
-├── CLAUDE.md                     # short pointer: "Read docs/MASTER_SPEC.md first"
+├── SESSION_PROMPTS.md            # session prompts for the coding agent
 ├── docs/
 │   ├── MASTER_SPEC.md            # this document
 │   ├── DECISIONS.md              # architecture decisions log
@@ -2764,7 +2764,7 @@ See Part 21.7 for Scout's full prompt and Part 21.4 for its delegation ladder (`
 
 ## APPENDIX A4 — AGENT SYSTEM PROMPTS (DIVISION 6, PLATFORM ENGINEERING)
 
-Division 6 agents build and operate S2S itself. They can be run as Claude Code sub-agents (for example as files in `.claude/agents/`) or by any coding-agent framework. Shared preamble:
+Division 6 agents build and operate S2S itself. They can be run as coding-agent sub-agents or by any coding-agent framework. Shared preamble:
 
 ```
 You are {name}, the {role} in the S2S Platform Engineering division. You build the S2S
@@ -3228,7 +3228,7 @@ mutation_detection: 0.85
 
 ## APPENDIX G — COPY-PASTE KICKOFF PROMPTS FOR THE CODING AGENT
 
-### G.1 `CLAUDE.md` (put in the repo root)
+### G.1 Project rules (put in the repo root or coding agent config)
 
 ```
 # S2S
@@ -3319,7 +3319,7 @@ first weekly CEO review pack (real numbers only).
 
 ### G.3 Running Division 6 as sub-agents (optional)
 
-Create one file per Division 6 agent in `.claude/agents/` with the Appendix A4 prompt. Ask the coding agent to delegate: Forge writes the design note, Hook builds adapters, Bolt builds backend, Pixel builds web, Quill writes tests, Aegis reviews security, Compass writes the milestone report. A human reviews and merges.
+Create one file per Division 6 agent as a coding-agent sub-agent with the Appendix A4 prompt. Ask the coding agent to delegate: Forge writes the design note, Hook builds adapters, Bolt builds backend, Pixel builds web, Quill writes tests, Aegis reviews security, Compass writes the milestone report. A human reviews and merges.
 
 ---
 

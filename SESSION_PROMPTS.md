@@ -1,6 +1,6 @@
 # Session prompts for the coding agent (paste one per session, in order)
 
-Put docs/MASTER_SPEC.md and CLAUDE.md in place first. Then:
+Put docs/MASTER_SPEC.md in place and configure the project rules (Appendix G.1) first. Then:
 
 ## Session 1 — M0.1 (foundations + EDA runner)
 Read docs/MASTER_SPEC.md. Implement milestone M0.1 exactly as specified in Part 13.2.

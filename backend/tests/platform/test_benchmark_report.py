@@ -143,7 +143,7 @@ def test_benchmark_report(platform, tmp_path, monkeypatch):
     assert "– (power not reported (power_tool.json missing))" in md
     assert "– (synthesis not reported (synth_tool.json missing))" in md
     assert "Tape-out readiness: – (tapeout_readiness.json missing" in md
-    assert "claude-code-bridge 400 tok $0.0000 (estimated tokens, $0: Claude Code bridge)" in md
+    assert "claude-code-bridge 400 tok $0.0000 (estimated tokens, $0: coding-agent bridge)" in md
     assert "| Worst hold slack, post-route (P&R) | ns | -0.05 | 0.02 | pnr_iterations.json |" in md
     assert "debug rounds: main 2" in md and "2 P&R iteration(s)" in md
     assert "$0.0420" in md and "3,900" in md

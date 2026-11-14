@@ -2,9 +2,9 @@
 # at http://localhost:3000, whose browser code calls the api at <host>:8000.
 # The orchestrator runs the EDA tools in the s2s-eda image (build it first: docker build -t s2s-eda eda/)
 # as sibling containers through the host's Docker socket. A sibling mounts a run folder by its HOST path,
-# so run data (var/artifacts) and the Claude Code bridge folder (var/bridge) are bind-mounted at the
+# so run data (var/artifacts) and the coding-agent bridge folder (var/bridge) are bind-mounted at the
 # SAME absolute path inside the backend containers (${PWD} = the repo root where you run compose).
-# Model calls go to the Claude Code bridge by default (config/finance.yaml model_provider: bridge);
+# Model calls go to the coding-agent bridge by default (config/finance.yaml model_provider: bridge);
 # S2S_MODEL_PROVIDER=anthropic overrides it (see docs/DECISIONS.md).
 x-backend: &backend
   build: {context: ., dockerfile: backend/Dockerfile}

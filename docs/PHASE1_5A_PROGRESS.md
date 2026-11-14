@@ -1,17 +1,17 @@
 # Phase 1.5 Pillar A — s2s_rv32i RTL, Backend Progress Report
 
 **Date:** 2026-10-09
-**Design:** s2s_rv32i — 32-bit RISC-V core (RV32I), hand-authored by Claude in Code session
+**Design:** s2s_rv32i — 32-bit RISC-V core (RV32I), hand-authored in interactive AI coding session
 **Process:** SkyWater SKY130 (sky130_fd_sc_hd standard cells)
 **Tools:** Open-source only (Yosys 0.46, OpenSTA, OpenLane 2.3.10, OpenROAD, Magic, Netgen, KLayout, Icarus Verilog 12.0, SymbiYosys 0.69, z3 5.1.0, Sail RISC-V v0.15)
-**Provenance:** `hand-authored` — RTL written by Claude (Opus 4.6) in interactive Claude Code session (session_01GAKtQEAqB69LApKchB7Egh), not by the S2S agent pipeline. CORRECTED 2026-10-09: original "agent-generated" label was false.
+**Provenance:** `hand-authored` — RTL written with AI assistance in an interactive coding session, not by the S2S agent pipeline. CORRECTED 2026-10-09: original "agent-generated" label was false.
 
 ---
 
 ## Summary
 
-Phase 1.5 Pillar A proves the s2s_rv32i RV32I core (hand-authored by Claude
-in a Code session) passes the SAME gates as the hand-authored PicoRV32 from
+Phase 1.5 Pillar A proves the s2s_rv32i RV32I core (hand-authored in an
+interactive AI coding session) passes the SAME gates as the hand-authored PicoRV32 from
 Phase 1 — from RTL compliance through full P&R, signoff, and GDSII on SKY130.
 
 The s2s_rv32i core passes all 39 RV32I riscv-arch-test tests against
@@ -395,7 +395,7 @@ FP_CORE_UTIL=30 with all other parameters unchanged.
 - PPA comparison uses same flow; s2s_rv32i at util=30 vs PicoRV32 at util=35.
 - Phase 0 constraint met: open-source tools only, open SKY130 PDK only.
 - No rules weakened, no tests skipped, no fabricated results, no overclaiming.
-- RTL hand-authored by Claude in Code session: zero manual human edits to execution logic.
+- RTL hand-authored in interactive AI coding session: zero manual human edits to execution logic.
 
 ---
 

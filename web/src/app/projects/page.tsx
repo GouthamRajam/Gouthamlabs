@@ -360,7 +360,7 @@ function DesignView({ designId }: { designId: string }) {
               ))}
             </tbody>
           </table>
-          <p className="muted pj-small">Metered API cost. Claude Code bridge calls are recorded at $0.</p>
+          <p className="muted pj-small">Metered API cost. Coding-agent bridge calls are recorded at $0.</p>
           <h2>Runs</h2>
           <ul className="pj-runs mono">
             {o.runs.map((r) => <li key={r.id}>{r.id} · {r.stages.join(" → ")} · {r.status}</li>)}

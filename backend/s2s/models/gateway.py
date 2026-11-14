@@ -135,11 +135,11 @@ class BridgeProvider:
     """PERSONAL / LOCALHOST DEV MODE, approved by the CEO 2026-10-04 (env S2S_MODEL_PROVIDER=bridge;
     never a production path).
 
-    Each call is handed to a Claude Code session instead of the API: the request is written to
+    Each call is handed to a coding-agent session instead of the API: the request is written to
     <bridge>/requests/<id>.json and this call waits for <bridge>/responses/<id>.json, written by a
-    Claude Code subagent. The answer is checked against the schema here (one retry with the exact
+    coding-agent subagent. The answer is checked against the schema here (one retry with the exact
     error). Metered with ESTIMATED tokens (~4 chars/token) under model "claude-code-bridge" at $0:
-    the real cost is the Claude Code session's usage, which S2S cannot see, so the S2S spend caps do
+    the real cost is the coding-agent session's usage, which S2S cannot see, so the S2S spend caps do
     not limit bridge calls. Limits (docs/DECISIONS.md): a subagent has filesystem access, so the
     reads_from isolation is an instruction, not enforced.
     """
@@ -222,7 +222,7 @@ class ModelGateway:
     @classmethod
     def from_settings(cls) -> "ModelGateway":
         """The gateway real agents use: config/finance.yaml `model_provider` (S2S_MODEL_PROVIDER
-        overrides it): "bridge" = Claude Code subagents (personal localhost mode, no API usage),
+        overrides it): "bridge" = coding-agent subagents (personal localhost mode, no API usage),
         "anthropic" = the provider saved in Settings -> Model access."""
         from s2s.config import finance
         name = os.environ.get("S2S_MODEL_PROVIDER") or finance().get("model_provider") or "anthropic"
