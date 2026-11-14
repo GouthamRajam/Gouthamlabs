@@ -39,9 +39,11 @@
 ## Demo — From Spec to GDSII in 3.5 Minutes
 
 <p align="center">
-  <video src="https://github.com/GouthamRajam/Gouthamlabs/raw/main/assets/s2s_demo.mp4" width="100%" autoplay loop muted playsinline>
-    Your browser does not support the video tag. <a href="assets/s2s_demo.mp4">Download the demo video</a>.
-  </video>
+  <a href="https://github.com/GouthamRajam/Gouthamlabs/raw/main/assets/s2s_demo.mp4">
+    <img src="assets/s2s_demo_thumb.jpg" alt="S2S Demo Video — Click to watch: Autonomous AI chip design from Spec to GDSII in 3.5 minutes" width="100%">
+  </a>
+  <br>
+  <sub>&#9654; Click to play demo video (10s) — S2S pipeline: Spec → RTL → Verify → Synthesis → P&R → Signoff → GDSII</sub>
 </p>
 
 > **37 AI agents** orchestrate a 10-stage pipeline — from a plain-text chip spec through RTL generation, verification, synthesis, place & route, and signoff — producing tape-out-ready GDSII verified by real EDA tools. No human intervention required.
