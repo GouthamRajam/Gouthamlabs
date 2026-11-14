@@ -1,31 +1,50 @@
+<!-- S2S: Autonomous AI Chip Design Framework — Spec to Silicon -->
+<!-- Keywords: AI chip design, autonomous VLSI, spec to GDSII, multi-agent EDA, open source semiconductor, RTL to layout, SkyWater SKY130, RISC-V, chip design automation, AI hardware design, automated place and route, EDA automation, open source ASIC, AI ASIC design -->
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.svg">
-    <img alt="GouthamLabs" src="assets/logo-light.svg" width="520">
+    <img alt="S2S — Autonomous AI Chip Design Framework by GouthamLabs" src="assets/logo-light.svg" width="520">
   </picture>
 </p>
 
+<h1 align="center">S2S: Spec-to-Silicon</h1>
+
 <h3 align="center">
-  An AI design team that takes a written chip specification<br>
-  to a tape-out-ready GDSII layout — proven at every step by real EDA tools.
+  The first open-source AI framework that autonomously takes a written chip specification<br>
+  to a tape-out-ready GDSII layout — 37 agents, 11 EDA tools, $0.39 per design.
 </h3>
 
 <p align="center">
   <a href="docs/paper/s2s_paper.tex"><strong>Research Paper</strong></a> ·
   <a href="docs/MASTER_SPEC.md"><strong>Full Specification</strong></a> ·
   <a href="demo/live_office.html"><strong>Live Office Demo</strong></a> ·
-  <a href="docs/DECISIONS.md"><strong>Decision Log</strong></a>
+  <a href="docs/DECISIONS.md"><strong>Decision Log</strong></a> ·
+  <a href="CONTRIBUTING.md"><strong>Contributing</strong></a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Phase_0-4%2F5_Clean_GDSII-brightgreen?style=flat-square" alt="Phase 0">
-  <img src="https://img.shields.io/badge/Phase_1-39%2F39_RV32I_Compliance-brightgreen?style=flat-square" alt="Phase 1">
-  <img src="https://img.shields.io/badge/Agents-37_Specialized-blue?style=flat-square" alt="Agents">
-  <img src="https://img.shields.io/badge/PDK-SkyWater_SKY130-purple?style=flat-square" alt="PDK">
-  <img src="https://img.shields.io/badge/Cost-%240.39%2Fdesign-orange?style=flat-square" alt="Cost">
-  <img src="https://img.shields.io/badge/License-Open_Source-green?style=flat-square" alt="License">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue?style=flat-square" alt="Apache 2.0 License"></a>
+  <img src="https://img.shields.io/badge/Phase_0-4%2F5_Clean_GDSII-brightgreen?style=flat-square" alt="Phase 0: 4/5 Clean GDSII">
+  <img src="https://img.shields.io/badge/Phase_1-39%2F39_RV32I-brightgreen?style=flat-square" alt="Phase 1: 39/39 RV32I Compliance">
+  <img src="https://img.shields.io/badge/AI_Agents-37_Specialized-blue?style=flat-square" alt="37 Specialized AI Agents">
+  <img src="https://img.shields.io/badge/PDK-SkyWater_SKY130-purple?style=flat-square" alt="SkyWater SKY130 PDK">
+  <img src="https://img.shields.io/badge/Cost-%240.39%2Fdesign-orange?style=flat-square" alt="$0.39 per chip design">
+  <img src="https://img.shields.io/badge/Time-3.5_min%2Fblock-orange?style=flat-square" alt="3.5 minutes per block">
 </p>
+
+---
+
+## Demo — From Spec to GDSII in 3.5 Minutes
+
+<p align="center">
+  <video src="https://github.com/GouthamRajam/Gouthamlabs/raw/main/assets/s2s_demo.mp4" width="100%" autoplay loop muted playsinline>
+    Your browser does not support the video tag. <a href="assets/s2s_demo.mp4">Download the demo video</a>.
+  </video>
+</p>
+
+> **37 AI agents** orchestrate a 10-stage pipeline — from a plain-text chip spec through RTL generation, verification, synthesis, place & route, and signoff — producing tape-out-ready GDSII verified by real EDA tools. No human intervention required.
 
 ---
 
@@ -413,7 +432,23 @@ See [`docs/paper/PUBLISHING_GUIDE.md`](docs/paper/PUBLISHING_GUIDE.md) for submi
 
 ---
 
+## What is S2S?
+
+**S2S (Spec-to-Silicon)** is an autonomous AI chip design framework that converts a plain-text hardware specification into a fabrication-ready GDSII layout. It uses 37 specialized AI agents organized across 7 engineering disciplines — specification, architecture, RTL design, verification, synthesis, physical design, and signoff — orchestrated through a 10-stage pipeline.
+
+Unlike approaches where AI generates code and a human validates it, S2S enforces a **Trust Layer**: real EDA tools (Yosys, OpenROAD, Verilator, Magic, Netgen, OpenSTA) make every pass/fail decision. The AI proposes; deterministic tools verify. Three consecutive failures trigger human escalation.
+
+**Key results:**
+- **RISC-V RV32I core**: 39/39 instruction compliance, full DRC/LVS/STA signoff on SkyWater SKY130
+- **Autonomous UART design**: Spec to clean GDSII in 3.5 minutes for $0.39, zero human edits
+- **5 completed chip layouts**: counter8, ALU8, UART, SPI master, sync FIFO — all placed and routed on SKY130
+
+S2S is independent research by Goutham Rajam, built entirely with open-source EDA tools on the SkyWater SKY130 process node.
+
+---
+
 <p align="center">
   <sub>Built by <strong>Goutham Rajam</strong> · Independent Research · Open Source</sub><br>
-  <sub>All designs target SkyWater SKY130 with open-source EDA tools</sub>
+  <sub>Autonomous AI chip design on SkyWater SKY130 with open-source EDA tools</sub><br>
+  <sub>AI VLSI · Automated RTL-to-GDSII · Multi-Agent Semiconductor Design · RISC-V · OpenROAD · Yosys</sub>
 </p>
