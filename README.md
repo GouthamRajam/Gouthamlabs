@@ -110,6 +110,18 @@
   <img src="docs/reports/phase0_paper/fig_power_ir.png" alt="Power by PVT corner and IR drop analysis" width="100%">
 </p>
 
+<sub>Left: total power across 3 PVT corners (SS/TT/FF). Right: static IR drop vs. the 90 mV limit (5% of 1.8 V). All five designs pass with margin.</sub>
+
+---
+
+## Completed Run — All 10 Stages, Spec to GDSII
+
+> A finished design run with all pipeline stages checked off. 15 tool runs, 11 checks passed, human gate approvals shown at the bottom. Run cost: $0.01.
+
+<p align="center">
+  <img src="docs/milestones/m0.4-screenshots/live-after-run.png" alt="Completed S2S run showing all 10 stages passed" width="100%">
+</p>
+
 ---
 
 ## RISC-V RV32I Core (Phase 1) — Full Signoff
@@ -169,6 +181,50 @@
 <br>
 <p align="center">
   <img src="docs/milestones/m0.5-screenshots/live-office-replay-counter8.png" alt="counter8 replay showing agent activity" width="100%">
+</p>
+</details>
+
+<details>
+<summary><strong>Agent Detail Panel — click any seat to inspect</strong></summary>
+<br>
+
+> Each agent shows its persona, current task, checks passed/failed, files touched, tools used, and a timestamped action log. Here: Lumen (Design Quality) after running Verilator lint and Yosys elaboration.
+
+<p align="center">
+  <img src="docs/milestones/m0.5-screenshots/live-office-lumen-panel.png" alt="Agent detail panel showing Lumen's checks, files, and actions" width="100%">
+</p>
+</details>
+
+<details>
+<summary><strong>Finance Dashboard — cost tracking by agent, model, and run</strong></summary>
+<br>
+
+> Real-time spend tracking: budget vs. actual per run, cost breakdown by source (LLM, compute, storage), by model, by agent, and by run. Budget alerts fire when a run exceeds its allocation.
+
+<p align="center">
+  <img src="docs/milestones/m0.4-screenshots/finance.png" alt="Finance dashboard showing cost breakdown and budget alerts" width="100%">
+</p>
+</details>
+
+<details>
+<summary><strong>Management View — SLA monitoring, stall detection, escalations</strong></summary>
+<br>
+
+> Operations dashboard: backlog depth, running tasks, stall count, assignment SLA hit rate. Stalled agents (no progress beyond the SLA threshold) are flagged automatically. Escalation alerts fire after 3 consecutive failures.
+
+<p align="center">
+  <img src="docs/milestones/m0.4-screenshots/management-stall.png" alt="Management view showing SLA metrics and stall detection" width="100%">
+</p>
+</details>
+
+<details>
+<summary><strong>Activity Feed — every agent action is logged</strong></summary>
+<br>
+
+> Timestamped event stream: manager check-ins, stage completions, task heartbeats, artifact creation, check results. Every action is recorded and reproducible.
+
+<p align="center">
+  <img src="docs/milestones/m0.5-screenshots/live-office-activity-feed.png" alt="Activity feed showing timestamped agent events" width="100%">
 </p>
 </details>
 
