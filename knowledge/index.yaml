@@ -51,3 +51,38 @@ entries:
     tags: [equivalence, eqy, yosys, phase-1]
     status: confirmed
     date: 2026-10-08
+
+  - id: k008-pre-drt-antenna-closure
+    topic: "Antenna closure that worked: pre-DRT heuristic diodes + lower core utilization"
+    file: methods/pre_drt_antenna_closure.yaml
+    tags: [antenna, p-and-r, openlane, diode-insertion, picorv32, s2s_rv32i, phase-1]
+    status: confirmed
+    date: 2026-10-08
+
+  - id: k009-provenance-hand-authored
+    topic: "Committed s2s_rv32i and s2s_uart RTL are hand-authored, not pipeline-generated"
+    file: decisions/provenance_hand_authored.yaml
+    tags: [provenance, trust-layer, pillar-a, pillar-b, phase-1.5, honesty]
+    status: confirmed
+    date: 2026-10-09
+
+  - id: k010-stale-milestone-reports
+    topic: "Milestone reports are point-in-time; DECISIONS.md and PHASE_GATES.md are current"
+    file: failures/stale_milestone_reports.yaml
+    tags: [documentation, stale, status, cold-start, process]
+    status: confirmed
+    date: 2026-11-16
+
+  - id: k011-post-pnr-analyses
+    topic: "VCD-annotated power, IR-drop conservative bound, gate smoke is not compliance"
+    file: methods/vcd_power_ir_bound_gate_smoke.yaml
+    tags: [power, vcd, ir-drop, gate-level-sim, smoke-test, picorv32, phase-1]
+    status: confirmed
+    date: 2026-10-08
+
+  - id: k012-phase-1-5-pillar-status
+    topic: "Phase 1.5 pillar status snapshot (A not met, B/C partial, D in progress)"
+    file: decisions/phase_1_5_pillar_status.yaml
+    tags: [status, phase-gates, phase-1.5, pillars]
+    status: provisional
+    date: 2026-11-16

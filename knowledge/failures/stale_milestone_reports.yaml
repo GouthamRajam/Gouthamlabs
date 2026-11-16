@@ -1,0 +1,32 @@
+topic: "Milestone reports are point-in-time; DECISIONS.md and PHASE_GATES.md are the current truth"
+summary: |
+  Several docs/milestones/*.md files describe the state at the time they were written and were NOT
+  updated when later work superseded them. A reader who trusts them gets a wrong status.
+  Known superseded statements:
+  - docs/milestones/A2.md (2026-10-09) says s2s_rv32i P&R, OCV signoff and GDSII are "BLOCKED:
+    OpenROAD/OpenLane not available". Superseded the same day by DECISIONS.md "A2-BACKEND ...
+    COMPLETE": full 78-step OpenLane run, DRC 0, LVS clean, antenna 0, 9 corners met, GDSII hashed.
+  - docs/milestones/M0.6.md says uart verification is "not finished", paused on a 400,000-token
+    task budget. Superseded: the budget was raised to 1,000,000 for that task (DECISIONS 2026-10-04),
+    uart mutation reached 19/20 = 95% (2026-10-06), G2 passed, and uart reached GDSII in M0.7.
+  - docs/START_HERE.md and tests/cold_start_test.md (before 2026-11-16) said Phase 1 open / P1.4 next.
+    Phase 1 closed 2026-10-08 (P1.6) and the gate is checked in PHASE_GATES.md.
+  - docs/PHASE1_5_PLAN.md "Sequencing" block (found by the 2026-11-16 cold-start run) still shows
+    "Phase 1 (in progress)" with P1.4 as the open item. Phase 1 is closed; read that block as history.
+  - docs/PHASE1_5A_PROGRESS.md says "ALL PILLAR A GATES COMPLETE", but Pillar A's acceptance test
+    needs pipeline-generated RTL and the core is hand-authored (see k009, k012).
+  Source-of-truth order when documents disagree: PHASE_GATES.md (gate state, human-marked), then the
+  newest dated entry in DECISIONS.md, then the milestone report.
+evidence:
+  - path: docs/DECISIONS.md
+    note: "Entries dated 2026-10-04, 2026-10-06, 2026-10-08 (P1.6), 2026-10-09 (A2-BACKEND)"
+  - path: PHASE_GATES.md
+    note: "Gate checkboxes, marked by a human"
+tags: [documentation, stale, status, cold-start, honesty, process]
+status: confirmed
+date: 2026-11-16
+related: [k009-provenance-hand-authored]
+lesson: |
+  When a status question comes up, check the newest DECISIONS.md entry and PHASE_GATES.md before
+  quoting a milestone report. This was learned the hard way: a status answer built on A2.md alone
+  wrongly called s2s_rv32i P&R blocked.

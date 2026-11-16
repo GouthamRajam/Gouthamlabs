@@ -1,0 +1,35 @@
+topic: "Antenna closure that worked: pre-DRT heuristic diodes + lower core utilization"
+summary: |
+  The post-detailed-route antenna repair blocker (k001) was resolved for PicoRV32 in P1.4 by
+  inserting diodes BEFORE detailed routing, not by repairing after it. OpenLane 2.3.10 Classic flow
+  (75 steps), pinned OpenROAD edf00dff. Order: GlobalRouting -> CheckAntennas ->
+  HeuristicDiodeInsertion (diode_2 at gates of nets > ~90 um) -> RepairAntennas -> DetailedRouting
+  -> CheckAntennas (post-DRT, the signoff number).
+
+  Three iterations of eight allowed:
+  - Run 1 (util 40, heuristic diodes off, GRT repair only): post-DRT antenna 16 violations. FAIL.
+  - Run 2 (util 40, heuristic diodes on, GRT iters 15 / margin 30): 1 violation left, a met3 side-area
+    case (490.86 vs 400). Heuristic targets met1/met2 by Manhattan length and misses met3 promotion.
+  - Run 3 (util 35, same diode settings): 0 violations. All signoff gates pass.
+  The lever that closed the last violation was LOWER core utilization (40 -> 35), which gives the
+  router room to avoid the met3 layer promotion.
+
+  The same lever repeated on the s2s_rv32i core (A2-BACKEND): util 35 left 1 marginal met4 pin;
+  util 30 closed it, at +16.2% die area and +17.5% power.
+
+  Honest cost: PicoRV32 Run 3 has 11,631 diodes = 44.3% of 26,252 instances, because the heuristic
+  targets ALL long nets, not only the ~50 that violate. Flagged as an efficiency target.
+evidence:
+  - path: docs/milestones/P1.4.md
+    note: "Iteration history, parameters, diode overhead accounting"
+  - path: docs/milestones/p1.4-evidence/config.json
+    note: "Winning OpenLane config"
+  - path: docs/DECISIONS.md
+    note: "Entries '2026-10-08 (P1.4 ...)' and '2026-10-09 (A2-BACKEND ...)'"
+tags: [antenna, p-and-r, openlane, diode-insertion, picorv32, s2s_rv32i, phase-1, method]
+status: confirmed
+date: 2026-10-08
+related: [k001-antenna-blocker]
+lesson: |
+  When a post-route repair does not converge, move the fix upstream of the router and give the router
+  more space. Try utilization first (cheap, in pnr_ranges.yaml bounds). Report the diode overhead.

@@ -1,0 +1,31 @@
+topic: "Post-P&R analyses: VCD-annotated power, IR-drop conservative bound, gate smoke is not compliance"
+summary: |
+  P1.5 on the routed PicoRV32 (26,252 instances, 20 MHz, nom_tt_025C_1v80):
+  - Power, vector-based: 2.606 mW total (OpenSTA 3.1.0 read_vcd of a 134-cycle gate-level
+    simulation; 49,934 pin activities annotated; SPEF parasitics from P1.4). Statistical default-
+    activity estimate from P1.4 signoff: 3.387 mW (23% higher). Limit: the program is short and
+    representative; a heavier workload would draw more.
+  - IR drop: OpenROAD PSM from P1.4 step 56, worst 0.146 mV on VGND = 0.01% of VDD, 0 grid violations.
+    PSM was NOT re-run with VCD current because full OpenROAD was unavailable; the argument is that
+    VCD power is lower than the statistical power PSM used, so the reported IR drop is a conservative
+    upper bound. Signal-net EM is a Phase 2+ item; only the power-grid check is clean.
+  - Gate-level functional smoke on the post-P&R netlist: 9 checks (ADD, SUB, OR, SLT, SLLI, SRLI,
+    SW/LW, BEQ, JAL), PASS, 134 cycles, 170 auto-generated behavioral cell models. This is a SMOKE
+    test, NOT the 39-test RV32I suite. Full compliance is proven at RTL (39/39 vs Sail v0.15) and linked
+    to the gates only by BMC depth-10 equivalence (k003).
+  By contrast, s2s_rv32i ran the full 39/39 suite on its synthesized gate netlist (not post-P&R).
+evidence:
+  - path: docs/milestones/P1.5.md
+    note: "Power tables, IR-drop bound argument, smoke test program and scope statement"
+  - path: docs/milestones/p1.5-evidence/gate_compliance_tb.v
+    note: "Gate-level smoke testbench"
+  - path: docs/milestones/A2.md
+    note: "39/39 gate-level run for s2s_rv32i (synthesized netlist)"
+tags: [power, vcd, ir-drop, em, gate-level-sim, smoke-test, picorv32, phase-1, trust-layer]
+status: confirmed
+date: 2026-10-08
+related: [k003-bmc-equiv-depth10, k006-ocv-derated-sta]
+lesson: |
+  Label what a test is. A 9-check smoke test must never be reported as compliance. State the
+  workload behind a power number, and when an analysis could not be re-run, say so and give the
+  bound argument instead of quoting a number you did not measure.

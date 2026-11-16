@@ -27,8 +27,8 @@ summary: |
 evidence:
   - path: designs/s2s_rv32i/synth_dft/gen_fault_sim.py
     note: "Python code generator — reads JSON netlist, emits C fault simulator"
-  - path: designs/s2s_rv32i/synth_dft/fault_sim.c
-    note: "Generated C fault simulator with 7,125 gate evaluations"
+  - path: designs/picorv32/synth_dft/gen_fault_sim.py
+    note: "Same generator used for PicoRV32 (P1.3). The generated fault_sim.c (7,125 gate evaluations for s2s_rv32i) is NOT committed; regenerate it with the generator."
   - path: designs/s2s_rv32i/synth_dft/export_json.ys
     note: "Yosys script to export flattened JSON netlist"
 tags: [atpg, dft, fault-simulation, sky130, phase-1, compiled-simulation, yosys-json]

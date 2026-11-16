@@ -1,0 +1,43 @@
+topic: "Provenance: committed s2s_rv32i and s2s_uart RTL are hand-authored, not pipeline-generated"
+summary: |
+  A 2026-10-09 audit found that NEITHER committed design was produced by the S2S agent pipeline
+  (backend/s2s/agents/). Both were written with AI assistance in an interactive coding session.
+  An earlier "agent-generated" label was false and was removed everywhere it could be edited.
+
+  - designs/s2s_rv32i (5 modules): zero trajectory logs, pipeline never invoked. Hand-authored.
+    Still passes 39/39 Sail compliance and full GDSII signoff; only the provenance label changed.
+  - designs/uart/rtl (3 modules: s2s_uart, s2s_uart_tx, s2s_uart_rx): hand-authored, a DIFFERENT
+    design from the pipeline's.
+  - The pipeline DID autonomously generate a 5-module UART on 2026-10-04 (trajectory
+    run_01M426JH3YWRXXHKAKSF3J94CP, 12 model calls, 0 operator influence; baud_gen, uart_tx, uart_rx,
+    sync2, uart_top). Its RTL lives in designs/uart/pipeline_rtl/ and was taken to a routed DEF with
+    0 antenna violations and setup +9.11 ns post-P&R at 50 MHz. It has NO GDSII: stream-out and
+    DRC/LVS need Magic/KLayout/Netgen, which need the s2s-eda Docker runtime, and the Docker daemon
+    cannot start in the cloud container (containerd timeout).
+
+  Facts for whoever finishes the pipeline UART: the committed DEF
+  (designs/uart/pipeline_rtl/pnr/pipeline_uart_pnr.def) has SHA-256 a8531f25...39830, matching the
+  value recorded in DECISIONS.md. The .odb is gitignored (derived from the DEF). The DEF came from
+  pip OpenROAD, not the pinned OpenLane flow. No stream-out recipe is committed:
+  eda/scripts/verify_gds.sh is a TODO stub, so the DEF -> GDS step has to be written and run in
+  the s2s-eda image (pinned: Magic 8.3.489, KLayout 0.29.4, Netgen 1.5.278 in eda/versions.lock).
+
+  Consequence for Phase 1.5: Pillar A's acceptance test requires a design whose RTL the pipeline
+  generated with no manual edits. No committed design meets that yet. The claim "our agents designed
+  the chip" cannot be made for either committed design.
+  One unfixable artifact: docs/reports/S2S_Phase1_5A_Progress_Report.pdf still says "Agent-Generated"
+  in its metadata (binary).
+evidence:
+  - path: docs/DECISIONS.md
+    note: "Entries '2026-10-09 (A1 PROVENANCE AUDIT)', '(PROVENANCE AUDIT — both designs)', '(PIPELINE-UART ...)'"
+  - path: docs/trajectories
+    note: "Trajectory records; absence of any record for s2s_rv32i is the evidence"
+  - path: designs/uart/pipeline_rtl
+    note: "The genuine pipeline-generated UART RTL, testbench, synthesis and pnr outputs"
+tags: [provenance, trust-layer, pillar-a, pillar-b, s2s_rv32i, uart, phase-1.5, honesty]
+status: confirmed
+date: 2026-10-09
+related: [k008-pre-drt-antenna-closure]
+lesson: |
+  A label is not evidence. Provenance must be checkable from the trajectory log alone. If a design
+  has no trajectory, it was not pipeline-generated, whatever its file headers say.
