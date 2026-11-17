@@ -86,3 +86,10 @@ entries:
     tags: [status, phase-gates, phase-1.5, pillars]
     status: provisional
     date: 2026-11-16
+
+  - id: k013-def-to-gds-and-filler
+    topic: "DEF to GDS stream-out for the pipeline UART; missing filler caused 286 DRC violations"
+    file: methods/def_to_gds_and_filler.yaml
+    tags: [stream-out, gds, klayout, drc, filler, pillar-b, uart, floorplan]
+    status: provisional
+    date: 2026-11-17

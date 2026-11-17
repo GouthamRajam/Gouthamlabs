@@ -91,10 +91,13 @@ step in your current environment, say so."
 **Ground truth:** The agent should reference:
 - Input: designs/uart/pipeline_rtl/ (RTL, testbench, synth/, pnr/ with DEF and ODB); trajectory
   run_01M426JH3YWRXXHKAKSF3J94CP; not designs/uart/rtl (a different, hand-authored design).
-- Tools: Magic or KLayout for stream-out, Magic + KLayout DRC, Netgen LVS, OpenSTA incl. derated
-  STA (k006), all inside the s2s-eda Docker image.
-- Environment: the cloud container's Docker daemon cannot start, so this cannot run there; it
-  needs a runtime with Docker (or native Magic/KLayout/Netgen).
+- Tools: stream-out via designs/uart/pipeline_rtl/pnr/stream_out.py (KLayout), Magic + KLayout DRC,
+  Netgen LVS, OpenSTA incl. derated STA (k006); signoff of record uses the pinned versions in the
+  s2s-eda Docker image (k013).
+- Environment: the cloud container's Docker daemon cannot start. There KLayout stream-out and KLayout
+  DRC can run on non-pinned versions, but Magic DRC and Netgen LVS cannot; the plan should say so and
+  not claim LVS. Known open defects: the P&R has no filler step (286 DRC violations without it) and
+  its floorplan is ~100x oversized (k013).
 - Rules: no hand-edits to the pipeline's RTL (provenance, k009); results come from real tools,
   never written by hand; antenna is already 0, and if it regresses use k008's pre-DRT approach;
   record the outcome in docs/DECISIONS.md.

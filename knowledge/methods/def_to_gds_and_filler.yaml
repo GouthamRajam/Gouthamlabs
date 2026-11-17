@@ -1,0 +1,41 @@
+topic: "DEF to GDS stream-out for the pipeline UART; missing filler caused 286 DRC violations"
+summary: |
+  designs/uart/pipeline_rtl/pnr/stream_out.py turns the OpenROAD DEF into a GDS with KLayout's Python
+  API: cell geometry from the pinned PDK sky130_fd_sc_hd.gds, routing/vias/pins from the DEF. It
+  refuses to write unless all DEF components resolve to real cells, and prunes unused cells. Needs the
+  sky130A LEF/tech LEF/cell GDS and KLayout's sky130A.map (PDK from the pinned volare archives, sha256
+  in eda/versions.lock). Run it with python3 -I and --pylib if klayout is not installed system-wide.
+
+  DRC finding: the DEF as routed gives 286 KLayout DRC violations (nwell.2a 86, nwell.1 66, hvtp.1 66,
+  hvtp.2 68). Cause: the P&R script never ran filler placement. Filling empty row sites with
+  sky130_fd_sc_hd__fill_* (136,104 cells, --insert-filler) gives 0 violations on the final GDS
+  (sha256 f7ee8aa9...f83, KLayout 0.28.16 DRC, repo default options). The filler belongs in P&R
+  (OpenROAD filler_placement); the stream-out flag is a stand-in and must not be reported as a P&R result.
+
+  How it was validated (controls): the same deck gives 0 on the signed-off counter8.gds; an
+  independent placement-only GDS built without the LEF/DEF reader reproduces the same 286 per rule.
+
+  What does NOT work here: KLayout's sky130.lvs flow reports "Netlists don't match" on the signed-off
+  counter8 too, so it cannot judge any design; apt Magic 8.3.105 segfaults on the PDK tech file; the
+  pinned Magic/Netgen sources are blocked by the egress proxy (403). Real Magic DRC and Netgen LVS
+  need the s2s-eda image.
+
+  Open defect found: the P&R floorplan is ~100x too large (die 1,406,679 um2; logic cells 0.31% of
+  core vs 30% requested; tap cells 84% of cell area). Re-run P&R with correct sizing and filler.
+evidence:
+  - path: designs/uart/pipeline_rtl/pnr/stream_out.py
+    note: "The stream-out script with its component-count and single-top-cell checks"
+  - path: designs/uart/pipeline_rtl/pnr/pnr_pipeline_uart.tcl
+    note: "P&R script: no filler_placement step; floorplan sizing to be fixed"
+  - path: docs/DECISIONS.md
+    note: "Entry 2026-11-17 (Pillar B ...): hashes, tool versions, controls, what was not run"
+  - path: backend/s2s/tools/klayout_drc.py
+    note: "Default DRC options used (feol, beol, offgrid, seal)"
+tags: [stream-out, gds, klayout, drc, filler, nwell, pillar-b, uart, pipeline, floorplan]
+status: provisional
+date: 2026-11-17
+related: [k009-provenance-hand-authored, k008-pre-drt-antenna-closure]
+lesson: |
+  A DRC count on a GDS you built yourself proves nothing until a control shows the checker is sound and
+  an independent construction reproduces the number. When a result depends on tools other than the
+  pinned ones, say so beside the number.

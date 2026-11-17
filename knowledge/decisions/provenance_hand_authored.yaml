@@ -11,16 +11,18 @@ summary: |
   - The pipeline DID autonomously generate a 5-module UART on 2026-10-04 (trajectory
     run_01M426JH3YWRXXHKAKSF3J94CP, 12 model calls, 0 operator influence; baud_gen, uart_tx, uart_rx,
     sync2, uart_top). Its RTL lives in designs/uart/pipeline_rtl/ and was taken to a routed DEF with
-    0 antenna violations and setup +9.11 ns post-P&R at 50 MHz. It has NO GDSII: stream-out and
-    DRC/LVS need Magic/KLayout/Netgen, which need the s2s-eda Docker runtime, and the Docker daemon
-    cannot start in the cloud container (containerd timeout).
+    0 antenna violations and setup +9.11 ns post-P&R at 50 MHz. It had no GDSII until 2026-11-17,
+    when stream_out.py produced one (non-pinned KLayout, see k013). There is still no signoff of
+    record: Magic DRC and Netgen LVS need the s2s-eda Docker runtime, and the Docker daemon cannot
+    start in the cloud container (containerd timeout).
 
   Facts for whoever finishes the pipeline UART: the committed DEF
   (designs/uart/pipeline_rtl/pnr/pipeline_uart_pnr.def) has SHA-256 a8531f25...39830, matching the
   value recorded in DECISIONS.md. The .odb is gitignored (derived from the DEF). The DEF came from
-  pip OpenROAD, not the pinned OpenLane flow. No stream-out recipe is committed:
-  eda/scripts/verify_gds.sh is a TODO stub, so the DEF -> GDS step has to be written and run in
-  the s2s-eda image (pinned: Magic 8.3.489, KLayout 0.29.4, Netgen 1.5.278 in eda/versions.lock).
+  pip OpenROAD, not the pinned OpenLane flow. As of 2026-11-17 a stream-out recipe exists
+  (designs/uart/pipeline_rtl/pnr/stream_out.py, see k013); eda/scripts/verify_gds.sh is still a TODO
+  stub. Signoff of record still has to run in the s2s-eda image (pinned: Magic 8.3.489, KLayout 0.29.4,
+  Netgen 1.5.278 in eda/versions.lock).
 
   Consequence for Phase 1.5: Pillar A's acceptance test requires a design whose RTL the pipeline
   generated with no manual edits. No committed design meets that yet. The claim "our agents designed

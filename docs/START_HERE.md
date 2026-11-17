@@ -49,7 +49,7 @@ Subdirectories:
 - `designs/picorv32/` — hand-authored RISC-V core (Phase 1 deliverable; clean GDSII)
 - `designs/s2s_rv32i/` — RV32I core, hand-authored in an AI coding session (Pillar A; GDSII)
 - `designs/uart/rtl/` — hand-authored 3-module UART (Pillar B; GDSII)
-- `designs/uart/pipeline_rtl/` — the UART the S2S pipeline generated autonomously (routed DEF, no GDSII)
+- `designs/uart/pipeline_rtl/` — the UART the S2S pipeline generated autonomously (routed DEF; `pnr/stream_out.py` makes a GDS; see k013 for DRC status and open defects)
 - `var/artifacts/` — run outputs from the pipeline (content-addressed)
 - `docs/trajectories/` — records of pipeline runs; a design with no trajectory was not pipeline-generated
 - `docs/milestones/` — milestone reports (M0.1 to M0.7, P1.3 to P1.5, A2)
@@ -70,5 +70,7 @@ Includes this document's cold-start acceptance test (Pillar D gate); the test it
 
 - EDA tools run only in the `s2s-eda` Docker image (`docker build -t s2s-eda eda/`).
 - The cloud container's Docker daemon cannot start (no `/var/run/docker.sock`; containerd timeout).
-  There, Yosys, OpenROAD, Magic, KLayout and Netgen are unavailable, so DRC, LVS and GDSII
-  stream-out cannot run. Do not report such a check as passed; say it was not run.
+  There, the pinned Magic, Netgen and OpenROAD are unavailable. KLayout (pip/apt, not the pinned
+  version) can stream out a GDS and run the PDK DRC deck, but Magic DRC and Netgen LVS cannot run.
+  Do not report a check as passed unless the tool actually ran; say which were not run, and label
+  results from non-pinned tools as such.

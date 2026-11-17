@@ -13,8 +13,10 @@ summary: |
   pillar requires pipeline-generated RTL with no manual edits. docs/PHASE1_5A_PROGRESS.md still says
   "ALL PILLAR A GATES COMPLETE"; read it with that caveat.
   Pillar B (second distinct design to GDSII): PARTIAL. The hand-authored s2s_uart reached GDSII
-  (DRC 0, LVS 0 diff, antenna 0, 9 corners met, 72/72 loopback). The pipeline-generated UART reached
-  a routed DEF only (no GDSII, no DRC/LVS) because Docker cannot start in the cloud container.
+  (DRC 0, LVS 0 diff, antenna 0, 9 corners met, 72/72 loopback). The pipeline-generated UART was
+  streamed to a GDS on 2026-11-17 (k013): KLayout DRC 286 violations as routed, 0 after adding filler
+  at stream-out, on non-pinned tools. Still missing: LVS and Magic DRC (not run), a pinned-tool run,
+  filler inside P&R, and a fix for its ~100x oversized floorplan (logic is 0.31% of core).
   Pillar C: PARTIAL. Done: 3x3 TT/SS/FF x nominal/+-5%/+-10% OCV STA on s2s_rv32i, Fmax 42.63 MHz.
   NOT done: constrained-random verification (riscv-dv / torture vs Sail, >= 90% encoding coverage,
   0 mismatches) appears only in plans and agent prompts.
