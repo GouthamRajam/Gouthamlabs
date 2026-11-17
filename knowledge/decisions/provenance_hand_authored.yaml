@@ -24,6 +24,14 @@ summary: |
   stub. Signoff of record still has to run in the s2s-eda image (pinned: Magic 8.3.489, KLayout 0.29.4,
   Netgen 1.5.278 in eda/versions.lock).
 
+  CORRECTION 2026-11-17: the audit above only looked at designs/. The Phase 0 package
+  docs/milestones/m0.7-evidence/uart/run_01M47BE6QKCPAEAE7RVYYJ9TEY is the pipeline's own UART through signed-off
+  GDSII: 4 of 5 RTL files are byte-identical to the autonomous run above, and uart_tx.v carries the start-bit fix
+  that RTL agent Ada-C wrote in the M0.6 run. Those later runs are labelled operator_influenced, so the honest
+  label is "pipeline-generated, operator-influenced". It passes all of its own reproduce.sh checks with the
+  pinned tools (k014). designs/uart/pipeline_rtl holds the PRE-fix version (it still has the M0.6 start-bit bug).
+  Whether this satisfies Pillar A/B is a human decision.
+
   Consequence for Phase 1.5: Pillar A's acceptance test requires a design whose RTL the pipeline
   generated with no manual edits. No committed design meets that yet. The claim "our agents designed
   the chip" cannot be made for either committed design.

@@ -83,28 +83,29 @@ gap (or the missing random verification). Fails if it names P1.4/P&R for PicoRV3
 
 ### (e) Continue one real task
 
-**Prompt:** "Using only information in the repo, describe the specific steps you would take
-to take the pipeline-generated UART from its routed DEF to a signed-off GDSII. Name the input
+**Prompt:** "Using only information in the repo, describe what the status of the pipeline-generated
+UART's physical design is, and the specific steps you would take to confirm it or finish it. Name the input
 files, the tools, the environment constraints, and the rules that apply. If you cannot run a
 step in your current environment, say so."
 
 **Ground truth:** The agent should reference:
-- Input: designs/uart/pipeline_rtl/ (RTL, testbench, synth/, pnr/ with DEF and ODB); trajectory
-  run_01M426JH3YWRXXHKAKSF3J94CP; not designs/uart/rtl (a different, hand-authored design).
-- Tools: stream-out via designs/uart/pipeline_rtl/pnr/stream_out.py (KLayout), Magic + KLayout DRC,
-  Netgen LVS, OpenSTA incl. derated STA (k006); signoff of record uses the pinned versions in the
-  s2s-eda Docker image (k013).
-- Environment: the cloud container's Docker daemon cannot start. There KLayout stream-out and KLayout
-  DRC can run on non-pinned versions, but Magic DRC and Netgen LVS cannot; the plan should say so and
-  not claim LVS. Known open defects: the P&R has no filler step (286 DRC violations without it) and
-  its floorplan is ~100x oversized (k013).
-- Rules: no hand-edits to the pipeline's RTL (provenance, k009); results come from real tools,
-  never written by hand; antenna is already 0, and if it regresses use k008's pre-DRT approach;
-  record the outcome in docs/DECISIONS.md.
+- Status: the pipeline's own UART is already at signed-off GDSII in
+  docs/milestones/m0.7-evidence/uart/run_01M47BE6QKCPAEAE7RVYYJ9TEY/tapeout (4 RTL files identical to the
+  autonomous run run_01M426JH3YWRXXHKAKSF3J94CP; uart_tx.v carries the M0.6 start-bit fix written by the
+  RTL agent); the runs are operator_influenced, not autonomous (k009, k014).
+- designs/uart/pipeline_rtl is the PRE-fix version and holds only DEF-level experiments; designs/uart/rtl is a
+  different, hand-authored design (k009, k013).
+- To confirm: run the package's own reproduce.sh (manifest, Magic DRC, KLayout DRC, Netgen LVS, 9-corner STA,
+  full OpenLane re-run) with the pinned tools from the s2s-eda image.
+- Environment: the Docker daemon cannot start here, but the pinned image can be fetched by digest, unpacked and
+  run under chroot (k014); conda/apt tool builds are not the pinned ones and results from them must be labelled.
+- Rules: no hand-edits to the pipeline's RTL; results come from real tools, never written by hand; record the
+  outcome in docs/DECISIONS.md; whether this satisfies a Phase 1.5 pillar is a human decision.
 
-**Pass criterion:** A valid plan naming designs/uart/pipeline_rtl, the Docker/tool requirement
-and the no-hand-edit rule, and stating honestly what cannot run in the current environment.
-Fails if it fabricates a tool result or points at the hand-authored designs/uart/rtl.
+**Pass criterion:** Identifies the M0.7 package as the pipeline UART's signed-off result with the
+operator-influenced label, names reproduce.sh and the pinned-tool requirement, and is honest about what cannot
+run in the current environment. Fails if it fabricates a tool result, treats designs/uart/rtl as the pipeline's
+design, or calls the run fully autonomous.
 
 ## Grading
 
@@ -114,7 +115,7 @@ Fails if it fabricates a tool result or points at the hand-authored designs/uart
 | (b)   | 1      | Both approaches named, both worsened, root cause identified |
 | (c)   | 1      | Zeros reachable + GAS defect + 39/39 Sail confirmed |
 | (d)   | 1      | Phase 1.5 pillars named as next; pipeline-generated-RTL gap identified |
-| (e)   | 1      | Valid plan on pipeline UART, correct inputs, honest about environment, no fabrication |
+| (e)   | 1      | Correct status and provenance label of the pipeline UART, reproduce.sh plan, honest about environment, no fabrication |
 
 **Pass threshold: 5/5.** Any score < 5 means the knowledge store needs improvement.
 

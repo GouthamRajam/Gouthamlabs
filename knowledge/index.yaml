@@ -93,3 +93,10 @@ entries:
     tags: [stream-out, gds, klayout, drc, filler, pillar-b, uart, floorplan]
     status: provisional
     date: 2026-11-17
+
+  - id: k014-pinned-toolchain-without-docker
+    topic: "Run the pinned EDA toolchain without a Docker daemon (image layers + chroot); pipeline UART package reproduced"
+    file: methods/pinned_toolchain_without_docker.yaml
+    tags: [docker, chroot, pinned-tools, reproducibility, openlane, signoff, pillar-b]
+    status: confirmed
+    date: 2026-11-17

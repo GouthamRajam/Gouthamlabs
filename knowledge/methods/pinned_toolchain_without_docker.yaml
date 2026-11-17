@@ -1,0 +1,36 @@
+topic: "Run the pinned EDA toolchain without a Docker daemon (image layers + chroot) and reproduce a signed-off package"
+summary: |
+  The container's Docker daemon cannot start, but the repo's pinned image is only a registry image, so the exact
+  tools can be used without it. Steps that worked on 2026-11-17:
+  1. Anonymous token: https://ghcr.io/token?service=ghcr.io&scope=repository:efabless/openlane2:pull
+  2. Manifest list for the digest in eda/Dockerfile, pick amd64; its 2 layers (1.56 GB + 2.5 MB). Verify each
+     layer sha256 against the manifest before use.
+  3. Unpack both layers into a fresh empty directory (5.5 GB); mknod /dev/null,zero,random,urandom; mount -t proc.
+  4. Fetch the image config blob; export its Env (PATH, NIX_PYTHONPATH, ...) as the chroot environment.
+  5. PDK: all six volare archives named in eda/versions.lock (not only sky130_fd_sc_hd; OpenLane's config needs
+     sky130_fd_io etc.), each sha256-checked, extracted to <root>/opt/pdk/sky130A.
+  6. chroot <root> bash -c '. env; cd /pkg; bash reproduce.sh' using a COPY of a tapeout package.
+  Versions seen equal the pins: OpenROAD edf00dff, Magic rev 489, KLayout 0.29.4, Netgen 1.5.278, OpenLane 2.3.10.
+  Result: the Phase 0 pipeline UART package (m0.7-evidence/uart) passed all 9 reproduce.sh items, re-ran the full
+  OpenLane flow to the recorded 1,207 instances / wirelength 20,101, and its re-run layout is XOR-identical to the
+  packaged one on all 37 layers (file bytes differ from the recorded sha256; header-level, not investigated).
+  Traps hit: missing /proc makes KLayout fail with a tlFileUtils internal error; an incomplete PDK makes OpenLane
+  stop at config load; apt/conda Magic and Netgen builds are not the pinned ones and apt Magic 8.3.105 segfaults on
+  this PDK's tech file.
+evidence:
+  - path: eda/Dockerfile
+    note: "Image digest and PDK fetch logic that this recipe mirrors"
+  - path: eda/versions.lock
+    note: "Pinned tool versions and PDK archive sha256 values"
+  - path: docs/milestones/m0.7-evidence/uart/run_01M47BE6QKCPAEAE7RVYYJ9TEY/tapeout/reproduce.sh
+    note: "The package's own re-verification script"
+  - path: docs/DECISIONS.md
+    note: "Entry 2026-11-17 (Pillar B/A evidence — pinned toolchain without Docker ...)"
+tags: [docker, chroot, pinned-tools, reproducibility, openlane, signoff, ghcr, pillar-b]
+status: confirmed
+date: 2026-11-17
+related: [k009-provenance-hand-authored, k013-def-to-gds-and-filler]
+lesson: |
+  "Docker is unavailable" does not mean "the pinned tools are unavailable". Check what the blocker really blocks
+  before accepting a limitation, and reproduce a result with the pinned tools before drawing conclusions from
+  non-pinned ones.

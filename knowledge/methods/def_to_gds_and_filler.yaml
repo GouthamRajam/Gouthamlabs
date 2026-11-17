@@ -15,6 +15,10 @@ summary: |
   How it was validated (controls): the same deck gives 0 on the signed-off counter8.gds; an
   independent placement-only GDS built without the LEF/DEF reader reproduces the same 286 per rule.
 
+  SUPERSEDED IN PART (2026-11-17, k014): this entry covers designs/uart/pipeline_rtl, the pre-fix UART, with
+  non-pinned tools. The signed-off pipeline UART is the M0.7 package, which passes with the pinned tools. The
+  filler/floorplan/global_connect defects found here are real defects of pnr_pipeline_uart.tcl (fixed in pnr_v2.tcl).
+
   What does NOT work here: KLayout's sky130.lvs flow reports "Netlists don't match" on the signed-off
   counter8 too, so it cannot judge any design; apt Magic 8.3.105 segfaults on the PDK tech file; the
   pinned Magic/Netgen sources are blocked by the egress proxy (403). Real Magic DRC and Netgen LVS

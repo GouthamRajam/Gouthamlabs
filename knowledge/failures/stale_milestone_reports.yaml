@@ -15,6 +15,8 @@ summary: |
     "Phase 1 (in progress)" with P1.4 as the open item. Phase 1 is closed; read that block as history.
   - docs/PHASE1_5A_PROGRESS.md says "ALL PILLAR A GATES COMPLETE", but Pillar A's acceptance test
     needs pipeline-generated RTL and the core is hand-authored (see k009, k012).
+  - The 2026-10-09 provenance audit (DECISIONS.md) concluded that no committed design came from the pipeline. It
+    checked designs/ only; docs/milestones/m0.7-evidence/uart is pipeline-generated (see k009, k014).
   Source-of-truth order when documents disagree: PHASE_GATES.md (gate state, human-marked), then the
   newest dated entry in DECISIONS.md, then the milestone report.
 evidence:
